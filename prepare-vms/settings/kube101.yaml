@@ -1,7 +1,7 @@
 # 3 nodes for k8s 101 workshops
 
 # Number of VMs per cluster
-clustersize: 3
+clustersize: 4
 
 # The hostname of each node will be clusterprefix + a number
 clusterprefix: node
