@@ -168,7 +168,33 @@ _cmd_kube() {
         sudo kubeadm join --discovery-token-unsafe-skip-ca-verification --token \$TOKEN node1:6443
     fi"
 
-    sep "Done"
+    # Prepare nodes for prometheus monitoring
+    pssh "
+    KUBEADM_SYSTEMD_CONF=/etc/systemd/system/kubelet.service.d/10-kubeadm.conf
+    sed -e \"/cadvisor-port=0/d\" -i \$KUBEADM_SYSTEMD_CONF
+    if ! grep -q \"authentication-token-webhook=true\" \$KUBEADM_SYSTEMD_CONF; then
+          sed -e \"s/--authorization-mode=Webhook/--authentication-token-webhook=true --authorization-mode=Webhook/\" -i \$KUBEADM_SYSTEMD_CONF
+    fi
+    if grep -q node1 /tmp/node; then
+        sudo sed -e \"s/- --address=127.0.0.1/- --address=0.0.0.0/\" -i /etc/kubernetes/manifests/kube-controller-manager.yaml
+        sudo sed -e \"s/- --address=127.0.0.1/- --address=0.0.0.0/\" -i /etc/kubernetes/manifests/kube-scheduler.yaml
+    fi    
+    sudo systemctl daemon-reload
+    sudo systemctl restart kubelet
+    "
+    
+    #Prepare nodes for spark-kubernetes and autoscaling examples with go
+    pssh --timeout 200 "
+    if grep -q node1 /tmp/node; then
+        sudo apt-get -y install openjdk-8-jre golang-1.10
+        kubectl create serviceaccount spark
+        kubectl create clusterrolebinding spark-role --clusterrole=edit --serviceaccount=default:spark --namespace=default
+
+        wget http://apache.crihan.fr/dist/spark/spark-2.3.0/spark-2.3.0-bin-hadoop2.7.tgz       
+        tar zxf spark-2.3.0-bin-hadoop2.7.tgz
+    fi      
+    "
+    sep "Done" 
 }
 
 _cmd kubetest "Check that all notes are reporting as Ready"

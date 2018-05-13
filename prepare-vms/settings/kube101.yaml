@@ -1,7 +1,7 @@
 # 3 nodes for k8s 101 workshops
 
 # Number of VMs per cluster
-clustersize: 3
+clustersize: 4
 
 # Jinja2 template to use to generate ready-to-cut cards
 cards_template: settings/kube101.html
