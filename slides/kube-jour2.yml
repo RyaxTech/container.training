@@ -1,0 +1,43 @@
+title: |
+    Introduction à la formation Kubernetes
+
+#chat: "[Slack](https://dockercommunity.slack.com/messages/C7GKACWDV)"
+#chat: "[Gitter](https://gitter.im/jpetazzo/workshop-yyyymmdd-city)"
+chat: "In person!"
+
+exclude:
+- self-paced
+
+chapters:
+- common/title-jour1.md
+- logistics.md
+  #- common/prereqs.md
+  #- common/sampleapp.md
+  #- common/composescale.md
+  #- common/composedown.md
+- kube/versions-k8s.md
+  #- kube/intro.md
+  #- common/about-slides.md
+- common/toc.md
+- - intro/Docker_Overview_fr.md
+  - intro/Docker_History_fr.md
+- - kube/concepts-k8s.md
+  - common/declarative.md
+  - kube/declarative.md
+  - kube/kubenet.md
+  - kube/kubectlget.md
+  - kube/setup-k8s.md
+  - kube/kubectlrun.md
+- - kube/kubectlexpose.md
+  - kube/ourapponkube.md
+  - kube/dashboard.md
+- - kube/kubectlscale.md
+  - kube/daemonset.md
+  - kube/rollout.md
+  - kube/logs-cli.md
+  - kube/logs-centralized.md
+  - kube/helm.md
+  - kube/namespaces.md
+  - kube/whatsnext.md
+  - kube/links.md
+  - common/thankyou.md

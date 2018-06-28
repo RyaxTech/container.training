@@ -1,16 +1,18 @@
 ## Intros
 
-- This slide should be customized by the tutorial instructor(s).
+- Bonjour! Je suis:
 
-- Hello! We are:
+   - Yiannis Georgiou - CTO Ryax Technologies
+   - PhD Universite Grenoble Alps - Gestion de ressources et orchestration sur de systemes de calcul intensif
+   - 11 ans a Bull/Atos Technologies - Ingenieur R&D / Architecte
 
-   - .emoji[👩🏻‍🏫] Ann O'Nymous ([@...](https://twitter.com/...), Megacorp Inc)
+- La formation se déroulera de 9h à 17h
 
-   - .emoji[👨🏾‍🎓] Stu Dent ([@...](https://twitter.com/...), University of Wakanda)
+- Il y aura une pause déjeuner à 12h30
 
- <!-- .dummy[
+- N'hésitez pas à interrompre pour des questions à tout moment
 
-   - .emoji[👷🏻‍♀️] AJ ([@s0ulshake](https://twitter.com/s0ulshake), Travis CI)
+- * Surtout quand vous voyez des photos de conteneurs en plein écran! *
 
    - .emoji[🚁] Alexandre ([@alexbuisine](https://twitter.com/alexbuisine), Enix SAS)
 

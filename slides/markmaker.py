@@ -10,6 +10,8 @@ import subprocess
 import sys
 import yaml
 
+reload(sys)  
+sys.setdefaultencoding('utf8')
 
 logging.basicConfig(level=os.environ.get("LOG_LEVEL", "INFO"))
 
