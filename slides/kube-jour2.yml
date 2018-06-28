@@ -9,18 +9,18 @@ exclude:
 - self-paced
 
 chapters:
-- common/title.md
-  #- logistics.md
+- common/title-jour1.md
+- logistics.md
+  #- common/prereqs.md
+  #- common/sampleapp.md
+  #- common/composescale.md
+  #- common/composedown.md
+- kube/versions-k8s.md
   #- kube/intro.md
   #- common/about-slides.md
 - common/toc.md
 - - intro/Docker_Overview_fr.md
   - intro/Docker_History_fr.md
-- - common/prereqs.md
-  - kube/versions-k8s.md
-  - common/sampleapp.md
-  - common/composescale.md
-  - common/composedown.md
 - - kube/concepts-k8s.md
   - common/declarative.md
   - kube/declarative.md
