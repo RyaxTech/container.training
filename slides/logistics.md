@@ -1,10 +1,14 @@
-## Intros
+## Quelques infos sur le formateur
 
-- Bonjour! Je suis:
+- Yiannis Georgiou - CTO Ryax Technologies
 
-   - Yiannis Georgiou - CTO Ryax Technologies
-   - PhD Universite Grenoble Alps - Gestion de ressources et orchestration sur de systemes de calcul intensif
-   - 11 ans a Bull/Atos Technologies - Ingenieur R&D / Architecte
+- PhD Universite Grenoble-Alpes - Gestion de ressources et orchestration sur de systemes de calcul intensif
+
+- 11 ans a Bull/Atos Technologies - Ingenieur R&D / Architecte
+
+---
+
+## Logistique
 
 - La formation se déroulera de 9h à 17h
 

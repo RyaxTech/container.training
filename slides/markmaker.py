@@ -1,4 +1,5 @@
 #!/usr/bin/env python2
+# -*-coding:Latin-1 -*
 # transforms a YAML manifest into a HTML workshop file
 
 import glob
@@ -59,11 +60,11 @@ class: title
 {title}
 
 .nav[
-[Previous section](#{previouslink})
+[Section précédente](#{previouslink})
 |
-[Back to table of contents](#{toclink})
+[Retour table des matières](#{toclink})
 |
-[Next section](#{nextlink})
+[Section suivante](#{nextlink})
 ]
 
 .debug[(automatically generated title slide)]

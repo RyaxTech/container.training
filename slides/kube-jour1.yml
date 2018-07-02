@@ -1,5 +1,6 @@
 title: |
-    Kubernetes - Introduction, Architecture et Installation
+    Kubernetes
+    Introduction, Architecture et Installation
 
 #chat: "[Slack](https://dockercommunity.slack.com/messages/C7GKACWDV)"
 #chat: "[Gitter](https://gitter.im/jpetazzo/workshop-yyyymmdd-city)"
@@ -9,9 +10,8 @@ exclude:
 - self-paced
 
 chapters:
-- common/title-jour1.md
+- common/title_fr.md
 - logistics.md
-  #- common/prereqs.md
   #- common/sampleapp.md
   #- common/composescale.md
   #- common/composedown.md
@@ -19,15 +19,17 @@ chapters:
   #- kube/intro.md
   #- common/about-slides.md
 - common/toc.md
-- - intro/Docker_Overview_fr.md
+- - common/prereqs_fr.md
+  - intro/Docker_Overview_fr.md
   - intro/Docker_History_fr.md
-- - kube/concepts-k8s.md
-  - common/declarative.md
-  - kube/declarative.md
-  - kube/kubenet.md
-  - kube/kubectlget.md
-  - kube/setup-k8s.md
-  - kube/kubectlrun.md
- # - kube/kubectlexpose.md
- # - kube/ourapponkube.md
-- - kube/dashboard.md
+  - common/sampleapp_fr.md
+    # - common/composescale.md
+    #- common/composedown.md  
+- - kube/concepts-k8s_fr.md
+  - common/declarative_fr.md
+  - kube/declarative_fr.md
+  - kube/kubenet_fr.md
+  - kube/kubectlget_fr.md
+  - kube/kubectlrun_fr.md
+- - kube/setup-k8s_fr.md
+  - kube/dashboard_fr.md
