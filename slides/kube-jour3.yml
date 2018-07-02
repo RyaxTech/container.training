@@ -1,6 +1,6 @@
 title: |
-   Kubernetes 
-   Concepts de base, Services et Deploiement 
+    Kubernetes 
+    Stockage, Configuration, Secrets et Concepts Avancés 
 
 #chat: "[Slack](https://dockercommunity.slack.com/messages/C7GKACWDV)"
 #chat: "[Gitter](https://gitter.im/jpetazzo/workshop-yyyymmdd-city)"
@@ -20,15 +20,15 @@ chapters:
   #- kube/intro.md
   #- common/about-slides.md
 - common/toc.md
-- - kube/kubeobjects_fr.md
-  - kube/kubectlexpose_fr.md
-  - kube/ourapponkube_fr.md
-  - kube/kubectlscale_fr.md
-- - kube/daemonset_fr.md
-  - kube/rollout_fr.md
-  - kube/logs-cli_fr.md
-  - kube/logs-centralized_fr.md
-- - kube/helm_fr.md
-  - kube/namespaces_fr.md  
-  #  - kube/whatsnext.md
-  #- kube/links.md
+- - intro/Docker_Overview_fr.md
+  - intro/Docker_History_fr.md
+- - kube/concepts-k8s.md
+  - common/declarative.md
+  - kube/declarative.md
+  - kube/kubenet.md
+  - kube/kubectlget.md
+  - kube/setup-k8s.md
+  - kube/kubectlrun.md
+ # - kube/kubectlexpose.md
+ # - kube/ourapponkube.md
+- - kube/dashboard.md
