@@ -30,13 +30,13 @@ Ne vous inquiétez pas, nous y arriverons assez vite!
   * applications monolithiques
   * longs cycles de développement
   * environnement unique
-  * redimensionner lentement
+  * passage à l'echelle lente
 
 * À présent:
   * services découplés
   * améliorations rapides et itératives
   * plusieurs environnements
-  * Élargir rapidement
+  * passage à l'echelle rapide
 
 ---
 
@@ -60,15 +60,15 @@ class: pic
 
 ## Le déploiement devient très complexe
 
-* Beaucoup de piles différentes:
-  * langues
-  * cadres
-  * des bases
+* Beaucoup de stacks différentes:
+  * langages
+  * frameworks
+  * des bases de données
 
 * Beaucoup de cibles différentes:
   * environnements de développement individuels
-  * pré-production, QA, mise en scène ...
-  * production: sur prém, nuage, hybride
+  * pré-production, QA, stagin ...
+  * production: on-prem, cloud, hybride
 
 ---
 
@@ -168,7 +168,7 @@ class: pic
 
 4. Si le Dockerfile se construit sur votre machine, il se construira *n'importe où*
 
-5. Réjouis-toi en évitant l'enfer de la dépendance et "ca marche sur ma machine"
+5. Nous sommes tranquille en évitant l'enfer de la dépendance et "ca marche sur ma machine"
 
 ---
 
@@ -178,7 +178,7 @@ class: pic
 
 2. Utilisez des images pré-faites depuis le Docker Hub (mysql, redis ...)
 
-3. Décrivez votre pile avec un fichier Compose
+3. Décrivez votre stack avec un fichier Compose
 
 4. Embarquez quelqu'un avec deux commandes:
 
@@ -193,13 +193,13 @@ Avec cela, vous pouvez créer des environnements de développement, d'intégrati
 
 class: extra-details
 
-## Mettre en œuvre un CI fiable facilement
+## Mise en œuvre un CI fiable facilement
 
-1. Construire un environnement de test avec un fichier Dockerfile ou Compose
+1. Construction d'un environnement de test avec un fichier Dockerfile ou Compose
 
-2. Pour chaque série de tests, placez un nouveau conteneur ou une nouvelle pile
+2. Pour chaque série de tests, placez un nouveau conteneur ou une nouvelle stack
 
-3. Chaque course est maintenant dans un environnement propre
+3. Chaque run est maintenant dans un environnement propre
 
 4. Aucune pollution des tests précédents
 
@@ -209,7 +209,7 @@ Beaucoup plus rapide et moins cher que de créer des machines virtuelles à chaq
 
 class: extra-details
 
-## Utiliser les images de conteneur comme artefacts de construction
+## Utilisation des images de conteneur comme composants de construction
 
 1. Construisez votre application depuis Dockerfiles
 
@@ -219,11 +219,11 @@ class: extra-details
 
 4. Testez ces images dans QA, CI, intégration ...
 
-5. Exécuter les mêmes images en production
+5. Exécutez les mêmes images en production
 
 6. Quelque chose ne va pas? Retour à l'image précédente
 
-7. Enquêter sur l'ancienne régression? L'ancienne image vous couvre!
+7. Inquetude sur l'ancienne régression? L'ancienne image vous couvre!
 
 Les images contiennent toutes les bibliothèques, dépendances, etc. nécessaires pour exécuter l'application.
 
@@ -231,11 +231,11 @@ Les images contiennent toutes les bibliothèques, dépendances, etc. nécessaire
 
 class: extra-details
 
-## Découpler "plomberie" de la logique de l'application
+## Découplage de la "plomberie" de la logique de l'application
 
 1. Ecrivez votre code pour vous connecter aux services nommés ("db", "api" ...)
 
-2. Utilisez Composer pour commencer votre pile
+2. Utilisez Compose pour commencer votre stack
 
 3. Docker va configurer le résolveur DNS par conteneur pour ces noms
 
