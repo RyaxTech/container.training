@@ -29,24 +29,23 @@ Kubernetes <br/>Stockage, Configuration, Secrets et Concepts Avancés <br/>
 
 .debug[
 ```
- M slides/common/declarative_fr.md
- M slides/common/prereqs_fr.md
- M slides/intro/Docker_Overview_fr.md
- M slides/kube-jour1.yml
- M slides/kube-jour1.yml.html
- M slides/logistics.md
-?? slides/common/about-slides_fr.md
-?? slides/common/composedown_fr.md
-?? slides/common/composescale_fr.md
-?? slides/images/microservice2.png
-?? slides/images/microservices1.png
+ M common/about-slides_fr.md
+ M common/prereqs_fr.md
+ M intro-fullday.yml.html
+ M intro-selfpaced.yml.html
+ M kube-fullday.yml.html
+ M kube-halfday.yml.html
+ M kube-jour1.yml
+ M kube-jour1.yml.html
+ M kube-jour2.yml.html
+ M kube-jour3.yml.html
 
 ```
 
-These slides have been built from commit: 2b2ba6c
+These slides have been built from commit: 347c7f0
 
 
-[common/title_fr.md](https://github.com/RyaxTech/container.training.git/tree/master/slides/common/title_fr.md)]
+[common/title_fr.md](https://github.com/RyaxTech/kube.training.git/tree/gh-pages//common/title_fr.md)]
 ---
 
 class: title, in-person
@@ -54,7 +53,7 @@ class: title, in-person
 Kubernetes <br/>Stockage, Configuration, Secrets et Concepts Avancés <br/><br/></br>
 
 
-.debug[[common/title_fr.md](https://github.com/RyaxTech/container.training.git/tree/master/slides/common/title_fr.md)]
+.debug[[common/title_fr.md](https://github.com/RyaxTech/kube.training.git/tree/gh-pages//common/title_fr.md)]
 ---
 
 name: toc-chapter-1
@@ -97,7 +96,7 @@ name: toc-chapter-3
 
 
 
-.debug[[common/toc.md](https://github.com/RyaxTech/container.training.git/tree/master/slides/common/toc.md)]
+.debug[[common/toc.md](https://github.com/RyaxTech/kube.training.git/tree/gh-pages//common/toc.md)]
 ---
 
 class: pic
@@ -138,14 +137,14 @@ Nous n'utiliserons pas Docker ni les conteneurs dans ce chapitre (pour l'instant
 
 Ne vous inquiétez pas, nous y arriverons assez vite!
 
-.debug[[intro/Docker_Overview_fr.md](https://github.com/RyaxTech/container.training.git/tree/master/slides/intro/Docker_Overview_fr.md)]
+.debug[[intro/Docker_Overview_fr.md](https://github.com/RyaxTech/kube.training.git/tree/gh-pages//intro/Docker_Overview_fr.md)]
 ---
 
 ## Elevator pitch
 
 ### (pour votre manager, votre patron ...)
 
-.debug[[intro/Docker_Overview_fr.md](https://github.com/RyaxTech/container.training.git/tree/master/slides/intro/Docker_Overview_fr.md)]
+.debug[[intro/Docker_Overview_fr.md](https://github.com/RyaxTech/kube.training.git/tree/gh-pages//intro/Docker_Overview_fr.md)]
 ---
 
 ## OK ... Pourquoi le buzz autour des conteneurs?
@@ -164,7 +163,7 @@ Ne vous inquiétez pas, nous y arriverons assez vite!
   * plusieurs environnements
   * Élargir rapidement
 
-.debug[[intro/Docker_Overview_fr.md](https://github.com/RyaxTech/container.training.git/tree/master/slides/intro/Docker_Overview_fr.md)]
+.debug[[intro/Docker_Overview_fr.md](https://github.com/RyaxTech/kube.training.git/tree/gh-pages//intro/Docker_Overview_fr.md)]
 ---
 
 class: pic
@@ -175,7 +174,7 @@ class: pic
 
 
 
-.debug[[intro/Docker_Overview_fr.md](https://github.com/RyaxTech/container.training.git/tree/master/slides/intro/Docker_Overview_fr.md)]
+.debug[[intro/Docker_Overview_fr.md](https://github.com/RyaxTech/kube.training.git/tree/gh-pages//intro/Docker_Overview_fr.md)]
 ---
 
 class: pic
@@ -184,7 +183,7 @@ class: pic
 
 ![problem](images/microservice2.png)
 
-.debug[[intro/Docker_Overview_fr.md](https://github.com/RyaxTech/container.training.git/tree/master/slides/intro/Docker_Overview_fr.md)]
+.debug[[intro/Docker_Overview_fr.md](https://github.com/RyaxTech/kube.training.git/tree/gh-pages//intro/Docker_Overview_fr.md)]
 ---
 
 ## Le déploiement devient très complexe
@@ -199,7 +198,7 @@ class: pic
   * pré-production, QA, mise en scène ...
   * production: sur prém, nuage, hybride
 
-.debug[[intro/Docker_Overview_fr.md](https://github.com/RyaxTech/container.training.git/tree/master/slides/intro/Docker_Overview_fr.md)]
+.debug[[intro/Docker_Overview_fr.md](https://github.com/RyaxTech/kube.training.git/tree/gh-pages//intro/Docker_Overview_fr.md)]
 ---
 
 class: pic
@@ -208,7 +207,7 @@ class: pic
 
 ![problem](images/shipping-software-problem.png)
 
-.debug[[intro/Docker_Overview_fr.md](https://github.com/RyaxTech/container.training.git/tree/master/slides/intro/Docker_Overview_fr.md)]
+.debug[[intro/Docker_Overview_fr.md](https://github.com/RyaxTech/kube.training.git/tree/gh-pages//intro/Docker_Overview_fr.md)]
 ---
 
 class: pic
@@ -217,7 +216,7 @@ class: pic
 
 ![matrix](images/shipping-matrix-from-hell.png)
 
-.debug[[intro/Docker_Overview_fr.md](https://github.com/RyaxTech/container.training.git/tree/master/slides/intro/Docker_Overview_fr.md)]
+.debug[[intro/Docker_Overview_fr.md](https://github.com/RyaxTech/kube.training.git/tree/gh-pages//intro/Docker_Overview_fr.md)]
 ---
 
 class: pic
@@ -226,7 +225,7 @@ class: pic
 
 ![history](images/shipping-industry-problem.png)
 
-.debug[[intro/Docker_Overview_fr.md](https://github.com/RyaxTech/container.training.git/tree/master/slides/intro/Docker_Overview_fr.md)]
+.debug[[intro/Docker_Overview_fr.md](https://github.com/RyaxTech/kube.training.git/tree/gh-pages//intro/Docker_Overview_fr.md)]
 ---
 
 class: pic
@@ -235,7 +234,7 @@ class: pic
 
 ![shipping](images/shipping-industry-solution.png)
 
-.debug[[intro/Docker_Overview_fr.md](https://github.com/RyaxTech/container.training.git/tree/master/slides/intro/Docker_Overview_fr.md)]
+.debug[[intro/Docker_Overview_fr.md](https://github.com/RyaxTech/kube.training.git/tree/gh-pages//intro/Docker_Overview_fr.md)]
 ---
 
 class: pic
@@ -244,7 +243,7 @@ class: pic
 
 ![shipeco](images/shipping-indsutry-results.png)
 
-.debug[[intro/Docker_Overview_fr.md](https://github.com/RyaxTech/container.training.git/tree/master/slides/intro/Docker_Overview_fr.md)]
+.debug[[intro/Docker_Overview_fr.md](https://github.com/RyaxTech/kube.training.git/tree/gh-pages//intro/Docker_Overview_fr.md)]
 ---
 
 class: pic
@@ -253,7 +252,7 @@ class: pic
 
 ![shipapp](images/shipping-software-solution.png)
 
-.debug[[intro/Docker_Overview_fr.md](https://github.com/RyaxTech/container.training.git/tree/master/slides/intro/Docker_Overview_fr.md)]
+.debug[[intro/Docker_Overview_fr.md](https://github.com/RyaxTech/kube.training.git/tree/gh-pages//intro/Docker_Overview_fr.md)]
 ---
 
 class: pic
@@ -262,7 +261,7 @@ class: pic
 
 ![elimatrix](images/shipping-matrix-solved.png)
 
-.debug[[intro/Docker_Overview_fr.md](https://github.com/RyaxTech/container.training.git/tree/master/slides/intro/Docker_Overview_fr.md)]
+.debug[[intro/Docker_Overview_fr.md](https://github.com/RyaxTech/kube.training.git/tree/gh-pages//intro/Docker_Overview_fr.md)]
 ---
 
 ## Résultats
@@ -287,14 +286,14 @@ class: pic
 
 * etc.
 
-.debug[[intro/Docker_Overview_fr.md](https://github.com/RyaxTech/container.training.git/tree/master/slides/intro/Docker_Overview_fr.md)]
+.debug[[intro/Docker_Overview_fr.md](https://github.com/RyaxTech/kube.training.git/tree/gh-pages//intro/Docker_Overview_fr.md)]
 ---
 
 ## Elevator pitch
 
 ###(pour vos collègues devs et ops)
 
-.debug[[intro/Docker_Overview_fr.md](https://github.com/RyaxTech/container.training.git/tree/master/slides/intro/Docker_Overview_fr.md)]
+.debug[[intro/Docker_Overview_fr.md](https://github.com/RyaxTech/kube.training.git/tree/gh-pages//intro/Docker_Overview_fr.md)]
 ---
 
 ## Échapper à la dépendance d'enfer
@@ -309,7 +308,7 @@ class: pic
 
 5. Réjouis-toi en évitant l'enfer de la dépendance et "ca marche sur ma machine"
 
-.debug[[intro/Docker_Overview_fr.md](https://github.com/RyaxTech/container.training.git/tree/master/slides/intro/Docker_Overview_fr.md)]
+.debug[[intro/Docker_Overview_fr.md](https://github.com/RyaxTech/kube.training.git/tree/gh-pages//intro/Docker_Overview_fr.md)]
 ---
 
 ## Développeurs et contributeurs embarqués rapidement
@@ -329,7 +328,7 @@ docker-compose up
 
 Avec cela, vous pouvez créer des environnements de développement, d'intégration et d'assurance qualité en quelques minutes!
 
-.debug[[intro/Docker_Overview_fr.md](https://github.com/RyaxTech/container.training.git/tree/master/slides/intro/Docker_Overview_fr.md)]
+.debug[[intro/Docker_Overview_fr.md](https://github.com/RyaxTech/kube.training.git/tree/gh-pages//intro/Docker_Overview_fr.md)]
 ---
 
 class: extra-details
@@ -346,7 +345,7 @@ class: extra-details
 
 Beaucoup plus rapide et moins cher que de créer des machines virtuelles à chaque fois!
 
-.debug[[intro/Docker_Overview_fr.md](https://github.com/RyaxTech/container.training.git/tree/master/slides/intro/Docker_Overview_fr.md)]
+.debug[[intro/Docker_Overview_fr.md](https://github.com/RyaxTech/kube.training.git/tree/gh-pages//intro/Docker_Overview_fr.md)]
 ---
 
 class: extra-details
@@ -369,7 +368,7 @@ class: extra-details
 
 Les images contiennent toutes les bibliothèques, dépendances, etc. nécessaires pour exécuter l'application.
 
-.debug[[intro/Docker_Overview_fr.md](https://github.com/RyaxTech/container.training.git/tree/master/slides/intro/Docker_Overview_fr.md)]
+.debug[[intro/Docker_Overview_fr.md](https://github.com/RyaxTech/kube.training.git/tree/gh-pages//intro/Docker_Overview_fr.md)]
 ---
 
 class: extra-details
@@ -386,7 +385,7 @@ class: extra-details
 
 Note: ceci n'est pas couvert dans cet atelier de niveau intro!
 
-.debug[[intro/Docker_Overview_fr.md](https://github.com/RyaxTech/container.training.git/tree/master/slides/intro/Docker_Overview_fr.md)]
+.debug[[intro/Docker_Overview_fr.md](https://github.com/RyaxTech/kube.training.git/tree/gh-pages//intro/Docker_Overview_fr.md)]
 ---
 
 class: extra-details
@@ -395,7 +394,7 @@ class: extra-details
 
 ### Docker avant / après
 
-.debug[[intro/Docker_Overview_fr.md](https://github.com/RyaxTech/container.training.git/tree/master/slides/intro/Docker_Overview_fr.md)]
+.debug[[intro/Docker_Overview_fr.md](https://github.com/RyaxTech/kube.training.git/tree/gh-pages//intro/Docker_Overview_fr.md)]
 ---
 
 class: extra-details
@@ -419,7 +418,7 @@ Analogie:
 * Les conteneurs d'expédition ne sont pas seulement des boîtes en acier.
 * Ce sont des boîtes en acier de taille standard, avec les mêmes crochets et trous.
 
-.debug[[intro/Docker_Overview_fr.md](https://github.com/RyaxTech/container.training.git/tree/master/slides/intro/Docker_Overview_fr.md)]
+.debug[[intro/Docker_Overview_fr.md](https://github.com/RyaxTech/kube.training.git/tree/gh-pages//intro/Docker_Overview_fr.md)]
 ---
 
 class: extra-details
@@ -434,7 +433,7 @@ class: extra-details
 
 * Amélioration des outils spécifiques ad-hoc, internes.
 
-.debug[[intro/Docker_Overview_fr.md](https://github.com/RyaxTech/container.training.git/tree/master/slides/intro/Docker_Overview_fr.md)]
+.debug[[intro/Docker_Overview_fr.md](https://github.com/RyaxTech/kube.training.git/tree/gh-pages//intro/Docker_Overview_fr.md)]
 ---
 
 class: extra-details
@@ -449,7 +448,7 @@ class: extra-details
 
 * Déploiement de base souvent fait à partir de zéro (debootstrap ...) et peu fiable.
 
-.debug[[intro/Docker_Overview_fr.md](https://github.com/RyaxTech/container.training.git/tree/master/slides/intro/Docker_Overview_fr.md)]
+.debug[[intro/Docker_Overview_fr.md](https://github.com/RyaxTech/kube.training.git/tree/gh-pages//intro/Docker_Overview_fr.md)]
 ---
 
 class: extra-details
@@ -464,7 +463,7 @@ class: extra-details
 
 * Enregistrer l'utilisation du disque, du réseau, de la mémoire.
 
-.debug[[intro/Docker_Overview_fr.md](https://github.com/RyaxTech/container.training.git/tree/master/slides/intro/Docker_Overview_fr.md)]
+.debug[[intro/Docker_Overview_fr.md](https://github.com/RyaxTech/kube.training.git/tree/gh-pages//intro/Docker_Overview_fr.md)]
 ---
 
 class: extra-details
@@ -480,7 +479,7 @@ Couches:
 * Application JAR
 * Configuration
 
-.debug[[intro/Docker_Overview_fr.md](https://github.com/RyaxTech/container.training.git/tree/master/slides/intro/Docker_Overview_fr.md)]
+.debug[[intro/Docker_Overview_fr.md](https://github.com/RyaxTech/kube.training.git/tree/gh-pages//intro/Docker_Overview_fr.md)]
 ---
 
 class: extra-details
@@ -501,7 +500,7 @@ class: extra-details
 
 * Le code de livraison provoque des frictions et des retards.
 
-.debug[[intro/Docker_Overview_fr.md](https://github.com/RyaxTech/container.training.git/tree/master/slides/intro/Docker_Overview_fr.md)]
+.debug[[intro/Docker_Overview_fr.md](https://github.com/RyaxTech/kube.training.git/tree/gh-pages//intro/Docker_Overview_fr.md)]
 ---
 
 class: extra-details
@@ -523,7 +522,7 @@ class: extra-details
 * Les développeurs peuvent être autorisés à faire eux-mêmes des publications
    plus facilement.
 
-.debug[[intro/Docker_Overview_fr.md](https://github.com/RyaxTech/container.training.git/tree/master/slides/intro/Docker_Overview_fr.md)]
+.debug[[intro/Docker_Overview_fr.md](https://github.com/RyaxTech/kube.training.git/tree/gh-pages//intro/Docker_Overview_fr.md)]
 ---
 
 class: pic
@@ -550,7 +549,7 @@ Histoire des conteneurs ... et Docker
 ---
 # Histoire des conteneurs ... et Docker
 
-.debug[[intro/Docker_History_fr.md](https://github.com/RyaxTech/container.training.git/tree/master/slides/intro/Docker_History_fr.md)]
+.debug[[intro/Docker_History_fr.md](https://github.com/RyaxTech/kube.training.git/tree/gh-pages//intro/Docker_History_fr.md)]
 ---
 
 ## Premières expérimentations
@@ -565,7 +564,7 @@ Histoire des conteneurs ... et Docker
 
 Les conteneurs existent depuis *très longtemps* en effet.
 
-.debug[[intro/Docker_History_fr.md](https://github.com/RyaxTech/container.training.git/tree/master/slides/intro/Docker_History_fr.md)]
+.debug[[intro/Docker_History_fr.md](https://github.com/RyaxTech/kube.training.git/tree/gh-pages//intro/Docker_History_fr.md)]
 ---
 
 class: pic
@@ -574,7 +573,7 @@ class: pic
 
 ![lightcont](images/containers-as-lightweight-vms.png)
 
-.debug[[intro/Docker_History_fr.md](https://github.com/RyaxTech/container.training.git/tree/master/slides/intro/Docker_History_fr.md)]
+.debug[[intro/Docker_History_fr.md](https://github.com/RyaxTech/kube.training.git/tree/gh-pages//intro/Docker_History_fr.md)]
 ---
 
 ## Containers = moins cher que les VM
@@ -583,7 +582,7 @@ class: pic
 
 * Audience hautement spécialisée avec une forte culture d'opérations.
 
-.debug[[intro/Docker_History_fr.md](https://github.com/RyaxTech/container.training.git/tree/master/slides/intro/Docker_History_fr.md)]
+.debug[[intro/Docker_History_fr.md](https://github.com/RyaxTech/kube.training.git/tree/gh-pages//intro/Docker_History_fr.md)]
 ---
 
 class: pic
@@ -592,7 +591,7 @@ class: pic
 
 ![heroku 2007](images/heroku-first-homepage.png)
 
-.debug[[intro/Docker_History_fr.md](https://github.com/RyaxTech/container.training.git/tree/master/slides/intro/Docker_History_fr.md)]
+.debug[[intro/Docker_History_fr.md](https://github.com/RyaxTech/kube.training.git/tree/gh-pages//intro/Docker_History_fr.md)]
 ---
 
 ## Containers = plus facile que les VM
@@ -612,7 +611,7 @@ class: pic
 
 * Le nom de code de ce projet est "Docker".
 
-.debug[[intro/Docker_History_fr.md](https://github.com/RyaxTech/container.training.git/tree/master/slides/intro/Docker_History_fr.md)]
+.debug[[intro/Docker_History_fr.md](https://github.com/RyaxTech/kube.training.git/tree/gh-pages//intro/Docker_History_fr.md)]
 ---
 
 ## Première version publique de Docker
@@ -630,12 +629,12 @@ class: pic
 
 * En 2014, l'activité PaaS est vendue.
 
-.debug[[intro/Docker_History_fr.md](https://github.com/RyaxTech/container.training.git/tree/master/slides/intro/Docker_History_fr.md)]
+.debug[[intro/Docker_History_fr.md](https://github.com/RyaxTech/kube.training.git/tree/gh-pages//intro/Docker_History_fr.md)]
 ---
 
 ## Docker premiers jours (2013-2014)
 
-.debug[[intro/Docker_History_fr.md](https://github.com/RyaxTech/container.training.git/tree/master/slides/intro/Docker_History_fr.md)]
+.debug[[intro/Docker_History_fr.md](https://github.com/RyaxTech/kube.training.git/tree/gh-pages//intro/Docker_History_fr.md)]
 ---
 
 ## Premiers utilisateurs de Docker
@@ -648,7 +647,7 @@ class: pic
 
 * développeurs, développeurs, développeurs, développeurs
 
-.debug[[intro/Docker_History_fr.md](https://github.com/RyaxTech/container.training.git/tree/master/slides/intro/Docker_History_fr.md)]
+.debug[[intro/Docker_History_fr.md](https://github.com/RyaxTech/kube.training.git/tree/gh-pages//intro/Docker_History_fr.md)]
 ---
 
 ## Boucle de rétroaction positive
@@ -664,12 +663,12 @@ class: pic
 
 * Les conteneurs deviennent un excellent outil pour déployer / déplacer des charges de travail de / sur le site / cloud.
 
-.debug[[intro/Docker_History_fr.md](https://github.com/RyaxTech/container.training.git/tree/master/slides/intro/Docker_History_fr.md)]
+.debug[[intro/Docker_History_fr.md](https://github.com/RyaxTech/kube.training.git/tree/gh-pages//intro/Docker_History_fr.md)]
 ---
 
 ## Maturité (2015-2016)
 
-.debug[[intro/Docker_History_fr.md](https://github.com/RyaxTech/container.training.git/tree/master/slides/intro/Docker_History_fr.md)]
+.debug[[intro/Docker_History_fr.md](https://github.com/RyaxTech/kube.training.git/tree/gh-pages//intro/Docker_History_fr.md)]
 ---
 
 ## Docker devient un standard de l'industrie
@@ -684,7 +683,7 @@ class: pic
 
 * Création de la CNCF (Cloud Native Computing Foundation).
 
-.debug[[intro/Docker_History_fr.md](https://github.com/RyaxTech/container.training.git/tree/master/slides/intro/Docker_History_fr.md)]
+.debug[[intro/Docker_History_fr.md](https://github.com/RyaxTech/kube.training.git/tree/gh-pages//intro/Docker_History_fr.md)]
 ---
 
 ## Docker devient une plateforme
@@ -702,7 +701,7 @@ class: pic
 
 * Docker Inc. lance des offres commerciales.
 
-.debug[[intro/Docker_History_fr.md](https://github.com/RyaxTech/container.training.git/tree/master/slides/intro/Docker_History_fr.md)]
+.debug[[intro/Docker_History_fr.md](https://github.com/RyaxTech/kube.training.git/tree/gh-pages//intro/Docker_History_fr.md)]
 ---
 
 class: pic
@@ -737,7 +736,7 @@ Kubernetes concepts
 
 - What does that really mean?
 
-.debug[[kube/concepts-k8s.md](https://github.com/RyaxTech/container.training.git/tree/master/slides/kube/concepts-k8s.md)]
+.debug[[kube/concepts-k8s.md](https://github.com/RyaxTech/kube.training.git/tree/gh-pages//kube/concepts-k8s.md)]
 ---
 
 ## Basic things we can ask Kubernetes to do
@@ -770,7 +769,7 @@ Kubernetes concepts
 
 - Keep processing requests during the upgrade; update my containers one at a time
 
-.debug[[kube/concepts-k8s.md](https://github.com/RyaxTech/container.training.git/tree/master/slides/kube/concepts-k8s.md)]
+.debug[[kube/concepts-k8s.md](https://github.com/RyaxTech/kube.training.git/tree/gh-pages//kube/concepts-k8s.md)]
 ---
 
 ## Other things that Kubernetes can do for us
@@ -791,19 +790,19 @@ Kubernetes concepts
 
 - Automating complex tasks (*operators*)
 
-.debug[[kube/concepts-k8s.md](https://github.com/RyaxTech/container.training.git/tree/master/slides/kube/concepts-k8s.md)]
+.debug[[kube/concepts-k8s.md](https://github.com/RyaxTech/kube.training.git/tree/gh-pages//kube/concepts-k8s.md)]
 ---
 
 ## Kubernetes architecture
 
-.debug[[kube/concepts-k8s.md](https://github.com/RyaxTech/container.training.git/tree/master/slides/kube/concepts-k8s.md)]
+.debug[[kube/concepts-k8s.md](https://github.com/RyaxTech/kube.training.git/tree/gh-pages//kube/concepts-k8s.md)]
 ---
 
 class: pic
 
 ![haha only kidding](images/k8s-arch1.png)
 
-.debug[[kube/concepts-k8s.md](https://github.com/RyaxTech/container.training.git/tree/master/slides/kube/concepts-k8s.md)]
+.debug[[kube/concepts-k8s.md](https://github.com/RyaxTech/kube.training.git/tree/gh-pages//kube/concepts-k8s.md)]
 ---
 
 ## Kubernetes architecture
@@ -812,14 +811,14 @@ class: pic
 
 - OK, I was trying to scare you, it's much simpler than that ❤️
 
-.debug[[kube/concepts-k8s.md](https://github.com/RyaxTech/container.training.git/tree/master/slides/kube/concepts-k8s.md)]
+.debug[[kube/concepts-k8s.md](https://github.com/RyaxTech/kube.training.git/tree/gh-pages//kube/concepts-k8s.md)]
 ---
 
 class: pic
 
 ![that one is more like the real thing](images/k8s-arch2.png)
 
-.debug[[kube/concepts-k8s.md](https://github.com/RyaxTech/container.training.git/tree/master/slides/kube/concepts-k8s.md)]
+.debug[[kube/concepts-k8s.md](https://github.com/RyaxTech/kube.training.git/tree/gh-pages//kube/concepts-k8s.md)]
 ---
 
 ## Credits
@@ -832,7 +831,7 @@ class: pic
 
   (Courtesy of [Imesh Gunaratne](https://medium.com/containermind/a-reference-architecture-for-deploying-wso2-middleware-on-kubernetes-d4dee7601e8e))
 
-.debug[[kube/concepts-k8s.md](https://github.com/RyaxTech/container.training.git/tree/master/slides/kube/concepts-k8s.md)]
+.debug[[kube/concepts-k8s.md](https://github.com/RyaxTech/kube.training.git/tree/gh-pages//kube/concepts-k8s.md)]
 ---
 
 ## Kubernetes architecture: the nodes
@@ -849,7 +848,7 @@ class: pic
 
   (You might see that word in older articles or documentation)
 
-.debug[[kube/concepts-k8s.md](https://github.com/RyaxTech/container.training.git/tree/master/slides/kube/concepts-k8s.md)]
+.debug[[kube/concepts-k8s.md](https://github.com/RyaxTech/kube.training.git/tree/gh-pages//kube/concepts-k8s.md)]
 ---
 
 ## Kubernetes architecture: the control plane
@@ -866,7 +865,7 @@ class: pic
 
 - The control plane is also called the "master"
 
-.debug[[kube/concepts-k8s.md](https://github.com/RyaxTech/container.training.git/tree/master/slides/kube/concepts-k8s.md)]
+.debug[[kube/concepts-k8s.md](https://github.com/RyaxTech/kube.training.git/tree/gh-pages//kube/concepts-k8s.md)]
 ---
 
 ## Running the control plane on special nodes
@@ -889,7 +888,7 @@ class: pic
 
   (This is sometimes called a "multi-master" setup)
 
-.debug[[kube/concepts-k8s.md](https://github.com/RyaxTech/container.training.git/tree/master/slides/kube/concepts-k8s.md)]
+.debug[[kube/concepts-k8s.md](https://github.com/RyaxTech/kube.training.git/tree/gh-pages//kube/concepts-k8s.md)]
 ---
 
 ## Running the control plane outside containers
@@ -909,7 +908,7 @@ class: pic
 
 *For this reason, it is more accurate to say "control plane" rather than "master".*
 
-.debug[[kube/concepts-k8s.md](https://github.com/RyaxTech/container.training.git/tree/master/slides/kube/concepts-k8s.md)]
+.debug[[kube/concepts-k8s.md](https://github.com/RyaxTech/kube.training.git/tree/gh-pages//kube/concepts-k8s.md)]
 ---
 
 ## Do we need to run Docker at all?
@@ -926,7 +925,7 @@ No!
 
   (like CRI-O, or containerd)
 
-.debug[[kube/concepts-k8s.md](https://github.com/RyaxTech/container.training.git/tree/master/slides/kube/concepts-k8s.md)]
+.debug[[kube/concepts-k8s.md](https://github.com/RyaxTech/kube.training.git/tree/gh-pages//kube/concepts-k8s.md)]
 ---
 
 ## Do we need to run Docker at all?
@@ -949,7 +948,7 @@ Yes!
 
 .footnote[¹[Not Invented Here](https://en.wikipedia.org/wiki/Not_invented_here)]
 
-.debug[[kube/concepts-k8s.md](https://github.com/RyaxTech/container.training.git/tree/master/slides/kube/concepts-k8s.md)]
+.debug[[kube/concepts-k8s.md](https://github.com/RyaxTech/kube.training.git/tree/gh-pages//kube/concepts-k8s.md)]
 ---
 
 ## Do we need to run Docker at all?
@@ -966,7 +965,7 @@ Yes!
 
 .footnote[More information about CRI [on the Kubernetes blog](https://kubernetes.io/blog/2016/12/container-runtime-interface-cri-in-kubernetes)]
 
-.debug[[kube/concepts-k8s.md](https://github.com/RyaxTech/container.training.git/tree/master/slides/kube/concepts-k8s.md)]
+.debug[[kube/concepts-k8s.md](https://github.com/RyaxTech/kube.training.git/tree/gh-pages//kube/concepts-k8s.md)]
 ---
 
 ## Kubernetes resources
@@ -985,21 +984,21 @@ Yes!
  
   And much more! (We can see the full list by running `kubectl get`)
 
-.debug[[kube/concepts-k8s.md](https://github.com/RyaxTech/container.training.git/tree/master/slides/kube/concepts-k8s.md)]
+.debug[[kube/concepts-k8s.md](https://github.com/RyaxTech/kube.training.git/tree/gh-pages//kube/concepts-k8s.md)]
 ---
 
 class: pic
 
 ![Node, pod, container](images/k8s-arch3-thanks-weave.png)
 
-.debug[[kube/concepts-k8s.md](https://github.com/RyaxTech/container.training.git/tree/master/slides/kube/concepts-k8s.md)]
+.debug[[kube/concepts-k8s.md](https://github.com/RyaxTech/kube.training.git/tree/gh-pages//kube/concepts-k8s.md)]
 ---
 
 class: pic
 
 ![One of the best Kubernetes architecture diagrams available](images/k8s-arch4-thanks-luxas.png)
 
-.debug[[kube/concepts-k8s.md](https://github.com/RyaxTech/container.training.git/tree/master/slides/kube/concepts-k8s.md)]
+.debug[[kube/concepts-k8s.md](https://github.com/RyaxTech/kube.training.git/tree/gh-pages//kube/concepts-k8s.md)]
 ---
 
 ## Credits
@@ -1016,7 +1015,7 @@ class: pic
 
 Both diagrams used with permission.
 
-.debug[[kube/concepts-k8s.md](https://github.com/RyaxTech/container.training.git/tree/master/slides/kube/concepts-k8s.md)]
+.debug[[kube/concepts-k8s.md](https://github.com/RyaxTech/kube.training.git/tree/gh-pages//kube/concepts-k8s.md)]
 ---
 
 class: pic
@@ -1061,7 +1060,7 @@ Declarative vs imperative
 
 - ... As long as you know how to brew tea
 
-.debug[[common/declarative.md](https://github.com/RyaxTech/container.training.git/tree/master/slides/common/declarative.md)]
+.debug[[common/declarative.md](https://github.com/RyaxTech/kube.training.git/tree/gh-pages//common/declarative.md)]
 ---
 
 ## Declarative vs imperative
@@ -1087,7 +1086,7 @@ Declarative vs imperative
 .footnote[Did you know there was an [ISO standard](https://en.wikipedia.org/wiki/ISO_3103)
 specifying how to brew tea?]
 
-.debug[[common/declarative.md](https://github.com/RyaxTech/container.training.git/tree/master/slides/common/declarative.md)]
+.debug[[common/declarative.md](https://github.com/RyaxTech/kube.training.git/tree/gh-pages//common/declarative.md)]
 ---
 
 ## Declarative vs imperative
@@ -1107,7 +1106,7 @@ specifying how to brew tea?]
 
   - ... and compute a "diff" between *what we have* and *what we want*
 
-.debug[[common/declarative.md](https://github.com/RyaxTech/container.training.git/tree/master/slides/common/declarative.md)]
+.debug[[common/declarative.md](https://github.com/RyaxTech/kube.training.git/tree/gh-pages//common/declarative.md)]
 ---
 ## Declarative vs imperative in Kubernetes
 
@@ -1124,7 +1123,7 @@ specifying how to brew tea?]
 
 - Kubernetes will then *converge* that resource
 
-.debug[[kube/declarative.md](https://github.com/RyaxTech/container.training.git/tree/master/slides/kube/declarative.md)]
+.debug[[kube/declarative.md](https://github.com/RyaxTech/kube.training.git/tree/gh-pages//kube/declarative.md)]
 ---
 
 class: pic
@@ -1169,7 +1168,7 @@ Kubernetes network model
 
 - Kubernetes doesn't mandate any particular implementation
 
-.debug[[kube/kubenet.md](https://github.com/RyaxTech/container.training.git/tree/master/slides/kube/kubenet.md)]
+.debug[[kube/kubenet.md](https://github.com/RyaxTech/kube.training.git/tree/gh-pages//kube/kubenet.md)]
 ---
 
 ## Kubernetes network model: the good
@@ -1190,7 +1189,7 @@ Kubernetes network model
 
 - The specification is simple enough to allow many various implementations
 
-.debug[[kube/kubenet.md](https://github.com/RyaxTech/container.training.git/tree/master/slides/kube/kubenet.md)]
+.debug[[kube/kubenet.md](https://github.com/RyaxTech/kube.training.git/tree/gh-pages//kube/kubenet.md)]
 ---
 
 ## Kubernetes network model: the less good
@@ -1212,7 +1211,7 @@ Kubernetes network model
 - `kube-proxy` is on the data path when connecting to a pod or container,
   <br/>and it's not particularly fast (relies on userland proxying or iptables)
 
-.debug[[kube/kubenet.md](https://github.com/RyaxTech/container.training.git/tree/master/slides/kube/kubenet.md)]
+.debug[[kube/kubenet.md](https://github.com/RyaxTech/kube.training.git/tree/gh-pages//kube/kubenet.md)]
 ---
 
 ## Kubernetes network model: in practice
@@ -1234,7 +1233,7 @@ Kubernetes network model
 - If necessary, there are alternatives to `kube-proxy`; e.g.
   [`kube-router`](https://www.kube-router.io)
 
-.debug[[kube/kubenet.md](https://github.com/RyaxTech/container.training.git/tree/master/slides/kube/kubenet.md)]
+.debug[[kube/kubenet.md](https://github.com/RyaxTech/kube.training.git/tree/gh-pages//kube/kubenet.md)]
 ---
 
 ## The Container Network Interface (CNI)
@@ -1257,7 +1256,7 @@ Kubernetes network model
 
   (e.g. they don't all implement network policies, which are required to isolate pods)
 
-.debug[[kube/kubenet.md](https://github.com/RyaxTech/container.training.git/tree/master/slides/kube/kubenet.md)]
+.debug[[kube/kubenet.md](https://github.com/RyaxTech/kube.training.git/tree/gh-pages//kube/kubenet.md)]
 ---
 
 class: pic
@@ -1302,7 +1301,7 @@ First contact with `kubectl`
 
 - `kubectl` can be pronounced "Cube C T L", "Cube cuttle", "Cube cuddle"...
 
-.debug[[kube/kubectlget.md](https://github.com/RyaxTech/container.training.git/tree/master/slides/kube/kubectlget.md)]
+.debug[[kube/kubectlget.md](https://github.com/RyaxTech/kube.training.git/tree/gh-pages//kube/kubectlget.md)]
 ---
 
 ## `kubectl get`
@@ -1325,7 +1324,7 @@ First contact with `kubectl`
 
 ]
 
-.debug[[kube/kubectlget.md](https://github.com/RyaxTech/container.training.git/tree/master/slides/kube/kubectlget.md)]
+.debug[[kube/kubectlget.md](https://github.com/RyaxTech/kube.training.git/tree/gh-pages//kube/kubectlget.md)]
 ---
 
 ## Obtaining machine-readable output
@@ -1347,7 +1346,7 @@ First contact with `kubectl`
 
 ]
 
-.debug[[kube/kubectlget.md](https://github.com/RyaxTech/container.training.git/tree/master/slides/kube/kubectlget.md)]
+.debug[[kube/kubectlget.md](https://github.com/RyaxTech/kube.training.git/tree/gh-pages//kube/kubectlget.md)]
 ---
 
 ## (Ab)using `kubectl` and `jq`
@@ -1364,7 +1363,7 @@ First contact with `kubectl`
 
 ]
 
-.debug[[kube/kubectlget.md](https://github.com/RyaxTech/container.training.git/tree/master/slides/kube/kubectlget.md)]
+.debug[[kube/kubectlget.md](https://github.com/RyaxTech/kube.training.git/tree/gh-pages//kube/kubectlget.md)]
 ---
 
 ## What's available?
@@ -1386,7 +1385,7 @@ First contact with `kubectl`
 
 Each time, `type` can be singular, plural, or abbreviated type name.
 
-.debug[[kube/kubectlget.md](https://github.com/RyaxTech/container.training.git/tree/master/slides/kube/kubectlget.md)]
+.debug[[kube/kubectlget.md](https://github.com/RyaxTech/kube.training.git/tree/gh-pages//kube/kubectlget.md)]
 ---
 
 ## Services
@@ -1409,7 +1408,7 @@ Each time, `type` can be singular, plural, or abbreviated type name.
 
 There is already one service on our cluster: the Kubernetes API itself.
 
-.debug[[kube/kubectlget.md](https://github.com/RyaxTech/container.training.git/tree/master/slides/kube/kubectlget.md)]
+.debug[[kube/kubectlget.md](https://github.com/RyaxTech/kube.training.git/tree/gh-pages//kube/kubectlget.md)]
 ---
 
 ## ClusterIP services
@@ -1435,7 +1434,7 @@ There is already one service on our cluster: the Kubernetes API itself.
 
 The error that we see is expected: the Kubernetes API requires authentication.
 
-.debug[[kube/kubectlget.md](https://github.com/RyaxTech/container.training.git/tree/master/slides/kube/kubectlget.md)]
+.debug[[kube/kubectlget.md](https://github.com/RyaxTech/kube.training.git/tree/gh-pages//kube/kubectlget.md)]
 ---
 
 ## Listing running containers
@@ -1461,7 +1460,7 @@ The error that we see is expected: the Kubernetes API requires authentication.
 
 *These are not the pods you're looking for.* But where are they?!?
 
-.debug[[kube/kubectlget.md](https://github.com/RyaxTech/container.training.git/tree/master/slides/kube/kubectlget.md)]
+.debug[[kube/kubectlget.md](https://github.com/RyaxTech/kube.training.git/tree/gh-pages//kube/kubectlget.md)]
 ---
 
 ## Namespaces
@@ -1483,7 +1482,7 @@ The error that we see is expected: the Kubernetes API requires authentication.
 
 *You know what ... This `kube-system` thing looks suspicious.*
 
-.debug[[kube/kubectlget.md](https://github.com/RyaxTech/container.training.git/tree/master/slides/kube/kubectlget.md)]
+.debug[[kube/kubectlget.md](https://github.com/RyaxTech/kube.training.git/tree/gh-pages//kube/kubectlget.md)]
 ---
 
 ## Accessing namespaces
@@ -1507,7 +1506,7 @@ The error that we see is expected: the Kubernetes API requires authentication.
 
 The `kube-system` namespace is used for the control plane.
 
-.debug[[kube/kubectlget.md](https://github.com/RyaxTech/container.training.git/tree/master/slides/kube/kubectlget.md)]
+.debug[[kube/kubectlget.md](https://github.com/RyaxTech/kube.training.git/tree/gh-pages//kube/kubectlget.md)]
 ---
 
 ## What are all these control plane pods?
@@ -1530,7 +1529,7 @@ The `kube-system` namespace is used for the control plane.
   <br/>
   (they have been specifically "pinned" to the master node)
 
-.debug[[kube/kubectlget.md](https://github.com/RyaxTech/container.training.git/tree/master/slides/kube/kubectlget.md)]
+.debug[[kube/kubectlget.md](https://github.com/RyaxTech/kube.training.git/tree/gh-pages//kube/kubectlget.md)]
 ---
 
 ## What about `kube-public`?
@@ -1562,7 +1561,7 @@ The `kube-system` namespace is used for the control plane.
 
 - `kube-public` is created by kubeadm & [used for security bootstrapping](https://kubernetes.io/blog/2017/01/stronger-foundation-for-creating-and-managing-kubernetes-clusters)
 
-.debug[[kube/kubectlget.md](https://github.com/RyaxTech/container.training.git/tree/master/slides/kube/kubectlget.md)]
+.debug[[kube/kubectlget.md](https://github.com/RyaxTech/kube.training.git/tree/gh-pages//kube/kubectlget.md)]
 ---
 
 class: pic
@@ -1611,7 +1610,7 @@ Setting up Kubernetes
 
 - Check the [prepare VMs README](https://github.com/jpetazzo/container.training/blob/master/prepare-vms/README.md) for more details
 
-.debug[[kube/setup-k8s.md](https://github.com/RyaxTech/container.training.git/tree/master/slides/kube/setup-k8s.md)]
+.debug[[kube/setup-k8s.md](https://github.com/RyaxTech/kube.training.git/tree/gh-pages//kube/setup-k8s.md)]
 ---
 
 ## `kubeadm` drawbacks
@@ -1630,7 +1629,7 @@ Setting up Kubernetes
 
 - "It's still twice as many steps as setting up a Swarm cluster 😕" -- Jérôme
 
-.debug[[kube/setup-k8s.md](https://github.com/RyaxTech/container.training.git/tree/master/slides/kube/setup-k8s.md)]
+.debug[[kube/setup-k8s.md](https://github.com/RyaxTech/kube.training.git/tree/gh-pages//kube/setup-k8s.md)]
 ---
 
 ## Other deployment options
@@ -1656,7 +1655,7 @@ Setting up Kubernetes
 
   Probably the closest to a multi-cloud/hybrid solution so far, but in development
 
-.debug[[kube/setup-k8s.md](https://github.com/RyaxTech/container.training.git/tree/master/slides/kube/setup-k8s.md)]
+.debug[[kube/setup-k8s.md](https://github.com/RyaxTech/kube.training.git/tree/gh-pages//kube/setup-k8s.md)]
 ---
 
 ## Even more deployment options
@@ -1678,7 +1677,7 @@ Setting up Kubernetes
   <br/>
   it has a great guide to [pick the right solution](https://kubernetes.io/docs/setup/pick-right-solution/) to set up Kubernetes.
 
-.debug[[kube/setup-k8s.md](https://github.com/RyaxTech/container.training.git/tree/master/slides/kube/setup-k8s.md)]
+.debug[[kube/setup-k8s.md](https://github.com/RyaxTech/kube.training.git/tree/gh-pages//kube/setup-k8s.md)]
 ---
 
 class: pic
@@ -1717,7 +1716,7 @@ Running our first containers on Kubernetes
 
 - Then we are going to start additional copies of the pod
 
-.debug[[kube/kubectlrun.md](https://github.com/RyaxTech/container.training.git/tree/master/slides/kube/kubectlrun.md)]
+.debug[[kube/kubectlrun.md](https://github.com/RyaxTech/kube.training.git/tree/gh-pages//kube/kubectlrun.md)]
 ---
 
 ## Starting a simple pod with `kubectl run`
@@ -1738,7 +1737,7 @@ Running our first containers on Kubernetes
 
 OK, what just happened?
 
-.debug[[kube/kubectlrun.md](https://github.com/RyaxTech/container.training.git/tree/master/slides/kube/kubectlrun.md)]
+.debug[[kube/kubectlrun.md](https://github.com/RyaxTech/kube.training.git/tree/gh-pages//kube/kubectlrun.md)]
 ---
 
 ## Behind the scenes of `kubectl run`
@@ -1763,7 +1762,7 @@ We should see the following things:
 
 Note: as of 1.10.1, resource types are displayed in more detail.
 
-.debug[[kube/kubectlrun.md](https://github.com/RyaxTech/container.training.git/tree/master/slides/kube/kubectlrun.md)]
+.debug[[kube/kubectlrun.md](https://github.com/RyaxTech/kube.training.git/tree/gh-pages//kube/kubectlrun.md)]
 ---
 
 ## What are these different things?
@@ -1787,7 +1786,7 @@ Note: as of 1.10.1, resource types are displayed in more detail.
 
 - A *replication controller* is the (deprecated) predecessor of a replica set
 
-.debug[[kube/kubectlrun.md](https://github.com/RyaxTech/container.training.git/tree/master/slides/kube/kubectlrun.md)]
+.debug[[kube/kubectlrun.md](https://github.com/RyaxTech/kube.training.git/tree/gh-pages//kube/kubectlrun.md)]
 ---
 
 ## Our `pingpong` deployment
@@ -1817,7 +1816,7 @@ pod/pingpong-7c8bbcd9bc-6c9qz   1/1       Running   0          10m
 
   - scaling, high availability, rolling updates
 
-.debug[[kube/kubectlrun.md](https://github.com/RyaxTech/container.training.git/tree/master/slides/kube/kubectlrun.md)]
+.debug[[kube/kubectlrun.md](https://github.com/RyaxTech/kube.training.git/tree/gh-pages//kube/kubectlrun.md)]
 ---
 
 ## Viewing container output
@@ -1841,7 +1840,7 @@ pod/pingpong-7c8bbcd9bc-6c9qz   1/1       Running   0          10m
 
 ]
 
-.debug[[kube/kubectlrun.md](https://github.com/RyaxTech/container.training.git/tree/master/slides/kube/kubectlrun.md)]
+.debug[[kube/kubectlrun.md](https://github.com/RyaxTech/kube.training.git/tree/gh-pages//kube/kubectlrun.md)]
 ---
 
 ## Streaming logs in real time
@@ -1868,7 +1867,7 @@ pod/pingpong-7c8bbcd9bc-6c9qz   1/1       Running   0          10m
 
 ]
 
-.debug[[kube/kubectlrun.md](https://github.com/RyaxTech/container.training.git/tree/master/slides/kube/kubectlrun.md)]
+.debug[[kube/kubectlrun.md](https://github.com/RyaxTech/kube.training.git/tree/gh-pages//kube/kubectlrun.md)]
 ---
 
 ## Scaling our application
@@ -1888,7 +1887,7 @@ Note: what if we tried to scale `replicaset.apps/pingpong-xxxxxxxxxx`?
 
 We could! But the *deployment* would notice it right away, and scale back to the initial level.
 
-.debug[[kube/kubectlrun.md](https://github.com/RyaxTech/container.training.git/tree/master/slides/kube/kubectlrun.md)]
+.debug[[kube/kubectlrun.md](https://github.com/RyaxTech/kube.training.git/tree/gh-pages//kube/kubectlrun.md)]
 ---
 
 ## Resilience
@@ -1917,7 +1916,7 @@ We could! But the *deployment* would notice it right away, and scale back to the
   ```
 ]
 
-.debug[[kube/kubectlrun.md](https://github.com/RyaxTech/container.training.git/tree/master/slides/kube/kubectlrun.md)]
+.debug[[kube/kubectlrun.md](https://github.com/RyaxTech/kube.training.git/tree/gh-pages//kube/kubectlrun.md)]
 ---
 
 ## What if we wanted something different?
@@ -1935,7 +1934,7 @@ We could! But the *deployment* would notice it right away, and scale back to the
 
 - With `kubectl run --schedule=...`, we can also create *cronjobs*
 
-.debug[[kube/kubectlrun.md](https://github.com/RyaxTech/container.training.git/tree/master/slides/kube/kubectlrun.md)]
+.debug[[kube/kubectlrun.md](https://github.com/RyaxTech/kube.training.git/tree/gh-pages//kube/kubectlrun.md)]
 ---
 
 ## Viewing logs of multiple pods
@@ -1959,7 +1958,7 @@ We could! But the *deployment* would notice it right away, and scale back to the
 
 Unfortunately, `--follow` cannot (yet) be used to stream the logs from multiple containers.
 
-.debug[[kube/kubectlrun.md](https://github.com/RyaxTech/container.training.git/tree/master/slides/kube/kubectlrun.md)]
+.debug[[kube/kubectlrun.md](https://github.com/RyaxTech/kube.training.git/tree/gh-pages//kube/kubectlrun.md)]
 ---
 
 ## Aren't we flooding 1.1.1.1?
@@ -1975,7 +1974,7 @@ Unfortunately, `--follow` cannot (yet) be used to stream the logs from multiple 
 - It's very unlikely that our concerted pings manage to produce
   even a modest blip at Cloudflare's NOC!
 
-.debug[[kube/kubectlrun.md](https://github.com/RyaxTech/container.training.git/tree/master/slides/kube/kubectlrun.md)]
+.debug[[kube/kubectlrun.md](https://github.com/RyaxTech/kube.training.git/tree/gh-pages//kube/kubectlrun.md)]
 ---
 
 class: pic
@@ -2020,7 +2019,7 @@ There is an additional step to make the dashboard available from outside (we'll 
 
 .footnote[.warning[Yes, this will open our cluster to all kinds of shenanigans. Don't do this at home.]]
 
-.debug[[kube/dashboard.md](https://github.com/RyaxTech/container.training.git/tree/master/slides/kube/dashboard.md)]
+.debug[[kube/dashboard.md](https://github.com/RyaxTech/kube.training.git/tree/gh-pages//kube/dashboard.md)]
 ---
 
 ## 1) Running the dashboard
@@ -2044,7 +2043,7 @@ The goo.gl URL expands to:
 <br/>
 .small[https://raw.githubusercontent.com/kubernetes/dashboard/master/src/deploy/recommended/kubernetes-dashboard.yaml]
 
-.debug[[kube/dashboard.md](https://github.com/RyaxTech/container.training.git/tree/master/slides/kube/dashboard.md)]
+.debug[[kube/dashboard.md](https://github.com/RyaxTech/kube.training.git/tree/gh-pages//kube/dashboard.md)]
 ---
 
 
@@ -2062,7 +2061,7 @@ The goo.gl URL expands to:
 
 .warning[Do not do this at home, or even worse, at work!]
 
-.debug[[kube/dashboard.md](https://github.com/RyaxTech/container.training.git/tree/master/slides/kube/dashboard.md)]
+.debug[[kube/dashboard.md](https://github.com/RyaxTech/kube.training.git/tree/gh-pages//kube/dashboard.md)]
 ---
 
 ## Running the SSL unwrapper
@@ -2088,7 +2087,7 @@ The goo.gl URL expands to:
 
 .warning[All our dashboard traffic is now clear-text, including passwords!]
 
-.debug[[kube/dashboard.md](https://github.com/RyaxTech/container.training.git/tree/master/slides/kube/dashboard.md)]
+.debug[[kube/dashboard.md](https://github.com/RyaxTech/kube.training.git/tree/gh-pages//kube/dashboard.md)]
 ---
 
 ## Connecting to the dashboard
@@ -2115,7 +2114,7 @@ You'll want the `3xxxx` port.
 
 The dashboard will then ask you which authentication you want to use.
 
-.debug[[kube/dashboard.md](https://github.com/RyaxTech/container.training.git/tree/master/slides/kube/dashboard.md)]
+.debug[[kube/dashboard.md](https://github.com/RyaxTech/kube.training.git/tree/gh-pages//kube/dashboard.md)]
 ---
 
 ## Dashboard authentication
@@ -2130,7 +2129,7 @@ The dashboard will then ask you which authentication you want to use.
 
 - Let's use "skip": we get a bunch of warnings and don't see much
 
-.debug[[kube/dashboard.md](https://github.com/RyaxTech/container.training.git/tree/master/slides/kube/dashboard.md)]
+.debug[[kube/dashboard.md](https://github.com/RyaxTech/kube.training.git/tree/gh-pages//kube/dashboard.md)]
 ---
 
 ## 3) Bypass authentication for the dashboard
@@ -2154,7 +2153,7 @@ The dashboard will then ask you which authentication you want to use.
 
 .warning[By the way, we just added a backdoor to our Kubernetes cluster!]
 
-.debug[[kube/dashboard.md](https://github.com/RyaxTech/container.training.git/tree/master/slides/kube/dashboard.md)]
+.debug[[kube/dashboard.md](https://github.com/RyaxTech/kube.training.git/tree/gh-pages//kube/dashboard.md)]
 ---
 
 ## Exposing the dashboard over HTTPS
@@ -2180,7 +2179,7 @@ The dashboard will then ask you which authentication you want to use.
 
 `NotFound`?!? Y U NO WORK?!?
 
-.debug[[kube/dashboard.md](https://github.com/RyaxTech/container.training.git/tree/master/slides/kube/dashboard.md)]
+.debug[[kube/dashboard.md](https://github.com/RyaxTech/kube.training.git/tree/gh-pages//kube/dashboard.md)]
 ---
 
 ## Editing the `kubernetes-dashboard` service
@@ -2208,7 +2207,7 @@ The dashboard will then ask you which authentication you want to use.
 
 ]
 
-.debug[[kube/dashboard.md](https://github.com/RyaxTech/container.training.git/tree/master/slides/kube/dashboard.md)]
+.debug[[kube/dashboard.md](https://github.com/RyaxTech/kube.training.git/tree/gh-pages//kube/dashboard.md)]
 ---
 
 ## Running the Kubernetes dashboard securely
@@ -2221,7 +2220,7 @@ The dashboard will then ask you which authentication you want to use.
   <br/>
   check [this excellent post on Heptio's blog](https://blog.heptio.com/on-securing-the-kubernetes-dashboard-16b09b1b7aca)
 
-.debug[[kube/dashboard.md](https://github.com/RyaxTech/container.training.git/tree/master/slides/kube/dashboard.md)]
+.debug[[kube/dashboard.md](https://github.com/RyaxTech/kube.training.git/tree/gh-pages//kube/dashboard.md)]
 ---
 
 class: pic
@@ -2277,7 +2276,7 @@ Security implications of `kubectl apply`
 
   - ☠️☠️☠️
 
-.debug[[kube/dashboard.md](https://github.com/RyaxTech/container.training.git/tree/master/slides/kube/dashboard.md)]
+.debug[[kube/dashboard.md](https://github.com/RyaxTech/kube.training.git/tree/gh-pages//kube/dashboard.md)]
 ---
 
 ## `kubectl apply` is the new `curl | sh`
@@ -2299,7 +2298,7 @@ Security implications of `kubectl apply`
 - It introduces new failure modes (like if you try to apply yaml from a link that's no longer valid)
 
 
-.debug[[kube/dashboard.md](https://github.com/RyaxTech/container.training.git/tree/master/slides/kube/dashboard.md)]</textarea>
+.debug[[kube/dashboard.md](https://github.com/RyaxTech/kube.training.git/tree/gh-pages//kube/dashboard.md)]</textarea>
     <script src="remark.min.js" type="text/javascript">
     </script>
     <script type="text/javascript">

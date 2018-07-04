@@ -48,7 +48,7 @@ Misattribué à Benjamin Franklin
 
 - C'est ce que tu es censé faire!
 
-- Allez dans [kube-training](https://ryaxtech.github.io/kube-tutorial/) pour voir ces diapositives
+- Allez dans [kube.training] (https://ryaxtech.github.io/kube.training/) pour voir ces diapositives
 
 ]
 

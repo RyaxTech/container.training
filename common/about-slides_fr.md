@@ -2,7 +2,7 @@
 
 Tout le contenu est disponible à un depot Github:
 
-  https://github.com/RyaxTech/container.training
+  https://github.com/RyaxTech/kube.training
 
 - Le contenu est basé sur les slides écrites initiallement par [Jérôme Petazzoni](https://twitter.com/jpetazzo) pour supporter de workshops et tutoriels autour de Conteneurs et Kubernetes. 
 

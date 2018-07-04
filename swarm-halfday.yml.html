@@ -29,24 +29,26 @@ Container Orchestration<br/>with Docker and Swarm<br/>
 
 .debug[
 ```
- M slides/common/declarative_fr.md
- M slides/common/prereqs_fr.md
- M slides/intro/Docker_Overview_fr.md
- M slides/kube-jour1.yml
- M slides/kube-jour1.yml.html
- M slides/logistics.md
-?? slides/common/about-slides_fr.md
-?? slides/common/composedown_fr.md
-?? slides/common/composescale_fr.md
-?? slides/images/microservice2.png
-?? slides/images/microservices1.png
+ M common/about-slides_fr.md
+ M common/prereqs_fr.md
+ M intro-fullday.yml.html
+ M intro-selfpaced.yml.html
+ M kube-fullday.yml.html
+ M kube-halfday.yml.html
+ M kube-jour1.yml
+ M kube-jour1.yml.html
+ M kube-jour2.yml.html
+ M kube-jour3.yml.html
+ M kube-selfpaced.yml.html
+ M swarm-fullday.yml.html
+ M swarm-halfday.yml.html
 
 ```
 
-These slides have been built from commit: 2b2ba6c
+These slides have been built from commit: 347c7f0
 
 
-[common/title.md](https://github.com/RyaxTech/container.training.git/tree/master/slides/common/title.md)]
+[common/title.md](https://github.com/RyaxTech/kube.training.git/tree/gh-pages//common/title.md)]
 ---
 
 class: title, in-person
@@ -62,7 +64,7 @@ Container Orchestration<br/>with Docker and Swarm<br/><br/></br>
 
 **Slides: http://container.training/**
 ]
-.debug[[common/title.md](https://github.com/RyaxTech/container.training.git/tree/master/slides/common/title.md)]
+.debug[[common/title.md](https://github.com/RyaxTech/kube.training.git/tree/gh-pages//common/title.md)]
 ---
 ## Quelques infos sur le formateur
 
@@ -72,7 +74,7 @@ Container Orchestration<br/>with Docker and Swarm<br/><br/></br>
 
 - 11 ans à Bull/Atos Technologies - Ingenieur R&D / Architecte
 
-.debug[[logistics.md](https://github.com/RyaxTech/container.training.git/tree/master/slides/logistics.md)]
+.debug[[logistics.md](https://github.com/RyaxTech/kube.training.git/tree/gh-pages//logistics.md)]
 ---
 
 ## Logistique
@@ -85,10 +87,10 @@ Container Orchestration<br/>with Docker and Swarm<br/><br/></br>
 
 - * Surtout quand vous voyez des photos de conteneurs en plein écran! *
 
-.debug[[logistics.md](https://github.com/RyaxTech/container.training.git/tree/master/slides/logistics.md)]
+.debug[[logistics.md](https://github.com/RyaxTech/kube.training.git/tree/gh-pages//logistics.md)]
 ---
 
-.debug[[logistics.md](https://github.com/RyaxTech/container.training.git/tree/master/slides/logistics.md)]
+.debug[[logistics.md](https://github.com/RyaxTech/kube.training.git/tree/gh-pages//logistics.md)]
 ---
 ## A brief introduction
 
@@ -110,7 +112,7 @@ Container Orchestration<br/>with Docker and Swarm<br/><br/></br>
   [StackOverflow](http://stackoverflow.com/questions/tagged/docker),
   and other outlets
 
-.debug[[swarm/intro.md](https://github.com/RyaxTech/container.training.git/tree/master/slides/swarm/intro.md)]
+.debug[[swarm/intro.md](https://github.com/RyaxTech/kube.training.git/tree/gh-pages//swarm/intro.md)]
 ---
 
 class: self-paced
@@ -132,7 +134,7 @@ class: self-paced
 - If you are doing this on your own:
   <br/>the first chapter will give you various options to get your own cluster
 
-.debug[[swarm/intro.md](https://github.com/RyaxTech/container.training.git/tree/master/slides/swarm/intro.md)]
+.debug[[swarm/intro.md](https://github.com/RyaxTech/kube.training.git/tree/gh-pages//swarm/intro.md)]
 ---
 ## About these slides
 
@@ -163,7 +165,7 @@ class: self-paced
 ]
 -->
 
-.debug[[common/about-slides.md](https://github.com/RyaxTech/container.training.git/tree/master/slides/common/about-slides.md)]
+.debug[[common/about-slides.md](https://github.com/RyaxTech/kube.training.git/tree/gh-pages//common/about-slides.md)]
 ---
 
 class: extra-details
@@ -184,7 +186,7 @@ class: extra-details
 
 - You can review these slides another time if you want, they'll be waiting for you ☺
 
-.debug[[common/about-slides.md](https://github.com/RyaxTech/container.training.git/tree/master/slides/common/about-slides.md)]
+.debug[[common/about-slides.md](https://github.com/RyaxTech/kube.training.git/tree/gh-pages//common/about-slides.md)]
 ---
 
 name: toc-chapter-1
@@ -241,7 +243,7 @@ name: toc-chapter-3
 
 
 
-.debug[[common/toc.md](https://github.com/RyaxTech/container.training.git/tree/master/slides/common/toc.md)]
+.debug[[common/toc.md](https://github.com/RyaxTech/kube.training.git/tree/gh-pages//common/toc.md)]
 ---
 
 class: pic
@@ -286,7 +288,7 @@ Pre-requirements
 
 - It's totally OK if you are not a Docker expert!
 
-.debug[[common/prereqs.md](https://github.com/RyaxTech/container.training.git/tree/master/slides/common/prereqs.md)]
+.debug[[common/prereqs.md](https://github.com/RyaxTech/kube.training.git/tree/gh-pages//common/prereqs.md)]
 ---
 
 class: title
@@ -301,7 +303,7 @@ Misattributed to Benjamin Franklin
 
 [(Probably inspired by Chinese Confucian philosopher Xunzi)](https://www.barrypopik.com/index.php/new_york_city/entry/tell_me_and_i_forget_teach_me_and_i_may_remember_involve_me_and_i_will_lear/)
 
-.debug[[common/prereqs.md](https://github.com/RyaxTech/container.training.git/tree/master/slides/common/prereqs.md)]
+.debug[[common/prereqs.md](https://github.com/RyaxTech/kube.training.git/tree/gh-pages//common/prereqs.md)]
 ---
 
 ## Hands-on sections
@@ -326,21 +328,21 @@ Misattributed to Benjamin Franklin
 
 ]
 
-.debug[[common/prereqs.md](https://github.com/RyaxTech/container.training.git/tree/master/slides/common/prereqs.md)]
+.debug[[common/prereqs.md](https://github.com/RyaxTech/kube.training.git/tree/gh-pages//common/prereqs.md)]
 ---
 
 class: in-person
 
 ## Where are we going to run our containers?
 
-.debug[[common/prereqs.md](https://github.com/RyaxTech/container.training.git/tree/master/slides/common/prereqs.md)]
+.debug[[common/prereqs.md](https://github.com/RyaxTech/kube.training.git/tree/gh-pages//common/prereqs.md)]
 ---
 
 class: in-person, pic
 
 ![You get a cluster](images/you-get-a-cluster.jpg)
 
-.debug[[common/prereqs.md](https://github.com/RyaxTech/container.training.git/tree/master/slides/common/prereqs.md)]
+.debug[[common/prereqs.md](https://github.com/RyaxTech/kube.training.git/tree/gh-pages//common/prereqs.md)]
 ---
 
 class: in-person
@@ -357,7 +359,7 @@ class: in-person
 
 - The nodes have aliases: `node1`, `node2`, etc.
 
-.debug[[common/prereqs.md](https://github.com/RyaxTech/container.training.git/tree/master/slides/common/prereqs.md)]
+.debug[[common/prereqs.md](https://github.com/RyaxTech/kube.training.git/tree/gh-pages//common/prereqs.md)]
 ---
 
 class: in-person
@@ -379,7 +381,7 @@ class: in-person
 
   - an SSH client
 
-.debug[[common/prereqs.md](https://github.com/RyaxTech/container.training.git/tree/master/slides/common/prereqs.md)]
+.debug[[common/prereqs.md](https://github.com/RyaxTech/kube.training.git/tree/gh-pages//common/prereqs.md)]
 ---
 
 class: in-person
@@ -401,7 +403,7 @@ class: in-person
 
 - Nice-to-have: [Mosh](https://mosh.org/) instead of SSH, if your internet connection tends to lose packets
 
-.debug[[common/prereqs.md](https://github.com/RyaxTech/container.training.git/tree/master/slides/common/prereqs.md)]
+.debug[[common/prereqs.md](https://github.com/RyaxTech/kube.training.git/tree/gh-pages//common/prereqs.md)]
 ---
 
 class: in-person, extra-details
@@ -428,7 +430,7 @@ We're just telling you about it because some of us think it's cool!*
 
   (Like when you hop from hotel to conference WiFi)
 
-.debug[[common/prereqs.md](https://github.com/RyaxTech/container.training.git/tree/master/slides/common/prereqs.md)]
+.debug[[common/prereqs.md](https://github.com/RyaxTech/kube.training.git/tree/gh-pages//common/prereqs.md)]
 ---
 
 class: in-person, extra-details
@@ -447,7 +449,7 @@ class: in-person, extra-details
 
   (By default, it uses a UDP port between 60000 and 61000)
 
-.debug[[common/prereqs.md](https://github.com/RyaxTech/container.training.git/tree/master/slides/common/prereqs.md)]
+.debug[[common/prereqs.md](https://github.com/RyaxTech/kube.training.git/tree/gh-pages//common/prereqs.md)]
 ---
 
 class: in-person
@@ -484,7 +486,7 @@ fi
 
 If anything goes wrong — ask for help!
 
-.debug[[common/prereqs.md](https://github.com/RyaxTech/container.training.git/tree/master/slides/common/prereqs.md)]
+.debug[[common/prereqs.md](https://github.com/RyaxTech/kube.training.git/tree/gh-pages//common/prereqs.md)]
 ---
 
 ## Doing or re-doing the workshop on your own?
@@ -505,7 +507,7 @@ If anything goes wrong — ask for help!
 
   Bigger setup effort; ideal for group training
 
-.debug[[common/prereqs.md](https://github.com/RyaxTech/container.training.git/tree/master/slides/common/prereqs.md)]
+.debug[[common/prereqs.md](https://github.com/RyaxTech/kube.training.git/tree/gh-pages//common/prereqs.md)]
 ---
 
 class: self-paced
@@ -532,7 +534,7 @@ You will need a Docker ID to use Play-With-Docker.
 
 (Creating a Docker ID is free.)
 
-.debug[[common/prereqs.md](https://github.com/RyaxTech/container.training.git/tree/master/slides/common/prereqs.md)]
+.debug[[common/prereqs.md](https://github.com/RyaxTech/kube.training.git/tree/gh-pages//common/prereqs.md)]
 ---
 
 ## We will (mostly) interact with node1 only
@@ -551,7 +553,7 @@ You will need a Docker ID to use Play-With-Docker.
   
   - Docker API (to check running containers and container engine status)
 
-.debug[[common/prereqs.md](https://github.com/RyaxTech/container.training.git/tree/master/slides/common/prereqs.md)]
+.debug[[common/prereqs.md](https://github.com/RyaxTech/kube.training.git/tree/gh-pages//common/prereqs.md)]
 ---
 
 ## Terminals
@@ -567,7 +569,7 @@ There are multiple ways to do this:
 
 You are welcome to use the method that you feel the most comfortable with.
 
-.debug[[common/prereqs.md](https://github.com/RyaxTech/container.training.git/tree/master/slides/common/prereqs.md)]
+.debug[[common/prereqs.md](https://github.com/RyaxTech/kube.training.git/tree/gh-pages//common/prereqs.md)]
 ---
 
 ## Tmux cheatsheet
@@ -591,7 +593,7 @@ It has been preinstalled on your workshop nodes.*
 - Ctrl-b d → detach session
 - tmux attach → reattach to session
 
-.debug[[common/prereqs.md](https://github.com/RyaxTech/container.training.git/tree/master/slides/common/prereqs.md)]
+.debug[[common/prereqs.md](https://github.com/RyaxTech/kube.training.git/tree/gh-pages//common/prereqs.md)]
 ---
 ## Brand new versions!
 
@@ -610,7 +612,7 @@ It has been preinstalled on your workshop nodes.*
 
 ]
 
-.debug[[swarm/versions.md](https://github.com/RyaxTech/container.training.git/tree/master/slides/swarm/versions.md)]
+.debug[[swarm/versions.md](https://github.com/RyaxTech/kube.training.git/tree/gh-pages//swarm/versions.md)]
 ---
 
 ## Wait, what, 17.12 ?!?
@@ -629,7 +631,7 @@ It has been preinstalled on your workshop nodes.*
 
 - For more details, check the [Docker EE announcement blog post](https://blog.docker.com/2017/03/docker-enterprise-edition/)
 
-.debug[[swarm/versions.md](https://github.com/RyaxTech/container.training.git/tree/master/slides/swarm/versions.md)]
+.debug[[swarm/versions.md](https://github.com/RyaxTech/kube.training.git/tree/gh-pages//swarm/versions.md)]
 ---
 
 class: extra-details
@@ -648,7 +650,7 @@ class: extra-details
   - available through Docker Mac, Docker Windows, and major Linux distros
   - perfect for individuals and small organizations
 
-.debug[[swarm/versions.md](https://github.com/RyaxTech/container.training.git/tree/master/slides/swarm/versions.md)]
+.debug[[swarm/versions.md](https://github.com/RyaxTech/kube.training.git/tree/gh-pages//swarm/versions.md)]
 ---
 
 class: extra-details
@@ -669,14 +671,14 @@ class: extra-details
 
 - More predictible release schedule (see next slide)
 
-.debug[[swarm/versions.md](https://github.com/RyaxTech/container.training.git/tree/master/slides/swarm/versions.md)]
+.debug[[swarm/versions.md](https://github.com/RyaxTech/kube.training.git/tree/gh-pages//swarm/versions.md)]
 ---
 
 class: pic
 
 ![Docker CE/EE release cycle](images/docker-ce-ee-lifecycle.png)
 
-.debug[[swarm/versions.md](https://github.com/RyaxTech/container.training.git/tree/master/slides/swarm/versions.md)]
+.debug[[swarm/versions.md](https://github.com/RyaxTech/kube.training.git/tree/gh-pages//swarm/versions.md)]
 ---
 
 ## What was added when?
@@ -698,7 +700,7 @@ class: pic
 | 2018 | 18.03 | Templates for secrets/configs, multi-yaml stacks, LCOW
 | 2018 | 18.03 | Stack deploy to Kubernetes, `docker trust`, tmpfs, manifest CLI
 
-.debug[[swarm/versions.md](https://github.com/RyaxTech/container.training.git/tree/master/slides/swarm/versions.md)]
+.debug[[swarm/versions.md](https://github.com/RyaxTech/kube.training.git/tree/gh-pages//swarm/versions.md)]
 ---
 
 class: pic
@@ -748,7 +750,7 @@ fi
 
 (You can also fork the repository on GitHub and clone your fork if you prefer that.)
 
-.debug[[common/sampleapp.md](https://github.com/RyaxTech/container.training.git/tree/master/slides/common/sampleapp.md)]
+.debug[[common/sampleapp.md](https://github.com/RyaxTech/kube.training.git/tree/gh-pages//common/sampleapp.md)]
 ---
 
 ## Downloading and running the application
@@ -777,7 +779,7 @@ Compose tells Docker to build all container images (pulling
 the corresponding base images), then starts all containers,
 and displays aggregated logs.
 
-.debug[[common/sampleapp.md](https://github.com/RyaxTech/container.training.git/tree/master/slides/common/sampleapp.md)]
+.debug[[common/sampleapp.md](https://github.com/RyaxTech/kube.training.git/tree/gh-pages//common/sampleapp.md)]
 ---
 
 ## More detail on our sample application
@@ -801,7 +803,7 @@ and displays aggregated logs.
   - `worker` = background process using `rng` and `hasher`
   - `webui` = web interface to watch progress
 
-.debug[[common/sampleapp.md](https://github.com/RyaxTech/container.training.git/tree/master/slides/common/sampleapp.md)]
+.debug[[common/sampleapp.md](https://github.com/RyaxTech/kube.training.git/tree/gh-pages//common/sampleapp.md)]
 ---
 
 class: extra-details
@@ -820,7 +822,7 @@ class: extra-details
 
 - There are other minor differences, but upgrade is easy and straightforward
 
-.debug[[common/sampleapp.md](https://github.com/RyaxTech/container.training.git/tree/master/slides/common/sampleapp.md)]
+.debug[[common/sampleapp.md](https://github.com/RyaxTech/kube.training.git/tree/gh-pages//common/sampleapp.md)]
 ---
 
 ## Service discovery in container-land
@@ -833,7 +835,7 @@ class: extra-details
 
   (And by container-magic, we mean "a crafty, dynamic, embedded DNS server")
 
-.debug[[common/sampleapp.md](https://github.com/RyaxTech/container.training.git/tree/master/slides/common/sampleapp.md)]
+.debug[[common/sampleapp.md](https://github.com/RyaxTech/kube.training.git/tree/gh-pages//common/sampleapp.md)]
 ---
 
 ## Example in `worker/worker.py`
@@ -857,7 +859,7 @@ def hash_bytes(data):
 https://github.com/jpetazzo/container.training/blob/8279a3bce9398f7c1a53bdd95187c53eda4e6435/dockercoins/worker/worker.py#L17
 ))
 
-.debug[[common/sampleapp.md](https://github.com/RyaxTech/container.training.git/tree/master/slides/common/sampleapp.md)]
+.debug[[common/sampleapp.md](https://github.com/RyaxTech/kube.training.git/tree/gh-pages//common/sampleapp.md)]
 ---
 
 class: extra-details
@@ -878,7 +880,7 @@ class: extra-details
 
   - containers in the green app will resolve `database` to the IP of the green database
 
-.debug[[common/sampleapp.md](https://github.com/RyaxTech/container.training.git/tree/master/slides/common/sampleapp.md)]
+.debug[[common/sampleapp.md](https://github.com/RyaxTech/kube.training.git/tree/gh-pages//common/sampleapp.md)]
 ---
 
 ## What's this application?
@@ -905,7 +907,7 @@ class: extra-details
 
   - `webui` queries `redis`, and computes and exposes "hashing speed" in your browser
 
-.debug[[common/sampleapp.md](https://github.com/RyaxTech/container.training.git/tree/master/slides/common/sampleapp.md)]
+.debug[[common/sampleapp.md](https://github.com/RyaxTech/kube.training.git/tree/gh-pages//common/sampleapp.md)]
 ---
 
 ## Our application at work
@@ -918,7 +920,7 @@ class: extra-details
 
 - For `rng` and `hasher`, we see HTTP access logs
 
-.debug[[common/sampleapp.md](https://github.com/RyaxTech/container.training.git/tree/master/slides/common/sampleapp.md)]
+.debug[[common/sampleapp.md](https://github.com/RyaxTech/kube.training.git/tree/gh-pages//common/sampleapp.md)]
 ---
 
 ## Connecting to the web UI
@@ -942,7 +944,7 @@ class: extra-details
 A drawing area should show up, and after a few seconds, a blue
 graph will appear.
 
-.debug[[common/sampleapp.md](https://github.com/RyaxTech/container.training.git/tree/master/slides/common/sampleapp.md)]
+.debug[[common/sampleapp.md](https://github.com/RyaxTech/kube.training.git/tree/gh-pages//common/sampleapp.md)]
 ---
 
 class: self-paced, extra-details
@@ -966,7 +968,7 @@ How to fix this?
 
 Stop the app with `^C`, edit `dockercoins.yml`, comment out the `volumes` section, and try again.
 
-.debug[[common/sampleapp.md](https://github.com/RyaxTech/container.training.git/tree/master/slides/common/sampleapp.md)]
+.debug[[common/sampleapp.md](https://github.com/RyaxTech/kube.training.git/tree/gh-pages//common/sampleapp.md)]
 ---
 
 class: extra-details
@@ -989,7 +991,7 @@ class: extra-details
 
 - Yes, and?
 
-.debug[[common/sampleapp.md](https://github.com/RyaxTech/container.training.git/tree/master/slides/common/sampleapp.md)]
+.debug[[common/sampleapp.md](https://github.com/RyaxTech/kube.training.git/tree/gh-pages//common/sampleapp.md)]
 ---
 
 class: extra-details
@@ -1012,7 +1014,7 @@ class: extra-details
 
 - "I'm clearly incapable of writing good frontend code!" 😀 — Jérôme
 
-.debug[[common/sampleapp.md](https://github.com/RyaxTech/container.training.git/tree/master/slides/common/sampleapp.md)]
+.debug[[common/sampleapp.md](https://github.com/RyaxTech/kube.training.git/tree/gh-pages//common/sampleapp.md)]
 ---
 
 ## Stopping the application
@@ -1040,7 +1042,7 @@ Some containers exit immediately, others take longer.
 The containers that do not handle `SIGTERM` end up being killed after a 10s timeout. If we are very impatient, we can hit `^C` a second time!
 
 
-.debug[[common/sampleapp.md](https://github.com/RyaxTech/container.training.git/tree/master/slides/common/sampleapp.md)]
+.debug[[common/sampleapp.md](https://github.com/RyaxTech/kube.training.git/tree/gh-pages//common/sampleapp.md)]
 ---
 ## Restarting in the background
 
@@ -1062,7 +1064,7 @@ The containers that do not handle `SIGTERM` end up being killed after a 10s time
 
 `docker-compose ps` also shows the ports exposed by the application.
 
-.debug[[common/composescale.md](https://github.com/RyaxTech/container.training.git/tree/master/slides/common/composescale.md)]
+.debug[[common/composescale.md](https://github.com/RyaxTech/kube.training.git/tree/gh-pages//common/composescale.md)]
 ---
 
 class: extra-details
@@ -1092,7 +1094,7 @@ class: extra-details
 
 Tip: use `^S` and `^Q` to pause/resume log output.
 
-.debug[[common/composescale.md](https://github.com/RyaxTech/container.training.git/tree/master/slides/common/composescale.md)]
+.debug[[common/composescale.md](https://github.com/RyaxTech/kube.training.git/tree/gh-pages//common/composescale.md)]
 ---
 
 ## Scaling up the application
@@ -1107,7 +1109,7 @@ Tip: use `^S` and `^Q` to pause/resume log output.
 
 - For that, we will use good old UNIX tools on our Docker node
 
-.debug[[common/composescale.md](https://github.com/RyaxTech/container.training.git/tree/master/slides/common/composescale.md)]
+.debug[[common/composescale.md](https://github.com/RyaxTech/kube.training.git/tree/gh-pages//common/composescale.md)]
 ---
 
 ## Looking at resource usage
@@ -1142,7 +1144,7 @@ We have available resources.
 - Why?
 - How can we use them?
 
-.debug[[common/composescale.md](https://github.com/RyaxTech/container.training.git/tree/master/slides/common/composescale.md)]
+.debug[[common/composescale.md](https://github.com/RyaxTech/kube.training.git/tree/gh-pages//common/composescale.md)]
 ---
 
 ## Scaling workers on a single node
@@ -1165,7 +1167,7 @@ We have available resources.
 
 ]
 
-.debug[[common/composescale.md](https://github.com/RyaxTech/container.training.git/tree/master/slides/common/composescale.md)]
+.debug[[common/composescale.md](https://github.com/RyaxTech/kube.training.git/tree/gh-pages//common/composescale.md)]
 ---
 
 ## Adding more workers
@@ -1187,7 +1189,7 @@ We have available resources.
 
 ]
 
-.debug[[common/composescale.md](https://github.com/RyaxTech/container.training.git/tree/master/slides/common/composescale.md)]
+.debug[[common/composescale.md](https://github.com/RyaxTech/kube.training.git/tree/gh-pages//common/composescale.md)]
 ---
 
 class: pic
@@ -1232,7 +1234,7 @@ Identifying bottlenecks
 - Let's use state-of-the-art HTTP performance analysis!
   <br/>(i.e. good old tools like `ab`, `httping`...)
 
-.debug[[common/composescale.md](https://github.com/RyaxTech/container.training.git/tree/master/slides/common/composescale.md)]
+.debug[[common/composescale.md](https://github.com/RyaxTech/kube.training.git/tree/gh-pages//common/composescale.md)]
 ---
 
 ## Accessing internal services
@@ -1255,7 +1257,7 @@ Identifying bottlenecks
     ...
   ```
 
-.debug[[common/composescale.md](https://github.com/RyaxTech/container.training.git/tree/master/slides/common/composescale.md)]
+.debug[[common/composescale.md](https://github.com/RyaxTech/kube.training.git/tree/gh-pages//common/composescale.md)]
 ---
 
 ## Measuring latency under load
@@ -1278,7 +1280,7 @@ We will use `httping`.
 
 `rng` has a much higher latency than `hasher`.
 
-.debug[[common/composescale.md](https://github.com/RyaxTech/container.training.git/tree/master/slides/common/composescale.md)]
+.debug[[common/composescale.md](https://github.com/RyaxTech/kube.training.git/tree/gh-pages//common/composescale.md)]
 ---
 
 ## Let's draw hasty conclusions
@@ -1295,7 +1297,7 @@ Note: this is a fiction! We have enough entropy. But we need a pretext to scale 
 <br/>
 ...and is [just as good as `/dev/random`](http://www.slideshare.net/PacSecJP/filippo-plain-simple-reality-of-entropy).)
 
-.debug[[common/composescale.md](https://github.com/RyaxTech/container.training.git/tree/master/slides/common/composescale.md)]
+.debug[[common/composescale.md](https://github.com/RyaxTech/kube.training.git/tree/gh-pages//common/composescale.md)]
 ---
 ## Clean up
 
@@ -1310,7 +1312,7 @@ Note: this is a fiction! We have enough entropy. But we need a pretext to scale 
 
 ]
 
-.debug[[common/composedown.md](https://github.com/RyaxTech/container.training.git/tree/master/slides/common/composedown.md)]
+.debug[[common/composedown.md](https://github.com/RyaxTech/kube.training.git/tree/gh-pages//common/composedown.md)]
 ---
 
 class: pic
@@ -1348,7 +1350,7 @@ SwarmKit
 
 .footnote[.emoji[🐳] Did you know that кит means "whale" in Russian?]
 
-.debug[[swarm/swarmkit.md](https://github.com/RyaxTech/container.training.git/tree/master/slides/swarm/swarmkit.md)]
+.debug[[swarm/swarmkit.md](https://github.com/RyaxTech/kube.training.git/tree/gh-pages//swarm/swarmkit.md)]
 ---
 
 ## SwarmKit features
@@ -1371,7 +1373,7 @@ SwarmKit
   - least privilege architecture (single-node compromise ≠ cluster compromise)
   - on-disk encryption with optional passphrase
 
-.debug[[swarm/swarmkit.md](https://github.com/RyaxTech/container.training.git/tree/master/slides/swarm/swarmkit.md)]
+.debug[[swarm/swarmkit.md](https://github.com/RyaxTech/kube.training.git/tree/gh-pages//swarm/swarmkit.md)]
 ---
 
 class: extra-details
@@ -1399,7 +1401,7 @@ class: extra-details
 
 - Simpler, easier to deploy and operate; also faster
 
-.debug[[swarm/swarmkit.md](https://github.com/RyaxTech/container.training.git/tree/master/slides/swarm/swarmkit.md)]
+.debug[[swarm/swarmkit.md](https://github.com/RyaxTech/kube.training.git/tree/gh-pages//swarm/swarmkit.md)]
 ---
 
 ## SwarmKit concepts (1/2)
@@ -1418,7 +1420,7 @@ class: extra-details
 
 - Both *workers* and *managers* can run containers
 
-.debug[[swarm/swarmkit.md](https://github.com/RyaxTech/container.training.git/tree/master/slides/swarm/swarmkit.md)]
+.debug[[swarm/swarmkit.md](https://github.com/RyaxTech/kube.training.git/tree/gh-pages//swarm/swarmkit.md)]
 ---
 
 ## Illustration
@@ -1435,14 +1437,14 @@ On the next slide:
 
 - dotted triangle = raft protocol
 
-.debug[[swarm/swarmkit.md](https://github.com/RyaxTech/container.training.git/tree/master/slides/swarm/swarmkit.md)]
+.debug[[swarm/swarmkit.md](https://github.com/RyaxTech/kube.training.git/tree/gh-pages//swarm/swarmkit.md)]
 ---
 
 class: pic
 
 ![Illustration](images/swarm-mode.svg)
 
-.debug[[swarm/swarmkit.md](https://github.com/RyaxTech/container.training.git/tree/master/slides/swarm/swarmkit.md)]
+.debug[[swarm/swarmkit.md](https://github.com/RyaxTech/kube.training.git/tree/gh-pages//swarm/swarmkit.md)]
 ---
 
 ## SwarmKit concepts (2/2)
@@ -1462,7 +1464,7 @@ class: pic
 
 You can refer to the [NOMENCLATURE](https://github.com/docker/swarmkit/blob/master/design/nomenclature.md) in the SwarmKit repo for more details.
 
-.debug[[swarm/swarmkit.md](https://github.com/RyaxTech/container.training.git/tree/master/slides/swarm/swarmkit.md)]
+.debug[[swarm/swarmkit.md](https://github.com/RyaxTech/kube.training.git/tree/gh-pages//swarm/swarmkit.md)]
 ---
 
 class: pic
@@ -1507,7 +1509,7 @@ Declarative vs imperative
 
 - ... As long as you know how to brew tea
 
-.debug[[common/declarative.md](https://github.com/RyaxTech/container.training.git/tree/master/slides/common/declarative.md)]
+.debug[[common/declarative.md](https://github.com/RyaxTech/kube.training.git/tree/gh-pages//common/declarative.md)]
 ---
 
 ## Declarative vs imperative
@@ -1533,7 +1535,7 @@ Declarative vs imperative
 .footnote[Did you know there was an [ISO standard](https://en.wikipedia.org/wiki/ISO_3103)
 specifying how to brew tea?]
 
-.debug[[common/declarative.md](https://github.com/RyaxTech/container.training.git/tree/master/slides/common/declarative.md)]
+.debug[[common/declarative.md](https://github.com/RyaxTech/kube.training.git/tree/gh-pages//common/declarative.md)]
 ---
 
 ## Declarative vs imperative
@@ -1553,7 +1555,7 @@ specifying how to brew tea?]
 
   - ... and compute a "diff" between *what we have* and *what we want*
 
-.debug[[common/declarative.md](https://github.com/RyaxTech/container.training.git/tree/master/slides/common/declarative.md)]
+.debug[[common/declarative.md](https://github.com/RyaxTech/kube.training.git/tree/gh-pages//common/declarative.md)]
 ---
 
 class: pic
@@ -1598,7 +1600,7 @@ Swarm mode
 
 - The SwarmKit API is also exposed (on a separate socket)
 
-.debug[[swarm/swarmmode.md](https://github.com/RyaxTech/container.training.git/tree/master/slides/swarm/swarmmode.md)]
+.debug[[swarm/swarmmode.md](https://github.com/RyaxTech/kube.training.git/tree/gh-pages//swarm/swarmmode.md)]
 ---
 
 ## Swarm mode needs to be explicitly activated
@@ -1626,7 +1628,7 @@ You will get an error message:
 Error response from daemon: This node is not a swarm manager. [...]
 ```
 
-.debug[[swarm/swarmmode.md](https://github.com/RyaxTech/container.training.git/tree/master/slides/swarm/swarmmode.md)]
+.debug[[swarm/swarmmode.md](https://github.com/RyaxTech/kube.training.git/tree/gh-pages//swarm/swarmmode.md)]
 ---
 
 class: pic
@@ -1676,7 +1678,7 @@ class: advertise-addr
 
 If Docker tells you that it `could not choose an IP address to advertise`, see next slide!
 
-.debug[[swarm/creatingswarm.md](https://github.com/RyaxTech/container.training.git/tree/master/slides/swarm/creatingswarm.md)]
+.debug[[swarm/creatingswarm.md](https://github.com/RyaxTech/kube.training.git/tree/gh-pages//swarm/creatingswarm.md)]
 ---
 
 class: advertise-addr
@@ -1703,7 +1705,7 @@ class: advertise-addr
   <br/>
   (otherwise, the default port 2377 will be used)
 
-.debug[[swarm/creatingswarm.md](https://github.com/RyaxTech/container.training.git/tree/master/slides/swarm/creatingswarm.md)]
+.debug[[swarm/creatingswarm.md](https://github.com/RyaxTech/kube.training.git/tree/gh-pages//swarm/creatingswarm.md)]
 ---
 
 class: advertise-addr
@@ -1726,7 +1728,7 @@ Example to run Swarm on a different port:
 docker swarm init --advertise-addr eth0:7777 --listen-addr eth0:7777
 ```
 
-.debug[[swarm/creatingswarm.md](https://github.com/RyaxTech/container.training.git/tree/master/slides/swarm/creatingswarm.md)]
+.debug[[swarm/creatingswarm.md](https://github.com/RyaxTech/kube.training.git/tree/gh-pages//swarm/creatingswarm.md)]
 ---
 
 class: advertise-addr
@@ -1756,7 +1758,7 @@ docker swarm init --advertise-addr 172.24.0.2
 docker swarm init --advertise-addr eth0
 ```
 
-.debug[[swarm/creatingswarm.md](https://github.com/RyaxTech/container.training.git/tree/master/slides/swarm/creatingswarm.md)]
+.debug[[swarm/creatingswarm.md](https://github.com/RyaxTech/kube.training.git/tree/gh-pages//swarm/creatingswarm.md)]
 ---
 
 class: extra-details
@@ -1777,7 +1779,7 @@ class: extra-details
 
   (When specifying an interface name, Docker will use its first IP address)
 
-.debug[[swarm/creatingswarm.md](https://github.com/RyaxTech/container.training.git/tree/master/slides/swarm/creatingswarm.md)]
+.debug[[swarm/creatingswarm.md](https://github.com/RyaxTech/kube.training.git/tree/gh-pages//swarm/creatingswarm.md)]
 ---
 
 ## Token generation
@@ -1801,7 +1803,7 @@ class: extra-details
       172.31.4.182:2377
   ```
 
-.debug[[swarm/creatingswarm.md](https://github.com/RyaxTech/container.training.git/tree/master/slides/swarm/creatingswarm.md)]
+.debug[[swarm/creatingswarm.md](https://github.com/RyaxTech/kube.training.git/tree/gh-pages//swarm/creatingswarm.md)]
 ---
 
 class: extra-details
@@ -1827,7 +1829,7 @@ Swarm: active
  ...
 ```
 
-.debug[[swarm/creatingswarm.md](https://github.com/RyaxTech/container.training.git/tree/master/slides/swarm/creatingswarm.md)]
+.debug[[swarm/creatingswarm.md](https://github.com/RyaxTech/kube.training.git/tree/gh-pages//swarm/creatingswarm.md)]
 ---
 
 ## Running our first Swarm mode command
@@ -1849,7 +1851,7 @@ ID             HOSTNAME  STATUS  AVAILABILITY  MANAGER STATUS
 8jud...ox4b *  node1     Ready   Active        Leader
 ```
 
-.debug[[swarm/creatingswarm.md](https://github.com/RyaxTech/container.training.git/tree/master/slides/swarm/creatingswarm.md)]
+.debug[[swarm/creatingswarm.md](https://github.com/RyaxTech/kube.training.git/tree/gh-pages//swarm/creatingswarm.md)]
 ---
 
 ## Adding nodes to the Swarm
@@ -1868,7 +1870,7 @@ ID             HOSTNAME  STATUS  AVAILABILITY  MANAGER STATUS
 
 - Don't panic, we can easily see it again .emoji[😏]
 
-.debug[[swarm/creatingswarm.md](https://github.com/RyaxTech/container.training.git/tree/master/slides/swarm/creatingswarm.md)]
+.debug[[swarm/creatingswarm.md](https://github.com/RyaxTech/kube.training.git/tree/gh-pages//swarm/creatingswarm.md)]
 ---
 
 ## Adding nodes to the Swarm
@@ -1892,7 +1894,7 @@ ID             HOSTNAME  STATUS  AVAILABILITY  MANAGER STATUS
 
 ]
 
-.debug[[swarm/creatingswarm.md](https://github.com/RyaxTech/container.training.git/tree/master/slides/swarm/creatingswarm.md)]
+.debug[[swarm/creatingswarm.md](https://github.com/RyaxTech/kube.training.git/tree/gh-pages//swarm/creatingswarm.md)]
 ---
 
 class: extra-details
@@ -1920,7 +1922,7 @@ class: extra-details
 - This is because the node that we added is currently a *worker*
 - Only *managers* can accept Swarm-specific commands
 
-.debug[[swarm/creatingswarm.md](https://github.com/RyaxTech/container.training.git/tree/master/slides/swarm/creatingswarm.md)]
+.debug[[swarm/creatingswarm.md](https://github.com/RyaxTech/kube.training.git/tree/gh-pages//swarm/creatingswarm.md)]
 ---
 
 ## View our two-node cluster
@@ -1947,7 +1949,7 @@ ID             HOSTNAME  STATUS  AVAILABILITY  MANAGER STATUS
 ehb0...4fvx    node2     Ready   Active
 ```
 
-.debug[[swarm/creatingswarm.md](https://github.com/RyaxTech/container.training.git/tree/master/slides/swarm/creatingswarm.md)]
+.debug[[swarm/creatingswarm.md](https://github.com/RyaxTech/kube.training.git/tree/gh-pages//swarm/creatingswarm.md)]
 ---
 
 class: under-the-hood
@@ -1964,7 +1966,7 @@ When we do `docker swarm init`:
 
 - the join tokens are created
 
-.debug[[swarm/creatingswarm.md](https://github.com/RyaxTech/container.training.git/tree/master/slides/swarm/creatingswarm.md)]
+.debug[[swarm/creatingswarm.md](https://github.com/RyaxTech/kube.training.git/tree/gh-pages//swarm/creatingswarm.md)]
 ---
 
 class: under-the-hood
@@ -1984,7 +1986,7 @@ If a token is compromised, it can be rotated instantly with:
 docker swarm join-token --rotate <worker|manager>
 ```
 
-.debug[[swarm/creatingswarm.md](https://github.com/RyaxTech/container.training.git/tree/master/slides/swarm/creatingswarm.md)]
+.debug[[swarm/creatingswarm.md](https://github.com/RyaxTech/kube.training.git/tree/gh-pages//swarm/creatingswarm.md)]
 ---
 
 class: under-the-hood
@@ -2005,7 +2007,7 @@ When a node joins the Swarm:
 
   - it connects to one of the managers (leader or follower)
 
-.debug[[swarm/creatingswarm.md](https://github.com/RyaxTech/container.training.git/tree/master/slides/swarm/creatingswarm.md)]
+.debug[[swarm/creatingswarm.md](https://github.com/RyaxTech/kube.training.git/tree/gh-pages//swarm/creatingswarm.md)]
 ---
 
 class: under-the-hood
@@ -2023,7 +2025,7 @@ class: under-the-hood
   (but this can be activated on a by-network basis, using IPSEC,
   leveraging hardware crypto if available)
 
-.debug[[swarm/creatingswarm.md](https://github.com/RyaxTech/container.training.git/tree/master/slides/swarm/creatingswarm.md)]
+.debug[[swarm/creatingswarm.md](https://github.com/RyaxTech/kube.training.git/tree/gh-pages//swarm/creatingswarm.md)]
 ---
 
 class: under-the-hood
@@ -2056,7 +2058,7 @@ And DockerCon Black Belt talks:
  ([video](https://dockercon.docker.com/watch/5fhwnQxW8on1TKxPwwXZ5r))]
 
 
-.debug[[swarm/creatingswarm.md](https://github.com/RyaxTech/container.training.git/tree/master/slides/swarm/creatingswarm.md)]
+.debug[[swarm/creatingswarm.md](https://github.com/RyaxTech/kube.training.git/tree/gh-pages//swarm/creatingswarm.md)]
 ---
 ## Adding more manager nodes
 
@@ -2072,7 +2074,7 @@ And DockerCon Black Belt talks:
 
 - Nobody wants to do that ... so let's make our cluster highly available
 
-.debug[[swarm/morenodes.md](https://github.com/RyaxTech/container.training.git/tree/master/slides/swarm/morenodes.md)]
+.debug[[swarm/morenodes.md](https://github.com/RyaxTech/kube.training.git/tree/gh-pages//swarm/morenodes.md)]
 ---
 
 class: self-paced
@@ -2090,7 +2092,7 @@ done
 unset DOCKER_HOST
 ```
 
-.debug[[swarm/morenodes.md](https://github.com/RyaxTech/container.training.git/tree/master/slides/swarm/morenodes.md)]
+.debug[[swarm/morenodes.md](https://github.com/RyaxTech/kube.training.git/tree/gh-pages//swarm/morenodes.md)]
 ---
 
 class: in-person
@@ -2115,7 +2117,7 @@ class: in-person
 
 [That was easy.](https://www.youtube.com/watch?v=3YmMNpbFjp0)
 
-.debug[[swarm/morenodes.md](https://github.com/RyaxTech/container.training.git/tree/master/slides/swarm/morenodes.md)]
+.debug[[swarm/morenodes.md](https://github.com/RyaxTech/kube.training.git/tree/gh-pages//swarm/morenodes.md)]
 ---
 
 ## Controlling the Swarm from other nodes
@@ -2139,7 +2141,7 @@ the node is not a manager.
 
 As we saw earlier, you can only control the Swarm through a manager node.
 
-.debug[[swarm/morenodes.md](https://github.com/RyaxTech/container.training.git/tree/master/slides/swarm/morenodes.md)]
+.debug[[swarm/morenodes.md](https://github.com/RyaxTech/kube.training.git/tree/gh-pages//swarm/morenodes.md)]
 ---
 
 class: self-paced
@@ -2156,7 +2158,7 @@ class: self-paced
 
 ![Play-With-Docker icons](images/pwd-icons.png)
 
-.debug[[swarm/morenodes.md](https://github.com/RyaxTech/container.training.git/tree/master/slides/swarm/morenodes.md)]
+.debug[[swarm/morenodes.md](https://github.com/RyaxTech/kube.training.git/tree/gh-pages//swarm/morenodes.md)]
 ---
 
 ## Dynamically changing the role of a node
@@ -2181,7 +2183,7 @@ class: self-paced
 
 ]
 
-.debug[[swarm/morenodes.md](https://github.com/RyaxTech/container.training.git/tree/master/slides/swarm/morenodes.md)]
+.debug[[swarm/morenodes.md](https://github.com/RyaxTech/kube.training.git/tree/gh-pages//swarm/morenodes.md)]
 ---
 
 ## How many managers do we need?
@@ -2199,7 +2201,7 @@ class: self-paced
 
 - 7 managers and more = now you might be overdoing it a little bit
 
-.debug[[swarm/morenodes.md](https://github.com/RyaxTech/container.training.git/tree/master/slides/swarm/morenodes.md)]
+.debug[[swarm/morenodes.md](https://github.com/RyaxTech/kube.training.git/tree/gh-pages//swarm/morenodes.md)]
 ---
 
 ## Why not have *all* nodes be managers?
@@ -2212,7 +2214,7 @@ class: self-paced
 
 - Bigger network = more latency
 
-.debug[[swarm/morenodes.md](https://github.com/RyaxTech/container.training.git/tree/master/slides/swarm/morenodes.md)]
+.debug[[swarm/morenodes.md](https://github.com/RyaxTech/kube.training.git/tree/gh-pages//swarm/morenodes.md)]
 ---
 
 ## What would McGyver do?
@@ -2235,7 +2237,7 @@ class: self-paced
   - if you can afford to have fast, stable managers, add more of them
   - otherwise, break down your nodes in multiple clusters
 
-.debug[[swarm/morenodes.md](https://github.com/RyaxTech/container.training.git/tree/master/slides/swarm/morenodes.md)]
+.debug[[swarm/morenodes.md](https://github.com/RyaxTech/kube.training.git/tree/gh-pages//swarm/morenodes.md)]
 ---
 
 ## What's the upper limit?
@@ -2256,7 +2258,7 @@ class: self-paced
 
   - scheduling of large jobs (70000 containers) is slow, though (working on it!)
 
-.debug[[swarm/morenodes.md](https://github.com/RyaxTech/container.training.git/tree/master/slides/swarm/morenodes.md)]
+.debug[[swarm/morenodes.md](https://github.com/RyaxTech/kube.training.git/tree/gh-pages//swarm/morenodes.md)]
 ---
 
 ## Real-life deployment methods
@@ -2277,7 +2279,7 @@ Running commands manually over SSH
 
 - [Docker for Azure](https://docs.docker.com/docker-for-azure/)
 
-.debug[[swarm/morenodes.md](https://github.com/RyaxTech/container.training.git/tree/master/slides/swarm/morenodes.md)]
+.debug[[swarm/morenodes.md](https://github.com/RyaxTech/kube.training.git/tree/gh-pages//swarm/morenodes.md)]
 ---
 
 class: pic
@@ -2322,7 +2324,7 @@ Running our first Swarm service
 
 ]
 
-.debug[[swarm/firstservice.md](https://github.com/RyaxTech/container.training.git/tree/master/slides/swarm/firstservice.md)]
+.debug[[swarm/firstservice.md](https://github.com/RyaxTech/kube.training.git/tree/gh-pages//swarm/firstservice.md)]
 ---
 
 ## Checking service logs
@@ -2346,7 +2348,7 @@ Flags `--follow` and `--tail` are available, as well as a few others.
 
 Note: by default, when a container is destroyed (e.g. when scaling down), its logs are lost.
 
-.debug[[swarm/firstservice.md](https://github.com/RyaxTech/container.training.git/tree/master/slides/swarm/firstservice.md)]
+.debug[[swarm/firstservice.md](https://github.com/RyaxTech/kube.training.git/tree/gh-pages//swarm/firstservice.md)]
 ---
 
 class: extra-details
@@ -2368,7 +2370,7 @@ class: extra-details
 
 ]
 
-.debug[[swarm/firstservice.md](https://github.com/RyaxTech/container.training.git/tree/master/slides/swarm/firstservice.md)]
+.debug[[swarm/firstservice.md](https://github.com/RyaxTech/kube.training.git/tree/gh-pages//swarm/firstservice.md)]
 ---
 
 class: extra-details
@@ -2393,7 +2395,7 @@ class: extra-details
 
 ]
 
-.debug[[swarm/firstservice.md](https://github.com/RyaxTech/container.training.git/tree/master/slides/swarm/firstservice.md)]
+.debug[[swarm/firstservice.md](https://github.com/RyaxTech/kube.training.git/tree/gh-pages//swarm/firstservice.md)]
 ---
 
 ## Scale our service
@@ -2414,7 +2416,7 @@ class: extra-details
 
 ]
 
-.debug[[swarm/firstservice.md](https://github.com/RyaxTech/container.training.git/tree/master/slides/swarm/firstservice.md)]
+.debug[[swarm/firstservice.md](https://github.com/RyaxTech/kube.training.git/tree/gh-pages//swarm/firstservice.md)]
 ---
 
 ## Monitoring deployment progress with `--detach`
@@ -2436,7 +2438,7 @@ class: extra-details
   - the CLI just submits our request
   - it exits as soon as the request is committed into Raft
 
-.debug[[swarm/firstservice.md](https://github.com/RyaxTech/container.training.git/tree/master/slides/swarm/firstservice.md)]
+.debug[[swarm/firstservice.md](https://github.com/RyaxTech/kube.training.git/tree/gh-pages//swarm/firstservice.md)]
 ---
 
 ## To `--detach` or not to `--detach`
@@ -2456,7 +2458,7 @@ class: extra-details
 
 .warning[`--detach=true` does not complete *faster*. It just *doesn't wait* for completion.]
 
-.debug[[swarm/firstservice.md](https://github.com/RyaxTech/container.training.git/tree/master/slides/swarm/firstservice.md)]
+.debug[[swarm/firstservice.md](https://github.com/RyaxTech/kube.training.git/tree/gh-pages//swarm/firstservice.md)]
 ---
 
 class: extra-details
@@ -2471,7 +2473,7 @@ class: extra-details
 
  (You can watch progress with e.g. `watch docker service ps <serviceID>`)
 
-.debug[[swarm/firstservice.md](https://github.com/RyaxTech/container.training.git/tree/master/slides/swarm/firstservice.md)]
+.debug[[swarm/firstservice.md](https://github.com/RyaxTech/kube.training.git/tree/gh-pages//swarm/firstservice.md)]
 ---
 
 ## `--detach` in action
@@ -2490,7 +2492,7 @@ class: extra-details
 
 ]
 
-.debug[[swarm/firstservice.md](https://github.com/RyaxTech/container.training.git/tree/master/slides/swarm/firstservice.md)]
+.debug[[swarm/firstservice.md](https://github.com/RyaxTech/kube.training.git/tree/gh-pages//swarm/firstservice.md)]
 ---
 
 ## Expose a service
@@ -2512,7 +2514,7 @@ class: extra-details
 - You can indicate two port numbers to set the public port number
   <br/>(just like with `docker run -p`)
 
-.debug[[swarm/firstservice.md](https://github.com/RyaxTech/container.training.git/tree/master/slides/swarm/firstservice.md)]
+.debug[[swarm/firstservice.md](https://github.com/RyaxTech/kube.training.git/tree/gh-pages//swarm/firstservice.md)]
 ---
 
 ## Expose ElasticSearch on its default port
@@ -2531,7 +2533,7 @@ Note: don't forget the **:2**!
 
 The latest version of the ElasticSearch image won't start without mandatory configuration.
 
-.debug[[swarm/firstservice.md](https://github.com/RyaxTech/container.training.git/tree/master/slides/swarm/firstservice.md)]
+.debug[[swarm/firstservice.md](https://github.com/RyaxTech/kube.training.git/tree/gh-pages//swarm/firstservice.md)]
 ---
 
 ## Tasks lifecycle
@@ -2550,14 +2552,14 @@ The latest version of the ElasticSearch image won't start without mandatory conf
 
   (A replacement task will be created)
 
-.debug[[swarm/firstservice.md](https://github.com/RyaxTech/container.training.git/tree/master/slides/swarm/firstservice.md)]
+.debug[[swarm/firstservice.md](https://github.com/RyaxTech/kube.training.git/tree/gh-pages//swarm/firstservice.md)]
 ---
 
 class: extra-details, pic
 
 ![diagram showing what happens during docker service create, courtesy of @aluzzardi](images/docker-service-create.svg)
 
-.debug[[swarm/firstservice.md](https://github.com/RyaxTech/container.training.git/tree/master/slides/swarm/firstservice.md)]
+.debug[[swarm/firstservice.md](https://github.com/RyaxTech/kube.training.git/tree/gh-pages//swarm/firstservice.md)]
 ---
 
 ## Test our service
@@ -2582,7 +2584,7 @@ class: extra-details, pic
 ElasticSearch serves a little JSON document with some basic information
 about this instance; including a randomly-generated super-hero name.
 
-.debug[[swarm/firstservice.md](https://github.com/RyaxTech/container.training.git/tree/master/slides/swarm/firstservice.md)]
+.debug[[swarm/firstservice.md](https://github.com/RyaxTech/kube.training.git/tree/gh-pages//swarm/firstservice.md)]
 ---
 
 ## Test the load balancing
@@ -2605,7 +2607,7 @@ Note: if you don't have `jq` on your Play-With-Docker instance, just install it:
 apk add --no-cache jq
 ```
 
-.debug[[swarm/firstservice.md](https://github.com/RyaxTech/container.training.git/tree/master/slides/swarm/firstservice.md)]
+.debug[[swarm/firstservice.md](https://github.com/RyaxTech/kube.training.git/tree/gh-pages//swarm/firstservice.md)]
 ---
 
 ## Load balancing results
@@ -2620,14 +2622,14 @@ you will probably see the same
 instance name over and over, because your browser (unlike curl) will try
 to re-use the same connection.
 
-.debug[[swarm/firstservice.md](https://github.com/RyaxTech/container.training.git/tree/master/slides/swarm/firstservice.md)]
+.debug[[swarm/firstservice.md](https://github.com/RyaxTech/kube.training.git/tree/gh-pages//swarm/firstservice.md)]
 ---
 
 class: pic
 
 ![routing mesh](images/ingress-routing-mesh.png)
 
-.debug[[swarm/firstservice.md](https://github.com/RyaxTech/container.training.git/tree/master/slides/swarm/firstservice.md)]
+.debug[[swarm/firstservice.md](https://github.com/RyaxTech/kube.training.git/tree/gh-pages//swarm/firstservice.md)]
 ---
 
 ## Under the hood of the routing mesh
@@ -2643,7 +2645,7 @@ class: pic
   (Allowing connections to be routed directly to the destination,
   without extra hops)
 
-.debug[[swarm/firstservice.md](https://github.com/RyaxTech/container.training.git/tree/master/slides/swarm/firstservice.md)]
+.debug[[swarm/firstservice.md](https://github.com/RyaxTech/kube.training.git/tree/gh-pages//swarm/firstservice.md)]
 ---
 
 ## Managing inbound traffic
@@ -2658,14 +2660,14 @@ There are many ways to deal with inbound traffic on a Swarm cluster.
 
 - etc.
 
-.debug[[swarm/firstservice.md](https://github.com/RyaxTech/container.training.git/tree/master/slides/swarm/firstservice.md)]
+.debug[[swarm/firstservice.md](https://github.com/RyaxTech/kube.training.git/tree/gh-pages//swarm/firstservice.md)]
 ---
 
 class: pic
 
 ![external LB](images/ingress-lb.png)
 
-.debug[[swarm/firstservice.md](https://github.com/RyaxTech/container.training.git/tree/master/slides/swarm/firstservice.md)]
+.debug[[swarm/firstservice.md](https://github.com/RyaxTech/kube.training.git/tree/gh-pages//swarm/firstservice.md)]
 ---
 
 ## Managing HTTP traffic
@@ -2694,7 +2696,7 @@ class: pic
   - [Docker Flow Proxy](http://proxy.dockerflow.com/) - uses HAProxy, made for 
   Swarm by Docker Captain [@vfarcic](https://twitter.com/vfarcic)
 
-.debug[[swarm/firstservice.md](https://github.com/RyaxTech/container.training.git/tree/master/slides/swarm/firstservice.md)]
+.debug[[swarm/firstservice.md](https://github.com/RyaxTech/kube.training.git/tree/gh-pages//swarm/firstservice.md)]
 ---
 
 class: btw-labels
@@ -2713,7 +2715,7 @@ class: btw-labels
 
   - corelate Swarm objects together (services, volumes, configs, secrets, etc.)
 
-.debug[[swarm/firstservice.md](https://github.com/RyaxTech/container.training.git/tree/master/slides/swarm/firstservice.md)]
+.debug[[swarm/firstservice.md](https://github.com/RyaxTech/kube.training.git/tree/gh-pages//swarm/firstservice.md)]
 ---
 
 ## Pro-tip for ingress traffic management
@@ -2735,7 +2737,7 @@ class: btw-labels
 
   (You will have to route traffic to containers using exposed ports or UNIX sockets)
 
-.debug[[swarm/firstservice.md](https://github.com/RyaxTech/container.training.git/tree/master/slides/swarm/firstservice.md)]
+.debug[[swarm/firstservice.md](https://github.com/RyaxTech/kube.training.git/tree/gh-pages//swarm/firstservice.md)]
 ---
 
 class: extra-details
@@ -2758,7 +2760,7 @@ class: extra-details
 
 - See [this PR](https://github.com/moby/moby/pull/32981) for more information about local network drivers in Swarm mode
 
-.debug[[swarm/firstservice.md](https://github.com/RyaxTech/container.training.git/tree/master/slides/swarm/firstservice.md)]
+.debug[[swarm/firstservice.md](https://github.com/RyaxTech/kube.training.git/tree/gh-pages//swarm/firstservice.md)]
 ---
 
 ## Visualize container placement
@@ -2777,7 +2779,7 @@ class: extra-details
 
 ]
 
-.debug[[swarm/firstservice.md](https://github.com/RyaxTech/container.training.git/tree/master/slides/swarm/firstservice.md)]
+.debug[[swarm/firstservice.md](https://github.com/RyaxTech/kube.training.git/tree/gh-pages//swarm/firstservice.md)]
 ---
 
 ## Connect to the visualization webapp
@@ -2802,7 +2804,7 @@ class: extra-details
 
 - It has some glitches (it's not Carrier-Grade Enterprise-Compliant ISO-9001 software)
 
-.debug[[swarm/firstservice.md](https://github.com/RyaxTech/container.training.git/tree/master/slides/swarm/firstservice.md)]
+.debug[[swarm/firstservice.md](https://github.com/RyaxTech/kube.training.git/tree/gh-pages//swarm/firstservice.md)]
 ---
 
 ## Why This Is More Important Than You Think
@@ -2831,7 +2833,7 @@ it to Swarm and maintains it.
 
 ]
 
-.debug[[swarm/firstservice.md](https://github.com/RyaxTech/container.training.git/tree/master/slides/swarm/firstservice.md)]
+.debug[[swarm/firstservice.md](https://github.com/RyaxTech/kube.training.git/tree/gh-pages//swarm/firstservice.md)]
 ---
 
 ## Terminate our services
@@ -2853,7 +2855,7 @@ it to Swarm and maintains it.
 
 ]
 
-.debug[[swarm/firstservice.md](https://github.com/RyaxTech/container.training.git/tree/master/slides/swarm/firstservice.md)]
+.debug[[swarm/firstservice.md](https://github.com/RyaxTech/kube.training.git/tree/gh-pages//swarm/firstservice.md)]
 ---
 
 class: pic
@@ -2888,7 +2890,7 @@ In this part, we will:
 
 - **run** services using these images.
 
-.debug[[swarm/ourapponswarm.md](https://github.com/RyaxTech/container.training.git/tree/master/slides/swarm/ourapponswarm.md)]
+.debug[[swarm/ourapponswarm.md](https://github.com/RyaxTech/kube.training.git/tree/gh-pages//swarm/ourapponswarm.md)]
 ---
 
 ## Why do we need to ship our images?
@@ -2904,7 +2906,7 @@ In this part, we will:
 - Once our images are on a registry, we can reference them when
   creating our services
 
-.debug[[swarm/ourapponswarm.md](https://github.com/RyaxTech/container.training.git/tree/master/slides/swarm/ourapponswarm.md)]
+.debug[[swarm/ourapponswarm.md](https://github.com/RyaxTech/kube.training.git/tree/gh-pages//swarm/ourapponswarm.md)]
 ---
 
 class: extra-details
@@ -2922,7 +2924,7 @@ docker service create jpetazzo/doublerainbow:v0.1
 
 We just have to adapt this to our application, which has 4 services!
 
-.debug[[swarm/ourapponswarm.md](https://github.com/RyaxTech/container.training.git/tree/master/slides/swarm/ourapponswarm.md)]
+.debug[[swarm/ourapponswarm.md](https://github.com/RyaxTech/kube.training.git/tree/gh-pages//swarm/ourapponswarm.md)]
 ---
 
 ## The plan
@@ -2935,7 +2937,7 @@ We just have to adapt this to our application, which has 4 services!
 
 - Create services using the images
 
-.debug[[swarm/ourapponswarm.md](https://github.com/RyaxTech/container.training.git/tree/master/slides/swarm/ourapponswarm.md)]
+.debug[[swarm/ourapponswarm.md](https://github.com/RyaxTech/kube.training.git/tree/gh-pages//swarm/ourapponswarm.md)]
 ---
 
 ## Which registry do we want to use?
@@ -2970,7 +2972,7 @@ We just have to adapt this to our application, which has 4 services!
   
 ]
 
-.debug[[swarm/ourapponswarm.md](https://github.com/RyaxTech/container.training.git/tree/master/slides/swarm/ourapponswarm.md)]
+.debug[[swarm/ourapponswarm.md](https://github.com/RyaxTech/kube.training.git/tree/gh-pages//swarm/ourapponswarm.md)]
 ---
 
 class: extra-details
@@ -2987,7 +2989,7 @@ class: extra-details
 - And in the following slides, we would use our Docker Hub login
   (e.g. `jpetazzo`) instead of the registry address (i.e. `127.0.0.1:5000`)
 
-.debug[[swarm/ourapponswarm.md](https://github.com/RyaxTech/container.training.git/tree/master/slides/swarm/ourapponswarm.md)]
+.debug[[swarm/ourapponswarm.md](https://github.com/RyaxTech/kube.training.git/tree/gh-pages//swarm/ourapponswarm.md)]
 ---
 
 class: extra-details
@@ -3007,7 +3009,7 @@ class: extra-details
 
 *This is out of the scope of this workshop!*
 
-.debug[[swarm/ourapponswarm.md](https://github.com/RyaxTech/container.training.git/tree/master/slides/swarm/ourapponswarm.md)]
+.debug[[swarm/ourapponswarm.md](https://github.com/RyaxTech/kube.training.git/tree/gh-pages//swarm/ourapponswarm.md)]
 ---
 class: btp-manual
 
@@ -3031,7 +3033,7 @@ class: btp-manual
 
 - Let's see how we can streamline this process!
 
-.debug[[swarm/compose2swarm.md](https://github.com/RyaxTech/container.training.git/tree/master/slides/swarm/compose2swarm.md)]
+.debug[[swarm/compose2swarm.md](https://github.com/RyaxTech/kube.training.git/tree/gh-pages//swarm/compose2swarm.md)]
 ---
 
 class: pic
@@ -3069,7 +3071,7 @@ Integration with Compose
 
 - Compose files *v3* can also be used for production deployments!
 
-.debug[[swarm/compose2swarm.md](https://github.com/RyaxTech/container.training.git/tree/master/slides/swarm/compose2swarm.md)]
+.debug[[swarm/compose2swarm.md](https://github.com/RyaxTech/kube.training.git/tree/gh-pages//swarm/compose2swarm.md)]
 ---
 
 ## Compose file version 3
@@ -3090,7 +3092,7 @@ Integration with Compose
 
   (JSON payload describing an application; could be generated from a Compose file)
 
-.debug[[swarm/compose2swarm.md](https://github.com/RyaxTech/container.training.git/tree/master/slides/swarm/compose2swarm.md)]
+.debug[[swarm/compose2swarm.md](https://github.com/RyaxTech/kube.training.git/tree/gh-pages//swarm/compose2swarm.md)]
 ---
 
 ## Our first stack
@@ -3115,7 +3117,7 @@ services:
       - "5000:5000"
 ```
 
-.debug[[swarm/compose2swarm.md](https://github.com/RyaxTech/container.training.git/tree/master/slides/swarm/compose2swarm.md)]
+.debug[[swarm/compose2swarm.md](https://github.com/RyaxTech/kube.training.git/tree/gh-pages//swarm/compose2swarm.md)]
 ---
 
 ## Checking our stack files
@@ -3136,7 +3138,7 @@ services:
 
 ]
 
-.debug[[swarm/compose2swarm.md](https://github.com/RyaxTech/container.training.git/tree/master/slides/swarm/compose2swarm.md)]
+.debug[[swarm/compose2swarm.md](https://github.com/RyaxTech/kube.training.git/tree/gh-pages//swarm/compose2swarm.md)]
 ---
 
 ## Deploying our first stack
@@ -3158,7 +3160,7 @@ services:
 
 ]
 
-.debug[[swarm/compose2swarm.md](https://github.com/RyaxTech/container.training.git/tree/master/slides/swarm/compose2swarm.md)]
+.debug[[swarm/compose2swarm.md](https://github.com/RyaxTech/kube.training.git/tree/gh-pages//swarm/compose2swarm.md)]
 ---
 
 ## Inspecting stacks
@@ -3179,7 +3181,7 @@ services:
 
 ]
 
-.debug[[swarm/compose2swarm.md](https://github.com/RyaxTech/container.training.git/tree/master/slides/swarm/compose2swarm.md)]
+.debug[[swarm/compose2swarm.md](https://github.com/RyaxTech/kube.training.git/tree/gh-pages//swarm/compose2swarm.md)]
 ---
 
 class: btp-manual
@@ -3200,7 +3202,7 @@ Our registry is not *exactly* identical to the one deployed with `docker service
 
 - Services and tasks also get an internal label indicating which stack they belong to
 
-.debug[[swarm/compose2swarm.md](https://github.com/RyaxTech/container.training.git/tree/master/slides/swarm/compose2swarm.md)]
+.debug[[swarm/compose2swarm.md](https://github.com/RyaxTech/kube.training.git/tree/gh-pages//swarm/compose2swarm.md)]
 ---
 
 class: btp-auto
@@ -3228,7 +3230,7 @@ It should return:
 
 If that doesn't work, retry a few times; perhaps the container is still starting.
 
-.debug[[swarm/compose2swarm.md](https://github.com/RyaxTech/container.training.git/tree/master/slides/swarm/compose2swarm.md)]
+.debug[[swarm/compose2swarm.md](https://github.com/RyaxTech/kube.training.git/tree/gh-pages//swarm/compose2swarm.md)]
 ---
 
 class: btp-auto
@@ -3252,7 +3254,7 @@ class: btp-auto
 
 ]
 
-.debug[[swarm/compose2swarm.md](https://github.com/RyaxTech/container.training.git/tree/master/slides/swarm/compose2swarm.md)]
+.debug[[swarm/compose2swarm.md](https://github.com/RyaxTech/kube.training.git/tree/gh-pages//swarm/compose2swarm.md)]
 ---
 
 class: btp-auto
@@ -3275,7 +3277,7 @@ The curl command should now output:
 "repositories":["busybox"]}
 ```
 
-.debug[[swarm/compose2swarm.md](https://github.com/RyaxTech/container.training.git/tree/master/slides/swarm/compose2swarm.md)]
+.debug[[swarm/compose2swarm.md](https://github.com/RyaxTech/kube.training.git/tree/gh-pages//swarm/compose2swarm.md)]
 ---
 
 ## Building and pushing stack services
@@ -3300,7 +3302,7 @@ The curl command should now output:
       image: myregistry.company.net:5000/webfront
   ```
 
-.debug[[swarm/compose2swarm.md](https://github.com/RyaxTech/container.training.git/tree/master/slides/swarm/compose2swarm.md)]
+.debug[[swarm/compose2swarm.md](https://github.com/RyaxTech/kube.training.git/tree/gh-pages//swarm/compose2swarm.md)]
 ---
 
 ## Using Compose to build and push images
@@ -3317,7 +3319,7 @@ The curl command should now output:
 
 Let's have a look at the `dockercoins.yml` file while this is building and pushing.
 
-.debug[[swarm/compose2swarm.md](https://github.com/RyaxTech/container.training.git/tree/master/slides/swarm/compose2swarm.md)]
+.debug[[swarm/compose2swarm.md](https://github.com/RyaxTech/kube.training.git/tree/gh-pages//swarm/compose2swarm.md)]
 ---
 
 ```yaml
@@ -3341,7 +3343,7 @@ services:
       replicas: 10
 ```
 
-.debug[[swarm/compose2swarm.md](https://github.com/RyaxTech/container.training.git/tree/master/slides/swarm/compose2swarm.md)]
+.debug[[swarm/compose2swarm.md](https://github.com/RyaxTech/kube.training.git/tree/gh-pages//swarm/compose2swarm.md)]
 ---
 
 ## Deploying the application
@@ -3359,7 +3361,7 @@ services:
 
 We can now connect to any of our nodes on port 8000, and we will see the familiar hashing speed graph.
 
-.debug[[swarm/compose2swarm.md](https://github.com/RyaxTech/container.training.git/tree/master/slides/swarm/compose2swarm.md)]
+.debug[[swarm/compose2swarm.md](https://github.com/RyaxTech/kube.training.git/tree/gh-pages//swarm/compose2swarm.md)]
 ---
 
 ## Maintaining multiple environments
@@ -3381,7 +3383,7 @@ There are many ways to handle variations between environments.
 
 See [this documentation page](https://docs.docker.com/compose/extends/) for more details about these techniques.
 
-.debug[[swarm/compose2swarm.md](https://github.com/RyaxTech/container.training.git/tree/master/slides/swarm/compose2swarm.md)]
+.debug[[swarm/compose2swarm.md](https://github.com/RyaxTech/kube.training.git/tree/gh-pages//swarm/compose2swarm.md)]
 ---
 
 class: extra-details
@@ -3404,7 +3406,7 @@ class: extra-details
 
   (But you can use `docker-compose config` to "flatten" your configuration)
 
-.debug[[swarm/compose2swarm.md](https://github.com/RyaxTech/container.training.git/tree/master/slides/swarm/compose2swarm.md)]
+.debug[[swarm/compose2swarm.md](https://github.com/RyaxTech/kube.training.git/tree/gh-pages//swarm/compose2swarm.md)]
 ---
 
 ## Summary
@@ -3423,7 +3425,7 @@ class: extra-details
 
 - Awesome job, team!
 
-.debug[[swarm/compose2swarm.md](https://github.com/RyaxTech/container.training.git/tree/master/slides/swarm/compose2swarm.md)]
+.debug[[swarm/compose2swarm.md](https://github.com/RyaxTech/kube.training.git/tree/gh-pages//swarm/compose2swarm.md)]
 ---
 
 class: pic
@@ -3462,7 +3464,7 @@ Updating services
 
   - run new image
 
-.debug[[swarm/updatingservices.md](https://github.com/RyaxTech/container.training.git/tree/master/slides/swarm/updatingservices.md)]
+.debug[[swarm/updatingservices.md](https://github.com/RyaxTech/kube.training.git/tree/gh-pages//swarm/updatingservices.md)]
 ---
 
 ## Updating a single service the hard way
@@ -3480,7 +3482,7 @@ Updating services
 
   (When you check which images are running, you want these tags to be uniquely identifiable)
 
-.debug[[swarm/updatingservices.md](https://github.com/RyaxTech/container.training.git/tree/master/slides/swarm/updatingservices.md)]
+.debug[[swarm/updatingservices.md](https://github.com/RyaxTech/kube.training.git/tree/gh-pages//swarm/updatingservices.md)]
 ---
 
 ## Updating services the easy way
@@ -3499,7 +3501,7 @@ Updating services
 
 - We don't need to learn new commands!
 
-.debug[[swarm/updatingservices.md](https://github.com/RyaxTech/container.training.git/tree/master/slides/swarm/updatingservices.md)]
+.debug[[swarm/updatingservices.md](https://github.com/RyaxTech/kube.training.git/tree/gh-pages//swarm/updatingservices.md)]
 ---
 
 ## Changing the code
@@ -3530,7 +3532,7 @@ Updating services
 
 ]
 
-.debug[[swarm/updatingservices.md](https://github.com/RyaxTech/container.training.git/tree/master/slides/swarm/updatingservices.md)]
+.debug[[swarm/updatingservices.md](https://github.com/RyaxTech/kube.training.git/tree/gh-pages//swarm/updatingservices.md)]
 ---
 
 ## Build, ship, and run our changes
@@ -3554,7 +3556,7 @@ Updating services
 
 ]
 
-.debug[[swarm/updatingservices.md](https://github.com/RyaxTech/container.training.git/tree/master/slides/swarm/updatingservices.md)]
+.debug[[swarm/updatingservices.md](https://github.com/RyaxTech/kube.training.git/tree/gh-pages//swarm/updatingservices.md)]
 ---
 
 ## Viewing our changes
@@ -3567,7 +3569,7 @@ Updating services
 
 - ... Eventually the legend on the left will be bigger!
 
-.debug[[swarm/updatingservices.md](https://github.com/RyaxTech/container.training.git/tree/master/slides/swarm/updatingservices.md)]
+.debug[[swarm/updatingservices.md](https://github.com/RyaxTech/kube.training.git/tree/gh-pages//swarm/updatingservices.md)]
 ---
 class: self-paced
 
@@ -3589,7 +3591,7 @@ We pick up exactly where we left you, so we assume that you have:
 
 The next slide has a cheat sheet if you need to set that up in a pinch.
 
-.debug[[swarm/operatingswarm.md](https://github.com/RyaxTech/container.training.git/tree/master/slides/swarm/operatingswarm.md)]
+.debug[[swarm/operatingswarm.md](https://github.com/RyaxTech/kube.training.git/tree/gh-pages//swarm/operatingswarm.md)]
 ---
 
 class: self-paced
@@ -3615,7 +3617,7 @@ docker stack deploy --compose-file dockercoins.yml dockercoins
 
 You should now be able to connect to port 8000 and see the DockerCoins web UI.
 
-.debug[[swarm/operatingswarm.md](https://github.com/RyaxTech/container.training.git/tree/master/slides/swarm/operatingswarm.md)]
+.debug[[swarm/operatingswarm.md](https://github.com/RyaxTech/kube.training.git/tree/gh-pages//swarm/operatingswarm.md)]
 ---
 
 class: pic
@@ -3657,7 +3659,7 @@ Secrets management and encryption at rest
   - data plane is not encrypted by default (for performance reasons),
     <br/>but we saw earlier how to enable that with a single flag
 
-.debug[[swarm/security.md](https://github.com/RyaxTech/container.training.git/tree/master/slides/swarm/security.md)]
+.debug[[swarm/security.md](https://github.com/RyaxTech/kube.training.git/tree/gh-pages//swarm/security.md)]
 ---
 
 class: pic
@@ -3698,7 +3700,7 @@ Least privilege model
 
 - Compromising a worker node does not give access to the full cluster
 
-.debug[[swarm/leastprivilege.md](https://github.com/RyaxTech/container.training.git/tree/master/slides/swarm/leastprivilege.md)]
+.debug[[swarm/leastprivilege.md](https://github.com/RyaxTech/kube.training.git/tree/gh-pages//swarm/leastprivilege.md)]
 ---
 
 ## What can I do if I compromise a worker node?
@@ -3717,7 +3719,7 @@ Least privilege model
 
 - I can only learn the IP addresses of the manager nodes
 
-.debug[[swarm/leastprivilege.md](https://github.com/RyaxTech/container.training.git/tree/master/slides/swarm/leastprivilege.md)]
+.debug[[swarm/leastprivilege.md](https://github.com/RyaxTech/kube.training.git/tree/gh-pages//swarm/leastprivilege.md)]
 ---
 
 ## Guidelines for workload isolation
@@ -3732,7 +3734,7 @@ Least privilege model
 
 - Enforcement can be done with [Authorization Plugins](https://docs.docker.com/engine/extend/plugins_authorization/)
 
-.debug[[swarm/leastprivilege.md](https://github.com/RyaxTech/container.training.git/tree/master/slides/swarm/leastprivilege.md)]
+.debug[[swarm/leastprivilege.md](https://github.com/RyaxTech/kube.training.git/tree/gh-pages//swarm/leastprivilege.md)]
 ---
 
 ## Learning more about container security
@@ -3746,7 +3748,7 @@ Least privilege model
 .blackbelt[DC17EU: What Have Syscalls Done for you Lately?
 ([video](https://dockercon.docker.com/watch/4ZxNyWuwk9JHSxZxgBBi6J))]
 
-.debug[[swarm/leastprivilege.md](https://github.com/RyaxTech/container.training.git/tree/master/slides/swarm/leastprivilege.md)]
+.debug[[swarm/leastprivilege.md](https://github.com/RyaxTech/kube.training.git/tree/gh-pages//swarm/leastprivilege.md)]
 ---
 ## A reminder about *scope*
 
@@ -3762,7 +3764,7 @@ Least privilege model
 
 - This can easily be avoided
 
-.debug[[swarm/apiscope.md](https://github.com/RyaxTech/container.training.git/tree/master/slides/swarm/apiscope.md)]
+.debug[[swarm/apiscope.md](https://github.com/RyaxTech/kube.training.git/tree/gh-pages//swarm/apiscope.md)]
 ---
 
 ## Fine-grained API access control
@@ -3791,7 +3793,7 @@ A few solutions, by increasing order of flexibility:
 [UCP]: https://docs.docker.com/datacenter/ucp/2.1/guides/
 [user and permission management]: https://docs.docker.com/datacenter/ucp/2.1/guides/admin/manage-users/
 
-.debug[[swarm/apiscope.md](https://github.com/RyaxTech/container.training.git/tree/master/slides/swarm/apiscope.md)]
+.debug[[swarm/apiscope.md](https://github.com/RyaxTech/kube.training.git/tree/gh-pages//swarm/apiscope.md)]
 ---
 
 class: pic
@@ -3832,7 +3834,7 @@ name: logging
 
 - We will update our services to send logs through the GELF logging driver
 
-.debug[[swarm/logging.md](https://github.com/RyaxTech/container.training.git/tree/master/slides/swarm/logging.md)]
+.debug[[swarm/logging.md](https://github.com/RyaxTech/kube.training.git/tree/gh-pages//swarm/logging.md)]
 ---
 
 class: pic
@@ -3875,7 +3877,7 @@ What we will do:
 
 - Set our containers up to send their logs to Logstash
 
-.debug[[swarm/logging.md](https://github.com/RyaxTech/container.training.git/tree/master/slides/swarm/logging.md)]
+.debug[[swarm/logging.md](https://github.com/RyaxTech/kube.training.git/tree/gh-pages//swarm/logging.md)]
 ---
 
 ## What's in an ELK stack?
@@ -3897,7 +3899,7 @@ What we will do:
 - Log entries will be stored in ElasticSearch,
   <br/>and displayed on Logstash's stdout for debugging
 
-.debug[[swarm/logging.md](https://github.com/RyaxTech/container.training.git/tree/master/slides/swarm/logging.md)]
+.debug[[swarm/logging.md](https://github.com/RyaxTech/kube.training.git/tree/gh-pages//swarm/logging.md)]
 ---
 
 class: elk-manual
@@ -3922,7 +3924,7 @@ class: elk-manual
 
 ]
 
-.debug[[swarm/logging.md](https://github.com/RyaxTech/container.training.git/tree/master/slides/swarm/logging.md)]
+.debug[[swarm/logging.md](https://github.com/RyaxTech/kube.training.git/tree/gh-pages//swarm/logging.md)]
 ---
 
 class: elk-manual
@@ -3948,7 +3950,7 @@ class: elk-manual
 
 ]
 
-.debug[[swarm/logging.md](https://github.com/RyaxTech/container.training.git/tree/master/slides/swarm/logging.md)]
+.debug[[swarm/logging.md](https://github.com/RyaxTech/kube.training.git/tree/gh-pages//swarm/logging.md)]
 ---
 
 class: elk-manual
@@ -3971,7 +3973,7 @@ class: elk-manual
 
 ]
 
-.debug[[swarm/logging.md](https://github.com/RyaxTech/container.training.git/tree/master/slides/swarm/logging.md)]
+.debug[[swarm/logging.md](https://github.com/RyaxTech/kube.training.git/tree/gh-pages//swarm/logging.md)]
 ---
 
 class: elk-manual
@@ -3991,7 +3993,7 @@ class: elk-manual
 
 ]
 
-.debug[[swarm/logging.md](https://github.com/RyaxTech/container.training.git/tree/master/slides/swarm/logging.md)]
+.debug[[swarm/logging.md](https://github.com/RyaxTech/kube.training.git/tree/gh-pages//swarm/logging.md)]
 ---
 
 class: elk-manual
@@ -4021,7 +4023,7 @@ You should see the heartbeat messages:
 ```
 ]
 
-.debug[[swarm/logging.md](https://github.com/RyaxTech/container.training.git/tree/master/slides/swarm/logging.md)]
+.debug[[swarm/logging.md](https://github.com/RyaxTech/kube.training.git/tree/gh-pages//swarm/logging.md)]
 ---
 
 class: elk-auto
@@ -4046,7 +4048,7 @@ Note: the *build* and *push* steps are not strictly necessary, but they don't hu
 Let's have a look at the [Compose file](
 https://github.com/jpetazzo/container.training/blob/master/stacks/elk.yml).
 
-.debug[[swarm/logging.md](https://github.com/RyaxTech/container.training.git/tree/master/slides/swarm/logging.md)]
+.debug[[swarm/logging.md](https://github.com/RyaxTech/kube.training.git/tree/gh-pages//swarm/logging.md)]
 ---
 
 class: elk-auto
@@ -4078,7 +4080,7 @@ You should see the heartbeat messages:
 ```
 ]
 
-.debug[[swarm/logging.md](https://github.com/RyaxTech/container.training.git/tree/master/slides/swarm/logging.md)]
+.debug[[swarm/logging.md](https://github.com/RyaxTech/kube.training.git/tree/gh-pages//swarm/logging.md)]
 ---
 
 ## Testing the GELF receiver
@@ -4098,7 +4100,7 @@ You should see the heartbeat messages:
 
 The test message should show up in the logstash container logs.
 
-.debug[[swarm/logging.md](https://github.com/RyaxTech/container.training.git/tree/master/slides/swarm/logging.md)]
+.debug[[swarm/logging.md](https://github.com/RyaxTech/kube.training.git/tree/gh-pages//swarm/logging.md)]
 ---
 
 ## Sending logs from a service
@@ -4128,7 +4130,7 @@ The test message should show up as well in the logstash container logs.
 
 In fact, *multiple messages will show up, and continue to show up every few seconds!*
 
-.debug[[swarm/logging.md](https://github.com/RyaxTech/container.training.git/tree/master/slides/swarm/logging.md)]
+.debug[[swarm/logging.md](https://github.com/RyaxTech/kube.training.git/tree/gh-pages//swarm/logging.md)]
 ---
 
 ## Restart conditions
@@ -4150,7 +4152,7 @@ Available restart conditions are `none`, `any`, and `on-error`.
 
 You can also set `--restart-delay`, `--restart-max-attempts`, and `--restart-window`.
 
-.debug[[swarm/logging.md](https://github.com/RyaxTech/container.training.git/tree/master/slides/swarm/logging.md)]
+.debug[[swarm/logging.md](https://github.com/RyaxTech/kube.training.git/tree/gh-pages//swarm/logging.md)]
 ---
 
 ## Connect to Kibana
@@ -4167,7 +4169,7 @@ You can also set `--restart-delay`, `--restart-max-attempts`, and `--restart-win
 
 ]
 
-.debug[[swarm/logging.md](https://github.com/RyaxTech/container.training.git/tree/master/slides/swarm/logging.md)]
+.debug[[swarm/logging.md](https://github.com/RyaxTech/kube.training.git/tree/gh-pages//swarm/logging.md)]
 ---
 
 ## "Configuring" Kibana
@@ -4189,7 +4191,7 @@ You can also set `--restart-delay`, `--restart-max-attempts`, and `--restart-win
 
 - You should see a series of green bars (with one new green bar every minute)
 
-.debug[[swarm/logging.md](https://github.com/RyaxTech/container.training.git/tree/master/slides/swarm/logging.md)]
+.debug[[swarm/logging.md](https://github.com/RyaxTech/kube.training.git/tree/gh-pages//swarm/logging.md)]
 ---
 
 ## Updating our services to use GELF
@@ -4212,7 +4214,7 @@ You can also set `--restart-delay`, `--restart-max-attempts`, and `--restart-win
 
 After ~15 seconds, you should see the log messages in Kibana.
 
-.debug[[swarm/logging.md](https://github.com/RyaxTech/container.training.git/tree/master/slides/swarm/logging.md)]
+.debug[[swarm/logging.md](https://github.com/RyaxTech/kube.training.git/tree/gh-pages//swarm/logging.md)]
 ---
 
 ## Viewing container logs
@@ -4240,7 +4242,7 @@ After ~15 seconds, you should see the log messages in Kibana.
 
 ]
 
-.debug[[swarm/logging.md](https://github.com/RyaxTech/container.training.git/tree/master/slides/swarm/logging.md)]
+.debug[[swarm/logging.md](https://github.com/RyaxTech/kube.training.git/tree/gh-pages//swarm/logging.md)]
 ---
 
 ## .warning[Don't update stateful services!]
@@ -4255,7 +4257,7 @@ After ~15 seconds, you should see the log messages in Kibana.
 
 - If we updated our Redis service, all our DockerCoins would be lost
 
-.debug[[swarm/logging.md](https://github.com/RyaxTech/container.training.git/tree/master/slides/swarm/logging.md)]
+.debug[[swarm/logging.md](https://github.com/RyaxTech/kube.training.git/tree/gh-pages//swarm/logging.md)]
 ---
 
 ## Important afterword
@@ -4278,7 +4280,7 @@ If you want to learn more about the GELF driver,
 have a look at [this blog post](
 http://jpetazzo.github.io/2017/01/20/docker-logging-gelf/).
 
-.debug[[swarm/logging.md](https://github.com/RyaxTech/container.training.git/tree/master/slides/swarm/logging.md)]
+.debug[[swarm/logging.md](https://github.com/RyaxTech/kube.training.git/tree/gh-pages//swarm/logging.md)]
 ---
 
 class: pic
@@ -4311,7 +4313,7 @@ Metrics collection
 
 - We want a nice interface to view them (graphs)
 
-.debug[[swarm/metrics.md](https://github.com/RyaxTech/container.training.git/tree/master/slides/swarm/metrics.md)]
+.debug[[swarm/metrics.md](https://github.com/RyaxTech/kube.training.git/tree/gh-pages//swarm/metrics.md)]
 ---
 
 ## Node metrics
@@ -4328,7 +4330,7 @@ Metrics collection
 
 - ... and much more!
 
-.debug[[swarm/metrics.md](https://github.com/RyaxTech/container.training.git/tree/master/slides/swarm/metrics.md)]
+.debug[[swarm/metrics.md](https://github.com/RyaxTech/kube.training.git/tree/gh-pages//swarm/metrics.md)]
 ---
 
 ## Container metrics
@@ -4349,7 +4351,7 @@ For details about container metrics, see:
 <br/>
 http://jpetazzo.github.io/2013/10/08/docker-containers-metrics/
 
-.debug[[swarm/metrics.md](https://github.com/RyaxTech/container.training.git/tree/master/slides/swarm/metrics.md)]
+.debug[[swarm/metrics.md](https://github.com/RyaxTech/kube.training.git/tree/gh-pages//swarm/metrics.md)]
 ---
 
 ## Application metrics
@@ -4362,7 +4364,7 @@ http://jpetazzo.github.io/2013/10/08/docker-containers-metrics/
 
 - Business data: inventory, items sold, revenue ...
 
-.debug[[swarm/metrics.md](https://github.com/RyaxTech/container.training.git/tree/master/slides/swarm/metrics.md)]
+.debug[[swarm/metrics.md](https://github.com/RyaxTech/kube.training.git/tree/gh-pages//swarm/metrics.md)]
 ---
 
 class: snap, prom
@@ -4379,7 +4381,7 @@ If you're using Play-With-Docker, skip the exercises
 relevant to Intel Snap (we rely on a SSH server to deploy,
 and PWD doesn't have that yet).
 
-.debug[[swarm/metrics.md](https://github.com/RyaxTech/container.training.git/tree/master/slides/swarm/metrics.md)]
+.debug[[swarm/metrics.md](https://github.com/RyaxTech/kube.training.git/tree/gh-pages//swarm/metrics.md)]
 ---
 
 class: snap
@@ -4400,7 +4402,7 @@ We will use three open source Go projects for our first metrics pipeline:
 
   Displays metrics visually
 
-.debug[[swarm/metrics.md](https://github.com/RyaxTech/container.training.git/tree/master/slides/swarm/metrics.md)]
+.debug[[swarm/metrics.md](https://github.com/RyaxTech/kube.training.git/tree/gh-pages//swarm/metrics.md)]
 ---
 
 class: snap
@@ -4421,7 +4423,7 @@ class: snap
 
 - Docs: https://github.com/intelsdi-x/snap/blob/master/docs/
 
-.debug[[swarm/metrics.md](https://github.com/RyaxTech/container.training.git/tree/master/slides/swarm/metrics.md)]
+.debug[[swarm/metrics.md](https://github.com/RyaxTech/kube.training.git/tree/gh-pages//swarm/metrics.md)]
 ---
 
 class: snap
@@ -4440,7 +4442,7 @@ class: snap
 
 - Snap has a plugin allowing to *publish* to InfluxDB
 
-.debug[[swarm/metrics.md](https://github.com/RyaxTech/container.training.git/tree/master/slides/swarm/metrics.md)]
+.debug[[swarm/metrics.md](https://github.com/RyaxTech/kube.training.git/tree/gh-pages//swarm/metrics.md)]
 ---
 
 class: snap
@@ -4455,7 +4457,7 @@ class: snap
 
 - Grafana can read data from InfluxDB and display it as graphs
 
-.debug[[swarm/metrics.md](https://github.com/RyaxTech/container.training.git/tree/master/slides/swarm/metrics.md)]
+.debug[[swarm/metrics.md](https://github.com/RyaxTech/kube.training.git/tree/gh-pages//swarm/metrics.md)]
 ---
 
 class: snap
@@ -4475,7 +4477,7 @@ class: snap
 
 - This service will effectively install Snap on the hosts
 
-.debug[[swarm/metrics.md](https://github.com/RyaxTech/container.training.git/tree/master/slides/swarm/metrics.md)]
+.debug[[swarm/metrics.md](https://github.com/RyaxTech/kube.training.git/tree/gh-pages//swarm/metrics.md)]
 ---
 
 class: snap
@@ -4503,7 +4505,7 @@ for BIN in snapd snapctl; do ln -s /opt/snap/bin/$BIN /usr/local/bin/$BIN; done
 
 ]
 
-.debug[[swarm/metrics.md](https://github.com/RyaxTech/container.training.git/tree/master/slides/swarm/metrics.md)]
+.debug[[swarm/metrics.md](https://github.com/RyaxTech/kube.training.git/tree/gh-pages//swarm/metrics.md)]
 ---
 
 class: snap
@@ -4528,7 +4530,7 @@ class: snap
   https://github.com/intelsdi-x/snap/blob/master/docs/SNAPD.md
   https://github.com/intelsdi-x/snap/blob/master/docs/SNAPD_CONFIGURATION.md
 
-.debug[[swarm/metrics.md](https://github.com/RyaxTech/container.training.git/tree/master/slides/swarm/metrics.md)]
+.debug[[swarm/metrics.md](https://github.com/RyaxTech/kube.training.git/tree/gh-pages//swarm/metrics.md)]
 ---
 
 class: snap
@@ -4553,7 +4555,7 @@ class: snap
 
 ]
 
-.debug[[swarm/metrics.md](https://github.com/RyaxTech/container.training.git/tree/master/slides/swarm/metrics.md)]
+.debug[[swarm/metrics.md](https://github.com/RyaxTech/kube.training.git/tree/gh-pages//swarm/metrics.md)]
 ---
 
 class: snap
@@ -4576,7 +4578,7 @@ class: snap
 
 ]
 
-.debug[[swarm/metrics.md](https://github.com/RyaxTech/container.training.git/tree/master/slides/swarm/metrics.md)]
+.debug[[swarm/metrics.md](https://github.com/RyaxTech/kube.training.git/tree/gh-pages//swarm/metrics.md)]
 ---
 
 class: snap
@@ -4600,7 +4602,7 @@ class: snap
 - More resources:
   https://github.com/intelsdi-x/snap/blob/master/docs/TASKS.md
 
-.debug[[swarm/metrics.md](https://github.com/RyaxTech/container.training.git/tree/master/slides/swarm/metrics.md)]
+.debug[[swarm/metrics.md](https://github.com/RyaxTech/kube.training.git/tree/gh-pages//swarm/metrics.md)]
 ---
 
 class: snap
@@ -4625,7 +4627,7 @@ class: snap
                 file: "/tmp/snap-psutil-file.log" # write to this file
 ```
 
-.debug[[swarm/metrics.md](https://github.com/RyaxTech/container.training.git/tree/master/slides/swarm/metrics.md)]
+.debug[[swarm/metrics.md](https://github.com/RyaxTech/kube.training.git/tree/gh-pages//swarm/metrics.md)]
 ---
 
 class: snap
@@ -4654,7 +4656,7 @@ class: snap
     State: Running
   ```
 
-.debug[[swarm/metrics.md](https://github.com/RyaxTech/container.training.git/tree/master/slides/swarm/metrics.md)]
+.debug[[swarm/metrics.md](https://github.com/RyaxTech/kube.training.git/tree/gh-pages//swarm/metrics.md)]
 ---
 
 class: snap
@@ -4676,7 +4678,7 @@ The output should look like the following:
     ID           NAME              STATE     HIT MISS FAIL CREATED
     24043...acba Task-24043...acba Running   4   0    0    2:34PM   8-13-2016
   ```
-.debug[[swarm/metrics.md](https://github.com/RyaxTech/container.training.git/tree/master/slides/swarm/metrics.md)]
+.debug[[swarm/metrics.md](https://github.com/RyaxTech/kube.training.git/tree/gh-pages//swarm/metrics.md)]
 ---
 
 class: snap
@@ -4698,7 +4700,7 @@ class: snap
 
 To exit, hit `^C`
 
-.debug[[swarm/metrics.md](https://github.com/RyaxTech/container.training.git/tree/master/slides/swarm/metrics.md)]
+.debug[[swarm/metrics.md](https://github.com/RyaxTech/kube.training.git/tree/gh-pages//swarm/metrics.md)]
 ---
 
 class: snap
@@ -4719,7 +4721,7 @@ snapctl task watch <ID>
 
 To exit, hit `^C`
 
-.debug[[swarm/metrics.md](https://github.com/RyaxTech/container.training.git/tree/master/slides/swarm/metrics.md)]
+.debug[[swarm/metrics.md](https://github.com/RyaxTech/kube.training.git/tree/gh-pages//swarm/metrics.md)]
 ---
 
 class: snap
@@ -4748,7 +4750,7 @@ class: snap
 
 - All tasks will be stopped; all plugins will be unloaded; Snap will exit
 
-.debug[[swarm/metrics.md](https://github.com/RyaxTech/container.training.git/tree/master/slides/swarm/metrics.md)]
+.debug[[swarm/metrics.md](https://github.com/RyaxTech/kube.training.git/tree/gh-pages//swarm/metrics.md)]
 ---
 
 class: snap
@@ -4770,7 +4772,7 @@ class: snap
 - More resources:
   https://github.com/intelsdi-x/snap/blob/master/docs/TRIBE.md
 
-.debug[[swarm/metrics.md](https://github.com/RyaxTech/container.training.git/tree/master/slides/swarm/metrics.md)]
+.debug[[swarm/metrics.md](https://github.com/RyaxTech/kube.training.git/tree/gh-pages//swarm/metrics.md)]
 ---
 
 class: snap
@@ -4790,7 +4792,7 @@ class: snap
 
 If you're *not* using Play-With-Docker, there is another way to start Snap!
 
-.debug[[swarm/metrics.md](https://github.com/RyaxTech/container.training.git/tree/master/slides/swarm/metrics.md)]
+.debug[[swarm/metrics.md](https://github.com/RyaxTech/kube.training.git/tree/gh-pages//swarm/metrics.md)]
 ---
 
 class: snap
@@ -4808,7 +4810,7 @@ class: snap
 
 - Once logged on the node, the service starts snapd with Tribe Mode enabled
 
-.debug[[swarm/metrics.md](https://github.com/RyaxTech/container.training.git/tree/master/slides/swarm/metrics.md)]
+.debug[[swarm/metrics.md](https://github.com/RyaxTech/kube.training.git/tree/gh-pages//swarm/metrics.md)]
 ---
 
 class: snap
@@ -4834,7 +4836,7 @@ class: snap
 
 Remember: this *does not work* with Play-With-Docker (which doesn't have SSH).
 
-.debug[[swarm/metrics.md](https://github.com/RyaxTech/container.training.git/tree/master/slides/swarm/metrics.md)]
+.debug[[swarm/metrics.md](https://github.com/RyaxTech/kube.training.git/tree/gh-pages//swarm/metrics.md)]
 ---
 
 class: snap
@@ -4854,7 +4856,7 @@ class: snap
 
 This should show the 5 nodes with their hostnames.
 
-.debug[[swarm/metrics.md](https://github.com/RyaxTech/container.training.git/tree/master/slides/swarm/metrics.md)]
+.debug[[swarm/metrics.md](https://github.com/RyaxTech/kube.training.git/tree/gh-pages//swarm/metrics.md)]
 ---
 
 class: snap
@@ -4879,7 +4881,7 @@ The output should look like the following:
   docker-influxdb  0                       0            0
 ```
 
-.debug[[swarm/metrics.md](https://github.com/RyaxTech/container.training.git/tree/master/slides/swarm/metrics.md)]
+.debug[[swarm/metrics.md](https://github.com/RyaxTech/kube.training.git/tree/gh-pages//swarm/metrics.md)]
 ---
 
 class: snap
@@ -4906,7 +4908,7 @@ The last bit of output should look like the following:
   docker-influxdb  5                       0               0
 ```
 
-.debug[[swarm/metrics.md](https://github.com/RyaxTech/container.training.git/tree/master/slides/swarm/metrics.md)]
+.debug[[swarm/metrics.md](https://github.com/RyaxTech/kube.training.git/tree/gh-pages//swarm/metrics.md)]
 ---
 
 class: snap
@@ -4928,7 +4930,7 @@ class: snap
 
 ]
 
-.debug[[swarm/metrics.md](https://github.com/RyaxTech/container.training.git/tree/master/slides/swarm/metrics.md)]
+.debug[[swarm/metrics.md](https://github.com/RyaxTech/kube.training.git/tree/gh-pages//swarm/metrics.md)]
 ---
 
 class: snap
@@ -4951,7 +4953,7 @@ class: snap
 
 - We will just publish the first two
 
-.debug[[swarm/metrics.md](https://github.com/RyaxTech/container.training.git/tree/master/slides/swarm/metrics.md)]
+.debug[[swarm/metrics.md](https://github.com/RyaxTech/kube.training.git/tree/gh-pages//swarm/metrics.md)]
 ---
 
 class: snap
@@ -4978,7 +4980,7 @@ on port 8083.
 (like, the name of the default retention policy is now "autogen") and
 this breaks a few things.]
 
-.debug[[swarm/metrics.md](https://github.com/RyaxTech/container.training.git/tree/master/slides/swarm/metrics.md)]
+.debug[[swarm/metrics.md](https://github.com/RyaxTech/kube.training.git/tree/gh-pages//swarm/metrics.md)]
 ---
 
 class: snap
@@ -5021,7 +5023,7 @@ Note: the InfluxDB query language *looks like* SQL but it's not.
 
 ]
 
-.debug[[swarm/metrics.md](https://github.com/RyaxTech/container.training.git/tree/master/slides/swarm/metrics.md)]
+.debug[[swarm/metrics.md](https://github.com/RyaxTech/kube.training.git/tree/gh-pages//swarm/metrics.md)]
 ---
 
 class: snap
@@ -5049,7 +5051,7 @@ class: snap
 
 ]
 
-.debug[[swarm/metrics.md](https://github.com/RyaxTech/container.training.git/tree/master/slides/swarm/metrics.md)]
+.debug[[swarm/metrics.md](https://github.com/RyaxTech/kube.training.git/tree/gh-pages//swarm/metrics.md)]
 ---
 
 class: snap
@@ -5076,7 +5078,7 @@ located at 127.0.0.1:8086. Since the InfluxDB container is published
 on port 8086, 127.0.0.1:8086 always routes traffic to the InfluxDB
 container.
 
-.debug[[swarm/metrics.md](https://github.com/RyaxTech/container.training.git/tree/master/slides/swarm/metrics.md)]
+.debug[[swarm/metrics.md](https://github.com/RyaxTech/kube.training.git/tree/gh-pages//swarm/metrics.md)]
 ---
 
 class: snap
@@ -5097,7 +5099,7 @@ snapctl task start <ID>
 This must be done *per node*. Alternatively, you can delete+re-create
 the task (it will delete+re-create on all nodes).
 
-.debug[[swarm/metrics.md](https://github.com/RyaxTech/container.training.git/tree/master/slides/swarm/metrics.md)]
+.debug[[swarm/metrics.md](https://github.com/RyaxTech/kube.training.git/tree/gh-pages//swarm/metrics.md)]
 ---
 
 class: snap
@@ -5122,7 +5124,7 @@ class: snap
 
 ]
 
-.debug[[swarm/metrics.md](https://github.com/RyaxTech/container.training.git/tree/master/slides/swarm/metrics.md)]
+.debug[[swarm/metrics.md](https://github.com/RyaxTech/kube.training.git/tree/gh-pages//swarm/metrics.md)]
 ---
 
 class: snap
@@ -5142,7 +5144,7 @@ class: snap
 
 ]
 
-.debug[[swarm/metrics.md](https://github.com/RyaxTech/container.training.git/tree/master/slides/swarm/metrics.md)]
+.debug[[swarm/metrics.md](https://github.com/RyaxTech/kube.training.git/tree/gh-pages//swarm/metrics.md)]
 ---
 
 class: snap
@@ -5163,7 +5165,7 @@ class: snap
 
 ]
 
-.debug[[swarm/metrics.md](https://github.com/RyaxTech/container.training.git/tree/master/slides/swarm/metrics.md)]
+.debug[[swarm/metrics.md](https://github.com/RyaxTech/kube.training.git/tree/gh-pages//swarm/metrics.md)]
 ---
 
 class: snap
@@ -5190,14 +5192,14 @@ If you see an orange box (sometimes without a message), it means that you got so
 
 ]
 
-.debug[[swarm/metrics.md](https://github.com/RyaxTech/container.training.git/tree/master/slides/swarm/metrics.md)]
+.debug[[swarm/metrics.md](https://github.com/RyaxTech/kube.training.git/tree/gh-pages//swarm/metrics.md)]
 ---
 
 class: snap
 
 ![Screenshot showing how to fill the form](images/grafana-add-source.png)
 
-.debug[[swarm/metrics.md](https://github.com/RyaxTech/container.training.git/tree/master/slides/swarm/metrics.md)]
+.debug[[swarm/metrics.md](https://github.com/RyaxTech/kube.training.git/tree/gh-pages//swarm/metrics.md)]
 ---
 
 class: snap
@@ -5222,7 +5224,7 @@ class: snap
 
 At this point, you should see a sample graph showing up.
 
-.debug[[swarm/metrics.md](https://github.com/RyaxTech/container.training.git/tree/master/slides/swarm/metrics.md)]
+.debug[[swarm/metrics.md](https://github.com/RyaxTech/kube.training.git/tree/gh-pages//swarm/metrics.md)]
 ---
 
 class: snap
@@ -5246,14 +5248,14 @@ class: snap
 
 Congratulations, you are viewing the CPU usage of a single container!
 
-.debug[[swarm/metrics.md](https://github.com/RyaxTech/container.training.git/tree/master/slides/swarm/metrics.md)]
+.debug[[swarm/metrics.md](https://github.com/RyaxTech/kube.training.git/tree/gh-pages//swarm/metrics.md)]
 ---
 
 class: snap
 
 ![Screenshot showing the end result](images/grafana-add-graph.png)
 
-.debug[[swarm/metrics.md](https://github.com/RyaxTech/container.training.git/tree/master/slides/swarm/metrics.md)]
+.debug[[swarm/metrics.md](https://github.com/RyaxTech/kube.training.git/tree/gh-pages//swarm/metrics.md)]
 ---
 
 class: snap, prom
@@ -5266,7 +5268,7 @@ class: snap, prom
 
 - ... And then compare both graphs side by side
 
-.debug[[swarm/metrics.md](https://github.com/RyaxTech/container.training.git/tree/master/slides/swarm/metrics.md)]
+.debug[[swarm/metrics.md](https://github.com/RyaxTech/kube.training.git/tree/gh-pages//swarm/metrics.md)]
 ---
 
 class: snap, prom
@@ -5277,7 +5279,7 @@ class: snap, prom
 
 - Snap *pushes* metrics; Prometheus *pulls* them
 
-.debug[[swarm/metrics.md](https://github.com/RyaxTech/container.training.git/tree/master/slides/swarm/metrics.md)]
+.debug[[swarm/metrics.md](https://github.com/RyaxTech/kube.training.git/tree/gh-pages//swarm/metrics.md)]
 ---
 
 class: prom
@@ -5293,7 +5295,7 @@ class: prom
 
   (An optimized format using protobuf is also possible)
 
-.debug[[swarm/metrics.md](https://github.com/RyaxTech/container.training.git/tree/master/slides/swarm/metrics.md)]
+.debug[[swarm/metrics.md](https://github.com/RyaxTech/kube.training.git/tree/gh-pages//swarm/metrics.md)]
 ---
 
 class: prom
@@ -5312,7 +5314,7 @@ class: prom
 
   (It can also use protobuf to avoid the overhead of parsing line-oriented formats!)
 
-.debug[[swarm/metrics.md](https://github.com/RyaxTech/container.training.git/tree/master/slides/swarm/metrics.md)]
+.debug[[swarm/metrics.md](https://github.com/RyaxTech/kube.training.git/tree/gh-pages//swarm/metrics.md)]
 ---
 
 class: prom-manual
@@ -5333,7 +5335,7 @@ class: prom-manual
 
 - All these services will be placed on a private internal network
 
-.debug[[swarm/metrics.md](https://github.com/RyaxTech/container.training.git/tree/master/slides/swarm/metrics.md)]
+.debug[[swarm/metrics.md](https://github.com/RyaxTech/kube.training.git/tree/gh-pages//swarm/metrics.md)]
 ---
 
 class: prom-manual
@@ -5351,7 +5353,7 @@ class: prom-manual
 
 ]
 
-.debug[[swarm/metrics.md](https://github.com/RyaxTech/container.training.git/tree/master/slides/swarm/metrics.md)]
+.debug[[swarm/metrics.md](https://github.com/RyaxTech/kube.training.git/tree/gh-pages//swarm/metrics.md)]
 ---
 
 class: prom-manual
@@ -5379,7 +5381,7 @@ class: prom-manual
 
 ]
 
-.debug[[swarm/metrics.md](https://github.com/RyaxTech/container.training.git/tree/master/slides/swarm/metrics.md)]
+.debug[[swarm/metrics.md](https://github.com/RyaxTech/kube.training.git/tree/gh-pages//swarm/metrics.md)]
 ---
 
 class: prom-manual
@@ -5404,7 +5406,7 @@ class: prom-manual
 
 ]
 
-.debug[[swarm/metrics.md](https://github.com/RyaxTech/container.training.git/tree/master/slides/swarm/metrics.md)]
+.debug[[swarm/metrics.md](https://github.com/RyaxTech/kube.training.git/tree/gh-pages//swarm/metrics.md)]
 ---
 
 class: prom-manual
@@ -5434,7 +5436,7 @@ scrape_configs:
 ```
 ]
 
-.debug[[swarm/metrics.md](https://github.com/RyaxTech/container.training.git/tree/master/slides/swarm/metrics.md)]
+.debug[[swarm/metrics.md](https://github.com/RyaxTech/kube.training.git/tree/gh-pages//swarm/metrics.md)]
 ---
 
 class: prom-manual
@@ -5458,7 +5460,7 @@ class: prom-manual
 Note: it is also possible to use a `config` to inject that configuration file
 without having to create this ad-hoc image.
 
-.debug[[swarm/metrics.md](https://github.com/RyaxTech/container.training.git/tree/master/slides/swarm/metrics.md)]
+.debug[[swarm/metrics.md](https://github.com/RyaxTech/kube.training.git/tree/gh-pages//swarm/metrics.md)]
 ---
 
 class: prom-manual
@@ -5481,7 +5483,7 @@ class: prom-manual
 
 ]
 
-.debug[[swarm/metrics.md](https://github.com/RyaxTech/container.training.git/tree/master/slides/swarm/metrics.md)]
+.debug[[swarm/metrics.md](https://github.com/RyaxTech/kube.training.git/tree/gh-pages//swarm/metrics.md)]
 ---
 
 class: prom-manual
@@ -5502,7 +5504,7 @@ class: prom-manual
 
 ]
 
-.debug[[swarm/metrics.md](https://github.com/RyaxTech/container.training.git/tree/master/slides/swarm/metrics.md)]
+.debug[[swarm/metrics.md](https://github.com/RyaxTech/kube.training.git/tree/gh-pages//swarm/metrics.md)]
 ---
 
 class: prom-auto
@@ -5527,7 +5529,7 @@ class: prom-auto
 
 ]
 
-.debug[[swarm/metrics.md](https://github.com/RyaxTech/container.training.git/tree/master/slides/swarm/metrics.md)]
+.debug[[swarm/metrics.md](https://github.com/RyaxTech/kube.training.git/tree/gh-pages//swarm/metrics.md)]
 ---
 
 class: prom
@@ -5548,7 +5550,7 @@ You should see 7 endpoints (3 cadvisor, 3 node, 1 prometheus).
 
 Their state should be "UP".
 
-.debug[[swarm/metrics.md](https://github.com/RyaxTech/container.training.git/tree/master/slides/swarm/metrics.md)]
+.debug[[swarm/metrics.md](https://github.com/RyaxTech/kube.training.git/tree/gh-pages//swarm/metrics.md)]
 ---
 
 class: prom-auto, config
@@ -5571,7 +5573,7 @@ class: prom-auto, config
     <br/>
     (this injects the blob as a plain file in the service's containers)
 
-.debug[[swarm/metrics.md](https://github.com/RyaxTech/container.training.git/tree/master/slides/swarm/metrics.md)]
+.debug[[swarm/metrics.md](https://github.com/RyaxTech/kube.training.git/tree/gh-pages//swarm/metrics.md)]
 ---
 
 class: prom-auto, config
@@ -5594,7 +5596,7 @@ The two are very similar, but ...
 
   - cannot be viewed or extracted with the Docker API or CLI
 
-.debug[[swarm/metrics.md](https://github.com/RyaxTech/container.training.git/tree/master/slides/swarm/metrics.md)]
+.debug[[swarm/metrics.md](https://github.com/RyaxTech/kube.training.git/tree/gh-pages//swarm/metrics.md)]
 ---
 
 class: prom-auto, config
@@ -5627,7 +5629,7 @@ configs:
 ```
 ]
 
-.debug[[swarm/metrics.md](https://github.com/RyaxTech/container.training.git/tree/master/slides/swarm/metrics.md)]
+.debug[[swarm/metrics.md](https://github.com/RyaxTech/kube.training.git/tree/gh-pages//swarm/metrics.md)]
 ---
 
 class: prom-auto, config
@@ -5650,7 +5652,7 @@ class: prom-auto, config
 
   - referencing a file, whose content is used to initialize the config
 
-.debug[[swarm/metrics.md](https://github.com/RyaxTech/container.training.git/tree/master/slides/swarm/metrics.md)]
+.debug[[swarm/metrics.md](https://github.com/RyaxTech/kube.training.git/tree/gh-pages//swarm/metrics.md)]
 ---
 
 class: prom-auto, config
@@ -5672,7 +5674,7 @@ class: prom-auto, config
 
 ]
 
-.debug[[swarm/metrics.md](https://github.com/RyaxTech/container.training.git/tree/master/slides/swarm/metrics.md)]
+.debug[[swarm/metrics.md](https://github.com/RyaxTech/kube.training.git/tree/gh-pages//swarm/metrics.md)]
 ---
 
 class: prom-auto, config
@@ -5699,7 +5701,7 @@ Note: the content of the config blob is shown with BASE64 encoding.
 <br/>
 (It doesn't have to be text; it could be an image or any kind of binary content!)
 
-.debug[[swarm/metrics.md](https://github.com/RyaxTech/container.training.git/tree/master/slides/swarm/metrics.md)]
+.debug[[swarm/metrics.md](https://github.com/RyaxTech/kube.training.git/tree/gh-pages//swarm/metrics.md)]
 ---
 
 class: prom-auto, config
@@ -5722,7 +5724,7 @@ class: prom-auto, config
 
 ]
 
-.debug[[swarm/metrics.md](https://github.com/RyaxTech/container.training.git/tree/master/slides/swarm/metrics.md)]
+.debug[[swarm/metrics.md](https://github.com/RyaxTech/kube.training.git/tree/gh-pages//swarm/metrics.md)]
 ---
 
 class: prom
@@ -5748,7 +5750,7 @@ class: prom
 
 ]
 
-.debug[[swarm/metrics.md](https://github.com/RyaxTech/container.training.git/tree/master/slides/swarm/metrics.md)]
+.debug[[swarm/metrics.md](https://github.com/RyaxTech/kube.training.git/tree/gh-pages//swarm/metrics.md)]
 ---
 
 class: prom
@@ -5765,7 +5767,7 @@ class: prom
   (Or, so that we can build other queries if necessary, or adapt if cAdvisor,
   Prometheus, or anything else changes and requires editing the query!)
 
-.debug[[swarm/metrics.md](https://github.com/RyaxTech/container.training.git/tree/master/slides/swarm/metrics.md)]
+.debug[[swarm/metrics.md](https://github.com/RyaxTech/kube.training.git/tree/gh-pages//swarm/metrics.md)]
 ---
 
 class: prom
@@ -5788,7 +5790,7 @@ class: prom
 
   *This replaces the table of measurements with a series of graphs (after a few seconds)*
 
-.debug[[swarm/metrics.md](https://github.com/RyaxTech/container.training.git/tree/master/slides/swarm/metrics.md)]
+.debug[[swarm/metrics.md](https://github.com/RyaxTech/kube.training.git/tree/gh-pages//swarm/metrics.md)]
 ---
 
 class: prom
@@ -5811,7 +5813,7 @@ class: prom
 
 - You can also specify multiple conditions by separating them with commas
 
-.debug[[swarm/metrics.md](https://github.com/RyaxTech/container.training.git/tree/master/slides/swarm/metrics.md)]
+.debug[[swarm/metrics.md](https://github.com/RyaxTech/kube.training.git/tree/gh-pages//swarm/metrics.md)]
 ---
 
 class: prom
@@ -5837,7 +5839,7 @@ class: prom
 
   *This should show spikes that were previously invisible because they were smoothed out*
 
-.debug[[swarm/metrics.md](https://github.com/RyaxTech/container.training.git/tree/master/slides/swarm/metrics.md)]
+.debug[[swarm/metrics.md](https://github.com/RyaxTech/kube.training.git/tree/gh-pages//swarm/metrics.md)]
 ---
 
 class: prom
@@ -5854,7 +5856,7 @@ class: prom
 
   *We now see a single graph*
 
-.debug[[swarm/metrics.md](https://github.com/RyaxTech/container.training.git/tree/master/slides/swarm/metrics.md)]
+.debug[[swarm/metrics.md](https://github.com/RyaxTech/kube.training.git/tree/gh-pages//swarm/metrics.md)]
 ---
 
 class: prom
@@ -5874,7 +5876,7 @@ class: prom
   (I'd like to thank [Johannes Ziemke](https://twitter.com/discordianfish) and
   [Julius Volz](https://twitter.com/juliusvolz) for their help with Prometheus!)
 
-.debug[[swarm/metrics.md](https://github.com/RyaxTech/container.training.git/tree/master/slides/swarm/metrics.md)]
+.debug[[swarm/metrics.md](https://github.com/RyaxTech/kube.training.git/tree/gh-pages//swarm/metrics.md)]
 ---
 
 class: prom, snap
@@ -5889,7 +5891,7 @@ class: prom, snap
 
 - To re-do the setup, just follow again the instructions from the previous chapter
 
-.debug[[swarm/metrics.md](https://github.com/RyaxTech/container.training.git/tree/master/slides/swarm/metrics.md)]
+.debug[[swarm/metrics.md](https://github.com/RyaxTech/kube.training.git/tree/gh-pages//swarm/metrics.md)]
 ---
 
 class: prom, snap
@@ -5910,7 +5912,7 @@ class: prom, snap
 
 We see the same input form that we filled earlier to connect to InfluxDB.
 
-.debug[[swarm/metrics.md](https://github.com/RyaxTech/container.training.git/tree/master/slides/swarm/metrics.md)]
+.debug[[swarm/metrics.md](https://github.com/RyaxTech/kube.training.git/tree/gh-pages//swarm/metrics.md)]
 ---
 
 class: prom, snap
@@ -5935,7 +5937,7 @@ Again, we should see a green box telling us "Data source is working."
 
 Otherwise, double-check every field and try again!
 
-.debug[[swarm/metrics.md](https://github.com/RyaxTech/container.training.git/tree/master/slides/swarm/metrics.md)]
+.debug[[swarm/metrics.md](https://github.com/RyaxTech/kube.training.git/tree/gh-pages//swarm/metrics.md)]
 ---
 
 class: prom, snap
@@ -5954,7 +5956,7 @@ class: prom, snap
 
 This takes us to the graph editor that we used earlier.
 
-.debug[[swarm/metrics.md](https://github.com/RyaxTech/container.training.git/tree/master/slides/swarm/metrics.md)]
+.debug[[swarm/metrics.md](https://github.com/RyaxTech/kube.training.git/tree/gh-pages//swarm/metrics.md)]
 ---
 
 class: prom, snap
@@ -5980,7 +5982,7 @@ The editor is a bit less friendly than the one we used for InfluxDB.
 
 ]
 
-.debug[[swarm/metrics.md](https://github.com/RyaxTech/container.training.git/tree/master/slides/swarm/metrics.md)]
+.debug[[swarm/metrics.md](https://github.com/RyaxTech/kube.training.git/tree/gh-pages//swarm/metrics.md)]
 ---
 
 class: prom, snap
@@ -6005,7 +6007,7 @@ class: prom, snap
 
 *Adjusting units is left as an exercise for the reader.*
 
-.debug[[swarm/metrics.md](https://github.com/RyaxTech/container.training.git/tree/master/slides/swarm/metrics.md)]
+.debug[[swarm/metrics.md](https://github.com/RyaxTech/kube.training.git/tree/gh-pages//swarm/metrics.md)]
 ---
 
 ## More resources on container metrics
@@ -6028,13 +6030,13 @@ class: prom, snap
 .blackbelt[DC17EU: Prometheus 2.0 Storage Engine
 ([video](https://dockercon.docker.com/watch/NNZ8GXHGomouwSXtXnxb8P))]
 
-.debug[[swarm/metrics.md](https://github.com/RyaxTech/container.training.git/tree/master/slides/swarm/metrics.md)]
+.debug[[swarm/metrics.md](https://github.com/RyaxTech/kube.training.git/tree/gh-pages//swarm/metrics.md)]
 ---
 class: title, self-paced
 
 Thank you!
 
-.debug[[common/thankyou.md](https://github.com/RyaxTech/container.training.git/tree/master/slides/common/thankyou.md)]
+.debug[[common/thankyou.md](https://github.com/RyaxTech/kube.training.git/tree/gh-pages//common/thankyou.md)]
 ---
 
 class: title, in-person
@@ -6043,7 +6045,7 @@ That's all, folks! <br/> Questions?
 
 ![end](images/end.jpg)
 
-.debug[[common/thankyou.md](https://github.com/RyaxTech/container.training.git/tree/master/slides/common/thankyou.md)]
+.debug[[common/thankyou.md](https://github.com/RyaxTech/kube.training.git/tree/gh-pages//common/thankyou.md)]
 ---
 
 class: pic
@@ -6081,7 +6083,7 @@ Links and resources
 
 .footnote[These slides (and future updates) are on → http://container.training/]
 
-.debug[[swarm/links.md](https://github.com/RyaxTech/container.training.git/tree/master/slides/swarm/links.md)]</textarea>
+.debug[[swarm/links.md](https://github.com/RyaxTech/kube.training.git/tree/gh-pages//swarm/links.md)]</textarea>
     <script src="remark.min.js" type="text/javascript">
     </script>
     <script type="text/javascript">

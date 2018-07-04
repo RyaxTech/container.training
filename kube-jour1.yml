@@ -20,9 +20,9 @@ chapters:
   #- kube/intro.md
   #- common/about-slides.md
 - common/toc.md
-- - common/prereqs_fr.md
-  - intro/Docker_Overview_fr.md
+- - intro/Docker_Overview_fr.md
   - intro/Docker_History_fr.md
+  - common/prereqs_fr.md
   - common/sampleapp_fr.md
   - common/composescale_fr.md
   - common/composedown_fr.md  

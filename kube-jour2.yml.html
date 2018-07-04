@@ -29,24 +29,22 @@ Kubernetes <br/>Concepts de base, Services et Deploiement <br/>
 
 .debug[
 ```
- M slides/common/declarative_fr.md
- M slides/common/prereqs_fr.md
- M slides/intro/Docker_Overview_fr.md
- M slides/kube-jour1.yml
- M slides/kube-jour1.yml.html
- M slides/logistics.md
-?? slides/common/about-slides_fr.md
-?? slides/common/composedown_fr.md
-?? slides/common/composescale_fr.md
-?? slides/images/microservice2.png
-?? slides/images/microservices1.png
+ M common/about-slides_fr.md
+ M common/prereqs_fr.md
+ M intro-fullday.yml.html
+ M intro-selfpaced.yml.html
+ M kube-fullday.yml.html
+ M kube-halfday.yml.html
+ M kube-jour1.yml
+ M kube-jour1.yml.html
+ M kube-jour2.yml.html
 
 ```
 
-These slides have been built from commit: 2b2ba6c
+These slides have been built from commit: 347c7f0
 
 
-[common/title_fr.md](https://github.com/RyaxTech/container.training.git/tree/master/slides/common/title_fr.md)]
+[common/title_fr.md](https://github.com/RyaxTech/kube.training.git/tree/gh-pages//common/title_fr.md)]
 ---
 
 class: title, in-person
@@ -54,7 +52,7 @@ class: title, in-person
 Kubernetes <br/>Concepts de base, Services et Deploiement <br/><br/></br>
 
 
-.debug[[common/title_fr.md](https://github.com/RyaxTech/container.training.git/tree/master/slides/common/title_fr.md)]
+.debug[[common/title_fr.md](https://github.com/RyaxTech/kube.training.git/tree/gh-pages//common/title_fr.md)]
 ---
 
 name: toc-chapter-1
@@ -103,7 +101,7 @@ name: toc-chapter-3
 
 
 
-.debug[[common/toc.md](https://github.com/RyaxTech/container.training.git/tree/master/slides/common/toc.md)]
+.debug[[common/toc.md](https://github.com/RyaxTech/kube.training.git/tree/gh-pages//common/toc.md)]
 ---
 
 class: pic
@@ -142,7 +140,7 @@ Les objets de Kubernetes
   - Créez et gérez plusieurs modules gérant la réplication, le déploiement et l'auto-réparation.
 
 
-.debug[[kube/kubeobjects_fr.md](https://github.com/RyaxTech/container.training.git/tree/master/slides/kube/kubeobjects_fr.md)]
+.debug[[kube/kubeobjects_fr.md](https://github.com/RyaxTech/kube.training.git/tree/gh-pages//kube/kubeobjects_fr.md)]
 ---
 
 ## Les objets de Kubernetes (suite)
@@ -164,14 +162,14 @@ Les objets de Kubernetes
 - **Nodes**
   - Ils peuvent être des machines virtuelles ou des machines physiques, ils fournissent les services nécessaires pour exécuter des modules et sont gérés par les composants principaux.
 
-.debug[[kube/kubeobjects_fr.md](https://github.com/RyaxTech/container.training.git/tree/master/slides/kube/kubeobjects_fr.md)]
+.debug[[kube/kubeobjects_fr.md](https://github.com/RyaxTech/kube.training.git/tree/gh-pages//kube/kubeobjects_fr.md)]
 ---
 
 class: pic
 
 ![Un des meilleurs diagrammes d'architecture Kubernetes disponibles](images/k8s-arch4-thanks-luxas.png)
 
-.debug[[kube/kubeobjects_fr.md](https://github.com/RyaxTech/container.training.git/tree/master/slides/kube/kubeobjects_fr.md)]
+.debug[[kube/kubeobjects_fr.md](https://github.com/RyaxTech/kube.training.git/tree/gh-pages//kube/kubeobjects_fr.md)]
 ---
 
 ## L'architecture de Kubernetes
@@ -190,7 +188,7 @@ class: pic
   - Seul le serveur API parle directement avec etcd. Tous les autres composants communiquent avec etcd indirectement via API-Server sur la base du "Contrôle de concurrence optimiste"
   - Utilise l'algorithme de consensus Raft pour décider de l'état actuel en fonction du quorum (majorité).
 
-.debug[[kube/kubeobjects_fr.md](https://github.com/RyaxTech/container.training.git/tree/master/slides/kube/kubeobjects_fr.md)]
+.debug[[kube/kubeobjects_fr.md](https://github.com/RyaxTech/kube.training.git/tree/gh-pages//kube/kubeobjects_fr.md)]
 ---
 
 ## L'architecture de Kubernetes (suite)
@@ -209,7 +207,7 @@ class: pic
   - Chaque contrôleur surveille le serveur API pour les modifications apportées aux ressources (Déploiements, Services, etc.) et effectue des opérations pour chaque modification
   - Il réconcilie l'état actuel avec l'état souhaité (spécifié dans la section des spécifications de la ressource)
 
-.debug[[kube/kubeobjects_fr.md](https://github.com/RyaxTech/container.training.git/tree/master/slides/kube/kubeobjects_fr.md)]
+.debug[[kube/kubeobjects_fr.md](https://github.com/RyaxTech/kube.training.git/tree/gh-pages//kube/kubeobjects_fr.md)]
 ---
 
 
@@ -222,17 +220,17 @@ class: pic
   - L'algorithme de planification par défaut détermine les nœuds acceptables et sélectionne le meilleur pour le pod en fonction de divers paramètres configurables.
   - Plusieurs schedulers peuvent s'exécuter simultanément dans le cluster et un module peut utiliser celui qui est le plus adapté.
 
-.debug[[kube/kubeobjects_fr.md](https://github.com/RyaxTech/container.training.git/tree/master/slides/kube/kubeobjects_fr.md)]
+.debug[[kube/kubeobjects_fr.md](https://github.com/RyaxTech/kube.training.git/tree/gh-pages//kube/kubeobjects_fr.md)]
 ---
 class: pic
 
 ![Exemple de Kubectl](images/kubectl_ex.png)
 
-.debug[[kube/kubeobjects_fr.md](https://github.com/RyaxTech/container.training.git/tree/master/slides/kube/kubeobjects_fr.md)]
+.debug[[kube/kubeobjects_fr.md](https://github.com/RyaxTech/kube.training.git/tree/gh-pages//kube/kubeobjects_fr.md)]
 ---
 
 
-.debug[[kube/kubeobjects_fr.md](https://github.com/RyaxTech/container.training.git/tree/master/slides/kube/kubeobjects_fr.md)]
+.debug[[kube/kubeobjects_fr.md](https://github.com/RyaxTech/kube.training.git/tree/gh-pages//kube/kubeobjects_fr.md)]
 ---
 
 class: pic
@@ -273,7 +271,7 @@ Exposition des conteneurs
 
   `ClusterIP`,` NodePort`, `LoadBalancer`,` ExternalName`
 
-.debug[[kube/kubectlexpose_fr.md](https://github.com/RyaxTech/container.training.git/tree/master/slides/kube/kubectlexpose_fr.md)]
+.debug[[kube/kubectlexpose_fr.md](https://github.com/RyaxTech/kube.training.git/tree/gh-pages//kube/kubectlexpose_fr.md)]
 ---
 
 ## Types de service de base
@@ -294,7 +292,7 @@ Ces types de service sont toujours disponibles.
 
 Sous le tapis: `kube-proxy` utilise un proxy userland et un tas de règles `iptables`.
 
-.debug[[kube/kubectlexpose_fr.md](https://github.com/RyaxTech/container.training.git/tree/master/slides/kube/kubectlexpose_fr.md)]
+.debug[[kube/kubectlexpose_fr.md](https://github.com/RyaxTech/kube.training.git/tree/gh-pages//kube/kubectlexpose_fr.md)]
 ---
 
 ## Plus de types de services
@@ -312,7 +310,7 @@ Sous le tapis: `kube-proxy` utilise un proxy userland et un tas de règles `ipta
 
 Le type `LoadBalancer` est actuellement disponible uniquement sur AWS, Azure et GCE.
 
-.debug[[kube/kubectlexpose_fr.md](https://github.com/RyaxTech/container.training.git/tree/master/slides/kube/kubectlexpose_fr.md)]
+.debug[[kube/kubectlexpose_fr.md](https://github.com/RyaxTech/kube.training.git/tree/gh-pages//kube/kubectlexpose_fr.md)]
 ---
 
 ## Exécuter des conteneurs avec des ports ouverts
@@ -337,7 +335,7 @@ L'option `-w` "watches" les événements se produisant sur les ressources spéci
 
 Note: veuillez NE PAS appeler le service `search`. Cela entrerait en conflit avec le TLD.
 
-.debug[[kube/kubectlexpose_fr.md](https://github.com/RyaxTech/container.training.git/tree/master/slides/kube/kubectlexpose_fr.md)]
+.debug[[kube/kubectlexpose_fr.md](https://github.com/RyaxTech/kube.training.git/tree/gh-pages//kube/kubectlexpose_fr.md)]
 ---
 
 ## Exposant notre déploiement
@@ -358,7 +356,7 @@ Note: veuillez NE PAS appeler le service `search`. Cela entrerait en conflit ave
 
 ]
 
-.debug[[kube/kubectlexpose_fr.md](https://github.com/RyaxTech/container.training.git/tree/master/slides/kube/kubectlexpose_fr.md)]
+.debug[[kube/kubectlexpose_fr.md](https://github.com/RyaxTech/kube.training.git/tree/gh-pages//kube/kubectlexpose_fr.md)]
 ---
 
 ## Les services sont des constructions de couche 4
@@ -377,7 +375,7 @@ Note: veuillez NE PAS appeler le service `search`. Cela entrerait en conflit ave
 
   (par exemple, host networking mode)
 
-.debug[[kube/kubectlexpose_fr.md](https://github.com/RyaxTech/container.training.git/tree/master/slides/kube/kubectlexpose_fr.md)]
+.debug[[kube/kubectlexpose_fr.md](https://github.com/RyaxTech/kube.training.git/tree/gh-pages//kube/kubectlexpose_fr.md)]
 ---
 
 ## Test de notre service
@@ -408,7 +406,7 @@ C'est normal pendant que le service démarre.
 
 Une fois qu'il est en cours d'exécution, nos demandes sont équilibrées en charge sur plusieurs pods.
 
-.debug[[kube/kubectlexpose_fr.md](https://github.com/RyaxTech/container.training.git/tree/master/slides/kube/kubectlexpose_fr.md)]
+.debug[[kube/kubectlexpose_fr.md](https://github.com/RyaxTech/kube.training.git/tree/gh-pages//kube/kubectlexpose_fr.md)]
 ---
 
 class: extra-details
@@ -429,7 +427,7 @@ class: extra-details
 
 - Dans ce cas, nous pouvons utiliser un "headless service"
 
-.debug[[kube/kubectlexpose_fr.md](https://github.com/RyaxTech/container.training.git/tree/master/slides/kube/kubectlexpose_fr.md)]
+.debug[[kube/kubectlexpose_fr.md](https://github.com/RyaxTech/kube.training.git/tree/gh-pages//kube/kubectlexpose_fr.md)]
 ---
 
 class: extra-details
@@ -448,7 +446,7 @@ class: extra-details
 
 - Cela nous donne un moyen facile de découvrir toutes les répliques pour un déploiement
 
-.debug[[kube/kubectlexpose_fr.md](https://github.com/RyaxTech/container.training.git/tree/master/slides/kube/kubectlexpose_fr.md)]
+.debug[[kube/kubectlexpose_fr.md](https://github.com/RyaxTech/kube.training.git/tree/gh-pages//kube/kubectlexpose_fr.md)]
 ---
 
 class: extra-details
@@ -474,7 +472,7 @@ Dans la sortie, il y aura une ligne commençant par `Endpoints:`.
 
 Cette ligne listera un tas d'adresses au format `host:port`.
 
-.debug[[kube/kubectlexpose_fr.md](https://github.com/RyaxTech/container.training.git/tree/master/slides/kube/kubectlexpose_fr.md)]
+.debug[[kube/kubectlexpose_fr.md](https://github.com/RyaxTech/kube.training.git/tree/gh-pages//kube/kubectlexpose_fr.md)]
 ---
 
 class: extra-details
@@ -499,7 +497,7 @@ class: extra-details
   kubectl get pods -l run=elastic -o wide
   ```
 
-.debug[[kube/kubectlexpose_fr.md](https://github.com/RyaxTech/container.training.git/tree/master/slides/kube/kubectlexpose_fr.md)]
+.debug[[kube/kubectlexpose_fr.md](https://github.com/RyaxTech/kube.training.git/tree/gh-pages//kube/kubectlexpose_fr.md)]
 ---
 
 class: extra-details
@@ -521,13 +519,13 @@ error: the server doesn't have a resource type "endpoint"
 
 
 
-.debug[[kube/kubectlexpose_fr.md](https://github.com/RyaxTech/container.training.git/tree/master/slides/kube/kubectlexpose_fr.md)]
+.debug[[kube/kubectlexpose_fr.md](https://github.com/RyaxTech/kube.training.git/tree/gh-pages//kube/kubectlexpose_fr.md)]
 ---
 class: title
 
 Notre application sur Kubernetes
 
-.debug[[kube/ourapponkube_fr.md](https://github.com/RyaxTech/container.training.git/tree/master/slides/kube/ourapponkube_fr.md)]
+.debug[[kube/ourapponkube_fr.md](https://github.com/RyaxTech/kube.training.git/tree/gh-pages//kube/ourapponkube_fr.md)]
 ---
 
 ## Qu'est-ce qu'il y'a au menu?
@@ -544,7 +542,7 @@ Dans cette partie, nous allons:
 
 - exposer l'interface web afin que nous puissions y accéder de l'extérieur.
 
-.debug[[kube/ourapponkube_fr.md](https://github.com/RyaxTech/container.training.git/tree/master/slides/kube/ourapponkube_fr.md)]
+.debug[[kube/ourapponkube_fr.md](https://github.com/RyaxTech/kube.training.git/tree/gh-pages//kube/ourapponkube_fr.md)]
 ---
 
 ## Le plan
@@ -561,7 +559,7 @@ Dans cette partie, nous allons:
 
 - Exposition (avec un NodePort) de l'interface Web
 
-.debug[[kube/ourapponkube_fr.md](https://github.com/RyaxTech/container.training.git/tree/master/slides/kube/ourapponkube_fr.md)]
+.debug[[kube/ourapponkube_fr.md](https://github.com/RyaxTech/kube.training.git/tree/gh-pages//kube/ourapponkube_fr.md)]
 ---
 
 ## Quel registre voulons-nous utiliser?
@@ -574,7 +572,7 @@ Dans cette partie, nous allons:
 
 *Nous hébergerons automatiquement le registre car c'est la solution la plus générique pour cet atelier.*
 
-.debug[[kube/ourapponkube_fr.md](https://github.com/RyaxTech/container.training.git/tree/master/slides/kube/ourapponkube_fr.md)]
+.debug[[kube/ourapponkube_fr.md](https://github.com/RyaxTech/kube.training.git/tree/gh-pages//kube/ourapponkube_fr.md)]
 ---
 
 ## Utiliser le registre open source
@@ -594,7 +592,7 @@ Dans cette partie, nous allons:
 - Notre stratégie: publier le conteneur de registre sur un NodePort,
   <br/> pour qu'il soit disponible via `127.0.0.1:xxxxx` sur chaque noeud
 
-.debug[[kube/ourapponkube_fr.md](https://github.com/RyaxTech/container.training.git/tree/master/slides/kube/ourapponkube_fr.md)]
+.debug[[kube/ourapponkube_fr.md](https://github.com/RyaxTech/kube.training.git/tree/gh-pages//kube/ourapponkube_fr.md)]
 ---
 
 class: pic
@@ -638,7 +636,7 @@ Déployer un registre auto-hébergé
 
 ]
 
-.debug[[kube/ourapponkube_fr.md](https://github.com/RyaxTech/container.training.git/tree/master/slides/kube/ourapponkube_fr.md)]
+.debug[[kube/ourapponkube_fr.md](https://github.com/RyaxTech/kube.training.git/tree/gh-pages//kube/ourapponkube_fr.md)]
 ---
 
 ## Connexion à notre registre
@@ -660,7 +658,7 @@ Déployer un registre auto-hébergé
 
 ]
 
-.debug[[kube/ourapponkube_fr.md](https://github.com/RyaxTech/container.training.git/tree/master/slides/kube/ourapponkube_fr.md)]
+.debug[[kube/ourapponkube_fr.md](https://github.com/RyaxTech/kube.training.git/tree/gh-pages//kube/ourapponkube_fr.md)]
 ---
 
 ## Test de notre registre
@@ -683,7 +681,7 @@ Nous devrions voir:
 {"repositories": []}
 ```
 
-.debug[[kube/ourapponkube_fr.md](https://github.com/RyaxTech/container.training.git/tree/master/slides/kube/ourapponkube_fr.md)]
+.debug[[kube/ourapponkube_fr.md](https://github.com/RyaxTech/kube.training.git/tree/gh-pages//kube/ourapponkube_fr.md)]
 ---
 
 ## Test de notre registre local
@@ -705,7 +703,7 @@ Nous devrions voir:
 
 ]
 
-.debug[[kube/ourapponkube_fr.md](https://github.com/RyaxTech/container.training.git/tree/master/slides/kube/ourapponkube_fr.md)]
+.debug[[kube/ourapponkube_fr.md](https://github.com/RyaxTech/kube.training.git/tree/gh-pages//kube/ourapponkube_fr.md)]
 ---
 
 ## Vérifier à nouveau ce qu'il y a dans notre registre local
@@ -726,7 +724,7 @@ La commande curl devrait maintenant sortir:
 {"repositories": ["busybox"]}
 ```
 
-.debug[[kube/ourapponkube_fr.md](https://github.com/RyaxTech/container.training.git/tree/master/slides/kube/ourapponkube_fr.md)]
+.debug[[kube/ourapponkube_fr.md](https://github.com/RyaxTech/kube.training.git/tree/gh-pages//kube/ourapponkube_fr.md)]
 ---
 
 ## Construire et pousser nos images
@@ -752,7 +750,7 @@ La commande curl devrait maintenant sortir:
 
 Jetons un coup d'œil au fichier `dockercoins.yml` pendant que ce dernier construit et pousse.
 
-.debug[[kube/ourapponkube_fr.md](https://github.com/RyaxTech/container.training.git/tree/master/slides/kube/ourapponkube_fr.md)]
+.debug[[kube/ourapponkube_fr.md](https://github.com/RyaxTech/kube.training.git/tree/gh-pages//kube/ourapponkube_fr.md)]
 ---
 
 ```yaml
@@ -778,7 +776,7 @@ services:
 
 .warning[Juste au cas où vous vous poseriez la question ... Les "services" de Docker ne sont pas des "services" de Kubernetes.]
 
-.debug[[kube/ourapponkube_fr.md](https://github.com/RyaxTech/container.training.git/tree/master/slides/kube/ourapponkube_fr.md)]
+.debug[[kube/ourapponkube_fr.md](https://github.com/RyaxTech/kube.training.git/tree/gh-pages//kube/ourapponkube_fr.md)]
 ---
 
 class: extra-details
@@ -803,7 +801,7 @@ class: extra-details
 
 - Les tags de "Images" doivent être significatives, c'est-à-dire correspondre à des branches, tags, ou hashes
 
-.debug[[kube/ourapponkube_fr.md](https://github.com/RyaxTech/container.training.git/tree/master/slides/kube/ourapponkube_fr.md)]
+.debug[[kube/ourapponkube_fr.md](https://github.com/RyaxTech/kube.training.git/tree/gh-pages//kube/ourapponkube_fr.md)]
 ---
 
 ## Déploiement de toutes les choses
@@ -826,7 +824,7 @@ class: extra-details
 
 ]
 
-.debug[[kube/ourapponkube_fr.md](https://github.com/RyaxTech/container.training.git/tree/master/slides/kube/ourapponkube_fr.md)]
+.debug[[kube/ourapponkube_fr.md](https://github.com/RyaxTech/kube.training.git/tree/gh-pages//kube/ourapponkube_fr.md)]
 ---
 
 ## Est-ce que ça marche?
@@ -853,7 +851,7 @@ class: extra-details
 
 💡 Oh, c'est vrai! Nous avons oublié de "exposer".
 
-.debug[[kube/ourapponkube_fr.md](https://github.com/RyaxTech/container.training.git/tree/master/slides/kube/ourapponkube_fr.md)]
+.debug[[kube/ourapponkube_fr.md](https://github.com/RyaxTech/kube.training.git/tree/gh-pages//kube/ourapponkube_fr.md)]
 ---
 
 class: pic
@@ -898,7 +896,7 @@ Exposant des services en interne
 
 ]
 
-.debug[[kube/ourapponkube_fr.md](https://github.com/RyaxTech/container.training.git/tree/master/slides/kube/ourapponkube_fr.md)]
+.debug[[kube/ourapponkube_fr.md](https://github.com/RyaxTech/kube.training.git/tree/gh-pages//kube/ourapponkube_fr.md)]
 ---
 
 ## Est-ce que ça marche encore?
@@ -920,7 +918,7 @@ Exposant des services en interne
 
 Nous devrions maintenant voir le «travailleur», bien, travaillant heureusement.
 
-.debug[[kube/ourapponkube_fr.md](https://github.com/RyaxTech/container.training.git/tree/master/slides/kube/ourapponkube_fr.md)]
+.debug[[kube/ourapponkube_fr.md](https://github.com/RyaxTech/kube.training.git/tree/gh-pages//kube/ourapponkube_fr.md)]
 ---
 
 class: pic
@@ -968,7 +966,7 @@ Exposant des services pour un accès externe
 
 ]
 
-.debug[[kube/ourapponkube_fr.md](https://github.com/RyaxTech/container.training.git/tree/master/slides/kube/ourapponkube_fr.md)]
+.debug[[kube/ourapponkube_fr.md](https://github.com/RyaxTech/kube.training.git/tree/gh-pages//kube/ourapponkube_fr.md)]
 ---
 
 ## Accès à l'interface utilisateur Web
@@ -986,7 +984,7 @@ Exposant des services pour un accès externe
 
 
 
-.debug[[kube/ourapponkube_fr.md](https://github.com/RyaxTech/container.training.git/tree/master/slides/kube/ourapponkube_fr.md)]
+.debug[[kube/ourapponkube_fr.md](https://github.com/RyaxTech/kube.training.git/tree/gh-pages//kube/ourapponkube_fr.md)]
 ---
 
 class: pic
@@ -1037,7 +1035,7 @@ Après quelques secondes, le graphique dans l'interface utilisateur Web devrait 
 
 
 
-.debug[[kube/kubectlscale_fr.md](https://github.com/RyaxTech/container.training.git/tree/master/slides/kube/kubectlscale_fr.md)]
+.debug[[kube/kubectlscale_fr.md](https://github.com/RyaxTech/kube.training.git/tree/gh-pages//kube/kubectlscale_fr.md)]
 ---
 
 class: pic
@@ -1078,7 +1076,7 @@ Daemon sets
 
 - Au lieu d'un `deploiyment`, nous utiliserons un `daemonset`
 
-.debug[[kube/daemonset_fr.md](https://github.com/RyaxTech/container.training.git/tree/master/slides/kube/daemonset_fr.md)]
+.debug[[kube/daemonset_fr.md](https://github.com/RyaxTech/kube.training.git/tree/gh-pages//kube/daemonset_fr.md)]
 ---
 
 ## Daemon set en pratique
@@ -1097,7 +1095,7 @@ Daemon sets
 
 - Ils peuvent également être limités à l'exécution [uniquement sur certains nœuds](https://kubernetes.io/docs/concepts/workloads/controllers/daemonset/#running-pods-on-only-some-nodes)
 
-.debug[[kube/daemonset_fr.md](https://github.com/RyaxTech/container.training.git/tree/master/slides/kube/daemonset_fr.md)]
+.debug[[kube/daemonset_fr.md](https://github.com/RyaxTech/kube.training.git/tree/gh-pages//kube/daemonset_fr.md)]
 ---
 
 ## Création d'un daemon set
@@ -1127,7 +1125,7 @@ Daemon sets
 
   - option 2: `vi` notre moyen de sortir de celui-ci
 
-.debug[[kube/daemonset_fr.md](https://github.com/RyaxTech/container.training.git/tree/master/slides/kube/daemonset_fr.md)]
+.debug[[kube/daemonset_fr.md](https://github.com/RyaxTech/kube.training.git/tree/gh-pages//kube/daemonset_fr.md)]
 ---
 
 ## Création du fichier YAML pour notre daemon set
@@ -1150,7 +1148,7 @@ Note: `--export` supprimera les informations spécifiques au cluster, c'est-à-d
 - status et creation timestamp (inutile lors de la création d'une nouvelle ressource)
 - resourceVersion et uid (ils causeraient des problèmes ... *intéressants*)
 
-.debug[[kube/daemonset_fr.md](https://github.com/RyaxTech/container.training.git/tree/master/slides/kube/daemonset_fr.md)]
+.debug[[kube/daemonset_fr.md](https://github.com/RyaxTech/kube.training.git/tree/gh-pages//kube/daemonset_fr.md)]
 ---
 
 ## "Casting" d'une ressource à un autre
@@ -1176,7 +1174,7 @@ Note: `--export` supprimera les informations spécifiques au cluster, c'est-à-d
 
 Nous savions tous que cela ne pourrait pas être aussi facile, non!
 
-.debug[[kube/daemonset_fr.md](https://github.com/RyaxTech/container.training.git/tree/master/slides/kube/daemonset_fr.md)]
+.debug[[kube/daemonset_fr.md](https://github.com/RyaxTech/kube.training.git/tree/gh-pages//kube/daemonset_fr.md)]
 ---
 
 ## Comprendre le problème
@@ -1204,7 +1202,7 @@ Nous savions tous que cela ne pourrait pas être aussi facile, non!
 
 - Ou, on pourrait aussi ...
 
-.debug[[kube/daemonset_fr.md](https://github.com/RyaxTech/container.training.git/tree/master/slides/kube/daemonset_fr.md)]
+.debug[[kube/daemonset_fr.md](https://github.com/RyaxTech/kube.training.git/tree/gh-pages//kube/daemonset_fr.md)]
 ---
 
 ## Utilise le `--force`, Luke
@@ -1230,7 +1228,7 @@ Nous savions tous que cela ne pourrait pas être aussi facile, non!
 
 Attendez ... Maintenant, cela peut-il être * aussi facile?
 
-.debug[[kube/daemonset_fr.md](https://github.com/RyaxTech/container.training.git/tree/master/slides/kube/daemonset_fr.md)]
+.debug[[kube/daemonset_fr.md](https://github.com/RyaxTech/kube.training.git/tree/gh-pages//kube/daemonset_fr.md)]
 ---
 
 ## Vérification de ce que nous avons fait
@@ -1258,7 +1256,7 @@ Nous avons aussi un trop grand nombre de pods.
 <br/>
 (Le module correspondant au *deployment* existe toujours.)
 
-.debug[[kube/daemonset_fr.md](https://github.com/RyaxTech/container.training.git/tree/master/slides/kube/daemonset_fr.md)]
+.debug[[kube/daemonset_fr.md](https://github.com/RyaxTech/kube.training.git/tree/gh-pages//kube/daemonset_fr.md)]
 ---
 
 ## `deploy / rng` et` ds / rng`
@@ -1282,7 +1280,7 @@ NAME                DESIRED  CURRENT  READY  UP-TO-DATE  AVAILABLE  NODE SELECTO
 daemonset.apps/rng  2        2        2      2           2          <none>         9s
   ```
 
-.debug[[kube/daemonset_fr.md](https://github.com/RyaxTech/container.training.git/tree/master/slides/kube/daemonset_fr.md)]
+.debug[[kube/daemonset_fr.md](https://github.com/RyaxTech/kube.training.git/tree/gh-pages//kube/daemonset_fr.md)]
 ---
 
 ## Trop de pods
@@ -1310,7 +1308,7 @@ Le nœud principal a [taints](https://kubernetes.io/docs/concepts/configuration/
 
 .footnote [(Désactivé par un? Nous n'exécutons pas ces pods sur le nœud hébergeant le Control Plane.)]
 
-.debug[[kube/daemonset_fr.md](https://github.com/RyaxTech/container.training.git/tree/master/slides/kube/daemonset_fr.md)]
+.debug[[kube/daemonset_fr.md](https://github.com/RyaxTech/kube.training.git/tree/gh-pages//kube/daemonset_fr.md)]
 ---
 
 ## Que font tous ces pods?
@@ -1338,7 +1336,7 @@ Le nœud principal a [taints](https://kubernetes.io/docs/concepts/configuration/
 
 Il semble que *tous les pods* servent des requêtes pour le moment.
 
-.debug[[kube/daemonset_fr.md](https://github.com/RyaxTech/container.training.git/tree/master/slides/kube/daemonset_fr.md)]
+.debug[[kube/daemonset_fr.md](https://github.com/RyaxTech/kube.training.git/tree/gh-pages//kube/daemonset_fr.md)]
 ---
 
 ## La magie des selectors
@@ -1360,7 +1358,7 @@ Lorsque nous avons créé des pods supplémentaires avec ce label, ils étaient
 automatiquement détecté par `svc/rng` et ajouté en tant que *endpoints*
 à l'équilibreur de charge associé.
 
-.debug[[kube/daemonset_fr.md](https://github.com/RyaxTech/container.training.git/tree/master/slides/kube/daemonset_fr.md)]
+.debug[[kube/daemonset_fr.md](https://github.com/RyaxTech/kube.training.git/tree/gh-pages//kube/daemonset_fr.md)]
 ---
 
 ## Retrait du premier pod de l'équilibreur de charge
@@ -1391,7 +1389,7 @@ automatiquement détecté par `svc/rng` et ajouté en tant que *endpoints*
 
   La réponse réside dans le selector exact utilisé par le `replica set` ...
 
-.debug[[kube/daemonset_fr.md](https://github.com/RyaxTech/container.training.git/tree/master/slides/kube/daemonset_fr.md)]
+.debug[[kube/daemonset_fr.md](https://github.com/RyaxTech/kube.training.git/tree/gh-pages//kube/daemonset_fr.md)]
 ---
 
 ## Plongée profonde dans les selectors
@@ -1418,7 +1416,7 @@ automatiquement détecté par `svc/rng` et ajouté en tant que *endpoints*
 
 Le selector du replica set possède également un `pod-template-hash`, contrairement aux pods de notre daemon set.
 
-.debug[[kube/daemonset_fr.md](https://github.com/RyaxTech/container.training.git/tree/master/slides/kube/daemonset_fr.md)]
+.debug[[kube/daemonset_fr.md](https://github.com/RyaxTech/kube.training.git/tree/gh-pages//kube/daemonset_fr.md)]
 ---
 
 class: pic
@@ -1462,7 +1460,7 @@ Mise à jour d'un service via des labels et des selectors
 
 Bien sûr, l'option 2 offre plus d'opportunités d'apprentissage. Non?
 
-.debug[[kube/daemonset_fr.md](https://github.com/RyaxTech/container.training.git/tree/master/slides/kube/daemonset_fr.md)]
+.debug[[kube/daemonset_fr.md](https://github.com/RyaxTech/kube.training.git/tree/gh-pages//kube/daemonset_fr.md)]
 ---
 
 ## Ajouter un label supplémentaire au daemon set
@@ -1483,7 +1481,7 @@ Bien sûr, l'option 2 offre plus d'opportunités d'apprentissage. Non?
 
 *Nous avons inclus quelques conseils sur les prochaines diapositives pour votre facilitation!*
 
-.debug[[kube/daemonset_fr.md](https://github.com/RyaxTech/container.training.git/tree/master/slides/kube/daemonset_fr.md)]
+.debug[[kube/daemonset_fr.md](https://github.com/RyaxTech/kube.training.git/tree/gh-pages//kube/daemonset_fr.md)]
 ---
 
 ## Nous avons mis des ressources dans vos ressources
@@ -1504,7 +1502,7 @@ Bien sûr, l'option 2 offre plus d'opportunités d'apprentissage. Non?
 
   (c'est-à-dire que la ressource refusera de créer des ressources qu'elle ne sélectionnera pas)
 
-.debug[[kube/daemonset_fr.md](https://github.com/RyaxTech/container.training.git/tree/master/slides/kube/daemonset_fr.md)]
+.debug[[kube/daemonset_fr.md](https://github.com/RyaxTech/kube.training.git/tree/gh-pages//kube/daemonset_fr.md)]
 ---
 
 ## Ajout de notre label
@@ -1527,7 +1525,7 @@ Bien sûr, l'option 2 offre plus d'opportunités d'apprentissage. Non?
 
 ]
 
-.debug[[kube/daemonset_fr.md](https://github.com/RyaxTech/container.training.git/tree/master/slides/kube/daemonset_fr.md)]
+.debug[[kube/daemonset_fr.md](https://github.com/RyaxTech/kube.training.git/tree/gh-pages//kube/daemonset_fr.md)]
 ---
 
 ## Vérification de ce que nous avons fait
@@ -1552,7 +1550,7 @@ Les timestamps devraient nous donner un indice sur le nombre de pods qui reçoiv
 
 ]
 
-.debug[[kube/daemonset_fr.md](https://github.com/RyaxTech/container.training.git/tree/master/slides/kube/daemonset_fr.md)]
+.debug[[kube/daemonset_fr.md](https://github.com/RyaxTech/kube.training.git/tree/gh-pages//kube/daemonset_fr.md)]
 ---
 
 ## Nettoyage
@@ -1575,7 +1573,7 @@ Les timestamps devraient nous donner un indice sur le nombre de pods qui reçoiv
 
 ]
 
-.debug[[kube/daemonset_fr.md](https://github.com/RyaxTech/container.training.git/tree/master/slides/kube/daemonset_fr.md)]
+.debug[[kube/daemonset_fr.md](https://github.com/RyaxTech/kube.training.git/tree/gh-pages//kube/daemonset_fr.md)]
 ---
 
 ## Nettoyage des pods mortes
@@ -1602,7 +1600,7 @@ rng-xbpvg                   1/1       Running       0          7m
 
 - Si on supprime le pod associé au deployment, il est recréé automatiquement
 
-.debug[[kube/daemonset_fr.md](https://github.com/RyaxTech/container.training.git/tree/master/slides/kube/daemonset_fr.md)]
+.debug[[kube/daemonset_fr.md](https://github.com/RyaxTech/kube.training.git/tree/gh-pages//kube/daemonset_fr.md)]
 ---
 
 ## Suppression d'un déploiement
@@ -1630,7 +1628,7 @@ rng-xbpvg                   1/1       Running       0          11m
 
 Ding, dong, le déploiement est mort! Et le daemon set continue à vivre.
 
-.debug[[kube/daemonset_fr.md](https://github.com/RyaxTech/container.training.git/tree/master/slides/kube/daemonset_fr.md)]
+.debug[[kube/daemonset_fr.md](https://github.com/RyaxTech/kube.training.git/tree/gh-pages//kube/daemonset_fr.md)]
 ---
 
 ## Éviter les pods supplémentaires
@@ -1656,7 +1654,7 @@ Ding, dong, le déploiement est mort! Et le daemon set continue à vivre.
   ```
 
 
-.debug[[kube/daemonset_fr.md](https://github.com/RyaxTech/container.training.git/tree/master/slides/kube/daemonset_fr.md)]
+.debug[[kube/daemonset_fr.md](https://github.com/RyaxTech/kube.training.git/tree/gh-pages//kube/daemonset_fr.md)]
 ---
 
 ## Labels et débogage
@@ -1675,7 +1673,7 @@ Ding, dong, le déploiement est mort! Et le daemon set continue à vivre.
 
   (Très utile pour résoudre les bugs intermittents et insaisissables)
 
-.debug[[kube/daemonset_fr.md](https://github.com/RyaxTech/container.training.git/tree/master/slides/kube/daemonset_fr.md)]
+.debug[[kube/daemonset_fr.md](https://github.com/RyaxTech/kube.training.git/tree/gh-pages//kube/daemonset_fr.md)]
 ---
 
 ## Labels et contrôle de rollout avancé
@@ -1696,7 +1694,7 @@ Ding, dong, le déploiement est mort! Et le daemon set continue à vivre.
 
 
 
-.debug[[kube/daemonset_fr.md](https://github.com/RyaxTech/container.training.git/tree/master/slides/kube/daemonset_fr.md)]
+.debug[[kube/daemonset_fr.md](https://github.com/RyaxTech/kube.training.git/tree/gh-pages//kube/daemonset_fr.md)]
 ---
 
 class: pic
@@ -1735,7 +1733,7 @@ Rolling updates
   
   - Si quelque chose ne va pas, ¯\\\_(ツ)\_/¯
 
-.debug[[kube/rollout_fr.md](https://github.com/RyaxTech/container.training.git/tree/master/slides/kube/rollout_fr.md)]
+.debug[[kube/rollout_fr.md](https://github.com/RyaxTech/kube.training.git/tree/gh-pages//kube/rollout_fr.md)]
 ---
 
 ## Rolling updates
@@ -1757,7 +1755,7 @@ Rolling updates
 - Nous avons la possibilité de revenir à la version précédente (rollback)
   <br/> (si la mise à jour échoue ou est insatisfaisante)
 
-.debug[[kube/rollout_fr.md](https://github.com/RyaxTech/container.training.git/tree/master/slides/kube/rollout_fr.md)]
+.debug[[kube/rollout_fr.md](https://github.com/RyaxTech/kube.training.git/tree/gh-pages//kube/rollout_fr.md)]
 ---
 
 ## Vérification des paramètres de déploiement actuels
@@ -1774,7 +1772,7 @@ Rolling updates
 
 ]
 
-.debug[[kube/rollout_fr.md](https://github.com/RyaxTech/container.training.git/tree/master/slides/kube/rollout_fr.md)]
+.debug[[kube/rollout_fr.md](https://github.com/RyaxTech/kube.training.git/tree/gh-pages//kube/rollout_fr.md)]
 ---
 
 
@@ -1788,7 +1786,7 @@ Rolling updates
 
 - Les rolling updates peuvent être surveillées avec la sous-commande `kubectl rollout`
 
-.debug[[kube/rollout_fr.md](https://github.com/RyaxTech/container.training.git/tree/master/slides/kube/rollout_fr.md)]
+.debug[[kube/rollout_fr.md](https://github.com/RyaxTech/kube.training.git/tree/gh-pages//kube/rollout_fr.md)]
 ---
 
 ## Construire une nouvelle version du service `worker`
@@ -1812,7 +1810,7 @@ Rolling updates
 
 ]
 
-.debug[[kube/rollout_fr.md](https://github.com/RyaxTech/container.training.git/tree/master/slides/kube/rollout_fr.md)]
+.debug[[kube/rollout_fr.md](https://github.com/RyaxTech/kube.training.git/tree/gh-pages//kube/rollout_fr.md)]
 ---
 
 ## Rolling out du nouveau service `worker`
@@ -1837,7 +1835,7 @@ Rolling updates
 
 Ce rollout devrait être assez rapide. Que montre l'interface web?
 
-.debug[[kube/rollout_fr.md](https://github.com/RyaxTech/container.training.git/tree/master/slides/kube/rollout_fr.md)]
+.debug[[kube/rollout_fr.md](https://github.com/RyaxTech/kube.training.git/tree/gh-pages//kube/rollout_fr.md)]
 ---
 
 ## Donnez-lui du temps
@@ -1860,7 +1858,7 @@ Ce rollout devrait être assez rapide. Que montre l'interface web?
 
   (La période de grâce est de 30 secondes, mais [peut être modifiée](https://kubernetes.io/docs/concepts/workloads/pods/pod/#termination-of-pods) si nécessaire)
 
-.debug[[kube/rollout_fr.md](https://github.com/RyaxTech/container.training.git/tree/master/slides/kube/rollout_fr.md)]
+.debug[[kube/rollout_fr.md](https://github.com/RyaxTech/kube.training.git/tree/gh-pages//kube/rollout_fr.md)]
 ---
 
 ## Le cas d'une erreur
@@ -1886,7 +1884,7 @@ Ce rollout devrait être assez rapide. Que montre l'interface web?
 
 Notre déploiement est bloqué. Cependant, l'application n'est pas morte (seulement 10% plus lent).
 
-.debug[[kube/rollout_fr.md](https://github.com/RyaxTech/container.training.git/tree/master/slides/kube/rollout_fr.md)]
+.debug[[kube/rollout_fr.md](https://github.com/RyaxTech/kube.training.git/tree/gh-pages//kube/rollout_fr.md)]
 ---
 
 ## Que se passe-t-il avec notre déploiement?
@@ -1899,7 +1897,7 @@ Notre déploiement est bloqué. Cependant, l'application n'est pas morte (seulem
 
 - Parce que `MaxSurge=1`, donc en plus de remplacer le "terminated", le déploiement demarre un de plus
 
-.debug[[kube/rollout_fr.md](https://github.com/RyaxTech/container.training.git/tree/master/slides/kube/rollout_fr.md)]
+.debug[[kube/rollout_fr.md](https://github.com/RyaxTech/kube.training.git/tree/gh-pages//kube/rollout_fr.md)]
 ---
 
 class: extra-details
@@ -1920,7 +1918,7 @@ class: extra-details
 
 - Notre déploiement est bloqué à ce stade!
 
-.debug[[kube/rollout_fr.md](https://github.com/RyaxTech/container.training.git/tree/master/slides/kube/rollout_fr.md)]
+.debug[[kube/rollout_fr.md](https://github.com/RyaxTech/kube.training.git/tree/gh-pages//kube/rollout_fr.md)]
 ---
 
 ## Récupération à partir d'un mauvais déploiement
@@ -1941,7 +1939,7 @@ class: extra-details
 
 ]
 
-.debug[[kube/rollout_fr.md](https://github.com/RyaxTech/container.training.git/tree/master/slides/kube/rollout_fr.md)]
+.debug[[kube/rollout_fr.md](https://github.com/RyaxTech/kube.training.git/tree/gh-pages//kube/rollout_fr.md)]
 ---
 
 ## Modification des paramètres de rollout
@@ -1972,7 +1970,7 @@ spec:
 ]
 
 
-.debug[[kube/rollout_fr.md](https://github.com/RyaxTech/container.training.git/tree/master/slides/kube/rollout_fr.md)]
+.debug[[kube/rollout_fr.md](https://github.com/RyaxTech/kube.training.git/tree/gh-pages//kube/rollout_fr.md)]
 ---
 
 ## Application de modifications via un patch YAML
@@ -2010,7 +2008,7 @@ spec:
 
 
 
-.debug[[kube/rollout_fr.md](https://github.com/RyaxTech/container.training.git/tree/master/slides/kube/rollout_fr.md)]
+.debug[[kube/rollout_fr.md](https://github.com/RyaxTech/kube.training.git/tree/gh-pages//kube/rollout_fr.md)]
 ---
 
 class: pic
@@ -2045,7 +2043,7 @@ Accès aux logs depuis le CLI
 
 - Nous allons voir comment le faire mieux
 
-.debug[[kube/logs-cli_fr.md](https://github.com/RyaxTech/container.training.git/tree/master/slides/kube/logs-cli_fr.md)]
+.debug[[kube/logs-cli_fr.md](https://github.com/RyaxTech/kube.training.git/tree/gh-pages//kube/logs-cli_fr.md)]
 ---
 
 ## Le faire manuellement
@@ -2066,7 +2064,7 @@ Accès aux logs depuis le CLI
 
 - Nous *pourrions* le faire, mais heureusement, d'autres l'ont déjà fait pour nous!
 
-.debug[[kube/logs-cli_fr.md](https://github.com/RyaxTech/container.training.git/tree/master/slides/kube/logs-cli_fr.md)]
+.debug[[kube/logs-cli_fr.md](https://github.com/RyaxTech/kube.training.git/tree/gh-pages//kube/logs-cli_fr.md)]
 ---
 
 ## Stern
@@ -2082,7 +2080,7 @@ par [Wercker](http://www.wercker.com/).
 
 Exactement ce dont nous avons besoin!
 
-.debug[[kube/logs-cli_fr.md](https://github.com/RyaxTech/container.training.git/tree/master/slides/kube/logs-cli_fr.md)]
+.debug[[kube/logs-cli_fr.md](https://github.com/RyaxTech/kube.training.git/tree/gh-pages//kube/logs-cli_fr.md)]
 ---
 
 ## Installation de Stern
@@ -2103,7 +2101,7 @@ Exactement ce dont nous avons besoin!
 
 Ces instructions d'installation fonctionneront sur nos clusters, car ce sont des VM Linux amd64.
 
-.debug[[kube/logs-cli_fr.md](https://github.com/RyaxTech/container.training.git/tree/master/slides/kube/logs-cli_fr.md)]
+.debug[[kube/logs-cli_fr.md](https://github.com/RyaxTech/kube.training.git/tree/gh-pages//kube/logs-cli_fr.md)]
 ---
 
 ## Utilisation de Stern
@@ -2125,7 +2123,7 @@ Ces instructions d'installation fonctionneront sur nos clusters, car ce sont des
 
 ]
 
-.debug[[kube/logs-cli_fr.md](https://github.com/RyaxTech/container.training.git/tree/master/slides/kube/logs-cli_fr.md)]
+.debug[[kube/logs-cli_fr.md](https://github.com/RyaxTech/kube.training.git/tree/gh-pages//kube/logs-cli_fr.md)]
 ---
 
 ## Options pratiques Stern
@@ -2146,7 +2144,7 @@ Ces instructions d'installation fonctionneront sur nos clusters, car ce sont des
   ```
 ]
 
-.debug[[kube/logs-cli_fr.md](https://github.com/RyaxTech/container.training.git/tree/master/slides/kube/logs-cli_fr.md)]
+.debug[[kube/logs-cli_fr.md](https://github.com/RyaxTech/kube.training.git/tree/gh-pages//kube/logs-cli_fr.md)]
 ---
 
 ## Utiliser Stern avec un selector
@@ -2166,7 +2164,7 @@ Ces instructions d'installation fonctionneront sur nos clusters, car ce sont des
   stern -l run
   ```
 
-.debug[[kube/logs-cli_fr.md](https://github.com/RyaxTech/container.training.git/tree/master/slides/kube/logs-cli_fr.md)]
+.debug[[kube/logs-cli_fr.md](https://github.com/RyaxTech/kube.training.git/tree/gh-pages//kube/logs-cli_fr.md)]
 ---
 
 class: pic
@@ -2209,7 +2207,7 @@ Logs centralisée
 
 - Nous allons déployer une stack EFK
 
-.debug[[kube/logs-centralized_fr.md](https://github.com/RyaxTech/container.training.git/tree/master/slides/kube/logs-centralized_fr.md)]
+.debug[[kube/logs-centralized_fr.md](https://github.com/RyaxTech/kube.training.git/tree/gh-pages//kube/logs-centralized_fr.md)]
 ---
 
 ## Qu'est-ce que EFK?
@@ -2224,7 +2222,7 @@ Logs centralisée
 
 - Le seul composant auquel nous devons accéder depuis l'extérieur du cluster sera Kibana
 
-.debug[[kube/logs-centralized_fr.md](https://github.com/RyaxTech/container.training.git/tree/master/slides/kube/logs-centralized_fr.md)]
+.debug[[kube/logs-centralized_fr.md](https://github.com/RyaxTech/kube.training.git/tree/gh-pages//kube/logs-centralized_fr.md)]
 ---
 
 ## Déploiement de EFK sur notre cluster
@@ -2245,7 +2243,7 @@ Si nous [regardons le fichier YAML](https://goo.gl/MUZhE4), nous voyons que
 il crée 1 daemon set, 2 deployments, 2 services,
 et quelques roles et roles bindings (pour donner à fluentd les permissions requises).
 
-.debug[[kube/logs-centralized_fr.md](https://github.com/RyaxTech/container.training.git/tree/master/slides/kube/logs-centralized_fr.md)]
+.debug[[kube/logs-centralized_fr.md](https://github.com/RyaxTech/kube.training.git/tree/gh-pages//kube/logs-centralized_fr.md)]
 ---
 
 ## L'itinéraire d'une ligne de log (avant Fluentd)
@@ -2264,7 +2262,7 @@ et quelques roles et roles bindings (pour donner à fluentd les permissions requ
 
 - Ce fichier est lu lorsque nous invoquons `kubectl logs`; nous pouvons y accéder directement aussi
 
-.debug[[kube/logs-centralized_fr.md](https://github.com/RyaxTech/container.training.git/tree/master/slides/kube/logs-centralized_fr.md)]
+.debug[[kube/logs-centralized_fr.md](https://github.com/RyaxTech/kube.training.git/tree/gh-pages//kube/logs-centralized_fr.md)]
 ---
 
 ## L'itinéraire d'une ligne de log (avec Fluentd)
@@ -2284,7 +2282,7 @@ et quelques roles et roles bindings (pour donner à fluentd les permissions requ
 
 - Nous pouvons accéder aux logs via Kibana (et effectuer des recherches, des comptes, etc.)
 
-.debug[[kube/logs-centralized_fr.md](https://github.com/RyaxTech/container.training.git/tree/master/slides/kube/logs-centralized_fr.md)]
+.debug[[kube/logs-centralized_fr.md](https://github.com/RyaxTech/kube.training.git/tree/gh-pages//kube/logs-centralized_fr.md)]
 ---
 
 ## Accès à Kibana
@@ -2304,7 +2302,7 @@ et quelques roles et roles bindings (pour donner à fluentd les permissions requ
 
 ]
 
-.debug[[kube/logs-centralized_fr.md](https://github.com/RyaxTech/container.training.git/tree/master/slides/kube/logs-centralized_fr.md)]
+.debug[[kube/logs-centralized_fr.md](https://github.com/RyaxTech/kube.training.git/tree/gh-pages//kube/logs-centralized_fr.md)]
 ---
 
 ## Utiliser Kibana
@@ -2323,7 +2321,7 @@ et quelques roles et roles bindings (pour donner à fluentd les permissions requ
 
   `kubernetes.host`,` kubernetes.pod_name`, `stream`,` log`
 
-.debug[[kube/logs-centralized_fr.md](https://github.com/RyaxTech/container.training.git/tree/master/slides/kube/logs-centralized_fr.md)]
+.debug[[kube/logs-centralized_fr.md](https://github.com/RyaxTech/kube.training.git/tree/gh-pages//kube/logs-centralized_fr.md)]
 ---
 
 ## Caveat emptor
@@ -2344,7 +2342,7 @@ Le fichier YAML que nous avons utilisé crée toutes les ressources dans le
 espace de noms `default`, pour plus de simplicité. Dans un scénario réel, vous allez
 créez les ressources dans l'espace de noms `kube-system` ou dans un espace de noms dédié.
 
-.debug[[kube/logs-centralized_fr.md](https://github.com/RyaxTech/container.training.git/tree/master/slides/kube/logs-centralized_fr.md)]
+.debug[[kube/logs-centralized_fr.md](https://github.com/RyaxTech/kube.training.git/tree/gh-pages//kube/logs-centralized_fr.md)]
 ---
 
 class: pic
@@ -2387,7 +2385,7 @@ Gestion des stacks avec Helm
 
 - [Helm](https://helm.sh/) est un projet open source offrant toutes ces choses!
 
-.debug[[kube/helm_fr.md](https://github.com/RyaxTech/container.training.git/tree/master/slides/kube/helm_fr.md)]
+.debug[[kube/helm_fr.md](https://github.com/RyaxTech/kube.training.git/tree/gh-pages//kube/helm_fr.md)]
 ---
 
 ## Concepts de Helm
@@ -2402,7 +2400,7 @@ Gestion des stacks avec Helm
 
 - Les charts peuvent être stockés sur des repositories privés ou publics
 
-.debug[[kube/helm_fr.md](https://github.com/RyaxTech/container.training.git/tree/master/slides/kube/helm_fr.md)]
+.debug[[kube/helm_fr.md](https://github.com/RyaxTech/kube.training.git/tree/gh-pages//kube/helm_fr.md)]
 ---
 
 ## Installation de Helm
@@ -2430,7 +2428,7 @@ Gestion des stacks avec Helm
 
 ]
 
-.debug[[kube/helm_fr.md](https://github.com/RyaxTech/container.training.git/tree/master/slides/kube/helm_fr.md)]
+.debug[[kube/helm_fr.md](https://github.com/RyaxTech/kube.training.git/tree/gh-pages//kube/helm_fr.md)]
 ---
 
 ## Réparer les "account permissions"
@@ -2454,7 +2452,7 @@ Gestion des stacks avec Helm
 une connaissance plus approfondie du modèle RBAC de Kubernetes. La commande ci-dessus est
 amende pour les clusters personnels et de développement.)
 
-.debug[[kube/helm_fr.md](https://github.com/RyaxTech/container.training.git/tree/master/slides/kube/helm_fr.md)]
+.debug[[kube/helm_fr.md](https://github.com/RyaxTech/kube.training.git/tree/gh-pages//kube/helm_fr.md)]
 ---
 
 ## Voir les charts disponibles
@@ -2477,7 +2475,7 @@ amende pour les clusters personnels et de développement.)
 
 ]
 
-.debug[[kube/helm_fr.md](https://github.com/RyaxTech/container.training.git/tree/master/slides/kube/helm_fr.md)]
+.debug[[kube/helm_fr.md](https://github.com/RyaxTech/kube.training.git/tree/gh-pages//kube/helm_fr.md)]
 ---
 
 ## Installation d'un chart
@@ -2501,7 +2499,7 @@ amende pour les clusters personnels et de développement.)
 
 D'où viennent ces options `--set`?
 
-.debug[[kube/helm_fr.md](https://github.com/RyaxTech/container.training.git/tree/master/slides/kube/helm_fr.md)]
+.debug[[kube/helm_fr.md](https://github.com/RyaxTech/kube.training.git/tree/gh-pages//kube/helm_fr.md)]
 ---
 
 ## Inspection d'un chart
@@ -2521,7 +2519,7 @@ Les métadonnées du chart incluent une URL vers la page d'accueil du projet.
 
 (Parfois, il pointe facilement vers la documentation de la carte.)
 
-.debug[[kube/helm_fr.md](https://github.com/RyaxTech/container.training.git/tree/master/slides/kube/helm_fr.md)]
+.debug[[kube/helm_fr.md](https://github.com/RyaxTech/kube.training.git/tree/gh-pages//kube/helm_fr.md)]
 ---
 
 ## Création d'un chart
@@ -2547,7 +2545,7 @@ Les métadonnées du chart incluent une URL vers la page d'accueil du projet.
 
 ]
 
-.debug[[kube/helm_fr.md](https://github.com/RyaxTech/container.training.git/tree/master/slides/kube/helm_fr.md)]
+.debug[[kube/helm_fr.md](https://github.com/RyaxTech/kube.training.git/tree/gh-pages//kube/helm_fr.md)]
 ---
 
 ## Exportation du YAML pour notre application
@@ -2578,7 +2576,7 @@ Les métadonnées du chart incluent une URL vers la page d'accueil du projet.
 
 ]
 
-.debug[[kube/helm_fr.md](https://github.com/RyaxTech/container.training.git/tree/master/slides/kube/helm_fr.md)]
+.debug[[kube/helm_fr.md](https://github.com/RyaxTech/kube.training.git/tree/gh-pages//kube/helm_fr.md)]
 ---
 
 ## Test de notre chart
@@ -2598,7 +2596,7 @@ Les métadonnées du chart incluent une URL vers la page d'accueil du projet.
 
 - Pour éviter les conflits de noms, nous allons déployer l'application dans un autre *namespace*
 
-.debug[[kube/helm_fr.md](https://github.com/RyaxTech/container.training.git/tree/master/slides/kube/helm_fr.md)]
+.debug[[kube/helm_fr.md](https://github.com/RyaxTech/kube.training.git/tree/gh-pages//kube/helm_fr.md)]
 ---
 
 class: pic
@@ -2647,7 +2645,7 @@ Namespaces
 
   (Dans la ressource YAML, le type s'appelle `Kind`)
 
-.debug[[kube/namespaces_fr.md](https://github.com/RyaxTech/container.training.git/tree/master/slides/kube/namespaces_fr.md)]
+.debug[[kube/namespaces_fr.md](https://github.com/RyaxTech/kube.training.git/tree/gh-pages//kube/namespaces_fr.md)]
 ---
 
 ## Namespaces préexistants
@@ -2662,7 +2660,7 @@ Namespaces
 
 - Si nous déployons différemment, nous pouvons avoir différents namespaces
 
-.debug[[kube/namespaces_fr.md](https://github.com/RyaxTech/container.training.git/tree/master/slides/kube/namespaces_fr.md)]
+.debug[[kube/namespaces_fr.md](https://github.com/RyaxTech/kube.training.git/tree/gh-pages//kube/namespaces_fr.md)]
 ---
 
 ## Création des namespaces
@@ -2679,7 +2677,7 @@ Namespaces
 
 - Si nous utilisons un outil comme Helm, il créera automatiquement des namespaces
 
-.debug[[kube/namespaces_fr.md](https://github.com/RyaxTech/container.training.git/tree/master/slides/kube/namespaces_fr.md)]
+.debug[[kube/namespaces_fr.md](https://github.com/RyaxTech/kube.training.git/tree/gh-pages//kube/namespaces_fr.md)]
 ---
 
 ## Utiliser les namespaces
@@ -2695,7 +2693,7 @@ Namespaces
 
 - Nous pouvons manipuler les contexts avec la commande `kubectl config`
 
-.debug[[kube/namespaces_fr.md](https://github.com/RyaxTech/container.training.git/tree/master/slides/kube/namespaces_fr.md)]
+.debug[[kube/namespaces_fr.md](https://github.com/RyaxTech/kube.training.git/tree/gh-pages//kube/namespaces_fr.md)]
 ---
 
 ## Créer un context
@@ -2721,7 +2719,7 @@ Nous avons créé un context; mais c'est juste quelques valeurs de configuration
 
 Le namespace n'existe pas encore.
 
-.debug[[kube/namespaces_fr.md](https://github.com/RyaxTech/container.training.git/tree/master/slides/kube/namespaces_fr.md)]
+.debug[[kube/namespaces_fr.md](https://github.com/RyaxTech/kube.training.git/tree/gh-pages//kube/namespaces_fr.md)]
 ---
 
 ## Utiliser un contexte
@@ -2745,7 +2743,7 @@ Le namespace n'existe pas encore.
 Dans la dernière ligne de commande, `dockercoins` est juste le chemin local où
 nous avons créé notre Helm chart avant.
 
-.debug[[kube/namespaces_fr.md](https://github.com/RyaxTech/container.training.git/tree/master/slides/kube/namespaces_fr.md)]
+.debug[[kube/namespaces_fr.md](https://github.com/RyaxTech/kube.training.git/tree/gh-pages//kube/namespaces_fr.md)]
 ---
 
 ## Affichage de l'application déployée
@@ -2765,7 +2763,7 @@ nous avons créé notre Helm chart avant.
 
 Remarque: l'application peut prendre une minute ou deux pour être opérationnelle.
 
-.debug[[kube/namespaces_fr.md](https://github.com/RyaxTech/container.training.git/tree/master/slides/kube/namespaces_fr.md)]
+.debug[[kube/namespaces_fr.md](https://github.com/RyaxTech/kube.training.git/tree/gh-pages//kube/namespaces_fr.md)]
 ---
 
 ## Namespaces et isolation
@@ -2782,7 +2780,7 @@ Remarque: l'application peut prendre une minute ou deux pour être opérationnel
 
   `https://kubernetes.default.svc.cluster.local:443/`
 
-.debug[[kube/namespaces_fr.md](https://github.com/RyaxTech/container.training.git/tree/master/slides/kube/namespaces_fr.md)]
+.debug[[kube/namespaces_fr.md](https://github.com/RyaxTech/kube.training.git/tree/gh-pages//kube/namespaces_fr.md)]
 ---
 
 ## Isolation de Pods
@@ -2799,7 +2797,7 @@ Remarque: l'application peut prendre une minute ou deux pour être opérationnel
 
   - et vice versa
 
-.debug[[kube/namespaces_fr.md](https://github.com/RyaxTech/container.training.git/tree/master/slides/kube/namespaces_fr.md)]
+.debug[[kube/namespaces_fr.md](https://github.com/RyaxTech/kube.training.git/tree/gh-pages//kube/namespaces_fr.md)]
 ---
 
 ## Présentation des network policies
@@ -2816,7 +2814,7 @@ Remarque: l'application peut prendre une minute ou deux pour être opérationnel
 
 - Si un pod est ciblé par au moins une politique, le trafic doit être autorisé explicitement
 
-.debug[[kube/namespaces_fr.md](https://github.com/RyaxTech/container.training.git/tree/master/slides/kube/namespaces_fr.md)]
+.debug[[kube/namespaces_fr.md](https://github.com/RyaxTech/kube.training.git/tree/gh-pages//kube/namespaces_fr.md)]
 ---
 
 ## En savoir plus sur les network policies
@@ -2829,7 +2827,7 @@ Remarque: l'application peut prendre une minute ou deux pour être opérationnel
 
   - ceci [presentation de network policies chez KubeCon 2017 US](https://www.youtube.com/watch?v=3gGpMmYeEO8) par [@ahmetb](https://twitter.com/ahmetb)
 
-.debug[[kube/namespaces_fr.md](https://github.com/RyaxTech/container.training.git/tree/master/slides/kube/namespaces_fr.md)]</textarea>
+.debug[[kube/namespaces_fr.md](https://github.com/RyaxTech/kube.training.git/tree/gh-pages//kube/namespaces_fr.md)]</textarea>
     <script src="remark.min.js" type="text/javascript">
     </script>
     <script type="text/javascript">
