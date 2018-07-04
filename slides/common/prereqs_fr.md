@@ -6,7 +6,7 @@
 
   - éditer des fichiers
 
-  - un peu de bash-fu (variables d'environnement, boucles)
+  - un peu de bash (variables d'environnement, boucles)
 
 - Quelques connaissances de Docker
 
@@ -40,7 +40,7 @@ Misattribué à Benjamin Franklin
 
 - Nous allons construire, expédier et faire fonctionner des conteneurs!
 
-- Vous êtes invités à reproduire toutes les démos
+- Nous allons reproduire toutes les démos
 
 - Toutes les sections pratiques sont clairement identifiées, comme le rectangle gris ci-dessous
 
@@ -48,7 +48,7 @@ Misattribué à Benjamin Franklin
 
 - C'est ce que tu es censé faire!
 
-- Allez dans [container.training] (http://container.training/) pour voir ces diapositives
+- Allez dans [kube-training](https://ryaxtech.github.io/kube-tutorial/) pour voir ces diapositives
 
 ]
 
@@ -88,9 +88,6 @@ class: in person
 
   (32 bits CPU ou OS ... Ordinateurs portables sans accès administrateur ... etc.)
 
-- *"Toute l'équipe a téléchargé toutes ces images de conteneurs à partir du WiFi!
-  <br/> ... et ça s'est bien passé! "* (Littéralement, personne ne l'a jamais fait)
-
 - Tout ce dont vous avez besoin est un ordinateur (ou même un téléphone ou une tablette!), Avec:
 
   - une connexion internet
@@ -106,6 +103,8 @@ class: in person
 ## Connexion à l'environnement d'exercices
 
 .exercise[
+
+- Chaqu'un m'envoie la cles SSH publique de son poste par email au yiannis.georgiou@ryax.org
 
 - Connectez-vous à la première machine virtuelle (`asterix-1`) avec votre client SSH
 

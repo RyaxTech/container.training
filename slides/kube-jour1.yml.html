@@ -29,41 +29,21 @@ Kubernetes<br/>Introduction, Architecture et Installation<br/>
 
 .debug[
 ```
- D slides/common/title-jour1.md
+ M slides/common/declarative_fr.md
+ M slides/common/prereqs_fr.md
+ M slides/intro/Docker_Overview_fr.md
  M slides/kube-jour1.yml
  M slides/kube-jour1.yml.html
- M slides/kube-jour2.yml
  M slides/logistics.md
- M slides/markmaker.py
-?? slides/common/declarative_fr.md
-?? slides/common/prereqs_fr.md
-?? slides/common/sampleapp_fr.md
-?? slides/common/title_fr.md
-?? slides/images/kube_archi_simple.png
-?? slides/images/kubectl_ex.png
-?? slides/kube-jour3.yml
-?? slides/kube.html
-?? slides/kube/concepts-k8s_fr.md
-?? slides/kube/daemonset_fr.md
-?? slides/kube/dashboard_fr.md
-?? slides/kube/declarative_fr.md
-?? slides/kube/helm_fr.md
-?? slides/kube/kubectlexpose_fr.md
-?? slides/kube/kubectlget_fr.md
-?? slides/kube/kubectlrun_fr.md
-?? slides/kube/kubectlscale_fr.md
-?? slides/kube/kubenet_fr.md
-?? slides/kube/kubeobjects_fr.md
-?? slides/kube/logs-centralized_fr.md
-?? slides/kube/logs-cli_fr.md
-?? slides/kube/namespaces_fr.md
-?? slides/kube/ourapponkube_fr.md
-?? slides/kube/rollout_fr.md
-?? slides/kube/setup-k8s_fr.md
+?? slides/common/about-slides_fr.md
+?? slides/common/composedown_fr.md
+?? slides/common/composescale_fr.md
+?? slides/images/microservice2.png
+?? slides/images/microservices1.png
 
 ```
 
-These slides have been built from commit: e96f82f
+These slides have been built from commit: 2b2ba6c
 
 
 [common/title_fr.md](https://github.com/RyaxTech/container.training.git/tree/master/slides/common/title_fr.md)]
@@ -80,9 +60,9 @@ Kubernetes<br/>Introduction, Architecture et Installation<br/><br/></br>
 
 - Yiannis Georgiou - CTO Ryax Technologies
 
-- PhD Universite Grenoble-Alpes - Gestion de ressources et orchestration sur de systemes de calcul intensif
+- PhD Université Grenoble-Alpes - Gestion de ressources et orchestration sur de systèmes de calcul intensif
 
-- 11 ans a Bull/Atos Technologies - Ingenieur R&D / Architecte
+- 11 ans à Bull/Atos Technologies - Ingenieur R&D / Architecte
 
 .debug[[logistics.md](https://github.com/RyaxTech/container.training.git/tree/master/slides/logistics.md)]
 ---
@@ -102,50 +82,24 @@ Kubernetes<br/>Introduction, Architecture et Installation<br/><br/></br>
 
 .debug[[logistics.md](https://github.com/RyaxTech/container.training.git/tree/master/slides/logistics.md)]
 ---
-## Versions installed
+## Les slides de la formation
 
-- Kubernetes 1.10.1
-- Docker Engine 18.03.0-ce
-- Docker Compose 1.20.1
+Tout le contenu est disponible à un depot Github:
+
+  https://github.com/RyaxTech/container.training
+
+- Le contenu est basé sur les slides écrites initiallement par [Jérôme Petazzoni](https://twitter.com/jpetazzo) pour supporter de workshops et tutoriels autour de Conteneurs et Kubernetes. 
+
+- Pour cette formation les slides ont été traduites en français et adaptés aux besoins particuliers.
+
+- Plusieurs mots et termes liées aux concepts de Kubernetes n'ont pas été traduit pour de raison de simplicité
+
+* En dehors de la formation: 
+  * ...si vous voulez passer plus de temps pour approfondir sur Kubernetes vous pouvez suivre la [documentation](https://kubernetes.io/docs/) officiel ...
+  * ...si vous avez de questions particuliers vous pouvez aussi voir sur [StackOverflow](http://stackoverflow.com/questions/tagged/kubernetes)
 
 
-.exercise[
-
-- Check all installed versions:
-  ```bash
-  kubectl version
-  docker version
-  docker-compose -v
-  ```
-
-]
-
-.debug[[kube/versions-k8s.md](https://github.com/RyaxTech/container.training.git/tree/master/slides/kube/versions-k8s.md)]
----
-
-class: extra-details
-
-## Kubernetes and Docker compatibility
-
-- Kubernetes 1.10.x only validates Docker Engine versions [1.11.2 to 1.13.1 and 17.03.x](https://github.com/kubernetes/kubernetes/blob/master/CHANGELOG-1.10.md#external-dependencies)
-
---
-
-class: extra-details
-
-- Are we living dangerously?
-
---
-
-class: extra-details
-
-- "Validates" = continuous integration builds
-
-- The Docker API is versioned, and offers strong backward-compatibility
-
-  (If a client uses e.g. API v1.25, the Docker Engine will keep behaving the same way)
-
-.debug[[kube/versions-k8s.md](https://github.com/RyaxTech/container.training.git/tree/master/slides/kube/versions-k8s.md)]
+.debug[[common/about-slides_fr.md](https://github.com/RyaxTech/container.training.git/tree/master/slides/common/about-slides_fr.md)]
 ---
 
 name: toc-chapter-1
@@ -159,6 +113,8 @@ name: toc-chapter-1
 - [Histoire des conteneurs ... et Docker](#toc-histoire-des-conteneurs--et-docker)
 
 - [Notre application sample](#toc-notre-application-sample)
+
+- [Identifier les goulots d'étranglement](#toc-identifier-les-goulots-dtranglement)
 
 .debug[(auto-generated TOC)]
 ---
@@ -225,7 +181,7 @@ Pré-requis
 
   - éditer des fichiers
 
-  - un peu de bash-fu (variables d'environnement, boucles)
+  - un peu de bash (variables d'environnement, boucles)
 
 - Quelques connaissances de Docker
 
@@ -261,7 +217,7 @@ Misattribué à Benjamin Franklin
 
 - Nous allons construire, expédier et faire fonctionner des conteneurs!
 
-- Vous êtes invités à reproduire toutes les démos
+- Nous allons reproduire toutes les démos
 
 - Toutes les sections pratiques sont clairement identifiées, comme le rectangle gris ci-dessous
 
@@ -269,7 +225,7 @@ Misattribué à Benjamin Franklin
 
 - C'est ce que tu es censé faire!
 
-- Allez dans [container.training] (http://container.training/) pour voir ces diapositives
+- Allez dans [kube-training](https://ryaxtech.github.io/kube-tutorial/) pour voir ces diapositives
 
 ]
 
@@ -313,9 +269,6 @@ class: in person
 
   (32 bits CPU ou OS ... Ordinateurs portables sans accès administrateur ... etc.)
 
-- *"Toute l'équipe a téléchargé toutes ces images de conteneurs à partir du WiFi!
-  <br/> ... et ça s'est bien passé! "* (Littéralement, personne ne l'a jamais fait)
-
 - Tout ce dont vous avez besoin est un ordinateur (ou même un téléphone ou une tablette!), Avec:
 
   - une connexion internet
@@ -332,6 +285,8 @@ class: in person
 ## Connexion à l'environnement d'exercices
 
 .exercise[
+
+- Chaqu'un m'envoie la cles SSH publique de son poste par email au yiannis.georgiou@ryax.org
 
 - Connectez-vous à la première machine virtuelle (`asterix-1`) avec votre client SSH
 
@@ -452,6 +407,26 @@ Ne vous inquiétez pas, nous y arriverons assez vite!
   * améliorations rapides et itératives
   * plusieurs environnements
   * Élargir rapidement
+
+.debug[[intro/Docker_Overview_fr.md](https://github.com/RyaxTech/container.training.git/tree/master/slides/intro/Docker_Overview_fr.md)]
+---
+
+class: pic
+
+## Monolithic VS Microservices
+
+![problem](images/microservices1.png)
+
+
+
+.debug[[intro/Docker_Overview_fr.md](https://github.com/RyaxTech/container.training.git/tree/master/slides/intro/Docker_Overview_fr.md)]
+---
+
+class: pic
+
+## Passage à l'echelle de microservices
+
+![problem](images/microservice2.png)
 
 .debug[[intro/Docker_Overview_fr.md](https://github.com/RyaxTech/container.training.git/tree/master/slides/intro/Docker_Overview_fr.md)]
 ---
@@ -991,7 +966,7 @@ Notre application sample
 |
 [Retour table des matières](#toc-chapter-1)
 |
-[Section suivante](#toc-introduction-de-kubernetes)
+[Section suivante](#toc-identifier-les-goulots-dtranglement)
 ]
 
 .debug[(automatically generated title slide)]
@@ -1240,10 +1215,262 @@ Les conteneurs qui ne gèrent pas `SIGTERM` finissent par être détruits après
 
 .debug[[common/sampleapp_fr.md](https://github.com/RyaxTech/container.training.git/tree/master/slides/common/sampleapp_fr.md)]
 ---
+## Redémarrage en arrière-plan
+
+- De nombreux flags et commandes de Compose sont modélisés après ceux de `docker`
+
+.exercise[
+
+- Démarrez l'application en arrière-plan avec l'option `-d`:
+  ```bash
+  docker-compose up -d
+  ```
+
+- Vérifiez que notre application fonctionne avec la commande `ps`:
+  ```bash
+  docker-compose ps
+  ```
+
+]
+
+`docker-composer ps` montre également les ports exposés par l'application.
+
+.debug[[common/composescale_fr.md](https://github.com/RyaxTech/container.training.git/tree/master/slides/common/composescale_fr.md)]
+---
+
+class: extra-details
+
+## Affichage des logs
+
+- La commande `docker-compose logs` fonctionne comme les `docker logs`
+
+.exercise[
+
+- Voir tous les logs depuis la création du conteneur et quitter lorsque vous avez terminé:
+  ```bash
+  docker-compose logs
+  ```
+
+- Diffuser les logs de conteneur, en commençant par les 10 dernières lignes pour chaque conteneur:
+  ```bash
+  docker-composer logs --tail 10 - suivre
+  ```
+
+]
+
+Astuce: utilisez `^ S` et` ^ Q` pour mettre en pause / reprendre la sortie du log.
+
+.debug[[common/composescale_fr.md](https://github.com/RyaxTech/container.training.git/tree/master/slides/common/composescale_fr.md)]
+---
+
+## Passage à l'échelle de l'application
+
+- Notre objectif est de faire monter ce graphique de performance (sans changer de ligne de code!)
+
+-
+
+- Avant d'essayer de faire évoluer l'application, nous déterminerons si nous avons besoin de plus de ressources
+
+  (CPU, RAM ...)
+
+- Pour cela, nous utiliserons de bons vieux outils UNIX sur notre noeud Docker
+
+.debug[[common/composescale_fr.md](https://github.com/RyaxTech/container.training.git/tree/master/slides/common/composescale_fr.md)]
+---
+
+## Regard sur l'utilisation des ressources
+
+- Regardons le CPU, la mémoire et l'utilisation des I/O
+
+.exercise[
+
+- Exécutez `top` pour voir l'utilisation du processeur et de la mémoire (vous devriez voir les cycles d'inactivité)
+
+
+- Exécutez `vmstat 1` pour voir l'utilisation des I/O (si/so/bi/bo)
+  <br/>(les 4 nombres devraient être presque zéro, sauf `bo` pour l'enregistrement)
+
+]
+
+Nous avons des ressources disponibles.
+
+- Pourquoi?
+- Comment pouvons-nous les utiliser?
+
+.debug[[common/composescale_fr.md](https://github.com/RyaxTech/container.training.git/tree/master/slides/common/composescale_fr.md)]
+---
+
+## Passage à l'échelle des workers sur un seul noeud
+
+- Docker Compose prend en charge le passage à l'échelle
+- Nous allons scaler  `worker` et voir ce qui se passe!
+
+.exercise[
+
+- Démarrer un autre conteneur `worker`:
+  ```bash
+  docker-compose up --scale worker = 2
+  ```
+
+- Regardez le graphique de performance (il devrait montrer une amélioration de x2)
+
+- Regardez les logs agrégés de nos conteneurs (`worker_2` devrait apparaître)
+
+- Regardez l'impact sur la charge du processeur avec, par exemple, haut (il devrait être négligeable)
+
+]
+
+.debug[[common/composescale_fr.md](https://github.com/RyaxTech/container.training.git/tree/master/slides/common/composescale_fr.md)]
+---
+
+## Ajouter plus de workers
+
+- Super, ajoutons plus de workers, alors!
+
+.exercise[
+
+- Commencez huit autres conteneurs «worker»:
+  ```bash
+  docker-compose up --scale worker = 10
+  ```
+
+- Regardez le graphique des performances: montre-t-il une amélioration x10?
+
+- Regardez les logs agrégés de nos conteneurs
+
+- Regardez l'impact sur la charge du processeur et l'utilisation de la mémoire
+
+]
+
+.debug[[common/composescale_fr.md](https://github.com/RyaxTech/container.training.git/tree/master/slides/common/composescale_fr.md)]
+---
 
 class: pic
 
 .interstitial[![Image separating from the next chapter](https://gallant-turing-d0d520.netlify.com/containers/chinook-helicopter-container.jpg)]
+
+---
+
+name: toc-identifier-les-goulots-dtranglement
+class: title
+
+Identifier les goulots d'étranglement
+
+.nav[
+[Section précédente](#toc-notre-application-sample)
+|
+[Retour table des matières](#toc-chapter-1)
+|
+[Section suivante](#toc-introduction-de-kubernetes)
+]
+
+.debug[(automatically generated title slide)]
+
+---
+
+# Identifier les goulots d'étranglement
+
+- Vous devriez avoir vu une amelioration de vitesse 3x (pas 10x)
+
+- L'ajout de workers n'a pas entraîné d'amélioration linéaire
+
+- * Quelque chose d'autre * nous ralentit
+
+-
+
+- ... Mais quoi?
+
+-
+
+- Le code n'a pas d'instrumentation
+
+- Utilisons l'analyse de performance HTTP de pointe!
+  <br/> (c'est-à-dire de bons vieux outils comme `ab`,` https` ...)
+
+.debug[[common/composescale_fr.md](https://github.com/RyaxTech/container.training.git/tree/master/slides/common/composescale_fr.md)]
+---
+
+## Accès aux services internes
+
+- `rng` et` hasher` sont exposés sur les ports 8001 et 8002
+
+- Ceci est déclaré dans le fichier Compose:
+
+  ```yaml
+    ...
+    rng:
+      build: rng
+      ports:
+      - "8001:80"
+
+    hasher:
+      build: hasher
+      ports:
+      - "8002:80"
+    ...
+  ```
+
+.debug[[common/composescale_fr.md](https://github.com/RyaxTech/container.training.git/tree/master/slides/common/composescale_fr.md)]
+---
+
+## Mesure de la latence en charge
+
+Nous allons utiliser `httping`.
+
+.exercise[
+
+- Vérifiez la latence de `rng`:
+  ```bash
+  https -c 3 localhost: 8001
+  ```
+
+- Vérifiez la latence de `hasher`:
+  ```bash
+  https -c 3 localhost: 8002
+  ```
+
+]
+
+`rng` a une latence beaucoup plus élevée que` hasher`.
+
+.debug[[common/composescale_fr.md](https://github.com/RyaxTech/container.training.git/tree/master/slides/common/composescale_fr.md)]
+---
+
+## Tirons des conclusions simplistes
+
+- Le goulot d'étranglement semble être `rng`
+
+- *Que se passe-t-il si* nous n'avons pas assez d'entropie et que nous ne pouvons pas générer suffisamment de nombres aléatoires?
+
+- Nous devons étendre le service `rng` sur plusieurs machines!
+
+Note: ceci est une fiction! Nous avons assez d'entropie. Mais nous avons besoin d'un prétexte pour l'étendre.
+
+(En fait, le code de `rng` utilise `/dev/urandom`, qui ne manque jamais d'entropie ...
+<br/>
+... et est [aussi bon que `/dev/random`](http://www.slideshare.net/PacSecJP/filippo-plain-simple-reality-of-entropy).)
+
+.debug[[common/composescale_fr.md](https://github.com/RyaxTech/container.training.git/tree/master/slides/common/composescale_fr.md)]
+---
+## Nettoyage
+
+- Avant de continuer, enlevons ces conteneurs
+
+.exercise[
+
+- Dites à Compose de tout enlever:
+  ```bash
+  docker-compose down
+  ```
+
+]
+
+.debug[[common/composedown_fr.md](https://github.com/RyaxTech/container.training.git/tree/master/slides/common/composedown_fr.md)]
+---
+
+class: pic
+
+.interstitial[![Image separating from the next chapter](https://gallant-turing-d0d520.netlify.com/containers/container-cranes.jpg)]
 
 ---
 
@@ -1253,7 +1480,7 @@ class: title
 Introduction de Kubernetes
 
 .nav[
-[Section précédente](#toc-notre-application-sample)
+[Section précédente](#toc-identifier-les-goulots-dtranglement)
 |
 [Retour table des matières](#toc-chapter-2)
 |
@@ -1601,7 +1828,7 @@ class: pic
 
 class: pic
 
-.interstitial[![Image separating from the next chapter](https://gallant-turing-d0d520.netlify.com/containers/container-cranes.jpg)]
+.interstitial[![Image separating from the next chapter](https://gallant-turing-d0d520.netlify.com/containers/container-housing.jpg)]
 
 ---
 
@@ -1656,7 +1883,7 @@ Déclaratif vs impératif
 
 --
 
-  *²Le liquide chaud est obtenu en le versant dans un conten approprié³ et en le plaçant sur une cuisinière.*
+  *²Le liquide chaud est obtenu en le versant dans un conteneur approprié³ et en le plaçant sur une cuisinière.*
 
 --
 
@@ -1664,7 +1891,7 @@ Déclaratif vs impératif
 
 --
 
-.footnote [Saviez-vous qu'il y avait une [norme ISO](https://en.wikipedia.org/wiki/ISO_3103) précisant comment brasser le thé?]
+.footnote[Saviez-vous qu'il y avait une [norme ISO](https://en.wikipedia.org/wiki/ISO_3103) précisant comment brasser le thé?]
 
 .debug[[common/declarative_fr.md](https://github.com/RyaxTech/container.training.git/tree/master/slides/common/declarative_fr.md)]
 ---
@@ -1708,7 +1935,7 @@ Déclaratif vs impératif
 
 class: pic
 
-.interstitial[![Image separating from the next chapter](https://gallant-turing-d0d520.netlify.com/containers/container-housing.jpg)]
+.interstitial[![Image separating from the next chapter](https://gallant-turing-d0d520.netlify.com/containers/containers-by-the-water.jpg)]
 
 ---
 
@@ -1840,7 +2067,7 @@ Modèle de réseau de Kubernetes
 
 class: pic
 
-.interstitial[![Image separating from the next chapter](https://gallant-turing-d0d520.netlify.com/containers/containers-by-the-water.jpg)]
+.interstitial[![Image separating from the next chapter](https://gallant-turing-d0d520.netlify.com/containers/distillery-containers.jpg)]
 
 ---
 
@@ -2146,7 +2373,7 @@ L'espace de noms `kube-system` est utilisé pour le "Control Plane".
 
 class: pic
 
-.interstitial[![Image separating from the next chapter](https://gallant-turing-d0d520.netlify.com/containers/distillery-containers.jpg)]
+.interstitial[![Image separating from the next chapter](https://gallant-turing-d0d520.netlify.com/containers/lots-of-containers.jpg)]
 
 ---
 
@@ -2430,7 +2657,7 @@ Malheureusement, `--follow` ne peut pas (encore) être utilisé pour diffuser le
 
 class: pic
 
-.interstitial[![Image separating from the next chapter](https://gallant-turing-d0d520.netlify.com/containers/lots-of-containers.jpg)]
+.interstitial[![Image separating from the next chapter](https://gallant-turing-d0d520.netlify.com/containers/plastic-containers.JPG)]
 
 ---
 
@@ -2546,7 +2773,7 @@ Installation de Kubernetes
 
 class: pic
 
-.interstitial[![Image separating from the next chapter](https://gallant-turing-d0d520.netlify.com/containers/plastic-containers.JPG)]
+.interstitial[![Image separating from the next chapter](https://gallant-turing-d0d520.netlify.com/containers/train-of-containers-1.jpg)]
 
 ---
 
@@ -2790,7 +3017,7 @@ Le dashboard vous demandera ensuite l'authentification que vous souhaitez utilis
 
 class: pic
 
-.interstitial[![Image separating from the next chapter](https://gallant-turing-d0d520.netlify.com/containers/train-of-containers-1.jpg)]
+.interstitial[![Image separating from the next chapter](https://gallant-turing-d0d520.netlify.com/containers/train-of-containers-2.jpg)]
 
 ---
 

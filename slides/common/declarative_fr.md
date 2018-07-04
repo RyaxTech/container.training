@@ -32,7 +32,7 @@
 
 --
 
-  *²Le liquide chaud est obtenu en le versant dans un conten approprié³ et en le plaçant sur une cuisinière.*
+  *²Le liquide chaud est obtenu en le versant dans un conteneur approprié³ et en le plaçant sur une cuisinière.*
 
 --
 
@@ -40,7 +40,7 @@
 
 --
 
-.footnote [Saviez-vous qu'il y avait une [norme ISO](https://en.wikipedia.org/wiki/ISO_3103) précisant comment brasser le thé?]
+.footnote[Saviez-vous qu'il y avait une [norme ISO](https://en.wikipedia.org/wiki/ISO_3103) précisant comment brasser le thé?]
 
 ---
 

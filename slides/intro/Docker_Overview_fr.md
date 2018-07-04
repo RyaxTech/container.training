@@ -40,6 +40,24 @@ Ne vous inquiétez pas, nous y arriverons assez vite!
 
 ---
 
+class: pic
+
+## Monolithic VS Microservices
+
+![problem](images/microservices1.png)
+
+
+
+---
+
+class: pic
+
+## Passage à l'echelle de microservices
+
+![problem](images/microservice2.png)
+
+---
+
 ## Le déploiement devient très complexe
 
 * Beaucoup de piles différentes:
