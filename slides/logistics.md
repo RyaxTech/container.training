@@ -2,9 +2,9 @@
 
 - Yiannis Georgiou - CTO Ryax Technologies
 
-- PhD Universite Grenoble-Alpes - Gestion de ressources et orchestration sur de systemes de calcul intensif
+- PhD Université Grenoble-Alpes - Gestion de ressources et orchestration sur de systèmes de calcul intensif
 
-- 11 ans a Bull/Atos Technologies - Ingenieur R&D / Architecte
+- 11 ans à Bull/Atos Technologies - Ingenieur R&D / Architecte
 
 ---
 
