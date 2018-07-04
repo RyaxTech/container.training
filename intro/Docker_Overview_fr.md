@@ -90,7 +90,7 @@ class: pic
 
 class: pic
 
-## Le parallèle avec l'industrie maritime
+## Le parallèle avec l'industrie de transport
 
 ![history](images/shipping-industry-problem.png)
 
