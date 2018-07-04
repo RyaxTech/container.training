@@ -10,7 +10,7 @@
 
 - Cloner le dépôt sur `node1`:
   ```bash
-  git clone git: //github.com/jpetazzo/container.training
+  git clone https://github.com/RyaxTech/kube.training 
   ```
 
 ]
@@ -27,7 +27,7 @@ Commençons la procedure, car le téléchargement prendra un peu de temps ...
 
 - Allez dans le répertoire `dockercoins`, dans le repo clone:
   ```bash
-  cd ~ / container.training / dockercoins
+  cd ~/kube.training/dockercoins
   ```
 
 - Utilisez Compose pour générer et exécuter tous les conteneurs:
@@ -45,13 +45,13 @@ et affiche les logs agrégés.
 ## Plus de détails sur notre exemple d'application
 
 - Visitez le lien GitHub avec tous les matériaux de cet atelier:
-  <br/> https://github.com/jpetazzo/container.training
+  <br/> https://github.com/RyaxTech/kube.training
 
-- L'application est dans le sous-répertoire [dockercoins](https://github.com/jpetazzo/container.training/tree/master/dockercoins)
+- L'application est dans le sous-répertoire [dockercoins](https://github.com/RyaxTech/kube.training/tree/master/dockercoins)
 
 - Regardons la disposition générale du code source:
 
-  il y a un fichier Compose [docker-compose.yml](https://github.com/jpetazzo/container.training/blob/master/dockercoins/docker-compose.yml) ...
+  il y a un fichier Compose [docker-compose.yml](https://github.com/RyaxTech/kube.training/blob/master/dockercoins/docker-compose.yml) ...
 
   ... et 4 autres services, chacun dans son propre répertoire:
 
@@ -92,7 +92,7 @@ def hash_bytes(data):
 ```
 
 (Code source complet disponible [ici](
-https://github.com/jpetazzo/container.training/blob/8279a3bce9398f7c1a53bdd95187c53eda4e6435/dockercoins/worker/worker.py#L17
+https://github.com/RyaxTech/kube.training/blob/8279a3bce9398f7c1a53bdd95187c53eda4e6435/dockercoins/worker/worker.py#L17
 ))
 
 ---

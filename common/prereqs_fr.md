@@ -134,7 +134,7 @@ Si quelque chose ne va pas, demandez de l'aide!
   Petit effort d'installation; petit coût; environnements flexibles
 
 - Créer un tas de clusters pour vous et vos amis
-    ([instructions](https://github.com/jpetazzo/container.training/tree/master/prepare-vms))
+    ([instructions](https://github.com/RyaxTech/kube.training/tree/master/prepare-vms))
 
   Effort de configuration plus important; idéal pour la formation de groupe
 

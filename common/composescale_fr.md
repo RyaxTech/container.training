@@ -35,7 +35,7 @@ class: extra-details
 
 - Diffuser les logs de conteneur, en commençant par les 10 dernières lignes pour chaque conteneur:
   ```bash
-  docker-composer logs --tail 10 - suivre
+  docker-compose logs --tail 10 --follow
   ```
 
 ]
