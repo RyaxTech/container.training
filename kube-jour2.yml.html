@@ -1,0 +1,2854 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <title>Kubernetes  Concepts de base, Services et Deploiement  </title>
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8"/>
+    <link rel="stylesheet" href="workshop.css">
+  </head>
+  <body>
+    <!--
+    <div style="position: absolute; left: 20%; right: 20%; top: 30%;">
+      <h1 style="font-size: 3em;">Loading ...</h1>
+      The slides should show up here. If they don't, it might be
+      because you are accessing this file directly from your filesystem.
+      It needs to be served from a web server. You can try this:
+      <pre>
+        docker-compose up -d
+        open http://localhost:8888/workshop.html # on MacOS
+        xdg-open http://localhost:8888/workshop.html # on Linux
+      </pre>
+      Once the slides are loaded, this notice disappears when you
+      go full screen (e.g. by hitting "f").
+    </div>
+    -->
+    <textarea id="source">class: title, self-paced
+
+Kubernetes <br/>Concepts de base, Services et Deploiement <br/>
+
+.nav[*Self-paced version*]
+
+.debug[
+```
+ M slides/common/declarative_fr.md
+ M slides/common/prereqs_fr.md
+ M slides/intro/Docker_Overview_fr.md
+ M slides/kube-jour1.yml
+ M slides/kube-jour1.yml.html
+ M slides/logistics.md
+?? slides/common/about-slides_fr.md
+?? slides/common/composedown_fr.md
+?? slides/common/composescale_fr.md
+?? slides/images/microservice2.png
+?? slides/images/microservices1.png
+
+```
+
+These slides have been built from commit: 2b2ba6c
+
+
+[common/title_fr.md](https://github.com/RyaxTech/container.training.git/tree/master/slides/common/title_fr.md)]
+---
+
+class: title, in-person
+
+Kubernetes <br/>Concepts de base, Services et Deploiement <br/><br/></br>
+
+
+.debug[[common/title_fr.md](https://github.com/RyaxTech/container.training.git/tree/master/slides/common/title_fr.md)]
+---
+
+name: toc-chapter-1
+
+## Chapter 1
+
+- [Les objets de Kubernetes](#toc-les-objets-de-kubernetes)
+
+- [Exposition des conteneurs](#toc-exposition-des-conteneurs)
+
+- [Déployer un registre auto-hébergé](#toc-dployer-un-registre-auto-hberg)
+
+- [Exposant des services en interne](#toc-exposant-des-services-en-interne)
+
+- [Exposant des services pour un accès externe](#toc-exposant-des-services-pour-un-accs-externe)
+
+- [Passage à l'échelle (scaling) d'un déploiement](#toc-passage--lchelle-scaling-dun-dploiement)
+
+.debug[(auto-generated TOC)]
+---
+name: toc-chapter-2
+
+## Chapter 2
+
+- [Daemon sets](#toc-daemon-sets)
+
+- [Mise à jour d'un service via des labels et des selectors](#toc-mise--jour-dun-service-via-des-labels-et-des-selectors)
+
+- [Rolling updates](#toc-rolling-updates)
+
+- [Accès aux logs depuis le CLI](#toc-accs-aux-logs-depuis-le-cli)
+
+- [Logs centralisée](#toc-logs-centralise)
+
+.debug[(auto-generated TOC)]
+---
+name: toc-chapter-3
+
+## Chapter 3
+
+- [Gestion des stacks avec Helm](#toc-gestion-des-stacks-avec-helm)
+
+- [Namespaces](#toc-namespaces)
+
+.debug[(auto-generated TOC)]
+
+
+
+.debug[[common/toc.md](https://github.com/RyaxTech/container.training.git/tree/master/slides/common/toc.md)]
+---
+
+class: pic
+
+.interstitial[![Image separating from the next chapter](https://gallant-turing-d0d520.netlify.com/containers/Container-Ship-Freighter-Navigation-Elbe-Romance-1782991.jpg)]
+
+---
+
+name: toc-les-objets-de-kubernetes
+class: title
+
+Les objets de Kubernetes
+
+.nav[
+[Section précédente](#toc-)
+|
+[Retour table des matières](#toc-chapter-1)
+|
+[Section suivante](#toc-exposition-des-conteneurs)
+]
+
+.debug[(automatically generated title slide)]
+
+---
+# Les objets de Kubernetes
+--
+
+- **Pods**
+  - Représente une unité de déploiement composée d'un ou de plusieurs conteneurs étroitement liés partageant des ressources.
+  - Les conteneurs d'un Pod peuvent communiquer entre eux via localhost.
+  - Tous les modules résident dans un seul espace d'adressage réseau partagé et plat, aucune passerelle NAT n'existe entre eux. Les pods accèdent les uns aux autres sur leur adresse IP unique.
+
+--
+
+- **Controllers**
+  - Créez et gérez plusieurs modules gérant la réplication, le déploiement et l'auto-réparation.
+
+
+.debug[[kube/kubeobjects_fr.md](https://github.com/RyaxTech/container.training.git/tree/master/slides/kube/kubeobjects_fr.md)]
+---
+
+## Les objets de Kubernetes (suite)
+--
+
+- **Services**
+  - Représente un seul point d'entrée constant à un groupe de pods fournissant le même service. Chaque service a une adresse IP et un port qui ne changent jamais tant que le service existe.
+--
+
+- **Volumes**
+  - Les annuaires sont-ils accessibles aux conteneurs d'un pod. Lié au cycle de vie des pods.
+
+--
+
+- **Namespaces**
+  - Fournissez une abstraction permettant l'utilisation de plusieurs clusters virtuels soutenus par le même cluster physique.
+--
+
+- **Nodes**
+  - Ils peuvent être des machines virtuelles ou des machines physiques, ils fournissent les services nécessaires pour exécuter des modules et sont gérés par les composants principaux.
+
+.debug[[kube/kubeobjects_fr.md](https://github.com/RyaxTech/container.training.git/tree/master/slides/kube/kubeobjects_fr.md)]
+---
+
+class: pic
+
+![Un des meilleurs diagrammes d'architecture Kubernetes disponibles](images/k8s-arch4-thanks-luxas.png)
+
+.debug[[kube/kubeobjects_fr.md](https://github.com/RyaxTech/container.training.git/tree/master/slides/kube/kubeobjects_fr.md)]
+---
+
+## L'architecture de Kubernetes
+
+--
+
+- **Communication et exécution de composants**
+  - Tous les composants passent du serveur API pour communiquer entre eux
+  - Seul kubelet s'exécute en tant que composant système normal et peut exécuter les autres composants en tant que pods
+  - Les composants sur les nœuds de travail doivent s'exécuter sur le même nœud, mais les composants de maître peuvent être répartis sur plusieurs nœuds
+
+--
+
+- **Etcd**
+  - Magasin de valeurs clés distribué et cohérent.
+  - Seul le serveur API parle directement avec etcd. Tous les autres composants communiquent avec etcd indirectement via API-Server sur la base du "Contrôle de concurrence optimiste"
+  - Utilise l'algorithme de consensus Raft pour décider de l'état actuel en fonction du quorum (majorité).
+
+.debug[[kube/kubeobjects_fr.md](https://github.com/RyaxTech/container.training.git/tree/master/slides/kube/kubeobjects_fr.md)]
+---
+
+## L'architecture de Kubernetes (suite)
+
+--
+
+- **API-Server**
+  - Il fournit une interface CRUD (Créer, Lire, Mettre à jour, Supprimer) pour interroger et modifier l'état du cluster sur une API RESTful.
+  - Effectue l'authentification, l'autorisation et le contrôle d'admission via différents plugins avant d'accéder à l'état dans etcd
+  - Surveiller le mécanisme pour informer les clients des modifications sur les objets.
+
+--
+
+- **Controller manager**
+  - Il combine une multitude de contrôleurs effectuant diverses tâches de rapprochement.
+  - Chaque contrôleur surveille le serveur API pour les modifications apportées aux ressources (Déploiements, Services, etc.) et effectue des opérations pour chaque modification
+  - Il réconcilie l'état actuel avec l'état souhaité (spécifié dans la section des spécifications de la ressource)
+
+.debug[[kube/kubeobjects_fr.md](https://github.com/RyaxTech/container.training.git/tree/master/slides/kube/kubeobjects_fr.md)]
+---
+
+
+## L'architecture de Kubernetes (suite)
+
+--
+
+- **Scheduler**
+  - Il met à jour la définition des pods et, via le mécanisme de surveillance du serveur API, le kubelet est averti pour exécuter un pod.
+  - L'algorithme de planification par défaut détermine les nœuds acceptables et sélectionne le meilleur pour le pod en fonction de divers paramètres configurables.
+  - Plusieurs schedulers peuvent s'exécuter simultanément dans le cluster et un module peut utiliser celui qui est le plus adapté.
+
+.debug[[kube/kubeobjects_fr.md](https://github.com/RyaxTech/container.training.git/tree/master/slides/kube/kubeobjects_fr.md)]
+---
+class: pic
+
+![Exemple de Kubectl](images/kubectl_ex.png)
+
+.debug[[kube/kubeobjects_fr.md](https://github.com/RyaxTech/container.training.git/tree/master/slides/kube/kubeobjects_fr.md)]
+---
+
+
+.debug[[kube/kubeobjects_fr.md](https://github.com/RyaxTech/container.training.git/tree/master/slides/kube/kubeobjects_fr.md)]
+---
+
+class: pic
+
+.interstitial[![Image separating from the next chapter](https://gallant-turing-d0d520.netlify.com/containers/ShippingContainerSFBay.jpg)]
+
+---
+
+name: toc-exposition-des-conteneurs
+class: title
+
+Exposition des conteneurs
+
+.nav[
+[Section précédente](#toc-les-objets-de-kubernetes)
+|
+[Retour table des matières](#toc-chapter-1)
+|
+[Section suivante](#toc-dployer-un-registre-auto-hberg)
+]
+
+.debug[(automatically generated title slide)]
+
+---
+# Exposition des conteneurs
+
+- `kubectl expose` crée un *service* pour les pods existants
+
+- Un *service* est une adresse stable pour un pod (ou un groupe de pods)
+
+- Si nous voulons nous connecter à notre (nos) pod(s), nous devons créer un *service*
+
+- Une fois qu'un service est créé, `kube-dns` nous permettra de l'acceder par son nom
+
+  (c'est-à-dire après avoir créé le service "hello", le nom "hello" va se lier à quelque chose)
+
+- Il existe différents types de services, détaillés sur les diapositives suivantes:
+
+  `ClusterIP`,` NodePort`, `LoadBalancer`,` ExternalName`
+
+.debug[[kube/kubectlexpose_fr.md](https://github.com/RyaxTech/container.training.git/tree/master/slides/kube/kubectlexpose_fr.md)]
+---
+
+## Types de service de base
+
+- `ClusterIP` (type par défaut)
+
+  - une adresse IP virtuelle est allouée au service (dans une plage interne, privée)
+  - cette adresse IP est accessible uniquement depuis le cluster (nœuds et pods)
+  - notre code peut se connecter au service en utilisant le numéro de port d'origine
+
+- `NodePort`
+
+  - un port est attribué au service (par défaut, dans la plage 30000-32768)
+  - ce port est disponible *sur tous nos nœuds* et n'importe qui peut s'y connecter
+  - notre code doit être changé pour se connecter à ce nouveau numéro de port
+
+Ces types de service sont toujours disponibles.
+
+Sous le tapis: `kube-proxy` utilise un proxy userland et un tas de règles `iptables`.
+
+.debug[[kube/kubectlexpose_fr.md](https://github.com/RyaxTech/container.training.git/tree/master/slides/kube/kubectlexpose_fr.md)]
+---
+
+## Plus de types de services
+
+- `LoadBalancer`
+
+  - un équilibreur de charge externe est affecté au service
+  - l'équilibreur de charge est configuré en conséquence
+    <br/>(par exemple: un service `NodePort` est créé et l'équilibreur de charge envoie le trafic vers ce port)
+
+- `ExternalName`
+
+  - l'entrée DNS gérée par `kube-dns` sera juste un `CNAME` dans un enregistrement fourni
+  - pas de port, pas d'adresse IP, rien d'autre n'est attribué
+
+Le type `LoadBalancer` est actuellement disponible uniquement sur AWS, Azure et GCE.
+
+.debug[[kube/kubectlexpose_fr.md](https://github.com/RyaxTech/container.training.git/tree/master/slides/kube/kubectlexpose_fr.md)]
+---
+
+## Exécuter des conteneurs avec des ports ouverts
+
+- Puisque `ping` n'a rien à connecter, nous devrons exécuter autre chose
+
+.exercise[
+
+- Démarrer un tas de conteneurs ElasticSearch:
+  ```bash
+  kubectl run elastic --image=elasticsearch:2 --replicas=7
+  ```
+
+- Regardez-les commencer:
+  ```bash
+  kubectl get pods -w
+  ```
+
+]
+
+L'option `-w` "watches" les événements se produisant sur les ressources spécifiées.
+
+Note: veuillez NE PAS appeler le service `search`. Cela entrerait en conflit avec le TLD.
+
+.debug[[kube/kubectlexpose_fr.md](https://github.com/RyaxTech/container.training.git/tree/master/slides/kube/kubectlexpose_fr.md)]
+---
+
+## Exposant notre déploiement
+
+- Nous allons créer un service `ClusterIP` par défaut
+
+.exercise[
+
+- Exposez le port de l'API HTTP ElasticSearch:
+  ```bash
+  kubectl expose deploy/elastic --port 9200
+  ```
+
+- Rechercher quelle adresse IP a été attribuée:
+  ```bash
+  kubectl get svc
+  ```
+
+]
+
+.debug[[kube/kubectlexpose_fr.md](https://github.com/RyaxTech/container.training.git/tree/master/slides/kube/kubectlexpose_fr.md)]
+---
+
+## Les services sont des constructions de couche 4
+
+- Vous pouvez attribuer des adresses IP aux services, mais ils sont toujours *couche 4*
+
+  (c'est-à-dire qu'un service n'est pas une adresse IP, c'est une adresse IP + un protocole + un port)
+
+- Ceci est causé par l'implémentation actuelle de `kube-proxy`
+
+  (il repose sur des mécanismes qui ne supportent pas la couche 3)
+
+- En conséquence: vous *devez* indiquer le numéro de port pour votre service
+    
+- L'exécution de services avec un port arbitraire (ou des plages de ports) nécessite des hacks
+
+  (par exemple, host networking mode)
+
+.debug[[kube/kubectlexpose_fr.md](https://github.com/RyaxTech/container.training.git/tree/master/slides/kube/kubectlexpose_fr.md)]
+---
+
+## Test de notre service
+
+- Nous allons maintenant envoyer quelques requêtes HTTP à nos pods ElasticSearch
+
+.exercise[
+
+- Obtenons l'adresse IP qui a été allouée pour notre service, *par programmation:*
+  ```bash
+  IP=$(kubectl get svc elastic -o go-template --template '{{.spec.clusterIP}}')
+  ```
+
+- Envoyez quelques demandes:
+  ```bash
+  curl http://$IP:9200/
+  ```
+
+]
+
+--
+
+Nous pouvons voir `curl: (7) Failed to connect to _IP_ port 9200: Connection refused`.
+
+C'est normal pendant que le service démarre.
+
+--
+
+Une fois qu'il est en cours d'exécution, nos demandes sont équilibrées en charge sur plusieurs pods.
+
+.debug[[kube/kubectlexpose_fr.md](https://github.com/RyaxTech/container.training.git/tree/master/slides/kube/kubectlexpose_fr.md)]
+---
+
+class: extra-details
+
+## Si nous n'avons pas besoin d'un équilibreur de charge
+
+- Parfois, nous voulons accéder directement à nos services qui passent à l'échelle:
+
+  - Si nous voulons sauver un petit peu de latence (typiquement moins de 1ms)
+
+  - si nous devons nous connecter sur des ports arbitraires (au lieu de quelques uns fixes)
+
+  - si nous avons besoin de communiquer sur un autre protocole que UDP ou TCP
+
+  - si nous voulons décider comment équilibrer les demandes côté client
+
+  - ...
+
+- Dans ce cas, nous pouvons utiliser un "headless service"
+
+.debug[[kube/kubectlexpose_fr.md](https://github.com/RyaxTech/container.training.git/tree/master/slides/kube/kubectlexpose_fr.md)]
+---
+
+class: extra-details
+
+## Headless Services
+
+- Un "headless service" est obtenu en définissant le champ `clusterIP` sur `None`
+
+  (Soit avec `--cluster-ip = None`, soit en fournissant un YAML personnalisé)
+
+- Par conséquent, le service n'a pas d'adresse IP virtuelle
+
+- Comme il n'y a pas d'adresse IP virtuelle, il n'y a pas non plus d'équilibreur de charge
+
+- `kube-dns` retournera les adresses IP des pods en plusieurs enregistrements `A`
+
+- Cela nous donne un moyen facile de découvrir toutes les répliques pour un déploiement
+
+.debug[[kube/kubectlexpose_fr.md](https://github.com/RyaxTech/container.training.git/tree/master/slides/kube/kubectlexpose_fr.md)]
+---
+
+class: extra-details
+
+## Services et endpoints
+
+- Un service a un certain nombre de "endpoints"
+
+- Chaque endpoint est un hôte + port où le service est disponible
+
+- Les endpoints sont maintenus et mis à jour automatiquement par Kubernetes
+
+.exercise[
+
+- Vérifiez les points de terminaison que Kubernetes a associés à notre service `elastic`:
+  ```bash
+  kubectl describe service elastic
+  ```
+
+]
+
+Dans la sortie, il y aura une ligne commençant par `Endpoints:`.
+
+Cette ligne listera un tas d'adresses au format `host:port`.
+
+.debug[[kube/kubectlexpose_fr.md](https://github.com/RyaxTech/container.training.git/tree/master/slides/kube/kubectlexpose_fr.md)]
+---
+
+class: extra-details
+
+## Affichage des détails du point de terminaison
+
+- Lorsque nous avons beaucoup de endpoints, nos commandes d'affichage tronquent la liste
+  ```bash
+  kubectl get endpoints
+  ```
+
+- Si nous voulons voir la liste complète, nous pouvons utiliser l'une des commandes suivantes:
+  ```bash
+  kubectl describe endpoints elastic
+  kubectl get endpoints elastic -o yaml
+  ```
+
+- Ces commandes vont nous montrer une liste d'adresses IP
+
+- Ces adresses IP doivent correspondre aux adresses des pods correspondants:
+  ```bash
+  kubectl get pods -l run=elastic -o wide
+  ```
+
+.debug[[kube/kubectlexpose_fr.md](https://github.com/RyaxTech/container.training.git/tree/master/slides/kube/kubectlexpose_fr.md)]
+---
+
+class: extra-details
+
+## "endpoints" pas "endpoint"
+
+- `endpoints` est la seule ressource qui ne peut pas être singulière
+
+```bash
+$ kubectl get endpoint
+error: the server doesn't have a resource type "endpoint"
+```
+
+- C'est parce que le type lui-même est pluriel (contrairement à toutes les autres ressources)
+
+- Il n'y a pas d'objet `endpoint` object: `type Endpoints struct`
+
+- Le type ne représente pas un seul endpoint, mais une liste de endpoints
+
+
+
+.debug[[kube/kubectlexpose_fr.md](https://github.com/RyaxTech/container.training.git/tree/master/slides/kube/kubectlexpose_fr.md)]
+---
+class: title
+
+Notre application sur Kubernetes
+
+.debug[[kube/ourapponkube_fr.md](https://github.com/RyaxTech/container.training.git/tree/master/slides/kube/ourapponkube_fr.md)]
+---
+
+## Qu'est-ce qu'il y'a au menu?
+
+Dans cette partie, nous allons:
+
+- **construire** des images pour notre application,
+
+- **expédier** ces images avec un registre,
+
+- **déployer** des déploiements utilisant ces images,
+
+- exposer ces déploiements pour qu'ils puissent communiquer entre eux,
+
+- exposer l'interface web afin que nous puissions y accéder de l'extérieur.
+
+.debug[[kube/ourapponkube_fr.md](https://github.com/RyaxTech/container.training.git/tree/master/slides/kube/ourapponkube_fr.md)]
+---
+
+## Le plan
+
+- Construction sur notre noeud de contrôle (`node1`)
+
+- Marquage des images pour qu'elles soient nommées `$REGISTRY/servicename`
+
+- Téléchargement sur un registre
+
+- Creation des déploiements en utilisant les images
+
+- Exposition (avec un ClusterIP) des services qui ont besoin de communiquer
+
+- Exposition (avec un NodePort) de l'interface Web
+
+.debug[[kube/ourapponkube_fr.md](https://github.com/RyaxTech/container.training.git/tree/master/slides/kube/ourapponkube_fr.md)]
+---
+
+## Quel registre voulons-nous utiliser?
+
+- Nous pourrions utiliser le Docker Hub
+
+- Ou un service offert par notre fournisseur de cloud (ACR, GCR, ECR ...)
+
+- Ou nous pourrions simplement auto-héberger ce registre
+
+*Nous hébergerons automatiquement le registre car c'est la solution la plus générique pour cet atelier.*
+
+.debug[[kube/ourapponkube_fr.md](https://github.com/RyaxTech/container.training.git/tree/master/slides/kube/ourapponkube_fr.md)]
+---
+
+## Utiliser le registre open source
+
+- Nous devons lancer un conteneur `registry:2`
+  <br/>(assurez-vous de spécifier la balise `:2` pour exécuter la nouvelle version!)
+
+- Il va stocker des images et des couches dans le système de fichiers local
+  <br/>(mais vous pouvez ajouter un fichier de configuration pour utiliser S3, Swift, etc.)
+
+- Docker *nécessite* TLS lors de la communication avec le registre
+
+  - sauf pour les registres sur «127.0.0.0/8» (c'est-à-dire `localhost`)
+
+  - ou avec le flag Engine `--insecure-registry`
+
+- Notre stratégie: publier le conteneur de registre sur un NodePort,
+  <br/> pour qu'il soit disponible via `127.0.0.1:xxxxx` sur chaque noeud
+
+.debug[[kube/ourapponkube_fr.md](https://github.com/RyaxTech/container.training.git/tree/master/slides/kube/ourapponkube_fr.md)]
+---
+
+class: pic
+
+.interstitial[![Image separating from the next chapter](https://gallant-turing-d0d520.netlify.com/containers/aerial-view-of-containers.jpg)]
+
+---
+
+name: toc-dployer-un-registre-auto-hberg
+class: title
+
+Déployer un registre auto-hébergé
+
+.nav[
+[Section précédente](#toc-exposition-des-conteneurs)
+|
+[Retour table des matières](#toc-chapter-1)
+|
+[Section suivante](#toc-exposant-des-services-en-interne)
+]
+
+.debug[(automatically generated title slide)]
+
+---
+
+# Déployer un registre auto-hébergé
+
+- Nous allons déployer un conteneur de registre et l'exposer avec un NodePort
+
+.exercise[
+
+- Créez le service de registre:
+  ```bash
+  kubectl run registry --image=registry:2
+  ```
+
+- Exposez-le sur un NodePort:
+  ```bash
+  kubectl expose deploy/registry --port=5000 --type=NodePort
+  ```
+
+]
+
+.debug[[kube/ourapponkube_fr.md](https://github.com/RyaxTech/container.training.git/tree/master/slides/kube/ourapponkube_fr.md)]
+---
+
+## Connexion à notre registre
+
+- Nous devons trouver quel port a été attribué
+
+.exercise[
+
+- Voir les détails du service:
+  ```bash
+  kubectl describe svc/registry
+  ```
+
+- Obtenez le numéro de port par programme:
+  ```bash
+  NODEPORT=$(kubectl get svc/registry -o json | jq .spec.ports[0].nodePort)
+  REGISTRY=127.0.0.1:$NODEPORT
+  ```
+
+]
+
+.debug[[kube/ourapponkube_fr.md](https://github.com/RyaxTech/container.training.git/tree/master/slides/kube/ourapponkube_fr.md)]
+---
+
+## Test de notre registre
+
+- Une route API de registre Docker pratique à retenir est `/v2/_catalog`
+
+.exercise[
+
+- Voir les dépôts actuellement détenus dans notre registre:
+  ```bash
+  curl $REGISTRY/v2/_catalog
+  ```
+
+]
+
+--
+
+Nous devrions voir:
+```json
+{"repositories": []}
+```
+
+.debug[[kube/ourapponkube_fr.md](https://github.com/RyaxTech/container.training.git/tree/master/slides/kube/ourapponkube_fr.md)]
+---
+
+## Test de notre registre local
+
+- Nous pouvons retagger une petite image, et la pousser vers le registre
+
+.exercise[
+
+- Assurez-vous que nous avons l'image busybox, et retaggez la:
+  ```bash
+  docker pull busybox
+  docker tag busybox $REGISTRY/busybox
+  ```
+
+- Poussez-le:
+  ```bash
+  docker push $REGISTRY/busybox
+  ```
+
+]
+
+.debug[[kube/ourapponkube_fr.md](https://github.com/RyaxTech/container.training.git/tree/master/slides/kube/ourapponkube_fr.md)]
+---
+
+## Vérifier à nouveau ce qu'il y a dans notre registre local
+
+- Utilisons le même point final que précédemment
+
+.exercise[
+
+- Assurez-vous que notre image busybox est maintenant dans le registre local:
+  ```bash
+  curl $ REGISTRY / v2 / _catalog
+  ```
+
+]
+
+La commande curl devrait maintenant sortir:
+```json
+{"repositories": ["busybox"]}
+```
+
+.debug[[kube/ourapponkube_fr.md](https://github.com/RyaxTech/container.training.git/tree/master/slides/kube/ourapponkube_fr.md)]
+---
+
+## Construire et pousser nos images
+
+- Nous allons utiliser une fonctionnalité pratique de Docker Compose
+
+.exercise[
+
+- Allez dans le répertoire `stacks`:
+  ```bash
+  cd ~/container.training/stacks
+  ```
+
+- Construire et pousser les images:
+  ```bash
+  export REGISTRY
+  export TAG=v0.1
+  docker-compose -f dockercoins.yml build
+  docker-compose -f dockercoins.yml push
+  ```
+
+]
+
+Jetons un coup d'œil au fichier `dockercoins.yml` pendant que ce dernier construit et pousse.
+
+.debug[[kube/ourapponkube_fr.md](https://github.com/RyaxTech/container.training.git/tree/master/slides/kube/ourapponkube_fr.md)]
+---
+
+```yaml
+version: "3"
+
+services:
+  rng:
+    build: dockercoins/rng
+    image: ${REGISTRY-127.0.0.1:5000}/rng:${TAG-latest}
+    deploy:
+      mode: global
+  ...
+  redis:
+    image: redis
+  ...
+  worker:
+    build: dockercoins/worker
+    image: ${REGISTRY-127.0.0.1:5000}/worker:${TAG-latest}
+    ...
+    deploy:
+      replicas: 10
+```
+
+.warning[Juste au cas où vous vous poseriez la question ... Les "services" de Docker ne sont pas des "services" de Kubernetes.]
+
+.debug[[kube/ourapponkube_fr.md](https://github.com/RyaxTech/container.training.git/tree/master/slides/kube/ourapponkube_fr.md)]
+---
+
+class: extra-details
+
+## Éviter le tag `latest`
+
+.warning [Assurez-vous d'avoir bien défini la variable `TAG`!]
+
+- Si vous ne le faites pas, le tag sera par défaut `latest`
+
+- Le problème avec `latest`: personne ne sait à quoi ça veut dire!
+
+  - Le dernier commit dans le repo?
+
+  - Le dernier commit dans une branche? (Laquelle?)
+
+  - Le dernier tag?
+
+  - Une version aléatoire poussée par un membre de l'équipe aléatoire?
+
+- Si vous continuez à appuyer sur la balise `latest`, comment faire de rollback?
+
+- Les tags de "Images" doivent être significatives, c'est-à-dire correspondre à des branches, tags, ou hashes
+
+.debug[[kube/ourapponkube_fr.md](https://github.com/RyaxTech/container.training.git/tree/master/slides/kube/ourapponkube_fr.md)]
+---
+
+## Déploiement de toutes les choses
+
+- Nous pouvons maintenant déployer notre code (ainsi qu'une instance redis)
+
+.exercise[
+
+- Déployer `redis`:
+  ```bash
+  kubectl run redis --image=redis
+  ```
+
+- Déployer tout le reste:
+  ```bash
+   for SERVICE in hasher rng webui worker; do
+      kubectl run $SERVICE --image=$REGISTRY/$SERVICE:$TAG
+    done
+  ```
+
+]
+
+.debug[[kube/ourapponkube_fr.md](https://github.com/RyaxTech/container.training.git/tree/master/slides/kube/ourapponkube_fr.md)]
+---
+
+## Est-ce que ça marche?
+
+- Après avoir attendu la fin du déploiement, regardons les logs!
+
+  (Indice: utilisez `kubectl get deploy -w` pour regarder les événements de déploiement)
+
+.exercise[
+
+- Regardez quelques logs:
+  ```bash
+  kubectl logs deploy/rng
+  kubectl logs deploy/worker
+  ```
+
+]
+
+--
+
+🤔 `rng` va bien ... Mais pas `worker`.
+
+--
+
+💡 Oh, c'est vrai! Nous avons oublié de "exposer".
+
+.debug[[kube/ourapponkube_fr.md](https://github.com/RyaxTech/container.training.git/tree/master/slides/kube/ourapponkube_fr.md)]
+---
+
+class: pic
+
+.interstitial[![Image separating from the next chapter](https://gallant-turing-d0d520.netlify.com/containers/blue-containers.jpg)]
+
+---
+
+name: toc-exposant-des-services-en-interne
+class: title
+
+Exposant des services en interne
+
+.nav[
+[Section précédente](#toc-dployer-un-registre-auto-hberg)
+|
+[Retour table des matières](#toc-chapter-1)
+|
+[Section suivante](#toc-exposant-des-services-pour-un-accs-externe)
+]
+
+.debug[(automatically generated title slide)]
+
+---
+
+# Exposant des services en interne
+
+- Trois déploiements doivent être accessibles par d'autres: `hasher`,` redis`, `rng`
+
+- `worker` n'a pas besoin d'être exposé
+
+- `webui` sera traité plus tard
+
+.exercise[
+
+- Exposez chaque déploiement, en spécifiant le bon port:
+  ```bash
+  kubectl expose deployment redis --port 6379
+  kubectl expose deployment rng --port 80
+  kubectl expose deployment hasher --port 80
+  ```
+
+]
+
+.debug[[kube/ourapponkube_fr.md](https://github.com/RyaxTech/container.training.git/tree/master/slides/kube/ourapponkube_fr.md)]
+---
+
+## Est-ce que ça marche encore?
+
+- Le `worker` a une boucle infinie, qui réessaie 10 secondes après une erreur
+
+.exercise[
+
+- Diffuser les logs du worker:
+  ```bash
+  kubectl logs deploy/worker --follow
+  ```
+
+  (Donnez-lui environ 10 secondes pour récupérer)
+
+]
+
+--
+
+Nous devrions maintenant voir le «travailleur», bien, travaillant heureusement.
+
+.debug[[kube/ourapponkube_fr.md](https://github.com/RyaxTech/container.training.git/tree/master/slides/kube/ourapponkube_fr.md)]
+---
+
+class: pic
+
+.interstitial[![Image separating from the next chapter](https://gallant-turing-d0d520.netlify.com/containers/chinook-helicopter-container.jpg)]
+
+---
+
+name: toc-exposant-des-services-pour-un-accs-externe
+class: title
+
+Exposant des services pour un accès externe
+
+.nav[
+[Section précédente](#toc-exposant-des-services-en-interne)
+|
+[Retour table des matières](#toc-chapter-1)
+|
+[Section suivante](#toc-passage--lchelle-scaling-dun-dploiement)
+]
+
+.debug[(automatically generated title slide)]
+
+---
+
+# Exposant des services pour un accès externe
+
+- Maintenant, nous aimerions accéder à l'interface Web
+
+- Nous l'exposerons avec un `NodePort`
+
+  (Juste comme nous l'avons fait pour le registre)
+
+.exercise[
+
+- Créez un service `NodePort` pour l'interface Web:
+  ```bash
+  kubectl expose deploy/webui --type=NodePort --port=8080
+  ```
+
+- Vérifiez le port qui a été alloué:
+  ```bash
+  kubectl obtenir svc
+  ```
+
+]
+
+.debug[[kube/ourapponkube_fr.md](https://github.com/RyaxTech/container.training.git/tree/master/slides/kube/ourapponkube_fr.md)]
+---
+
+## Accès à l'interface utilisateur Web
+
+- Nous pouvons maintenant nous connecter à *n'importe quel noeud*, sur le port de noeud alloué, pour voir l'interface web
+
+.exercise[
+
+- Ouvrez l'interface web dans votre navigateur (http://node-ip-address:3xxxx/)
+]
+
+--
+
+*D'accord, nous sommes de retour là où nous avons commencé, quand nous utilisions un seul nœud!*
+
+
+
+.debug[[kube/ourapponkube_fr.md](https://github.com/RyaxTech/container.training.git/tree/master/slides/kube/ourapponkube_fr.md)]
+---
+
+class: pic
+
+.interstitial[![Image separating from the next chapter](https://gallant-turing-d0d520.netlify.com/containers/container-cranes.jpg)]
+
+---
+
+name: toc-passage--lchelle-scaling-dun-dploiement
+class: title
+
+Passage à l'échelle (scaling) d'un déploiement
+
+.nav[
+[Section précédente](#toc-exposant-des-services-pour-un-accs-externe)
+|
+[Retour table des matières](#toc-chapter-1)
+|
+[Section suivante](#toc-daemon-sets)
+]
+
+.debug[(automatically generated title slide)]
+
+---
+# Passage à l'échelle (scaling) d'un déploiement
+
+- Nous allons commencer par un facile: le déploiement du `worker`
+
+.exercise[
+
+- Ouvrez deux nouveaux terminaux pour vérifier ce qui se passe avec les pods et les déploiements:
+  ```bash
+  kubectl get pods -w
+  kubectl get deployments -w
+  ```
+
+
+- Maintenant, créez plus de replicas `worker`:
+  ```bash
+  kubectl scale deploy/worker --replicas=10
+  ```
+
+]
+
+Après quelques secondes, le graphique dans l'interface utilisateur Web devrait apparaître.
+<br/>
+(Et aller jusqu'à 10 hashes/seconde)
+
+
+
+.debug[[kube/kubectlscale_fr.md](https://github.com/RyaxTech/container.training.git/tree/master/slides/kube/kubectlscale_fr.md)]
+---
+
+class: pic
+
+.interstitial[![Image separating from the next chapter](https://gallant-turing-d0d520.netlify.com/containers/container-housing.jpg)]
+
+---
+
+name: toc-daemon-sets
+class: title
+
+Daemon sets
+
+.nav[
+[Section précédente](#toc-passage--lchelle-scaling-dun-dploiement)
+|
+[Retour table des matières](#toc-chapter-2)
+|
+[Section suivante](#toc-mise--jour-dun-service-via-des-labels-et-des-selectors)
+]
+
+.debug[(automatically generated title slide)]
+
+---
+# Daemon sets
+
+- Nous voulons passer à l'échelle `rng` d'une manière qui est différente de la façon dont nous avons passer à l'échelle `worker`
+
+- Nous voulons une (et exactement une) instance de `rng` par noeud
+
+- Et si nous déployions simplement `deploy/rng` sur le nombre de nœuds?
+
+  - rien ne garantit que les conteneurs `rng` seront distribués uniformément
+
+  - Si nous ajoutons des nœuds plus tard, ils ne lanceront pas automatiquement une copie de `rng`
+
+  - Si nous supprimons (ou redémarrons) un nœud, un conteneur `rng` va redémarrer ailleurs
+
+- Au lieu d'un `deploiyment`, nous utiliserons un `daemonset`
+
+.debug[[kube/daemonset_fr.md](https://github.com/RyaxTech/container.training.git/tree/master/slides/kube/daemonset_fr.md)]
+---
+
+## Daemon set en pratique
+
+- Les daemons sets sont parfaits pour les processus par nœud à l'échelle du cluster:
+
+  - `kube-proxy`
+
+  - `weave` (notre overlay de réseau)
+
+  - agents de surveillance
+
+  - des outils de gestion du matériel (par exemple des agents SCSI / FC HBA)
+
+  - etc.
+
+- Ils peuvent également être limités à l'exécution [uniquement sur certains nœuds](https://kubernetes.io/docs/concepts/workloads/controllers/daemonset/#running-pods-on-only-some-nodes)
+
+.debug[[kube/daemonset_fr.md](https://github.com/RyaxTech/container.training.git/tree/master/slides/kube/daemonset_fr.md)]
+---
+
+## Création d'un daemon set
+
+- Malheureusement, à partir de Kubernetes 1.10, l'interface de ligne de commande ne peut pas créer de jeux de démons
+
+--
+
+- Plus précisément: il n'a pas de sous-commande pour créer un daemon set
+
+--
+
+- Mais n'importe quel type de ressource peut toujours être créé en fournissant une description YAML:
+  ```bash
+  kubectl apply -f foo.yaml
+  ```
+
+--
+
+- Comment créons-nous le fichier YAML pour notre daemon set?
+
+--
+
+  - option 1: [lire les docs](https://kubernetes.io/docs/concepts/workloads/controllers/daemonset/#create-a-daemonset)
+
+--
+
+  - option 2: `vi` notre moyen de sortir de celui-ci
+
+.debug[[kube/daemonset_fr.md](https://github.com/RyaxTech/container.training.git/tree/master/slides/kube/daemonset_fr.md)]
+---
+
+## Création du fichier YAML pour notre daemon set
+
+- Commençons par le fichier YAML pour la ressource `rng` courante
+
+.exercise[
+
+- Faites un dump du ressource `rng` dans YAML:
+  ```bash
+  kubectl get deploy/rng -o yaml --export> rng.yml
+  ```
+
+- Modifier `rng.yml`
+
+]
+
+Note: `--export` supprimera les informations spécifiques au cluster, c'est-à-dire:
+- namespace (pour que la ressource ne soit pas liée à un espace de noms spécifique)
+- status et creation timestamp (inutile lors de la création d'une nouvelle ressource)
+- resourceVersion et uid (ils causeraient des problèmes ... *intéressants*)
+
+.debug[[kube/daemonset_fr.md](https://github.com/RyaxTech/container.training.git/tree/master/slides/kube/daemonset_fr.md)]
+---
+
+## "Casting" d'une ressource à un autre
+
+- Et si on changeait juste le champ `kind`?
+
+  (Ça ne peut pas être aussi simple, non?)
+
+.exercise[
+
+- Changez `kind: Deployment` en` kind: DaemonSet`
+
+- Enregistrer, quitter
+
+- Essayez de créer notre nouvelle ressource:
+  ```bash
+  kubectl apply -f rng.yml
+  ```
+
+]
+
+--
+
+Nous savions tous que cela ne pourrait pas être aussi facile, non!
+
+.debug[[kube/daemonset_fr.md](https://github.com/RyaxTech/container.training.git/tree/master/slides/kube/daemonset_fr.md)]
+---
+
+## Comprendre le problème
+
+- Le coeur de l'erreur est:
+  ```
+  error validating data:
+  [ValidationError(DaemonSet.spec):
+  unknown field "replicas" in io.k8s.api.extensions.v1beta1.DaemonSetSpec,
+  ...
+  ```
+--
+
+- *De toute évidence,* cela n'a pas de sens de spécifier un nombre de réplicas pour un ensemble de démons
+
+--
+
+- Solution de contournement: résolvez le problème du YAML
+
+  - supprimer le champ `replicas`
+  - supprimer le champ `strategy` (qui définit le mécanisme de déploiement pour un déploiement)
+  - enlever la ligne `status: {}` à la fin
+
+--
+
+- Ou, on pourrait aussi ...
+
+.debug[[kube/daemonset_fr.md](https://github.com/RyaxTech/container.training.git/tree/master/slides/kube/daemonset_fr.md)]
+---
+
+## Utilise le `--force`, Luke
+
+- Nous pourrions aussi dire à Kubernetes d'ignorer ces erreurs et essayer quand même
+
+- Le nom actuel du flag `--force` est` --validate = false`
+
+.exercise[
+
+- Essayez de charger notre fichier YAML et ignorez les erreurs:
+  `` `bash
+  kubectl applique -f rng.yml --validate = false
+  `` `
+
+]
+
+--
+
+🎩✨🐇
+
+--
+
+Attendez ... Maintenant, cela peut-il être * aussi facile?
+
+.debug[[kube/daemonset_fr.md](https://github.com/RyaxTech/container.training.git/tree/master/slides/kube/daemonset_fr.md)]
+---
+
+## Vérification de ce que nous avons fait
+
+- Avons-nous transformé notre «deployment» en un «daemonset»?
+
+.exercise[
+
+- Regardez les ressources que nous avons maintenant:
+  ```bash
+  Kubectl get all
+  ```
+
+]
+
+--
+
+Nous avons deux ressources appelées `rng`:
+
+- le *deployment* existant avant
+
+- le *daemon set* que nous venons de créer
+
+Nous avons aussi un trop grand nombre de pods.
+<br/>
+(Le module correspondant au *deployment* existe toujours.)
+
+.debug[[kube/daemonset_fr.md](https://github.com/RyaxTech/container.training.git/tree/master/slides/kube/daemonset_fr.md)]
+---
+
+## `deploy / rng` et` ds / rng`
+
+- Vous pouvez avoir différents types de ressources avec le même nom
+
+  (c'est-à-dire un *deploiement* et un *daemon set* tous deux nommés "rng")
+
+- Nous avons toujours l'ancien déploiement `rng` * *
+
+  ```
+NAME                       DESIRED   CURRENT   UP-TO-DATE   AVAILABLE   AGE
+deployment.apps/rng        1         1         1            1           18m
+  ```
+
+
+- Mais maintenant nous avons le nouveau *daemon set* `rng`
+
+  ```
+NAME                DESIRED  CURRENT  READY  UP-TO-DATE  AVAILABLE  NODE SELECTOR  AGE
+daemonset.apps/rng  2        2        2      2           2          <none>         9s
+  ```
+
+.debug[[kube/daemonset_fr.md](https://github.com/RyaxTech/container.training.git/tree/master/slides/kube/daemonset_fr.md)]
+---
+
+## Trop de pods
+
+- Si nous vérifions avec `kubectl get pods`, nous voyons:
+
+  - *un pod* pour le deployment (nommé `rng-xxxxxxxxxx-yyyyy`)
+
+  - *un pod par nœud* pour le daemon set (nommé `rng-zzzzz`)
+
+  ```
+  NAME                        READY     STATUS    RESTARTS   AGE
+  rng-54f57d4d49-7pt82        1/1       Running   0          11m
+  rng-b85tm                   1/1       Running   0          25s
+  rng-hfbrr                   1/1       Running   0          25s
+  [...]
+  ```
+--
+
+Le daemon set a créé un pod par nœud, sauf sur le nœud master.
+
+Le nœud principal a [taints](https://kubernetes.io/docs/concepts/configuration/taint-and-toleration/) empêchant les pods de s'exécuter.
+
+(Pour planifier un pod sur ce nœud de toute façon, le pod requiert les [tolerations](https://kubernetes.io/docs/concepts/configuration/taint-and-toleration/).) appropriées
+
+.footnote [(Désactivé par un? Nous n'exécutons pas ces pods sur le nœud hébergeant le Control Plane.)]
+
+.debug[[kube/daemonset_fr.md](https://github.com/RyaxTech/container.training.git/tree/master/slides/kube/daemonset_fr.md)]
+---
+
+## Que font tous ces pods?
+
+- Vérifions les logs de tous ces pods `rng`
+
+- Tous ces pods ont un label `run=rng`:
+
+  - le premier pod, parce que c'est ce que `kubectl run` fait
+  - les autres (dans le daemon set), parce que nous avons
+    *copié la spécification du premier*
+
+- Par conséquent, nous pouvons interroger les logs de tout le monde en utilisant ce selector `run=rng`
+
+.exercise[
+
+- Vérifier les logs de tous les pods ayant un label `run=rng`:
+  ```bash
+  kubectl logs -l run=rng --tail 1
+  ```
+
+]
+
+--
+
+Il semble que *tous les pods* servent des requêtes pour le moment.
+
+.debug[[kube/daemonset_fr.md](https://github.com/RyaxTech/container.training.git/tree/master/slides/kube/daemonset_fr.md)]
+---
+
+## La magie des selectors
+
+- Le *service* `rng` fait l'équilibrage de charge de requêtes vers un ensemble de pods
+
+- Cet ensemble de pods est défini comme "pods ayant le label `run=rng`"
+
+.exercise[
+
+- Vérifiez le *selector* dans la définition du service `rng`:
+  ```bash
+  kubectl describe service rng
+  ```
+
+]
+
+Lorsque nous avons créé des pods supplémentaires avec ce label, ils étaient
+automatiquement détecté par `svc/rng` et ajouté en tant que *endpoints*
+à l'équilibreur de charge associé.
+
+.debug[[kube/daemonset_fr.md](https://github.com/RyaxTech/container.training.git/tree/master/slides/kube/daemonset_fr.md)]
+---
+
+## Retrait du premier pod de l'équilibreur de charge
+
+- Que se passerait-il si on supprimait ce pod, avec `kubectl delete pod ...`?
+
+--
+
+  Le `replica set` le recréerait immédiatement.
+
+--
+
+- Que se passerait-il si nous enlevions le label `run=rng` de ce pod?
+
+--
+
+  Le `replica set` le recréerait immédiatement.
+
+--
+
+  ... Parce que ce qui compte pour le `replica set`, c'est le nombre de pods *correspondant à ce selector.*
+
+--
+
+- Mais mais mais ... N'avons-nous pas plus d'un pod avec `run=rng` maintenant?
+
+--
+
+  La réponse réside dans le selector exact utilisé par le `replica set` ...
+
+.debug[[kube/daemonset_fr.md](https://github.com/RyaxTech/container.training.git/tree/master/slides/kube/daemonset_fr.md)]
+---
+
+## Plongée profonde dans les selectors
+
+- Regardons les selectors pour le *deployment* `rng` et le *replica set* associé
+
+.exercise[
+
+- Afficher des informations détaillées sur le deployment `rng`:
+  ```bash
+  kubectl describe deploy rng
+  ```
+
+- Afficher des informations détaillées sur le réplica `rng`:
+  <br/> (La deuxième commande ne nécessite pas que vous obteniez le nom exact du replica set)
+  ```bash
+  kubectl describe rs rng-yyyy
+  kubectl describe rs -l run=rng
+  ```
+
+]
+
+--
+
+Le selector du replica set possède également un `pod-template-hash`, contrairement aux pods de notre daemon set.
+
+.debug[[kube/daemonset_fr.md](https://github.com/RyaxTech/container.training.git/tree/master/slides/kube/daemonset_fr.md)]
+---
+
+class: pic
+
+.interstitial[![Image separating from the next chapter](https://gallant-turing-d0d520.netlify.com/containers/containers-by-the-water.jpg)]
+
+---
+
+name: toc-mise--jour-dun-service-via-des-labels-et-des-selectors
+class: title
+
+Mise à jour d'un service via des labels et des selectors
+
+.nav[
+[Section précédente](#toc-daemon-sets)
+|
+[Retour table des matières](#toc-chapter-2)
+|
+[Section suivante](#toc-rolling-updates)
+]
+
+.debug[(automatically generated title slide)]
+
+---
+
+# Mise à jour d'un service via des labels et des selectors
+
+- Et si nous voulons supprimer le deployment `rng` de l'équilibreur de charge?
+
+- Option 1:
+
+  - Detruis-le
+
+- Option 2:
+
+  - ajouter un *label* supplémentaire au daemon set
+
+  - mettre à jour le service *selector* pour faire référence à ce *label*
+
+--
+
+Bien sûr, l'option 2 offre plus d'opportunités d'apprentissage. Non?
+
+.debug[[kube/daemonset_fr.md](https://github.com/RyaxTech/container.training.git/tree/master/slides/kube/daemonset_fr.md)]
+---
+
+## Ajouter un label supplémentaire au daemon set
+
+- Nous mettrons à jour le daemon set "spec"
+
+- Option 1:
+
+  - éditez le fichier `rng.yml` que nous avons utilisé plus tôt
+
+  - chargez la nouvelle définition avec `kubectl apply`
+
+- Option 2:
+
+  - utilisez `kubectl edit`
+
+--
+
+*Nous avons inclus quelques conseils sur les prochaines diapositives pour votre facilitation!*
+
+.debug[[kube/daemonset_fr.md](https://github.com/RyaxTech/container.training.git/tree/master/slides/kube/daemonset_fr.md)]
+---
+
+## Nous avons mis des ressources dans vos ressources
+
+- Rappel: un daemon set est une ressource qui crée plus de ressources!
+
+- Il y a une différence entre:
+
+  - le(s) label(s) d'une ressource (dans le bloc `metadata` au début)
+
+  - le selector d'une ressource (dans le bloc `spec`)
+
+  - le(s) label(s) de la (des) ressource(s) créée(s) par la première ressource (dans le bloc `template`)
+
+- Vous devez mettre à jour le selector et le template (les labels de metadata ne sont pas obligatoires)
+
+- Le template doit correspondre au selector
+
+  (c'est-à-dire que la ressource refusera de créer des ressources qu'elle ne sélectionnera pas)
+
+.debug[[kube/daemonset_fr.md](https://github.com/RyaxTech/container.training.git/tree/master/slides/kube/daemonset_fr.md)]
+---
+
+## Ajout de notre label
+
+- Ajoutons un label `isactive: yes`
+
+- En YAML, `yes` doit être cité; c'est-à-dire `isactive: "yes"`
+
+.exercise[
+
+- Mettre à jour le daemon set pour ajouter `isactive:" yes "` au label du selector et du template:
+  ```bash
+  kubectl edit daemonset rng
+  ```
+
+- Mettre à jour le service pour ajouter `isactive:" yes "` à son selector:
+  ```bash
+  kubectl edit service rng
+  ```
+
+]
+
+.debug[[kube/daemonset_fr.md](https://github.com/RyaxTech/container.training.git/tree/master/slides/kube/daemonset_fr.md)]
+---
+
+## Vérification de ce que nous avons fait
+
+.exercise[
+
+- Vérifiez la ligne du log la plus récente de tous les pods `run=rng` pour confirmer que exactement un par nœud est maintenant actif:
+  ```bash
+  kubectl logs -l run=rng --tail 1
+  ```
+
+]
+
+Les timestamps devraient nous donner un indice sur le nombre de pods qui reçoivent actuellement du trafic.
+
+.exercise[
+
+- Regardez les pods que nous avons en ce moment:
+  ```bash
+  kubectl get pods
+  ```
+
+]
+
+.debug[[kube/daemonset_fr.md](https://github.com/RyaxTech/container.training.git/tree/master/slides/kube/daemonset_fr.md)]
+---
+
+## Nettoyage
+
+- Les pods du deployment et le "vieux" daemon set sont toujours en cours d'exécution
+
+- Nous allons les identifier par programme
+
+.exercise[
+
+- Listez les pods avec `run=rng` mais sans `isactive=yes`:
+  ```bash
+  kubectl get pods -l run=rng,isactive!=yes
+  ```
+
+- Enlevez ces pods:
+  ```bash
+  kubectl delete pods -l run=rng,isactive!=yes
+  ```
+
+]
+
+.debug[[kube/daemonset_fr.md](https://github.com/RyaxTech/container.training.git/tree/master/slides/kube/daemonset_fr.md)]
+---
+
+## Nettoyage des pods mortes
+
+```
+$ kubectl get pods
+NAME                        READY     STATUS        RESTARTS   AGE
+rng-54f57d4d49-7pt82        1/1       Terminating   0          51m
+rng-54f57d4d49-vgz9h        1/1       Running       0          22s
+rng-b85tm                   1/1       Terminating   0          39m
+rng-hfbrr                   1/1       Terminating   0          39m
+rng-vplmj                   1/1       Running       0          7m
+rng-xbpvg                   1/1       Running       0          7m
+[...]
+```
+
+- Les pods supplémentaires (notées `Terminating` ci-dessus) vont disparaître
+
+- ... Mais un nouveau (`rng-54f57d4d49-vgz9h` ci-dessus) a été redémarré immédiatement!
+
+--
+
+- Rappelez-vous, le *deployment* existe toujours et vérifie qu'un pod est opérationnel
+
+- Si on supprime le pod associé au deployment, il est recréé automatiquement
+
+.debug[[kube/daemonset_fr.md](https://github.com/RyaxTech/container.training.git/tree/master/slides/kube/daemonset_fr.md)]
+---
+
+## Suppression d'un déploiement
+
+.exercise[
+
+- Supprimez le déploiement `rng`:
+  ```bash
+  kubectl delete deployment rng
+  ```
+]
+
+-
+
+- Le pod créé par le déploiement est en cours de finalisation:
+
+```
+$ kubectl get pods
+NAME                        READY     STATUS        RESTARTS   AGE
+rng-54f57d4d49-vgz9h        1/1       Terminating   0          4m
+rng-vplmj                   1/1       Running       0          11m
+rng-xbpvg                   1/1       Running       0          11m
+[...]
+```
+
+Ding, dong, le déploiement est mort! Et le daemon set continue à vivre.
+
+.debug[[kube/daemonset_fr.md](https://github.com/RyaxTech/container.training.git/tree/master/slides/kube/daemonset_fr.md)]
+---
+
+## Éviter les pods supplémentaires
+
+- Lorsque nous avons changé la définition de daemon set, il a immédiatement créé de nouveaux pods. Nous avons dû enlever les anciens manuellement.
+
+- Comment aurions-nous pu éviter cela?
+
+-
+
+- En ajoutant le label `isactive:"yes"` aux pods avant de changer le daemon set!
+
+- Cela peut être fait par programme avec `kubectl patch`:
+
+  ```bash
+    PATCH='
+    metadata:
+      labels:
+        isactive: "yes"
+    '
+    kubectl get pods -l run=rng -l controller-revision-hash -o name |
+      xargs kubectl patch -p "$PATCH" 
+  ```
+
+
+.debug[[kube/daemonset_fr.md](https://github.com/RyaxTech/container.training.git/tree/master/slides/kube/daemonset_fr.md)]
+---
+
+## Labels et débogage
+
+- Quand un pod se comporte mal, on peut le supprimer: un autre sera recréé
+
+- Mais on peut aussi changer ses labels
+
+- Il sera supprimé de l'équilibreur de charge (load balancerr) (il ne recevra plus de trafic)
+
+- Un autre pod sera recréé immédiatement
+
+- Mais le pod problématique est toujours là, et nous pouvons l'inspecter et le déboguer
+
+- Nous pouvons même le rajouter à la rotation si nécessaire
+
+  (Très utile pour résoudre les bugs intermittents et insaisissables)
+
+.debug[[kube/daemonset_fr.md](https://github.com/RyaxTech/container.training.git/tree/master/slides/kube/daemonset_fr.md)]
+---
+
+## Labels et contrôle de rollout avancé
+
+- Inversement, nous pouvons ajouter des pods correspondant au selector d'un service
+
+- Ces pods recevront alors des requêtes et serviront le trafic
+
+- Exemples:
+
+  - pod One-shot avec tous les flags de débogage activé, pour collecter des logs
+
+  - pods créés automatiquement, mais ajoutés à la rotation dans une seconde étape
+    <br/>
+    (en définissant leur label en conséquence)
+
+- Cela nous donne des blocs de construction pour les "canary" et "blue/green deployments"
+
+
+
+.debug[[kube/daemonset_fr.md](https://github.com/RyaxTech/container.training.git/tree/master/slides/kube/daemonset_fr.md)]
+---
+
+class: pic
+
+.interstitial[![Image separating from the next chapter](https://gallant-turing-d0d520.netlify.com/containers/distillery-containers.jpg)]
+
+---
+
+name: toc-rolling-updates
+class: title
+
+Rolling updates
+
+.nav[
+[Section précédente](#toc-mise--jour-dun-service-via-des-labels-et-des-selectors)
+|
+[Retour table des matières](#toc-chapter-2)
+|
+[Section suivante](#toc-accs-aux-logs-depuis-le-cli)
+]
+
+.debug[(automatically generated title slide)]
+
+---
+# Rolling updates
+
+- Rolling update est la mise à jour continue
+
+- Par défaut (sans le rolling update), lorsqu'une ressource qui passe l'echelle est mise à jour:
+
+  - De nouveaux pods sont créés
+
+  - les anciennes pods sont terminées
+  
+  - ... Tout en même temps
+  
+  - Si quelque chose ne va pas, ¯\\\_(ツ)\_/¯
+
+.debug[[kube/rollout_fr.md](https://github.com/RyaxTech/container.training.git/tree/master/slides/kube/rollout_fr.md)]
+---
+
+## Rolling updates
+
+- Avec les 'rolling updates', lorsqu'une ressource est mise à jour, ca se fait progressivement
+
+- Deux paramètres déterminent le rythme du rollout: `maxUnavailable` et `maxSurge`
+
+- Ils peuvent être spécifiés en nombre absolu de pods, ou en pourcentage du nombre de replicas
+
+- N'importe quand ...
+
+  - il y aura toujours au moins des `replicas`-`maxUnavailable` pods disponibles
+
+  - il n'y aura jamais plus que des `replicas`+`maxSurge` pods au total
+
+  - il y aura donc jusqu'à  `maxUnavailable`+`maxSurge` pods qui sont mises a jour
+
+- Nous avons la possibilité de revenir à la version précédente (rollback)
+  <br/> (si la mise à jour échoue ou est insatisfaisante)
+
+.debug[[kube/rollout_fr.md](https://github.com/RyaxTech/container.training.git/tree/master/slides/kube/rollout_fr.md)]
+---
+
+## Vérification des paramètres de déploiement actuels
+
+- Rappelez-vous comment nous construisons des rapports personnalisés avec `kubectl` et `jq`:
+
+.exercise[
+
+- Afficher le plan de rollout pour nos deployments:
+  ```bash
+    kubectl get deploy -o json |
+            jq ".items[] | {name:.metadata.name} + .spec.strategy.rollingUpdate"
+  ```
+
+]
+
+.debug[[kube/rollout_fr.md](https://github.com/RyaxTech/container.training.git/tree/master/slides/kube/rollout_fr.md)]
+---
+
+
+## Rolling update en pratique
+
+- À partir de Kubernetes 1.8, nous pouvons faire des rolling update avec:
+
+  `deployments`, `daemonsets`, `statefulsets`
+
+- La modification de l'une de ces ressources entraînera automatiquement une mise à jour progressive
+
+- Les rolling updates peuvent être surveillées avec la sous-commande `kubectl rollout`
+
+.debug[[kube/rollout_fr.md](https://github.com/RyaxTech/container.training.git/tree/master/slides/kube/rollout_fr.md)]
+---
+
+## Construire une nouvelle version du service `worker`
+
+.exercise[
+
+- Allez dans le répertoire `stacks`:
+  ```bash
+  cd ~/container.training/stacks
+  ```
+
+- Editez `dockercoins/worker/worker.py`, mettez à jour la ligne `sleep` pour dormir 1 seconde
+
+- Construire un nouveau tag et le pousser dans le registry:
+  ```bash
+  #export REGISTRY=localhost:3xxxx
+  export TAG=v0.2
+  docker-compose -f dockercoins.yml build
+  docker-compose -f dockercoins.yml push
+  ```
+
+]
+
+.debug[[kube/rollout_fr.md](https://github.com/RyaxTech/container.training.git/tree/master/slides/kube/rollout_fr.md)]
+---
+
+## Rolling out du nouveau service `worker`
+
+.exercise[
+
+- Surveillons ce qui se passe en ouvrant quelques terminaux, et exécutons:
+  ```bash
+  kubectl get pods -w
+  kubectl get replicasets -w
+  kubectl get deployments -w
+  ```
+
+- Mettre à jour `worker` soit avec `kubectl edit`, soit en exécutant:
+  ```bash
+  kubectl set image deploy worker worker=$REGISTRY/worker:$TAG
+  ```
+
+]
+
+--
+
+Ce rollout devrait être assez rapide. Que montre l'interface web?
+
+.debug[[kube/rollout_fr.md](https://github.com/RyaxTech/container.training.git/tree/master/slides/kube/rollout_fr.md)]
+---
+
+## Donnez-lui du temps
+
+- Au début, il semble que rien ne se passe (le graphique reste au même niveau)
+
+- Selon `kubectl get deploy -w`, le `deployment` a été mis à jour très rapidement
+
+- Mais `kubectl get pods -w` raconte une histoire différente
+
+- Les anciens `pods` sont toujours là, et ils restent dans l'état `Terminating` pendant un certain temps
+
+- Finalement, ils sont terminés; puis le graphique diminue de manière significative
+
+- Ce retard est dû au fait que notre worker ne gère pas les signaux
+
+- Kubernetes envoie une requête d'arrêt "polie" au worker, qui l'ignore
+
+- Après une période de grâce, Kubernetes s'impatiente et tue le conteneur
+
+  (La période de grâce est de 30 secondes, mais [peut être modifiée](https://kubernetes.io/docs/concepts/workloads/pods/pod/#termination-of-pods) si nécessaire)
+
+.debug[[kube/rollout_fr.md](https://github.com/RyaxTech/container.training.git/tree/master/slides/kube/rollout_fr.md)]
+---
+
+## Le cas d'une erreur
+
+- Que se passe-t-il si nous faisons une erreur?
+
+.exercise[
+
+- Mettre à jour `worker` en spécifiant une image inexistante:
+  ```bash
+  export TAG=v0.3
+  kubectl set image deploy worker worker=$REGISTRY/worker:$TAG
+  ```
+
+- Vérifiez ce qui se passe:
+  ```bash
+  kubectl rollout status deploy worker
+  ```
+
+]
+
+--
+
+Notre déploiement est bloqué. Cependant, l'application n'est pas morte (seulement 10% plus lent).
+
+.debug[[kube/rollout_fr.md](https://github.com/RyaxTech/container.training.git/tree/master/slides/kube/rollout_fr.md)]
+---
+
+## Que se passe-t-il avec notre déploiement?
+
+- Pourquoi notre application est-elle 10% plus lente?
+
+- Parce que `MaxUnavailable=1`, le deployment s'est terminé 1 replica sur 10 disponible
+
+- D'accord, mais pourquoi voyons-nous 2 nouvelles replicas en cours de deployment?
+
+- Parce que `MaxSurge=1`, donc en plus de remplacer le "terminated", le déploiement demarre un de plus
+
+.debug[[kube/rollout_fr.md](https://github.com/RyaxTech/container.training.git/tree/master/slides/kube/rollout_fr.md)]
+---
+
+class: extra-details
+
+## Quelques détails
+
+- Nous commençons avec 10 pods en cours d'exécution pour le déploiement `worker`
+
+- Paramètres actuels: MaxUnavailable=1 et MaxSurge=1
+
+- Quand nous commençons le déploiement:
+
+  - un replicas est supprimée (selon MaxUnavailable = 1)
+  - un autre est créé (avec la nouvelle version) pour le remplacer
+  - un autre est créé (avec la nouvelle version) par MaxSurge = 1
+
+- Nous avons maintenant 9 réplicas en service et 2 en cours de déploiement
+
+- Notre déploiement est bloqué à ce stade!
+
+.debug[[kube/rollout_fr.md](https://github.com/RyaxTech/container.training.git/tree/master/slides/kube/rollout_fr.md)]
+---
+
+## Récupération à partir d'un mauvais déploiement
+
+- Nous pourrions pousser une image `v0.3`
+
+  (la logique de réessai de pod l'attrapera finalement et le déploiement se poursuivra)
+
+- Ou nous pourrions invoquer une restauration manuelle
+
+.exercise[
+
+- Annuler le déploiement et attendre que la poussière s'installe:
+  ```bash
+  kubectl rollout undo deploy worker
+  kubectl rollout status deploy worker
+  ```
+
+]
+
+.debug[[kube/rollout_fr.md](https://github.com/RyaxTech/container.training.git/tree/master/slides/kube/rollout_fr.md)]
+---
+
+## Modification des paramètres de rollout
+
+- Nous voulons:
+
+  - revenir à `v0.1`
+  - être prudent sur la disponibilité (toujours avoir le nombre désiré de workers disponibles)
+  - être agressif sur la vitesse de rollout (mettre à jour plus d'un pod à la fois)
+  - donner un peu de temps à nos workers pour "se réchauffer" avant de commencer plus
+
+Les modifications correspondantes peuvent être exprimées dans l'extrait YAML suivant:
+
+.small[
+```yaml
+spec:
+  template:
+    spec:
+      containers:
+      - name: worker
+        image: $REGISTRY/worker:v0.1
+  strategy:
+    rollingUpdate:
+      maxUnavailable: 0
+      maxSurge: 3
+  minReadySeconds: 10
+```
+]
+
+
+.debug[[kube/rollout_fr.md](https://github.com/RyaxTech/container.training.git/tree/master/slides/kube/rollout_fr.md)]
+---
+
+## Application de modifications via un patch YAML
+
+- Nous pourrions utiliser `kubectl edit deployment worker`
+
+- Mais nous pourrions également utiliser `kubectl patch` avec le YAML exact montré avant
+
+.exercise[
+
+.small[
+
+- Appliquez tous nos changements et attendez qu'ils prennent effet:
+  ```bash
+  kubectl patch deployment worker -p "
+    spec:
+      template:
+        spec:
+          containers:
+          - name: worker
+            image: $REGISTRY/worker:v0.1
+      strategy:
+        rollingUpdate:
+          maxUnavailable: 0
+          maxSurge: 3
+      minReadySeconds: 10
+    "
+  kubectl rollout status deployment worker
+  kubectl get deploy -o json worker |
+          jq "{name:.metadata.name} + .spec.strategy.rollingUpdate"
+  ```
+  ] 
+
+]
+
+
+
+.debug[[kube/rollout_fr.md](https://github.com/RyaxTech/container.training.git/tree/master/slides/kube/rollout_fr.md)]
+---
+
+class: pic
+
+.interstitial[![Image separating from the next chapter](https://gallant-turing-d0d520.netlify.com/containers/lots-of-containers.jpg)]
+
+---
+
+name: toc-accs-aux-logs-depuis-le-cli
+class: title
+
+Accès aux logs depuis le CLI
+
+.nav[
+[Section précédente](#toc-rolling-updates)
+|
+[Retour table des matières](#toc-chapter-2)
+|
+[Section suivante](#toc-logs-centralise)
+]
+
+.debug[(automatically generated title slide)]
+
+---
+# Accès aux logs depuis le CLI
+
+- Les commandes `kubectl logs` ont des limitations:
+
+  - il ne peut pas diffuser les logs de plusieurs pods à la fois
+
+  - lors de l'affichage des logs de plusieurs pods, il les mélange tous ensemble
+
+- Nous allons voir comment le faire mieux
+
+.debug[[kube/logs-cli_fr.md](https://github.com/RyaxTech/container.training.git/tree/master/slides/kube/logs-cli_fr.md)]
+---
+
+## Le faire manuellement
+
+- Nous *pourrions* (si nous étions si motivé), écrire un programme ou un script qui:
+
+  - prendre un selector comme argument
+
+  - énumérer tous les pods correspondant à ce selector (avec `kubectl get -l ...`)
+
+  - fork un `kubectl logs --follow ...` commande par conteneur
+
+  - annoter les logs (le résultat de chaque processus `kubectl logs ...`) avec leur origine
+
+  - conserver la commande en utilisant `kubectl logs --timestamps ...` et fusionner la sortie
+
+--
+
+- Nous *pourrions* le faire, mais heureusement, d'autres l'ont déjà fait pour nous!
+
+.debug[[kube/logs-cli_fr.md](https://github.com/RyaxTech/container.training.git/tree/master/slides/kube/logs-cli_fr.md)]
+---
+
+## Stern
+
+[Stern](https://github.com/wercker/stern) est un projet open source
+par [Wercker](http://www.wercker.com/).
+
+À partir du fichier README:
+
+*Stern vous permet d'empiler plusieurs pods sur Kubernetes et plusieurs conteneurs dans le pod. Chaque résultat est codé en couleur pour un débogage plus rapide.*
+
+*La requête est une expression régulière, de sorte que le nom du pod peut facilement être filtré et que vous n'avez pas besoin de spécifier l'identifiant exact (par exemple en omettant l'ID de déploiement). Si un pod est supprimé, il est retiré de la queue et si un nouveau pod est ajouté, il est automatiquement suivi.*
+
+Exactement ce dont nous avons besoin!
+
+.debug[[kube/logs-cli_fr.md](https://github.com/RyaxTech/container.training.git/tree/master/slides/kube/logs-cli_fr.md)]
+---
+
+## Installation de Stern
+
+- Pour simplifier, prenons simplement une version binaire
+
+.exercise[
+
+- Télécharger une version binaire de GitHub:
+  ```bash
+  sudo curl -L -o /usr/local/bin/stern \
+       https://github.com/wercker/stern/releases/download/1.6.0/stern_linux_amd64
+  sudo chmod +x /usr/local/bin/stern
+  ```
+
+
+]
+
+Ces instructions d'installation fonctionneront sur nos clusters, car ce sont des VM Linux amd64.
+
+.debug[[kube/logs-cli_fr.md](https://github.com/RyaxTech/container.training.git/tree/master/slides/kube/logs-cli_fr.md)]
+---
+
+## Utilisation de Stern
+
+- Il existe deux façons de spécifier les pods pour lesquels nous voulons voir les logs:
+
+  - `-l` suivi d'une expression de sélection (comme avec de nombreuses commandes `kubectl`)
+
+  - avec une "requête de pod", c'est-à-dire une expression rationnelle (regex) utilisée pour faire correspondre les noms de pod
+
+- Ces deux voies peuvent être combinées si nécessaire
+
+.exercise[
+
+- Voir les logs pour tous les conteneurs rng:
+  ```bash
+  stern rng
+  ```
+
+]
+
+.debug[[kube/logs-cli_fr.md](https://github.com/RyaxTech/container.training.git/tree/master/slides/kube/logs-cli_fr.md)]
+---
+
+## Options pratiques Stern
+
+- Le flag `--tail N` montre les dernières lignes `N` pour chaque conteneur
+
+  (Au lieu d'afficher les logs depuis la création du conteneur)
+
+- Le flag  `-t`/`--timestamps` montre les timestamps
+
+- Le flag `--all-namespaces` est explicite
+
+.exercise[
+
+- Voir ce qui se passe avec les conteneurs du système `weave`:
+  ```bash
+  stern --tail 1 --timestamps --all-namespaces weave
+  ```
+]
+
+.debug[[kube/logs-cli_fr.md](https://github.com/RyaxTech/container.training.git/tree/master/slides/kube/logs-cli_fr.md)]
+---
+
+## Utiliser Stern avec un selector
+
+- Lorsque vous spécifiez un selector, nous pouvons omettre la valeur d'un label
+
+- Cela va correspondre à tous les objets ayant cette label (quelle que soit la valeur)
+
+- Tout ce qui a été créé avec `kubectl run` a une étiquette `run`
+
+- Nous pouvons utiliser cette propriété pour voir les logs de tous les pod créés avec `kubectl run`
+
+.exercise[
+
+- Voir les logs pour toutes les choses commencées avec `kubectl run`:
+  ```bash
+  stern -l run
+  ```
+
+.debug[[kube/logs-cli_fr.md](https://github.com/RyaxTech/container.training.git/tree/master/slides/kube/logs-cli_fr.md)]
+---
+
+class: pic
+
+.interstitial[![Image separating from the next chapter](https://gallant-turing-d0d520.netlify.com/containers/plastic-containers.JPG)]
+
+---
+
+name: toc-logs-centralise
+class: title
+
+Logs centralisée
+
+.nav[
+[Section précédente](#toc-accs-aux-logs-depuis-le-cli)
+|
+[Retour table des matières](#toc-chapter-2)
+|
+[Section suivante](#toc-gestion-des-stacks-avec-helm)
+]
+
+.debug[(automatically generated title slide)]
+
+---
+# Logs centralisée
+
+- L'utilisation de `kubectl` ou` stern` est simple; mais il a des inconvénients:
+
+  - quand un nœud tombe en panne, ses logs ne sont plus disponibles
+
+  - nous ne pouvons que vider ou diffuser des logs; nous voulons rechercher / indexer / compter ...
+
+- Nous voulons envoyer tous nos logs à un seul endroit
+
+- Nous voulons les analyser (par exemple pour les logs HTTP) et les indexer
+
+- Nous voulons un bon dashboard web
+
+--
+
+- Nous allons déployer une stack EFK
+
+.debug[[kube/logs-centralized_fr.md](https://github.com/RyaxTech/container.training.git/tree/master/slides/kube/logs-centralized_fr.md)]
+---
+
+## Qu'est-ce que EFK?
+
+- EFK est trois composants:
+
+  - ElasticSearch (pour stocker et indexer les entrées de log)
+
+  - Fluentd (pour obtenir les logs de conteneur, les traiter et les placer dans ElasticSearch)
+
+  - Kibana (pour voir/rechercher les entrées de log avec une belle interface)
+
+- Le seul composant auquel nous devons accéder depuis l'extérieur du cluster sera Kibana
+
+.debug[[kube/logs-centralized_fr.md](https://github.com/RyaxTech/container.training.git/tree/master/slides/kube/logs-centralized_fr.md)]
+---
+
+## Déploiement de EFK sur notre cluster
+
+- Nous allons utiliser un fichier YAML décrivant toutes les ressources nécessaires
+
+.exercise[
+
+- Chargez le fichier YAML dans notre cluster:
+  ```bash
+  kubectl apply -f https://goo.gl/MUZhE4
+  ```
+
+
+]
+
+Si nous [regardons le fichier YAML](https://goo.gl/MUZhE4), nous voyons que
+il crée 1 daemon set, 2 deployments, 2 services,
+et quelques roles et roles bindings (pour donner à fluentd les permissions requises).
+
+.debug[[kube/logs-centralized_fr.md](https://github.com/RyaxTech/container.training.git/tree/master/slides/kube/logs-centralized_fr.md)]
+---
+
+## L'itinéraire d'une ligne de log (avant Fluentd)
+
+- Un conteneur écrit une ligne sur stdout ou stderr
+
+- Les deux sont généralement redirigés vers le moteur du conteneur (Docker ou autre)
+
+- Le moteur de conteneur lit la ligne et l'envoie à un pilote de logs
+
+- Le timestamp et le flux (stdout ou stderr) sont ajoutés à la ligne du log
+
+- Avec la configuration par défaut pour Kubernetes, la ligne est écrite dans un fichier JSON
+
+  (`/var/log/containers/pod-name_namespace_container-id.log`)  
+
+- Ce fichier est lu lorsque nous invoquons `kubectl logs`; nous pouvons y accéder directement aussi
+
+.debug[[kube/logs-centralized_fr.md](https://github.com/RyaxTech/container.training.git/tree/master/slides/kube/logs-centralized_fr.md)]
+---
+
+## L'itinéraire d'une ligne de log (avec Fluentd)
+
+- Fluentd s'exécute sur chaque noeud (grâce à un daemon set)
+
+- Il bind-mount `/var/log/containers` de l'hôte (pour accéder à ces fichiers)
+
+- Il scanne en permanence ce répertoire pour les nouveaux fichiers; les lit; les analyse
+
+- Chaque ligne de log devient un objet JSON, entièrement annoté avec des informations supplémentaires:
+  <br/> container id, pod name, Kubernetes labels ...
+
+- Ces objets JSON sont stockés dans ElasticSearch
+
+- ElasticSearch indexe les objets JSON
+
+- Nous pouvons accéder aux logs via Kibana (et effectuer des recherches, des comptes, etc.)
+
+.debug[[kube/logs-centralized_fr.md](https://github.com/RyaxTech/container.training.git/tree/master/slides/kube/logs-centralized_fr.md)]
+---
+
+## Accès à Kibana
+
+- Kibana offre une interface web relativement simple
+
+- Regardons ça!
+
+.exercise[
+
+- Vérifiez quel `NodePort` a été alloué à Kibana:
+  ```bash
+  kubectl get svc kibana
+  ```
+
+- Avec notre navigateur Web, connectez-vous à Kibana
+
+]
+
+.debug[[kube/logs-centralized_fr.md](https://github.com/RyaxTech/container.training.git/tree/master/slides/kube/logs-centralized_fr.md)]
+---
+
+## Utiliser Kibana
+
+* Remarque: ce n'est pas un atelier Kibana! Donc cette section est délibérément très laconique. *
+
+- La première fois que vous vous connectez à Kibana, vous devez "configure an index pattern"
+
+- Il suffit d'utiliser celui qui est suggéré, `@timestamp`
+
+- Puis cliquez sur "Discover" (dans le coin supérieur gauche)
+
+- Vous devriez voir les logs de conteneurs
+
+- Conseil: dans la colonne de gauche, sélectionnez quelques champs à afficher, par exemple:
+
+  `kubernetes.host`,` kubernetes.pod_name`, `stream`,` log`
+
+.debug[[kube/logs-centralized_fr.md](https://github.com/RyaxTech/container.training.git/tree/master/slides/kube/logs-centralized_fr.md)]
+---
+
+## Caveat emptor
+
+Nous utilisons EFK parce que c'est relativement simple
+déployer sur Kubernetes, sans devoir redéployer ou reconfigurer
+notre cluster. Mais cela ne signifie pas que ce sera toujours le meilleur
+option pour votre cas d'utilisation. Si vous utilisez Kubernetes dans le
+cloud, vous pouvez envisager d'utiliser la journalisation du fournisseur de cloud
+infrastructure (si elle peut être intégrée avec Kubernetes).
+
+La méthode de déploiement que nous allons utiliser ici a été simplifiée:
+il n'y a qu'un seul noeud ElasticSearch. Dans un vrai déploiement, vous
+pourrait utiliser un cluster, à la fois pour des raisons de performance et de fiabilité.
+Mais ceci sort du cadre de ce chapitre.
+
+Le fichier YAML que nous avons utilisé crée toutes les ressources dans le
+espace de noms `default`, pour plus de simplicité. Dans un scénario réel, vous allez
+créez les ressources dans l'espace de noms `kube-system` ou dans un espace de noms dédié.
+
+.debug[[kube/logs-centralized_fr.md](https://github.com/RyaxTech/container.training.git/tree/master/slides/kube/logs-centralized_fr.md)]
+---
+
+class: pic
+
+.interstitial[![Image separating from the next chapter](https://gallant-turing-d0d520.netlify.com/containers/train-of-containers-1.jpg)]
+
+---
+
+name: toc-gestion-des-stacks-avec-helm
+class: title
+
+Gestion des stacks avec Helm
+
+.nav[
+[Section précédente](#toc-logs-centralise)
+|
+[Retour table des matières](#toc-chapter-3)
+|
+[Section suivante](#toc-namespaces)
+]
+
+.debug[(automatically generated title slide)]
+
+---
+# Gestion des stacks avec Helm
+
+- Nous avons créé nos premières ressources avec `kubectl run`,` kubectl expose` ...
+
+- Nous avons également créé des ressources en chargeant les fichiers YAML avec `kubectl apply -f`
+
+- Pour les plus grosses stacks, gérer des milliers de lignes de YAML est déraisonnable
+
+- Ces bundles YAML doivent être personnalisés avec des paramètres variables
+
+  (Par exemple: nombre de replicas, version de l'image à utiliser ...)
+
+- Ce serait bien d'avoir une collection de bundles (paquets) organisée et versionnée
+
+- Ce serait bien de pouvoir upgrade/rollback ces bundles avec soin
+
+- [Helm](https://helm.sh/) est un projet open source offrant toutes ces choses!
+
+.debug[[kube/helm_fr.md](https://github.com/RyaxTech/container.training.git/tree/master/slides/kube/helm_fr.md)]
+---
+
+## Concepts de Helm
+
+- `helm` est un outil CLI
+
+- `tiller` est son composant côté serveur
+
+- Un "chart" est une archive contenant des paquets YAML modélisés
+
+- Les charts sont versionnés
+
+- Les charts peuvent être stockés sur des repositories privés ou publics
+
+.debug[[kube/helm_fr.md](https://github.com/RyaxTech/container.training.git/tree/master/slides/kube/helm_fr.md)]
+---
+
+## Installation de Helm
+
+- Nous devons installer la CLI `helm`; puis utilisez-le pour déployer  `tiller`
+
+.exercise[
+
+- Installez la CLI `helm`:
+  ```bash
+  curl https://raw.githubusercontent.com/kubernetes/helm/master/scripts/get > get_helm.sh
+  chmod 700 get_helm.sh
+  ./get_helm.sh
+  ```
+
+- Déployer `tiller`:
+  ```bash
+  helm init
+  ```
+
+- Ajouter l'achèvement `helm`:
+  ```bash
+  . <(helm completion $(basename $SHELL))
+  ```
+
+]
+
+.debug[[kube/helm_fr.md](https://github.com/RyaxTech/container.training.git/tree/master/slides/kube/helm_fr.md)]
+---
+
+## Réparer les "account permissions"
+
+- Le modèle d'autorisation Helm nous oblige à modifier les autorisations (permissions)
+
+- Dans un déploiement plus réaliste, vous pouvez créer par utilisateur ou par équipe
+  comptes de service (service accounts), roles, et liaisons de rôles (role bindings)
+
+.exercise[
+
+- Accorder le rôle `cluster-admin` au compte de service `kube-system: default`:
+  ```bash
+    kubectl create clusterrolebinding add-on-cluster-admin \
+      --clusterrole=cluster-admin --serviceaccount=kube-system:default
+  ```
+
+]
+
+(Définir les rôles et les autorisations exacts sur votre cluster nécessite
+une connaissance plus approfondie du modèle RBAC de Kubernetes. La commande ci-dessus est
+amende pour les clusters personnels et de développement.)
+
+.debug[[kube/helm_fr.md](https://github.com/RyaxTech/container.training.git/tree/master/slides/kube/helm_fr.md)]
+---
+
+## Voir les charts disponibles
+
+- Un dépôt public est préconfiguré lors de l'installation de Helm
+
+- Nous pouvons voir les charts disponibles avec `helm search` (et un mot-clé optionnel)
+
+.exercise[
+
+- Voir tous les charts disponibles:
+  ```bash
+  helm search
+  ```
+
+- Voir les charts liés à `prometheus`:
+  ```bash
+  helm search prometheus
+  ```
+
+]
+
+.debug[[kube/helm_fr.md](https://github.com/RyaxTech/container.training.git/tree/master/slides/kube/helm_fr.md)]
+---
+
+## Installation d'un chart
+
+- La plupart des charts utilisent les types de service `LoadBalancer` par défaut
+
+- La plupart des charts nécessitent des volumes persistants pour stocker les données
+
+- Nous devons détendre ces exigences un peu
+
+.exercise[
+
+- Installez le collecteur de mesures Prometheus sur notre cluster:
+  ```bash
+    helm install stable/prometheus \
+         --set server.service.type=NodePort \
+         --set server.persistentVolume.enabled=false
+  ```
+
+]
+
+D'où viennent ces options `--set`?
+
+.debug[[kube/helm_fr.md](https://github.com/RyaxTech/container.training.git/tree/master/slides/kube/helm_fr.md)]
+---
+
+## Inspection d'un chart
+
+- `helm inspect` montre des détails sur un chart (y compris les options disponibles)
+
+.exercise[
+
+- Voir les métadonnées et toutes les options disponibles pour `stable/prometheus`:
+  ```bash
+  helm inspect stable/prometheus
+  ```
+
+]
+
+Les métadonnées du chart incluent une URL vers la page d'accueil du projet.
+
+(Parfois, il pointe facilement vers la documentation de la carte.)
+
+.debug[[kube/helm_fr.md](https://github.com/RyaxTech/container.training.git/tree/master/slides/kube/helm_fr.md)]
+---
+
+## Création d'un chart
+
+- Nous allons montrer un moyen de créer un chart *très simplifié*
+
+- Dans un vrai chart, *beaucoup de choses* seraient templacées
+
+  (Noms de ressources, types de services, nombre de replicas ...)
+
+.exercise[
+
+- Créer un exemple de chart:
+  ```bash
+  helm create dockercoins
+  ```
+
+- Éloignez les exemples de templates et créez un répertoire de template vide:
+  ```bash
+  mv dockercoins/templates dockercoins/default-templates
+  mkdir dockercoins/templates
+  ```
+
+]
+
+.debug[[kube/helm_fr.md](https://github.com/RyaxTech/container.training.git/tree/master/slides/kube/helm_fr.md)]
+---
+
+## Exportation du YAML pour notre application
+
+- La section suivante suppose que DockerCoins est en cours d'exécution
+
+.exercise[
+
+- Créez un fichier YAML pour chaque ressource dont nous avons besoin:
+  .small[
+  ```bash
+
+    while read kind name; do
+      kubectl get -o yaml --export $kind $name > dockercoins/templates/$name-$kind.yaml
+    done <<EOF
+    deployment worker
+    deployment hasher
+    daemonset rng
+    deployment webui
+    deployment redis
+    service hasher
+    service rng
+    service webui
+    service redis
+    EOF
+  ```
+  ]
+
+]
+
+.debug[[kube/helm_fr.md](https://github.com/RyaxTech/container.training.git/tree/master/slides/kube/helm_fr.md)]
+---
+
+## Test de notre chart
+
+.exercise[
+
+- Installons notre helm chart! (`dockercoins` est le chemin vers le chart)
+  ```bash
+  helm install dockercoins
+  ```
+]
+
+-
+
+- Puisque l'application est déjà déployée, cela échouera: <br>
+`Error: release loitering-otter failed: services "hasher" already exists`
+
+- Pour éviter les conflits de noms, nous allons déployer l'application dans un autre *namespace*
+
+.debug[[kube/helm_fr.md](https://github.com/RyaxTech/container.training.git/tree/master/slides/kube/helm_fr.md)]
+---
+
+class: pic
+
+.interstitial[![Image separating from the next chapter](https://gallant-turing-d0d520.netlify.com/containers/train-of-containers-2.jpg)]
+
+---
+
+name: toc-namespaces
+class: title
+
+Namespaces
+
+.nav[
+[Section précédente](#toc-gestion-des-stacks-avec-helm)
+|
+[Retour table des matières](#toc-chapter-3)
+|
+[Section suivante](#toc-)
+]
+
+.debug[(automatically generated title slide)]
+
+---
+# Namespaces
+
+- Nous ne pouvons pas avoir deux ressources avec le même nom
+
+  (Ou pouvons-nous ...?)
+
+--
+
+- Nous ne pouvons pas avoir deux ressources *du même type* avec le même nom
+
+  (Mais c'est bien d'avoir un service `rng`, un deploiement `rng`, et un daemon set `rng`!)
+
+--
+
+- Nous ne pouvons pas avoir deux ressources du même type avec le même nom *dans le même namespace*
+
+  (Mais c'est OK d'avoir par exemple deux services `rng` dans différents namespaces!)
+
+--
+
+- En d'autres termes: **le tuple *(type, name, namespace)* doit être unique**
+
+  (Dans la ressource YAML, le type s'appelle `Kind`)
+
+.debug[[kube/namespaces_fr.md](https://github.com/RyaxTech/container.training.git/tree/master/slides/kube/namespaces_fr.md)]
+---
+
+## Namespaces préexistants
+
+- Si nous déployons un cluster avec `kubeadm`, nous avons trois namespaces:
+
+  - `default` (pour nos applications)
+
+  - `kube-system` (pour le control plane)
+
+  - `kube-public` (contient un secret utilisé pour la découverte du cluster)
+
+- Si nous déployons différemment, nous pouvons avoir différents namespaces
+
+.debug[[kube/namespaces_fr.md](https://github.com/RyaxTech/container.training.git/tree/master/slides/kube/namespaces_fr.md)]
+---
+
+## Création des namespaces
+
+- Nous pouvons créer des namespaces avec un YAML très minime, par exemple:
+  ```bash
+    kubectl apply -f- <<EOF
+    apiVersion: v1
+    kind: Namespace
+    metadata:
+      name: blue
+    EOF
+  ```
+
+- Si nous utilisons un outil comme Helm, il créera automatiquement des namespaces
+
+.debug[[kube/namespaces_fr.md](https://github.com/RyaxTech/container.training.git/tree/master/slides/kube/namespaces_fr.md)]
+---
+
+## Utiliser les namespaces
+
+- Nous pouvons passer un flag `-n` ou `--namespace` à la plupart des commandes `kubectl`:
+  ```bash
+  kubectl -n blue get svc
+  ```
+
+- Nous pouvons également utiliser *contexts*
+
+- Un context est un tuple *(user, cluster, namespace)* 
+
+- Nous pouvons manipuler les contexts avec la commande `kubectl config`
+
+.debug[[kube/namespaces_fr.md](https://github.com/RyaxTech/container.training.git/tree/master/slides/kube/namespaces_fr.md)]
+---
+
+## Créer un context
+
+- Nous allons créer un context pour le namespace `blue`
+
+.exercise[
+
+- Afficher les contexts existants pour voir le nom du cluster et l'utilisateur actuel:
+  ```bash
+  kubectl config get-contexts
+  ```
+
+- Créer un nouveau context:
+  ```bash
+  kubectl config set-context blue --namespace=blue \
+      --cluster=kubernetes --user=kubernetes-admin
+  ```
+
+]
+
+Nous avons créé un context; mais c'est juste quelques valeurs de configuration.
+
+Le namespace n'existe pas encore.
+
+.debug[[kube/namespaces_fr.md](https://github.com/RyaxTech/container.training.git/tree/master/slides/kube/namespaces_fr.md)]
+---
+
+## Utiliser un contexte
+
+- Passons à notre nouveau context et déployons le graphique DockerCoins
+
+.exercise[
+
+- Utilisez le context `blue`:
+  ```bash
+  kubectl config use-context blue
+  ```
+
+- Déployer DockerCoins:
+  ```bash
+  helm install dockercoins
+  ```
+
+]
+
+Dans la dernière ligne de commande, `dockercoins` est juste le chemin local où
+nous avons créé notre Helm chart avant.
+
+.debug[[kube/namespaces_fr.md](https://github.com/RyaxTech/container.training.git/tree/master/slides/kube/namespaces_fr.md)]
+---
+
+## Affichage de l'application déployée
+
+- Voyons voir si notre carte Helm a fonctionné correctement!
+
+.exercise[
+
+- Récupérer le numéro de port attribué au service `webui`:
+  ```bash
+  kubectl get svc webui
+  ```
+
+- Pointez notre navigateur sur http://X.X.X.X:8080
+
+]
+
+Remarque: l'application peut prendre une minute ou deux pour être opérationnelle.
+
+.debug[[kube/namespaces_fr.md](https://github.com/RyaxTech/container.training.git/tree/master/slides/kube/namespaces_fr.md)]
+---
+
+## Namespaces et isolation
+
+- Les namespaces *ne fournissent pas* d'isolation
+
+- Un pod dans le namespace `green` peut communiquer avec un pod dans le namespace `blue`
+
+- Un pod dans le namespace `default` peut communiquer avec un pod dans le namespace `kube-system`
+
+- `kube-dns` utilise un sous-domaine différent pour chaque namespace
+
+- Exemple: depuis n'importe quel pod du cluster, vous pouvez vous connecter à l'API Kubernetes avec:
+
+  `https://kubernetes.default.svc.cluster.local:443/`
+
+.debug[[kube/namespaces_fr.md](https://github.com/RyaxTech/container.training.git/tree/master/slides/kube/namespaces_fr.md)]
+---
+
+## Isolation de Pods
+
+- L'isolation réelle est implémentée avec les *network policies* (politiques de réseau)
+
+- Les network policies sont des ressources (comme des deployments, services, namespaces ...)
+
+- Les network policies spécifient les flux autorisés:
+
+  - entre les pods
+
+  - des pods au monde extérieur
+
+  - et vice versa
+
+.debug[[kube/namespaces_fr.md](https://github.com/RyaxTech/container.training.git/tree/master/slides/kube/namespaces_fr.md)]
+---
+
+## Présentation des network policies
+
+- Nous pouvons créer autant de politiques de réseau *network policies* que nous voulons
+
+- Chaque network policy a:
+
+  - un *pod selector*: "quels pods sont ciblés par la politique?"
+
+  - des listes de règles d'entrée (ingress) et/ou de sortie (egress): "quels peers et quels ports sont autorisés ou bloqués?"
+
+- Si un pod n'est pas ciblé par aucune politique, le trafic est autorisé par défaut
+
+- Si un pod est ciblé par au moins une politique, le trafic doit être autorisé explicitement
+
+.debug[[kube/namespaces_fr.md](https://github.com/RyaxTech/container.training.git/tree/master/slides/kube/namespaces_fr.md)]
+---
+
+## En savoir plus sur les network policies
+
+- Cela reste un aperçu de haut niveau des network policies
+
+- Pour plus de détails regardez:
+
+  - la [documentation de Kubernetes sur les network policies](https://kubernetes.io/docs/concepts/services-networking/network-policies/)
+
+  - ceci [presentation de network policies chez KubeCon 2017 US](https://www.youtube.com/watch?v=3gGpMmYeEO8) par [@ahmetb](https://twitter.com/ahmetb)
+
+.debug[[kube/namespaces_fr.md](https://github.com/RyaxTech/container.training.git/tree/master/slides/kube/namespaces_fr.md)]</textarea>
+    <script src="remark.min.js" type="text/javascript">
+    </script>
+    <script type="text/javascript">
+      var slideshow = remark.create({
+        ratio: '16:9',
+        highlightSpans: true,
+        excludedClasses: ["self-paced"]
+      });
+    </script>
+    
+    <!-- 
+    These two scripts will be available only when loading the
+    content using the pub/sub server. Otherwise, they'll just
+    404 and that's OK.
+    -->
+    <script src="/socket.io/socket.io.js">
+    </script>
+    <script src="/remote.js">
+    </script>
+
+  </body>
+</html>
