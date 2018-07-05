@@ -146,9 +146,9 @@ Nous savions tous que cela ne pourrait pas être aussi facile, non!
 .exercise[
 
 - Essayez de charger notre fichier YAML et ignorez les erreurs:
-  `` `bash
-  kubectl applique -f rng.yml --validate = false
-  `` `
+  ```bash
+  kubectl apply -f rng.yml --validate=false
+  ```
 
 ]
 
