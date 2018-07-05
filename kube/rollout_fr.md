@@ -244,6 +244,10 @@ spec:
 
 - Nous pourrions utiliser `kubectl edit deployment worker`
 
+---
+
+## Application de modifications via un patch YAML
+
 - Mais nous pourrions également utiliser `kubectl patch` avec le YAML exact montré avant
 
 .exercise[
