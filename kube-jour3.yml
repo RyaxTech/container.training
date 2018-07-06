@@ -20,15 +20,6 @@ chapters:
   #- kube/intro.md
   #- common/about-slides.md
 - common/toc.md
-- - intro/Docker_Overview_fr.md
-  - intro/Docker_History_fr.md
-- - kube/concepts-k8s.md
-  - common/declarative.md
-  - kube/declarative.md
-  - kube/kubenet.md
-  - kube/kubectlget.md
-  - kube/setup-k8s.md
-  - kube/kubectlrun.md
- # - kube/kubectlexpose.md
- # - kube/ourapponkube.md
-- - kube/dashboard.md
+- - kube/stockage_fr.md
+- - kube/configs_fr.md
+- - kube/advanced_fr.md  
