@@ -91,6 +91,11 @@
   https://github.com/RyaxTech/kube-tutorial#6-enable-and-use-pod-autoscaling
 ]
 ---
+---
+# Big Data analytics on Kubernetes
 
-
+.exercise[
+- We will follow the procedure provided here:
+https://github.com/RyaxTech/kube-tutorial#3-execute-big-data-job-with-spark-on-the-kubernetes-cluster
+]
 
