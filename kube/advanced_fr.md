@@ -1,101 +1,101 @@
-# Isolation and network policies
+# Isolation et politiques de réseau
 
-- Namespaces *do not* provide isolation
+- Les Namespaces *ne fournissent pas* de l'isolation
 
-- A pod in the `green` namespace can communicate with a pod in the `blue` namespace
+- Un pod dans un namespace vert peut communiquer avec un pod dans le namespace bleu.
 
-- A pod in the `default` namespace can communicate with a pod in the `kube-system` namespace
+- Un pod dans le namespace `default` peut communiquer avec un pod dans le namespace `kube-system`.
 
-- `kube-dns` uses a different subdomain for each namespace
+- kube-dns utilise un sous-domaine différent pour chaque espace de nommage
 
-- Example: from any pod in the cluster, you can connect to the Kubernetes API with:
+- Exemple : à partir de n'importe quel pod du cluster, vous pouvez vous connecter à l'API Kubernetes avec :
 
   `https://kubernetes.default.svc.cluster.local:443/`
 
 ---
 
-## Isolating pods
+## Isolation de pods
 
-- Actual isolation is implemented with *network policies*
+- L'isolement réel est mis en œuvre avec des *politiques de réseau* (network policies).
 
-- Network policies are resources (like deployments, services, namespaces...)
+- Les politiques réseau sont des ressources (comme les déploiements, les services, les namespaces....).
 
-- Network policies specify which flows are allowed:
+- Les politiques de réseau spécifient les flux autorisés :
 
-  - between pods
+  - entre les pods
 
-  - from pods to the outside world
+  - du pod au monde extérieur
 
-  - and vice-versa
-
----
-
-## Network policies overview
-
-- We can create as many network policies as we want
-
-- Each network policy has:
-
-  - a *pod selector*: "which pods are targeted by the policy?"
-
-  - lists of ingress and/or egress rules: "which peers and ports are allowed or blocked?"
-
-- If a pod is not targeted by any policy, traffic is allowed by default
-
-- If a pod is targeted by at least one policy, traffic must be allowed explicitly
+  - et vice-versa
 
 ---
 
-## More about network policies
+## Network policies
 
-- This remains a high level overview of network policies
+- Nous pouvons créer autant de politiques de réseau que nous le voulons.
 
-- For more details, check:
+- Chaque politique de réseau a :
 
-  - the [Kubernetes documentation about network policies](https://kubernetes.io/docs/concepts/services-networking/network-policies/)
+  - un *pod selector* : "Quelles sont les pods visées par la politique ?"
 
-  - this [talk about network policies at KubeCon 2017 US](https://www.youtube.com/watch?v=3gGpMmYeEO8) by [@ahmetb](https://twitter.com/ahmetb)
+  - des listes de règles d'entrée (ingress) et/ou de sortie (egress) : "Quels pairs et ports sont autorisés ou bloqués ?"
+
+- Si un pod n'est pas visé par une politique, le trafic est autorisé par défaut.
+
+- Si un pod est visé par au moins une politique, le trafic doit être explicitement autorisé.
 
 ---
 
-## Exercises on network policies
+## Plus d'infos sur Network policies 
+
+- Pour plus de détails, vérifiez :
+
+  - la documentation de Kubernetes sur les politiques de réseau](https://kubernetes.io/docs/concepts/services-networking/network-policies/)
+
+  - ce [talk sur network policies fait au KubeCon 2017 US](https://www.youtube.com/watch?v=3gGpMmYeEO8) par [@ahmetb](https://twitter.com/ahmetb)
+
+---
+
+## Exercices sur les Network policies
 
 .exercise[
-- To execute some exercises on network policies we will follow some examples from here: 
+- Pour exécuter quelques exercices sur les politiques de réseau, nous allons suivre quelques exemples ici : 
   https://github.com/ahmetb/kubernetes-network-policy-recipes
 ]
+
 ---
 
-# Deploy Jupiter on Kubernetes
+# Déploiement de Jupiter sur Kubernetes
 
 .exercise[
-- We will follow the procedure provided here: 
+- Nous suivrons la procédure fournie ici : 
   https://zonca.github.io/2017/12/scalable-jupyterhub-kubernetes-jetstream.html
 ]
 
 ---
 --- 
 
-# Advanced scheduling with Kubernetes
+# Scheduling avancée avec Kubernetes
 
 .exercise[
-- We will follow the procedure provided here: 
+- Nous suivrons la procédure fournie ici : 
    https://github.com/RyaxTech/kube-tutorial#4-activate-an-advanced-scheduling-policy-and-test-its-usage
 ]
 ---
 ---
-# Autoscaling with Kubernetes
+# Autoscaling avec Kubernetes
 
 .exercise[
-- We will follow the procedure provided here: 
+- Nous suivrons la procédure fournie ici : 
   https://github.com/RyaxTech/kube-tutorial#6-enable-and-use-pod-autoscaling
 ]
 ---
 ---
-# Big Data analytics on Kubernetes
+# Big Data analytics sur Kubernetes
 
 .exercise[
-- We will follow the procedure provided here:
+- Nous suivrons la procédure fournie ici :
 https://github.com/RyaxTech/kube-tutorial#3-execute-big-data-job-with-spark-on-the-kubernetes-cluster
 ]
+
 

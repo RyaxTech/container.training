@@ -1,89 +1,78 @@
-# Decoupling configuration with a ConfigMap
+# Découplage de configuration avec un ConfigMap
 
-- The whole point of an app’s configuration is to keep the config options that vary between environments, or change frequently, separate from the application’s source
-code. 
+- Le but de la configuration d'une application est de garder les options de configuration qui varient d'un environnement à l'autre, ou de changer fréquemment, séparément de la source de l'application
+code.
 
-- If you think of a pod descriptor as source code for your app (it defines how to compose the individual components into a functioning system), it’s clear you should move the configuration out of the pod description.
-
----
-
-## Introducing ConfigMap
-
-- Kubernetes allows separating configuration options into a separate object called a ConfigMap, which is a map containing key/value pairs with the values ranging from
-short literals to full config files.
-
-- An application doesn’t need to read the ConfigMap directly or even know that it exists. The contents of the map are instead passed to containers as either environment
-variables or as files in a volume. 
+- Si vous considérez un descripteur de pod comme un code source pour votre application (il définit comment composer les composants individuels dans un système fonctionnel), il est clair que vous devez supprimer la configuration de la description du pod.
 
 ---
 
-## Introducing ConfigMap
+## Introduction de ConfigMap
 
-- You can define the map’s entries by passing literals to the kubectl command or you can create the ConfigMap from files stored on your disk. 
+- Kubernetes permet de séparer les options de configuration en un objet distinct appelé ConfigMap, qui est une carte contenant des paires clé / valeur avec des valeurs allant de
+des littéraux courts aux fichiers de configuration complets.
 
-- Use a simple literal first:
+- Une application n'a pas besoin de lire directement le ConfigMap ou même de savoir qu'il existe. Le contenu de la carte est plutôt transmis aux conteneurs comme environnement
+variables ou en tant que fichiers dans un volume.
+
+---
+
+## Introduction de ConfigMap
+
+- Vous pouvez définir les entrées de la carte en transmettant des littéraux à la commande kubectl ou vous pouvez créer ConfigMap à partir de fichiers stockés sur votre disque.
+
+- Utilisez un littéral simple en premier:
 
 .exercise[
   ```bash
   kubectl create configmap fortune-config --from-literal=sleep-interval=25
   ```
 
-- NOTE ConfigMap keys must be a valid DNS subdomain (they may only contain alphanumeric characters, dashes, underscores, and dots). They may optionally include a leading dot.
+- REMARQUE Les clés ConfigMap doivent être un sous-domaine DNS valide (elles ne peuvent contenir que des caractères alphanumériques, des tirets, des traits de soulignement et des points). Ils peuvent éventuellement inclure un point leader.
 ]
 
 ---
 
-## Explaining Configmaps in an example
+## Explication de Configmaps dans un exemple
 
-- Execute the example described here: https://kubernetes.io/docs/tutorials/configuration/configure-redis-using-configmap/
+- Exécutez l'exemple décrit ici: https://kubernetes.io/docs/tutorials/configuration/configure-redis-using-configmap/
 
-
----
-
-# Introducing Secrets
-
-- Kubernetes provides a separate object called Secret. Secrets are much like ConfigMaps 
-
-- They’re also maps that hold key-value pairs. They can be used the same way as a ConfigMap. 
-
-- You can Pass Secret entries to the container as environment variables
-
-- Expose Secret entries as files in a volume
 
 ---
 
-## Introducing Secrets
+# Introduction des secrets
 
-- Kubernetes helps keep your Secrets safe by making sure each Secret is only distributed
-to the nodes that run the pods that need access to the Secret. 
+- Kubernetes fournit un objet séparé appelé Secret. Les secrets ressemblent beaucoup à ConfigMaps
 
-- Also, on the nodes themselves, Secrets are always stored in memory and never written to physical storage,
-which would require wiping the disks after deleting the Secrets from them.
+- Ce sont aussi des cartes qui contiennent des paires clé-valeur. Ils peuvent être utilisés de la même manière qu'un ConfigMap.
+
+- Vous pouvez passer des entrées secrètes au conteneur en tant que variables d'environnement
+
+- Expose les entrées secrètes en tant que fichiers dans un volume
 
 ---
-## Introducing Secrets
 
-- On the master node itself etcd stores Secrets in encrypted form, making the system much more secure. Because of this, it’s imperative you properly
-choose when to use a Secret or a ConfigMap. Choosing between them is simple:
+## Introduction des secrets
 
- * Use a ConfigMap to store non-sensitive, plain configuration data.
+- Kubernetes aide à garder vos secrets en toute sécurité en s'assurant que chaque secret est seulement distribué
+aux nœuds qui exécutent les pods qui ont besoin d'accéder au secret.
+
+- De plus, sur les nœuds eux-mêmes, les Secrets sont toujours stockés en mémoire et jamais écrits dans le stockage physique,
+ce qui nécessiterait de nettoyer les disques après avoir supprimé les secrets d'eux.
+
+---
+## Introduction des secrets
+
+- Sur le nœud maître proprement dit, etcd stocke les secrets sous forme cryptée, ce qui rend le système beaucoup plus sécurisé. Pour cette raison, il est impératif que vous choisissez correctement quand utiliser un Secret ou un ConfigMap. Choisir entre eux est simple:
+
+ * Utilisez un fichier ConfigMap pour stocker des données de configuration non sensibles et simples.
 --
 
- * Use a Secret to store any data that is sensitive in nature and needs to be kept under key. If a config file includes both sensitive and not-sensitive data, you
-should store the file in a Secret.
+ * Utilisez un secret pour stocker toutes les données sensibles et doivent être conservées sous clé. Si un fichier de configuration contient des données sensibles mais aussi non sensibles, vous
+devrez stocker le fichier dans un secret.
 
 ---
 
-## Exercises using Secrets
+## Exercices utilisant des secrets
 
-- Some initial exercises using Secrets can be found here: https://kubernetes.io/docs/concepts/configuration/secret/
-
----
-
-
-
-
-
-
-
-
+- Quelques exercices initiaux utilisant Secrets peuvent être trouvés ici: https://kubernetes.io/docs/concepts/configuration/secret/
