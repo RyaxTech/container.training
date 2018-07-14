@@ -1,10 +1,10 @@
 ## Quelques infos sur le formateur
 
-- Yiannis Georgiou - CTO Ryax Technologies
+- David Glesser - CPO Ryax Technologies
 
 - PhD Université Grenoble-Alpes - Gestion de ressources et orchestration sur de systèmes de calcul intensif
 
-- 11 ans à Bull/Atos Technologies - Ingenieur R&D / Architecte
+- 5 ans à Bull/Atos Technologies - Ingenieur R&D
 
 ---
 
@@ -16,6 +16,6 @@
 
 - N'hésitez pas à interrompre pour des questions à tout moment
 
-- * Surtout quand vous voyez des photos de conteneurs en plein écran! *
+- *Surtout quand vous voyez des photos de conteneurs en plein écran!*
 
 ---

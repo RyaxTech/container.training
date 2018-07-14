@@ -225,7 +225,7 @@ class: extra-details
 
 ## Éviter le tag `latest`
 
-.warning [Assurez-vous d'avoir bien défini la variable `TAG`!]
+.warning[Assurez-vous d'avoir bien défini la variable `TAG`!]
 
 - Si vous ne le faites pas, le tag sera par défaut `latest`
 

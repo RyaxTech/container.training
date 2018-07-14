@@ -29,6 +29,8 @@ Kubernetes<br/>Introduction, Architecture et Installation<br/>
 
 .debug[
 ```
+ M common/about-slides_fr.md
+ M common/composescale_fr.md
  M index.html
  M intro-fullday.yml.html
  M intro-selfpaced.yml.html
@@ -38,11 +40,15 @@ Kubernetes<br/>Introduction, Architecture et Installation<br/>
  M kube-jour2.yml.html
  M kube-jour3.yml.html
  M kube-selfpaced.yml.html
+ M kube/dashboard_fr.md
+ M kube/ourapponkube_fr.md
+ M logistics.md
  M swarm-fullday.yml.html
  M swarm-halfday.yml.html
  M swarm-selfpaced.yml.html
  M swarm-video.yml.html
 ?? .directory
+?? common/.directory
 ?? intro/.directory
 ?? kube/.directory
 ?? slides/
@@ -50,7 +56,7 @@ Kubernetes<br/>Introduction, Architecture et Installation<br/>
 
 ```
 
-These slides have been built from commit: 044a0a1
+These slides have been built from commit: 273b22a
 
 
 [common/title_fr.md](https://github.com/RyaxTech/kube.training.git/tree/gh-pages//common/title_fr.md)]
@@ -65,11 +71,11 @@ Kubernetes<br/>Introduction, Architecture et Installation<br/><br/></br>
 ---
 ## Quelques infos sur le formateur
 
-- Yiannis Georgiou - CTO Ryax Technologies
+- David Glesser - CPO Ryax Technologies
 
 - PhD Université Grenoble-Alpes - Gestion de ressources et orchestration sur de systèmes de calcul intensif
 
-- 11 ans à Bull/Atos Technologies - Ingenieur R&D / Architecte
+- 5 ans à Bull/Atos Technologies - Ingenieur R&D
 
 .debug[[logistics.md](https://github.com/RyaxTech/kube.training.git/tree/gh-pages//logistics.md)]
 ---
@@ -82,7 +88,7 @@ Kubernetes<br/>Introduction, Architecture et Installation<br/><br/></br>
 
 - N'hésitez pas à interrompre pour des questions à tout moment
 
-- * Surtout quand vous voyez des photos de conteneurs en plein écran! *
+- *Surtout quand vous voyez des photos de conteneurs en plein écran!*
 
 .debug[[logistics.md](https://github.com/RyaxTech/kube.training.git/tree/gh-pages//logistics.md)]
 ---
@@ -91,15 +97,15 @@ Kubernetes<br/>Introduction, Architecture et Installation<br/><br/></br>
 ---
 ## Les slides de la formation
 
-Tout le contenu est disponible à un depot Github:
+Tout le contenu est disponible dans un depot Github:
 
   https://github.com/RyaxTech/kube.training
 
-- Le contenu est basé sur les slides écrites initiallement par [Jérôme Petazzoni](https://twitter.com/jpetazzo) pour supporter de workshops et tutoriels autour de Conteneurs et Kubernetes. 
+- Le contenu est basé sur les slides écrites initiallement par [Jérôme Petazzoni](https://twitter.com/jpetazzo) pour supporter de workshops et tutoriels autour des Conteneurs et de Kubernetes. 
 
-- Pour cette formation les slides ont été traduites en français et adaptés aux besoins particuliers.
+- Pour cette formation, les slides ont été traduites en français et adaptées.
 
-- Plusieurs mots et termes liées aux concepts de Kubernetes n'ont pas été traduit pour de raison de simplicité
+- Plusieurs mots et termes liées aux concepts de Kubernetes n'ont pas été traduit pour des raisons de simplicité
 
 * En dehors de la formation: 
   * ...si vous voulez passer plus de temps pour approfondir sur Kubernetes vous pouvez suivre la [documentation](https://kubernetes.io/docs/) officiel ...
@@ -1316,7 +1322,7 @@ Nous avons des ressources disponibles.
 
 - Démarrer un autre conteneur `worker`:
   ```bash
-  docker-compose up --scale worker = 2
+  docker-compose scale worker=2
   ```
 
 - Regardez le graphique de performance (il devrait montrer une amélioration de x2)
@@ -1338,7 +1344,7 @@ Nous avons des ressources disponibles.
 
 - Commencez huit autres conteneurs «worker»:
   ```bash
-  docker-compose up --scale worker = 10
+  docker-compose scale worker=10
   ```
 
 - Regardez le graphique des performances: montre-t-il une amélioration x10?
@@ -1381,7 +1387,7 @@ Identifier les goulots d'étranglement
 
 - L'ajout de workers n'a pas entraîné d'amélioration linéaire
 
-- * Quelque chose d'autre * nous ralentit
+- *Quelque chose d'autre* nous ralentit
 
 -
 
@@ -1428,12 +1434,12 @@ Nous allons utiliser `httping`.
 
 - Vérifiez la latence de `rng`:
   ```bash
-  https -c 3 localhost: 8001
+  httping -c 3 localhost:8001
   ```
 
 - Vérifiez la latence de `hasher`:
   ```bash
-  https -c 3 localhost: 8002
+  httping -c 3 localhost:8002
   ```
 
 ]
@@ -2892,7 +2898,7 @@ Il y a une étape supplémentaire pour rendre le dashboard disponible de l'exté
 
 --
 
-.footnote [.warning [Oui, cela ouvrira notre cluster à toutes sortes de manigances. Ne fais pas ça à la maison.]]
+.footnote[.warning[Oui, cela ouvrira notre cluster à toutes sortes de manigances. Ne fais pas ça à la maison.]]
 
 .debug[[kube/dashboard_fr.md](https://github.com/RyaxTech/kube.training.git/tree/gh-pages//kube/dashboard_fr.md)]
 ---
@@ -2934,7 +2940,7 @@ L'URL de goo.gl se développe pour:
 
 - ... Mais pour plus de commodité, pour cet atelier, nous transmettrons HTTP à HTTPS
 
-.warning [Ne le faites pas à la maison, ou pire, au travail!]
+.warning[Ne le faites pas à la maison, ou pire, au travail!]
 
 .debug[[kube/dashboard_fr.md](https://github.com/RyaxTech/kube.training.git/tree/gh-pages//kube/dashboard_fr.md)]
 ---
@@ -3024,7 +3030,7 @@ Le dashboard vous demandera ensuite l'authentification que vous souhaitez utilis
 
 --
 
-.warning [Au fait, nous venons d'ajouter une porte dérobée à notre cluster Kubernetes!]
+.warning[Au fait, nous venons d'ajouter une porte dérobée à notre cluster Kubernetes!]
 
 .debug[[kube/dashboard_fr.md](https://github.com/RyaxTech/kube.training.git/tree/gh-pages//kube/dashboard_fr.md)]
 ---
@@ -3072,7 +3078,7 @@ Le dashboard vous demandera ensuite l'authentification que vous souhaitez utilis
   kubectl -n kube-system edit service kubernetes-dashboard
   ```
 
-- Changez `ClusterIP` en `NodePort`, sauvegardez et quittez
+- Changez `type: ClusterIP` en `type: NodePort`, sauvegardez et quittez
 
 - Vérifiez le port qui a été assigné avec `kubectl -n kube-system get services`
 

@@ -88,7 +88,7 @@ Nous avons des ressources disponibles.
 
 - Démarrer un autre conteneur `worker`:
   ```bash
-  docker-compose up --scale worker = 2
+  docker-compose scale worker=2
   ```
 
 - Regardez le graphique de performance (il devrait montrer une amélioration de x2)
@@ -109,7 +109,7 @@ Nous avons des ressources disponibles.
 
 - Commencez huit autres conteneurs «worker»:
   ```bash
-  docker-compose up --scale worker = 10
+  docker-compose scale worker=10
   ```
 
 - Regardez le graphique des performances: montre-t-il une amélioration x10?
@@ -128,7 +128,7 @@ Nous avons des ressources disponibles.
 
 - L'ajout de workers n'a pas entraîné d'amélioration linéaire
 
-- * Quelque chose d'autre * nous ralentit
+- *Quelque chose d'autre* nous ralentit
 
 -
 
@@ -173,12 +173,12 @@ Nous allons utiliser `httping`.
 
 - Vérifiez la latence de `rng`:
   ```bash
-  https -c 3 localhost: 8001
+  httping -c 3 localhost:8001
   ```
 
 - Vérifiez la latence de `hasher`:
   ```bash
-  https -c 3 localhost: 8002
+  httping -c 3 localhost:8002
   ```
 
 ]
