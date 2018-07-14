@@ -1,20 +1,20 @@
-# Introducing Volumes
+# Introduction aux volumes
 
-- Kubernetes volumes are a component of a pod and are thus defined in the pod’s specification—much like containers. 
+- Les volumes de Kubernetes sont une composante d'un pod et sont donc définis dans la spécification de pods, tout comme les conteneurs.
 
-- They aren’t a standalone Kubernetes object and cannot be created or deleted on their own. 
+- Ils ne sont pas un objet Kubernetes autonome et ne peuvent pas être créés ou supprimés par eux-mêmes.
 
-- A volume is available to all containers in the pod, but it must be mounted in each container that needs to access it. 
+- Un volume est disponible pour tous les conteneurs du pod, mais il doit être monté dans chaque conteneur qui doit y accéder.
 
-- In each container, you can mount the volume in any location of its filesystem.
+- Dans chaque conteneur, vous pouvez monter le volume à n'importe quel emplacement de son système de fichiers.
 
 ---
 
-## Explaining volumes in an example 
+## Les volumes par un exemple
 
-- Containers no common storage
+- Conteneurs qui n'ont pas de stockage commune
 
-- Containers sharing 2 volumes mounted in different mount paths
+- Conteneurs qui partageant 2 volumes montés dans des chemins de montage différents
 
 ---
 
@@ -31,40 +31,42 @@ class: pic
 ---
 
 
-## Note
+## Remarques
 
-- The volume /var/logs is not mounted in the ContentAgent container. 
+- Les schemas ont été repris du livre de Marko Luksa "Kubernetes in Action"
 
-- The container cannot access its files, even though the container and the volume are part of the same pod. 
+- Le volume /var/logs n'est pas monté dans le conteneur ContentAgent.
 
-- It’s not enough to define a volume in the pod; you need to define a VolumeMount inside the container’s spec also, if you want the container to be able to access it.
+- Le conteneur ne peut pas accéder à ses fichiers, même si le conteneur et le volume font partie du même conteneur.
 
----
-
-## Volume Types
-
-- A wide variety of volume types is available. Several are generic, while others are specific to the actual storage technologies used underneath. 
-
-* `emptyDir`: A simple empty directory used for storing transient data.
-* `hostPath`: Used for mounting directories from the worker node’s filesystem into the pod.
-* `gitRepo`: A volume initialized by checking out the contents of a Git repository.
-* `nfs`: An NFS share mounted into the pod.
-* `gcePersistentDisk`, `awsElasticBlockStore`, `azureDisk`: Used for mounting cloud provider-specific storage.
-* `cinder`, `cephfs`, ...: Used for mounting other types of network storage.
-* `configMap`, `secret`, `downwardAPI`: Special types of volumes used to expose certain Kubernetes resources and cluster information to the pod.
-* `persistentVolumeClaim`: A way to use a pre- or dynamically provisioned persistent storage. 
+- Il ne suffit pas de définir un volume dans le pod; vous devez également définir un VolumeMount dans la spécification du conteneur, si vous voulez que le conteneur puisse y accéder.
 
 ---
 
-## Note
+## Types de volume
 
-- A single pod can use multiple volumes of different types at the same time
+- Une grande variété de types de volumes est disponible. Plusieurs sont génériques, tandis que d'autres sont spécifiques aux technologies de stockage utilisées en dessous.
 
-- Each of the pod’s containers can either have the volume mounted or not.
+* `emptyDir`: un répertoire vide simple utilisé pour stocker des données transitoires.
+* `hostPath`: Utilisé pour monter les répertoires du système de fichiers du noeud worker dans le pod.
+* `gitRepo`: Un volume initialisé en vérifiant le contenu d'un dépôt Git.
+* `nfs`: un partage NFS monté dans le pod.
+* `gcePersistentDisk`, `awsElasticBlockStore`, `azureDisk`: Utilisé pour monter le stockage spécifique au fournisseur de cloud.
+* `cinder`, `cephfs`, ...: Utilisé pour monter d'autres types de stockage réseau.
+* `configMap`, `secret`, `downwardAPI`: Types spéciaux de volumes utilisés pour exposer certaines ressources et informations de cluster Kubernetes au pod.
+* `persistentVolumeClaim`: un moyen d'utiliser un stockage persistant pré-provisionné ou dynamiquement.
 
 ---
 
-## Example a pod using gitrepo volume
+## Remarque
+
+- Un seul pod peut utiliser plusieurs volumes de types différents en même temps
+
+- Chacun des conteneurs du pod peut avoir le volume monté ou non.
+
+---
+
+## Exemple d'un pod utilisant le volume gitrepo
 
 ---
 
@@ -96,41 +98,40 @@ spec:
 
 ---
 
-## Decoupling pods from the underlying storage technology
+## Découplage des pods de la technologie de stockage sous-jacente
 
-- Above case is  against the basic idea of Kubernetes, which aims to hide the actual infrastructure from both the application and its developer.
+- Le cas ci-dessus est contre l'idée de base de Kubernetes, qui vise à cacher l'infrastructure réelle de l'application et de son développeur.
 
-- When a developer needs a certain amount of persistent storage for their application, they should request it from Kubernetes. 
+- Lorsqu'un développeur a besoin d'une certaine quantité de stockage persistant pour son application, il doit le demander à Kubernetes.
 
-- The same way they request CPU, memory, and other resources when creating a pod. 
+- De la même manière qu'ils demandent du CPU, de la mémoire et d'autres ressources lors de la création d'un pod.
 
-- The system administrator can configure the cluster so it can give the apps what they request.
-
----
-
-# Introducing PersistentVolumes and PersistentVolumeClaims
-
-- Instead of the developer adding a technology-specific volume to their pod, it’s the cluster administrator who sets up the underlying storage and then registers it in
-Kubernetes by creating a PersistentVolume resource through the Kubernetes API server. 
-
-- When creating the PersistentVolume, the admin specifies its size and the access
-modes it supports.
+- L'administrateur système peut configurer le cluster afin qu'il puisse donner aux applications ce qu'elles demandent.
 
 ---
 
-## Introducing PersistentVolumes and PersistentVolumeClaims
+# Introduction de PersistentVolumes et PersistentVolumeClaims
 
-- When a cluster user needs to use persistent storage in one of their pods, they first create a PersistentVolumeClaim manifest, specifying the minimum size and the access
-mode they require. 
+- Au lieu que le développeur ajoute un volume spécifique à son pod, c'est l'administrateur du cluster qui configure le stockage sous-jacent, puis l'enregistre dans
+Kubernetes en créant une ressource PersistentVolume via le serveur de l'API Kubernetes.
 
-- The user then submits the PersistentVolumeClaim manifest to the Kubernetes API server, and Kubernetes finds the appropriate PersistentVolume and binds the volume to the claim.
-
-- The PersistentVolumeClaim can then be used as one of the volumes inside a pod. Other users cannot use the same PersistentVolume until it has been released by deleting
-the bound PersistentVolumeClaim.
+- Lors de la création de PersistentVolume, l'administrateur spécifie sa taille et les modes d'accès
+qu'il supporte.
 
 ---
 
-## Example of PersistentVolumes and PersistentVolumeClaims
+## Introduction de PersistentVolumes et PersistentVolumeClaims
+
+- Lorsqu'un utilisateur de cluster doit utiliser un stockage persistant dans l'un de ses pods, il crée d'abord un manifeste PersistentVolumeClaim, en spécifiant la taille minimale et le mode d'accès qu'ils exigent.
+
+- L'utilisateur soumet ensuite le manifeste PersistentVolumeClaim au serveur de l'API Kubernetes, et Kubernetes trouve le PersistentVolume approprié et lie au Volume Claim.
+
+- Le PersistentVolumeClaim peut alors être utilisé comme l'un des volumes à l'intérieur d'un pod. Les autres utilisateurs ne peuvent pas utiliser le même PersistentVolume jusqu'à ce qu'il ait été libéré en supprimant
+le PersistentVolumeClaim lié.
+
+---
+
+## Exemple de PersistentVolumes et PersistentVolumeClaims
 
 ---
 
@@ -140,7 +141,7 @@ class: pic
 
 ---
 
-## PersistentVolumes and Namespaces
+## PersistentVolumes et Namespaces
 
 ---
 
@@ -150,7 +151,7 @@ class: pic
 
 ---
 
-##  Lifespan of PersistentVolume and PersistentVolumeClaims
+## Durée de vie de PersistentVolume et PersistentVolumeClaims
 
 ---
 
@@ -159,22 +160,29 @@ class: pic
 ![haha seulement blague](images/Volume5.png)
 
 ---
-# Dynamic Provisioning of PersistentVolumes
+# Provisionnement dynamique des volumes persistants
 
-- We have seen how using PersistentVolumes and PersistentVolumeClaims makes it easy to obtain persistent storage without the developer having to deal with the actual storage
-technology used underneath. 
+- Les schemas précédents ont été repris du livre de Marko Luksa "Kubernetes in Action"
 
-- But this still requires a cluster administrator to provision the actual storage up front. 
+- Nous avons vu comment l'utilisation de PersistentVolumes et PersistentVolumeClaims facilite l'obtention d'un stockage persistant sans que le développeur n'ait à gérer le stockage réel utilisée en dessous.
+
+- Mais cela nécessite toujours un administrateur de cluster pour provisionner le stockage réel à l'avance.
 
 ---
 
-## Dynamic Provisioning of PersistentVolumes
+## Provisionnement dynamique des volumes persistants
 
-- Luckily, Kubernetes can also perform this job automatically through dynamic provisioning of PersistentVolumes.
+- Heureusement, Kubernetes peut également effectuer ce travail automatiquement grâce au provisionnement dynamique de PersistentVolumes.
 
-- The cluster admin, instead of creating PersistentVolumes, can deploy a PersistentVolume provisioner and define one or more StorageClass objects to let users choose what type of PersistentVolume they want. 
+- L'administrateur du cluster, au lieu de créer PersistentVolumes, peut déployer un provisionneur PersistentVolume et définir un ou plusieurs objets StorageClass pour permettre aux utilisateurs de choisir le type de PersistentVolume souhaité.
 
-- The users can refer to the StorageClass in their PersistentVolumeClaims and the provisioner will take that into account when provisioning the persistent storage. 
+- Les utilisateurs peuvent se référer à StorageClass dans leur PersistanceVolumeClaims et le provisionneur en tiendra compte lors de l'approvisionnement du stockage persistant.
+
+- Le schema suivant a été repris du livre de Marko Luksa "Kubernetes in Action" 
+
+---
+
+## Provisionnement dynamique des volumes persistants
 
 ---
 
@@ -184,23 +192,25 @@ class: pic
 
 ---
 
-# Rook: orchestration of distributed storage
+# Rook orchestration de stockage distribué
 
-- Rook is an open source orchestrator for distributed storage systems.
+- Rook est un orchestrateur open source pour les systèmes de stockage distribués.
 
-- Rook turns distributed storage software into a self-managing, self-scaling, and self-healing storage services. 
+- Rook transforme le logiciel de stockage distribué en un service de stockage auto-géré, auto-scalable et auto-guérisant.
 
-- It does this by automating deployment, bootstrapping, configuration, provisioning, scaling, upgrading, migration, disaster recovery, monitoring, and resource management. 
-
----
-## Rook: orchestration of distributed storage
-- Rook is focused initially on orchestrating Ceph on-top of Kubernetes. Ceph is a distributed storage system that provides file, block and object storage and is deployed in large scale production clusters. 
-
-- Rook is hosted by the Cloud Native Computing Foundation (CNCF) as an inception level project.
+- Il le fait en automatisant le déploiement, l'amorçage, la configuration, l'approvisionnement, la mise à l'échelle, la mise à niveau, la migration, la reprise après sinistre, la surveillance et la gestion des ressources.
 
 ---
 
-## Example of dynamic provisioning of PersistentVolumes using Rook
+## Rook orchestration de stockage distribué
+
+- Rook se concentre d'abord sur l'orchestration de Ceph sur Kubernetes. Ceph est un système de stockage distribué qui permet le stockage de fichiers, de blocs et d'objets et qui est déployé dans des clusters de production à grande échelle.
+
+- Rook est hébergé par la Cloud Native Computing Foundation (CNCF) en tant que projet de niveau initial.
+
+---
+
+## Exemple de provisionnement dynamique de PersistentVolumes à l'aide de Rook
 
 .exercise[
   ```bash
@@ -209,8 +219,8 @@ class: pic
    kubectl create -f operator.yaml
    kubect create -f cluster.yaml
   ```
-- check to see everything is running as expected
- ```bash
+- vérifiez pour voir si tout fonctionne comme prévu
+  ```bash
    kubectl get pods -n rook-ceph
   ```
 
@@ -218,116 +228,77 @@ class: pic
 
 ---
 
-## Example of dynamic provisioning of PersistentVolumes using Rook
+## Exemple de provisionnement dynamique de PersistentVolumes à l'aide de Rook
 
-- Block storage allows you to mount storage to a single pod. 
+- Le stockage 'block' vous permet de monter le stockage dans un seul pod.
 
-- Let's see how to build a simple, multi-tier web application on Kubernetes using persistent volumes enabled by Rook.
+- Voyons comment construire une application web simple et multi-niveaux sur Kubernetes en utilisant des volumes persistants activés par Rook.
 
 --
 
-- Before Rook can start provisioning storage, a StorageClass and its storage pool need to be created. 
+- Avant que Rook puisse démarrer le provisionnement, une classe StorageClass et son pool de stockage doivent être créés.
 
-- This is needed for Kubernetes to interoperate with Rook for provisioning persistent volumes.
-
----
-
-## Example of dynamic provisioning of PersistentVolumes using Rook
-
-.exercise[
-- Save this storage class definition part as pool.yaml:
-   ```bash
-   apiVersion: ceph.rook.io/v1alpha1
-   kind: Pool
-   metadata:
-     name: replicapool
-     namespace: rook-ceph
-   spec:
-     replicated:
-       size: 3
-   ```
-]
+- Ceci est nécessaire pour que Kubernetes puisse interopérer avec Rook pour provisionner des volumes persistants.
 
 ---
-
-
-## Example of dynamic provisioning of PersistentVolumes using Rook
+## Exemple de provisionnement dynamique de PersistentVolumes à l'aide de Rook
 
 .exercise[
-- Save this storage class definition part as storageclass.yaml:
-   ```bash
-   apiVersion: storage.k8s.io/v1
-   kind: StorageClass
-   metadata:
-     name: rook-ceph-block
-   provisioner: ceph.rook.io/block
-   parameters:
-      pool: replicapool
-      #The value of "clusterNamespace" MUST be the same as the one in which your rook cluster exist
-      clusterNamespace: rook-ceph
-   ```
-]
-
----
-
-## Example of dynamic provisioning of PersistentVolumes using Rook
-
-.exercise[
-- Create the pool and storage class:
+- Créez le pool et le storage class:
   ```bash
   kubectl create -f pool.yaml
   kubectl create -f storageclass.yaml
   ```
 ]
-- Consume the storage with wordpress sample
-- We create a sample app to consume the block storage provisioned by Rook with the classic wordpress and mysql apps. 
-- Both of these apps will make use of block volumes provisioned by Rook.
+- Consommez le stockage avec l'échantillon wordpress
+- Nous créons un exemple d'application pour consommer le stockage en 'block' provisionné par Rook avec les applications classiques wordpress et mysql.
+- Ces deux applications utiliseront les volumes 'block' provisionnés par Rook.
 
 ---
 
-## Example of dynamic provisioning of PersistentVolumes using Rook
+## Exemple de provisionnement dynamique de PersistentVolumes à l'aide de Rook
 
 
 .exercise[
-- Start mysql and wordpress from the cluster/examples/kubernetes folder:
+- Démarrez mysql et wordpress depuis le dossier cluster/examples/kubernetes:
   ```bash
-kubectl create -f mysql.yaml
-kubectl create -f wordpress.yaml
+  kubectl create -f mysql.yaml
+  kubectl create -f wordpress.yaml
+  ```
+- Ces deux applications créent un volume en 'block' et le montent dans leur pod respectif. Vous pouvez voir les 'volume claims' de Kubernetes en exécutant les opérations suivantes:
+
+  ```bash
+  kubectl get pvc
+  ```
+- Vous devriez voir quelque chose comme ça:
+```bash
+NAME             STATUS    VOLUME        CAPACITY   ACCESSMODES   AGE
+mysql-pv-claim   Bound     pvc-954459ee   20Gi       RWO           1m
+wp-pv-claim      Bound     pvc-39e459ee   20Gi       RWO           1m
 ```
-- Both of these apps create a block volume and mount it to their respective pod. You can see the Kubernetes volume claims by running the following:
+]
+---
+
+## Exemple de provisionnement dynamique de PersistentVolumes à l'aide de Rook
+
+.exercise[
+- Une fois que les pods wordpress et mysql sont dans l'état Running, récupérez l'adresse IP du cluster de l'application wordpress et entrez-la dans votre navigateur avec le port:
 
  ```bash
-kubectl get pvc
-```
-- You should see something like this:
-```bash
-NAME             STATUS    VOLUME                                     CAPACITY   ACCESSMODES   AGE
-mysql-pv-claim   Bound     pvc-95402dbc-efc0-11e6-bc9a-0cc47a3459ee   20Gi       RWO           1m
-wp-pv-claim      Bound     pvc-39e43169-efc1-11e6-bc9a-0cc47a3459ee   20Gi       RWO           1m
-```
+ kubectl get svc wordpress
+ ```
 ]
----
-
-## Example of dynamic provisioning of PersistentVolumes using Rook
-
-.exercise[
-- Once the wordpress and mysql pods are in the Running state, get the cluster IP of the wordpress app and enter it in your browser along with the port:
-
-```bash
-kubectl get svc wordpress
-```
-]
-You should see the wordpress app running.
+Vous devriez voir l'application wordpress en cours d'exécution.
 
 ---
 
-## Launch another example of dynamic provisioning
+## Lancez un autre exemple de provisionnement dynamique
 
 .exercise[
 
-- Copy the file from here : https://github.com/zonca/jupyterhub-deploy-kubernetes-jetstream/blob/master/storage_rook/alpine-rook.yaml
+- Copiez le fichier à partir d'ici: https://github.com/zonca/jupyterhub-deploy-kubernetes-jetstream/blob/master/storage_rook/alpine-rook.yaml
 
-- Modify it so that it fits the specification you have at your cluster and run it using:
+- Modifiez-le pour qu'il corresponde aux spécifications de votre cluster et exécutez-le en utilisant:
   ```bash
   kubectl create -f alpine-rook.yaml
   ```
@@ -336,45 +307,43 @@ You should see the wordpress app running.
 
 ---
 
-## Launch another example of dynamic provisioning (suite)
+## Lancez un autre exemple de provisionnement dynamique (suite)
 
-- It is a very small pod with Alpine Linux that creates a 2 GB volume from Rook and mounts it on /data.
+- C'est un petit pod avec Alpine Linux qui crée un volume de 2 Go à partir de Rook et le monte sur /data.
 
-- This creates a Pod with Alpine Linux that requests a Persistent Volume Claim to be mounted under /data. 
+- Cela crée un Pod avec Alpine Linux qui demande qu'un Persistent Volume Claim soit montée sous /data.
 
-- The Persistent Volume Claim specified the type of storage and its size. 
+- Le PersistentVolumeClaim spécifiait le type de stockage et sa taille.
 
-- Once the Pod is created, it asks the Persistent Volume Claim to actually request Rook to prepare a Persistent Volume that is then mounted into the Pod.
+- Une fois le Pod créé, il demande au PersistentVolumeClaim de demander à Rook de préparer un volume persistant qui sera ensuite monté dans le pod.
 
 ---
 
-## Launch another example of dynamic provisioning (suite)
+## Lancez un autre exemple de provisionnement dynamique (suite)
 
-- We can verify the Persistent Volumes are created and associated with the pod, check:
+- Nous pouvons vérifier que les Volumes Persistants sont créés et associés au pod, vérifiez:
 
-.exercise[
+.exercice[
   ```bash
   kubectl get pv
   kubectl get pvc
   kubectl get logs alpine
   ```
-- Get a shell in the pod with:
+- Obtenez un shell dans le pod avec:
   ```bash
-  kubectl exec -it alpine  -- /bin/sh
+  kubectl exec -it alpine - /bin/sh
   ```
-- Access /data/ and write some files.
-- Exit the shell 
-- Now delete the pod and see if you can retrieve the data you wrote.
+- Access /data/ et écrire des fichiers.
+- Quitter le terminal
+- Maintenant supprimez le pod et voyez si vous pouvez récupérer les données que vous avez écrites.
 ]
 
 ---
-## Launch another example of dynamic provisioning (suite)
+## Lancez un autre exemple de provisionnement dynamique (suite)
 
-.exercise[
-- How could have we retrieved the data in the last case?
-- Let's change the alpine-rook.yaml to `kind:deployment` write some files and kill again the pod to see what happens.
+.exercice[
+- Comment aurions-nous pu récupérer les données dans le dernier cas?
+- Changeons alpine-rook.yaml en `kind:deployment`, écrivez quelques fichiers et tuez à nouveau le pod pour voir ce qui se passe.
 ]
-
-
 
 

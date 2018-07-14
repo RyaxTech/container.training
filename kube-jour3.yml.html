@@ -29,24 +29,19 @@ Kubernetes <br/>Stockage, Configuration, Secrets et Concepts Avancés <br/>
 
 .debug[
 ```
- M common/about-slides_fr.md
- M common/composescale_fr.md
- M index.html
  M intro-fullday.yml.html
  M intro-selfpaced.yml.html
  M kube-fullday.yml.html
  M kube-halfday.yml.html
- M kube-jour1.yml.html
- M kube-jour2.yml.html
- M kube-jour3.yml.html
- M kube-selfpaced.yml.html
- M kube/dashboard_fr.md
- M kube/ourapponkube_fr.md
- M logistics.md
- M swarm-fullday.yml.html
- M swarm-halfday.yml.html
- M swarm-selfpaced.yml.html
- M swarm-video.yml.html
+UU kube-jour1.yml.html
+UU kube-jour2.yml.html
+UU kube-jour3.yml.html
+A  kube/advanced.md
+M  kube/advanced_fr.md
+A  kube/configs.md
+M  kube/configs_fr.md
+A  kube/stockage.md
+M  kube/stockage_fr.md
 ?? .directory
 ?? common/.directory
 ?? intro/.directory
@@ -56,7 +51,7 @@ Kubernetes <br/>Stockage, Configuration, Secrets et Concepts Avancés <br/>
 
 ```
 
-These slides have been built from commit: 273b22a
+These slides have been built from commit: 52d8949
 
 
 [common/title_fr.md](https://github.com/RyaxTech/kube.training.git/tree/gh-pages//common/title_fr.md)]
@@ -74,13 +69,13 @@ name: toc-chapter-1
 
 ## Chapter 1
 
-- [Introducing Volumes](#toc-introducing-volumes)
+- [Introduction aux volumes](#toc-introduction-aux-volumes)
 
-- [Introducing PersistentVolumes and PersistentVolumeClaims](#toc-introducing-persistentvolumes-and-persistentvolumeclaims)
+- [Introduction de PersistentVolumes et PersistentVolumeClaims](#toc-introduction-de-persistentvolumes-et-persistentvolumeclaims)
 
-- [Dynamic Provisioning of PersistentVolumes](#toc-dynamic-provisioning-of-persistentvolumes)
+- [Provisionnement dynamique des volumes persistants](#toc-provisionnement-dynamique-des-volumes-persistants)
 
-- [Rook: orchestration of distributed storage](#toc-rook-orchestration-of-distributed-storage)
+- [Rook orchestration de stockage distribué](#toc-rook-orchestration-de-stockage-distribu)
 
 .debug[(auto-generated TOC)]
 ---
@@ -88,9 +83,9 @@ name: toc-chapter-2
 
 ## Chapter 2
 
-- [Decoupling configuration with a ConfigMap](#toc-decoupling-configuration-with-a-configmap)
+- [Découplage de configuration avec un ConfigMap](#toc-dcouplage-de-configuration-avec-un-configmap)
 
-- [Introducing Secrets](#toc-introducing-secrets)
+- [Introduction des secrets](#toc-introduction-des-secrets)
 
 .debug[(auto-generated TOC)]
 ---
@@ -98,15 +93,15 @@ name: toc-chapter-3
 
 ## Chapter 3
 
-- [Isolation and network policies](#toc-isolation-and-network-policies)
+- [Isolation et politiques de réseau](#toc-isolation-et-politiques-de-rseau)
 
-- [Deploy Jupiter on Kubernetes](#toc-deploy-jupiter-on-kubernetes)
+- [Déploiement de Jupiter sur Kubernetes](#toc-dploiement-de-jupiter-sur-kubernetes)
 
-- [Advanced scheduling with Kubernetes](#toc-advanced-scheduling-with-kubernetes)
+- [Scheduling avancée avec Kubernetes](#toc-scheduling-avance-avec-kubernetes)
 
-- [Autoscaling with Kubernetes](#toc-autoscaling-with-kubernetes)
+- [Autoscaling avec Kubernetes](#toc-autoscaling-avec-kubernetes)
 
-- [Big Data analytics on Kubernetes](#toc-big-data-analytics-on-kubernetes)
+- [Big Data analytics sur Kubernetes](#toc-big-data-analytics-sur-kubernetes)
 
 .debug[(auto-generated TOC)]
 
@@ -121,40 +116,40 @@ class: pic
 
 ---
 
-name: toc-introducing-volumes
+name: toc-introduction-aux-volumes
 class: title
 
-Introducing Volumes
+Introduction aux volumes
 
 .nav[
 [Section précédente](#toc-)
 |
 [Retour table des matières](#toc-chapter-1)
 |
-[Section suivante](#toc-introducing-persistentvolumes-and-persistentvolumeclaims)
+[Section suivante](#toc-introduction-de-persistentvolumes-et-persistentvolumeclaims)
 ]
 
 .debug[(automatically generated title slide)]
 
 ---
-# Introducing Volumes
+# Introduction aux volumes
 
-- Kubernetes volumes are a component of a pod and are thus defined in the pod’s specification—much like containers. 
+- Les volumes de Kubernetes sont une composante d'un pod et sont donc définis dans la spécification de pods, tout comme les conteneurs.
 
-- They aren’t a standalone Kubernetes object and cannot be created or deleted on their own. 
+- Ils ne sont pas un objet Kubernetes autonome et ne peuvent pas être créés ou supprimés par eux-mêmes.
 
-- A volume is available to all containers in the pod, but it must be mounted in each container that needs to access it. 
+- Un volume est disponible pour tous les conteneurs du pod, mais il doit être monté dans chaque conteneur qui doit y accéder.
 
-- In each container, you can mount the volume in any location of its filesystem.
+- Dans chaque conteneur, vous pouvez monter le volume à n'importe quel emplacement de son système de fichiers.
 
 .debug[[kube/stockage_fr.md](https://github.com/RyaxTech/kube.training.git/tree/gh-pages//kube/stockage_fr.md)]
 ---
 
-## Explaining volumes in an example 
+## Les volumes par un exemple
 
-- Containers no common storage
+- Conteneurs qui n'ont pas de stockage commune
 
-- Containers sharing 2 volumes mounted in different mount paths
+- Conteneurs qui partageant 2 volumes montés dans des chemins de montage différents
 
 .debug[[kube/stockage_fr.md](https://github.com/RyaxTech/kube.training.git/tree/gh-pages//kube/stockage_fr.md)]
 ---
@@ -174,43 +169,45 @@ class: pic
 ---
 
 
-## Note
+## Remarques
 
-- The volume /var/logs is not mounted in the ContentAgent container. 
+- Les schemas ont été repris du livre de Marko Luksa "Kubernetes in Action"
 
-- The container cannot access its files, even though the container and the volume are part of the same pod. 
+- Le volume /var/logs n'est pas monté dans le conteneur ContentAgent.
 
-- It’s not enough to define a volume in the pod; you need to define a VolumeMount inside the container’s spec also, if you want the container to be able to access it.
+- Le conteneur ne peut pas accéder à ses fichiers, même si le conteneur et le volume font partie du même conteneur.
 
-.debug[[kube/stockage_fr.md](https://github.com/RyaxTech/kube.training.git/tree/gh-pages//kube/stockage_fr.md)]
----
-
-## Volume Types
-
-- A wide variety of volume types is available. Several are generic, while others are specific to the actual storage technologies used underneath. 
-
-* `emptyDir`: A simple empty directory used for storing transient data.
-* `hostPath`: Used for mounting directories from the worker node’s filesystem into the pod.
-* `gitRepo`: A volume initialized by checking out the contents of a Git repository.
-* `nfs`: An NFS share mounted into the pod.
-* `gcePersistentDisk`, `awsElasticBlockStore`, `azureDisk`: Used for mounting cloud provider-specific storage.
-* `cinder`, `cephfs`, ...: Used for mounting other types of network storage.
-* `configMap`, `secret`, `downwardAPI`: Special types of volumes used to expose certain Kubernetes resources and cluster information to the pod.
-* `persistentVolumeClaim`: A way to use a pre- or dynamically provisioned persistent storage. 
+- Il ne suffit pas de définir un volume dans le pod; vous devez également définir un VolumeMount dans la spécification du conteneur, si vous voulez que le conteneur puisse y accéder.
 
 .debug[[kube/stockage_fr.md](https://github.com/RyaxTech/kube.training.git/tree/gh-pages//kube/stockage_fr.md)]
 ---
 
-## Note
+## Types de volume
 
-- A single pod can use multiple volumes of different types at the same time
+- Une grande variété de types de volumes est disponible. Plusieurs sont génériques, tandis que d'autres sont spécifiques aux technologies de stockage utilisées en dessous.
 
-- Each of the pod’s containers can either have the volume mounted or not.
+* `emptyDir`: un répertoire vide simple utilisé pour stocker des données transitoires.
+* `hostPath`: Utilisé pour monter les répertoires du système de fichiers du noeud worker dans le pod.
+* `gitRepo`: Un volume initialisé en vérifiant le contenu d'un dépôt Git.
+* `nfs`: un partage NFS monté dans le pod.
+* `gcePersistentDisk`, `awsElasticBlockStore`, `azureDisk`: Utilisé pour monter le stockage spécifique au fournisseur de cloud.
+* `cinder`, `cephfs`, ...: Utilisé pour monter d'autres types de stockage réseau.
+* `configMap`, `secret`, `downwardAPI`: Types spéciaux de volumes utilisés pour exposer certaines ressources et informations de cluster Kubernetes au pod.
+* `persistentVolumeClaim`: un moyen d'utiliser un stockage persistant pré-provisionné ou dynamiquement.
 
 .debug[[kube/stockage_fr.md](https://github.com/RyaxTech/kube.training.git/tree/gh-pages//kube/stockage_fr.md)]
 ---
 
-## Example a pod using gitrepo volume
+## Remarque
+
+- Un seul pod peut utiliser plusieurs volumes de types différents en même temps
+
+- Chacun des conteneurs du pod peut avoir le volume monté ou non.
+
+.debug[[kube/stockage_fr.md](https://github.com/RyaxTech/kube.training.git/tree/gh-pages//kube/stockage_fr.md)]
+---
+
+## Exemple d'un pod utilisant le volume gitrepo
 
 .debug[[kube/stockage_fr.md](https://github.com/RyaxTech/kube.training.git/tree/gh-pages//kube/stockage_fr.md)]
 ---
@@ -244,15 +241,15 @@ spec:
 .debug[[kube/stockage_fr.md](https://github.com/RyaxTech/kube.training.git/tree/gh-pages//kube/stockage_fr.md)]
 ---
 
-## Decoupling pods from the underlying storage technology
+## Découplage des pods de la technologie de stockage sous-jacente
 
-- Above case is  against the basic idea of Kubernetes, which aims to hide the actual infrastructure from both the application and its developer.
+- Le cas ci-dessus est contre l'idée de base de Kubernetes, qui vise à cacher l'infrastructure réelle de l'application et de son développeur.
 
-- When a developer needs a certain amount of persistent storage for their application, they should request it from Kubernetes. 
+- Lorsqu'un développeur a besoin d'une certaine quantité de stockage persistant pour son application, il doit le demander à Kubernetes.
 
-- The same way they request CPU, memory, and other resources when creating a pod. 
+- De la même manière qu'ils demandent du CPU, de la mémoire et d'autres ressources lors de la création d'un pod.
 
-- The system administrator can configure the cluster so it can give the apps what they request.
+- L'administrateur système peut configurer le cluster afin qu'il puisse donner aux applications ce qu'elles demandent.
 
 .debug[[kube/stockage_fr.md](https://github.com/RyaxTech/kube.training.git/tree/gh-pages//kube/stockage_fr.md)]
 ---
@@ -263,48 +260,47 @@ class: pic
 
 ---
 
-name: toc-introducing-persistentvolumes-and-persistentvolumeclaims
+name: toc-introduction-de-persistentvolumes-et-persistentvolumeclaims
 class: title
 
-Introducing PersistentVolumes and PersistentVolumeClaims
+Introduction de PersistentVolumes et PersistentVolumeClaims
 
 .nav[
-[Section précédente](#toc-introducing-volumes)
+[Section précédente](#toc-introduction-aux-volumes)
 |
 [Retour table des matières](#toc-chapter-1)
 |
-[Section suivante](#toc-dynamic-provisioning-of-persistentvolumes)
+[Section suivante](#toc-provisionnement-dynamique-des-volumes-persistants)
 ]
 
 .debug[(automatically generated title slide)]
 
 ---
 
-# Introducing PersistentVolumes and PersistentVolumeClaims
+# Introduction de PersistentVolumes et PersistentVolumeClaims
 
-- Instead of the developer adding a technology-specific volume to their pod, it’s the cluster administrator who sets up the underlying storage and then registers it in
-Kubernetes by creating a PersistentVolume resource through the Kubernetes API server. 
+- Au lieu que le développeur ajoute un volume spécifique à son pod, c'est l'administrateur du cluster qui configure le stockage sous-jacent, puis l'enregistre dans
+Kubernetes en créant une ressource PersistentVolume via le serveur de l'API Kubernetes.
 
-- When creating the PersistentVolume, the admin specifies its size and the access
-modes it supports.
-
-.debug[[kube/stockage_fr.md](https://github.com/RyaxTech/kube.training.git/tree/gh-pages//kube/stockage_fr.md)]
----
-
-## Introducing PersistentVolumes and PersistentVolumeClaims
-
-- When a cluster user needs to use persistent storage in one of their pods, they first create a PersistentVolumeClaim manifest, specifying the minimum size and the access
-mode they require. 
-
-- The user then submits the PersistentVolumeClaim manifest to the Kubernetes API server, and Kubernetes finds the appropriate PersistentVolume and binds the volume to the claim.
-
-- The PersistentVolumeClaim can then be used as one of the volumes inside a pod. Other users cannot use the same PersistentVolume until it has been released by deleting
-the bound PersistentVolumeClaim.
+- Lors de la création de PersistentVolume, l'administrateur spécifie sa taille et les modes d'accès
+qu'il supporte.
 
 .debug[[kube/stockage_fr.md](https://github.com/RyaxTech/kube.training.git/tree/gh-pages//kube/stockage_fr.md)]
 ---
 
-## Example of PersistentVolumes and PersistentVolumeClaims
+## Introduction de PersistentVolumes et PersistentVolumeClaims
+
+- Lorsqu'un utilisateur de cluster doit utiliser un stockage persistant dans l'un de ses pods, il crée d'abord un manifeste PersistentVolumeClaim, en spécifiant la taille minimale et le mode d'accès qu'ils exigent.
+
+- L'utilisateur soumet ensuite le manifeste PersistentVolumeClaim au serveur de l'API Kubernetes, et Kubernetes trouve le PersistentVolume approprié et lie au Volume Claim.
+
+- Le PersistentVolumeClaim peut alors être utilisé comme l'un des volumes à l'intérieur d'un pod. Les autres utilisateurs ne peuvent pas utiliser le même PersistentVolume jusqu'à ce qu'il ait été libéré en supprimant
+le PersistentVolumeClaim lié.
+
+.debug[[kube/stockage_fr.md](https://github.com/RyaxTech/kube.training.git/tree/gh-pages//kube/stockage_fr.md)]
+---
+
+## Exemple de PersistentVolumes et PersistentVolumeClaims
 
 .debug[[kube/stockage_fr.md](https://github.com/RyaxTech/kube.training.git/tree/gh-pages//kube/stockage_fr.md)]
 ---
@@ -316,7 +312,7 @@ class: pic
 .debug[[kube/stockage_fr.md](https://github.com/RyaxTech/kube.training.git/tree/gh-pages//kube/stockage_fr.md)]
 ---
 
-## PersistentVolumes and Namespaces
+## PersistentVolumes et Namespaces
 
 .debug[[kube/stockage_fr.md](https://github.com/RyaxTech/kube.training.git/tree/gh-pages//kube/stockage_fr.md)]
 ---
@@ -328,7 +324,7 @@ class: pic
 .debug[[kube/stockage_fr.md](https://github.com/RyaxTech/kube.training.git/tree/gh-pages//kube/stockage_fr.md)]
 ---
 
-##  Lifespan of PersistentVolume and PersistentVolumeClaims
+## Durée de vie de PersistentVolume et PersistentVolumeClaims
 
 .debug[[kube/stockage_fr.md](https://github.com/RyaxTech/kube.training.git/tree/gh-pages//kube/stockage_fr.md)]
 ---
@@ -346,39 +342,47 @@ class: pic
 
 ---
 
-name: toc-dynamic-provisioning-of-persistentvolumes
+name: toc-provisionnement-dynamique-des-volumes-persistants
 class: title
 
-Dynamic Provisioning of PersistentVolumes
+Provisionnement dynamique des volumes persistants
 
 .nav[
-[Section précédente](#toc-introducing-persistentvolumes-and-persistentvolumeclaims)
+[Section précédente](#toc-introduction-de-persistentvolumes-et-persistentvolumeclaims)
 |
 [Retour table des matières](#toc-chapter-1)
 |
-[Section suivante](#toc-rook-orchestration-of-distributed-storage)
+[Section suivante](#toc-rook-orchestration-de-stockage-distribu)
 ]
 
 .debug[(automatically generated title slide)]
 
 ---
-# Dynamic Provisioning of PersistentVolumes
+# Provisionnement dynamique des volumes persistants
 
-- We have seen how using PersistentVolumes and PersistentVolumeClaims makes it easy to obtain persistent storage without the developer having to deal with the actual storage
-technology used underneath. 
+- Les schemas précédents ont été repris du livre de Marko Luksa "Kubernetes in Action"
 
-- But this still requires a cluster administrator to provision the actual storage up front. 
+- Nous avons vu comment l'utilisation de PersistentVolumes et PersistentVolumeClaims facilite l'obtention d'un stockage persistant sans que le développeur n'ait à gérer le stockage réel utilisée en dessous.
+
+- Mais cela nécessite toujours un administrateur de cluster pour provisionner le stockage réel à l'avance.
 
 .debug[[kube/stockage_fr.md](https://github.com/RyaxTech/kube.training.git/tree/gh-pages//kube/stockage_fr.md)]
 ---
 
-## Dynamic Provisioning of PersistentVolumes
+## Provisionnement dynamique des volumes persistants
 
-- Luckily, Kubernetes can also perform this job automatically through dynamic provisioning of PersistentVolumes.
+- Heureusement, Kubernetes peut également effectuer ce travail automatiquement grâce au provisionnement dynamique de PersistentVolumes.
 
-- The cluster admin, instead of creating PersistentVolumes, can deploy a PersistentVolume provisioner and define one or more StorageClass objects to let users choose what type of PersistentVolume they want. 
+- L'administrateur du cluster, au lieu de créer PersistentVolumes, peut déployer un provisionneur PersistentVolume et définir un ou plusieurs objets StorageClass pour permettre aux utilisateurs de choisir le type de PersistentVolume souhaité.
 
-- The users can refer to the StorageClass in their PersistentVolumeClaims and the provisioner will take that into account when provisioning the persistent storage. 
+- Les utilisateurs peuvent se référer à StorageClass dans leur PersistanceVolumeClaims et le provisionneur en tiendra compte lors de l'approvisionnement du stockage persistant.
+
+- Le schema suivant a été repris du livre de Marko Luksa "Kubernetes in Action" 
+
+.debug[[kube/stockage_fr.md](https://github.com/RyaxTech/kube.training.git/tree/gh-pages//kube/stockage_fr.md)]
+---
+
+## Provisionnement dynamique des volumes persistants
 
 .debug[[kube/stockage_fr.md](https://github.com/RyaxTech/kube.training.git/tree/gh-pages//kube/stockage_fr.md)]
 ---
@@ -396,42 +400,44 @@ class: pic
 
 ---
 
-name: toc-rook-orchestration-of-distributed-storage
+name: toc-rook-orchestration-de-stockage-distribu
 class: title
 
-Rook: orchestration of distributed storage
+Rook orchestration de stockage distribué
 
 .nav[
-[Section précédente](#toc-dynamic-provisioning-of-persistentvolumes)
+[Section précédente](#toc-provisionnement-dynamique-des-volumes-persistants)
 |
 [Retour table des matières](#toc-chapter-1)
 |
-[Section suivante](#toc-decoupling-configuration-with-a-configmap)
+[Section suivante](#toc-dcouplage-de-configuration-avec-un-configmap)
 ]
 
 .debug[(automatically generated title slide)]
 
 ---
 
-# Rook: orchestration of distributed storage
+# Rook orchestration de stockage distribué
 
-- Rook is an open source orchestrator for distributed storage systems.
+- Rook est un orchestrateur open source pour les systèmes de stockage distribués.
 
-- Rook turns distributed storage software into a self-managing, self-scaling, and self-healing storage services. 
+- Rook transforme le logiciel de stockage distribué en un service de stockage auto-géré, auto-scalable et auto-guérisant.
 
-- It does this by automating deployment, bootstrapping, configuration, provisioning, scaling, upgrading, migration, disaster recovery, monitoring, and resource management. 
-
-.debug[[kube/stockage_fr.md](https://github.com/RyaxTech/kube.training.git/tree/gh-pages//kube/stockage_fr.md)]
----
-## Rook: orchestration of distributed storage
-- Rook is focused initially on orchestrating Ceph on-top of Kubernetes. Ceph is a distributed storage system that provides file, block and object storage and is deployed in large scale production clusters. 
-
-- Rook is hosted by the Cloud Native Computing Foundation (CNCF) as an inception level project.
+- Il le fait en automatisant le déploiement, l'amorçage, la configuration, l'approvisionnement, la mise à l'échelle, la mise à niveau, la migration, la reprise après sinistre, la surveillance et la gestion des ressources.
 
 .debug[[kube/stockage_fr.md](https://github.com/RyaxTech/kube.training.git/tree/gh-pages//kube/stockage_fr.md)]
 ---
 
-## Example of dynamic provisioning of PersistentVolumes using Rook
+## Rook orchestration de stockage distribué
+
+- Rook se concentre d'abord sur l'orchestration de Ceph sur Kubernetes. Ceph est un système de stockage distribué qui permet le stockage de fichiers, de blocs et d'objets et qui est déployé dans des clusters de production à grande échelle.
+
+- Rook est hébergé par la Cloud Native Computing Foundation (CNCF) en tant que projet de niveau initial.
+
+.debug[[kube/stockage_fr.md](https://github.com/RyaxTech/kube.training.git/tree/gh-pages//kube/stockage_fr.md)]
+---
+
+## Exemple de provisionnement dynamique de PersistentVolumes à l'aide de Rook
 
 .exercise[
   ```bash
@@ -440,8 +446,8 @@ Rook: orchestration of distributed storage
    kubectl create -f operator.yaml
    kubect create -f cluster.yaml
   ```
-- check to see everything is running as expected
- ```bash
+- vérifiez pour voir si tout fonctionne comme prévu
+  ```bash
    kubectl get pods -n rook-ceph
   ```
 
@@ -450,122 +456,81 @@ Rook: orchestration of distributed storage
 .debug[[kube/stockage_fr.md](https://github.com/RyaxTech/kube.training.git/tree/gh-pages//kube/stockage_fr.md)]
 ---
 
-## Example of dynamic provisioning of PersistentVolumes using Rook
+## Exemple de provisionnement dynamique de PersistentVolumes à l'aide de Rook
 
-- Block storage allows you to mount storage to a single pod. 
+- Le stockage 'block' vous permet de monter le stockage dans un seul pod.
 
-- Let's see how to build a simple, multi-tier web application on Kubernetes using persistent volumes enabled by Rook.
+- Voyons comment construire une application web simple et multi-niveaux sur Kubernetes en utilisant des volumes persistants activés par Rook.
 
 --
 
-- Before Rook can start provisioning storage, a StorageClass and its storage pool need to be created. 
+- Avant que Rook puisse démarrer le provisionnement, une classe StorageClass et son pool de stockage doivent être créés.
 
-- This is needed for Kubernetes to interoperate with Rook for provisioning persistent volumes.
-
-.debug[[kube/stockage_fr.md](https://github.com/RyaxTech/kube.training.git/tree/gh-pages//kube/stockage_fr.md)]
----
-
-## Example of dynamic provisioning of PersistentVolumes using Rook
-
-.exercise[
-- Save this storage class definition part as pool.yaml:
-   ```bash
-   apiVersion: ceph.rook.io/v1alpha1
-   kind: Pool
-   metadata:
-     name: replicapool
-     namespace: rook-ceph
-   spec:
-     replicated:
-       size: 3
-   ```
-]
+- Ceci est nécessaire pour que Kubernetes puisse interopérer avec Rook pour provisionner des volumes persistants.
 
 .debug[[kube/stockage_fr.md](https://github.com/RyaxTech/kube.training.git/tree/gh-pages//kube/stockage_fr.md)]
 ---
-
-
-## Example of dynamic provisioning of PersistentVolumes using Rook
+## Exemple de provisionnement dynamique de PersistentVolumes à l'aide de Rook
 
 .exercise[
-- Save this storage class definition part as storageclass.yaml:
-   ```bash
-   apiVersion: storage.k8s.io/v1
-   kind: StorageClass
-   metadata:
-     name: rook-ceph-block
-   provisioner: ceph.rook.io/block
-   parameters:
-      pool: replicapool
-      #The value of "clusterNamespace" MUST be the same as the one in which your rook cluster exist
-      clusterNamespace: rook-ceph
-   ```
-]
-
-.debug[[kube/stockage_fr.md](https://github.com/RyaxTech/kube.training.git/tree/gh-pages//kube/stockage_fr.md)]
----
-
-## Example of dynamic provisioning of PersistentVolumes using Rook
-
-.exercise[
-- Create the pool and storage class:
+- Créez le pool et le storage class:
   ```bash
   kubectl create -f pool.yaml
   kubectl create -f storageclass.yaml
   ```
 ]
-- Consume the storage with wordpress sample
-- We create a sample app to consume the block storage provisioned by Rook with the classic wordpress and mysql apps. 
-- Both of these apps will make use of block volumes provisioned by Rook.
+- Consommez le stockage avec l'échantillon wordpress
+- Nous créons un exemple d'application pour consommer le stockage en 'block' provisionné par Rook avec les applications classiques wordpress et mysql.
+- Ces deux applications utiliseront les volumes 'block' provisionnés par Rook.
 
 .debug[[kube/stockage_fr.md](https://github.com/RyaxTech/kube.training.git/tree/gh-pages//kube/stockage_fr.md)]
 ---
 
-## Example of dynamic provisioning of PersistentVolumes using Rook
+## Exemple de provisionnement dynamique de PersistentVolumes à l'aide de Rook
 
 
 .exercise[
-- Start mysql and wordpress from the cluster/examples/kubernetes folder:
+- Démarrez mysql et wordpress depuis le dossier cluster/examples/kubernetes:
   ```bash
-kubectl create -f mysql.yaml
-kubectl create -f wordpress.yaml
+  kubectl create -f mysql.yaml
+  kubectl create -f wordpress.yaml
+  ```
+- Ces deux applications créent un volume en 'block' et le montent dans leur pod respectif. Vous pouvez voir les 'volume claims' de Kubernetes en exécutant les opérations suivantes:
+
+  ```bash
+  kubectl get pvc
+  ```
+- Vous devriez voir quelque chose comme ça:
+```bash
+NAME             STATUS    VOLUME        CAPACITY   ACCESSMODES   AGE
+mysql-pv-claim   Bound     pvc-954459ee   20Gi       RWO           1m
+wp-pv-claim      Bound     pvc-39e459ee   20Gi       RWO           1m
 ```
-- Both of these apps create a block volume and mount it to their respective pod. You can see the Kubernetes volume claims by running the following:
+]
+.debug[[kube/stockage_fr.md](https://github.com/RyaxTech/kube.training.git/tree/gh-pages//kube/stockage_fr.md)]
+---
+
+## Exemple de provisionnement dynamique de PersistentVolumes à l'aide de Rook
+
+.exercise[
+- Une fois que les pods wordpress et mysql sont dans l'état Running, récupérez l'adresse IP du cluster de l'application wordpress et entrez-la dans votre navigateur avec le port:
 
  ```bash
-kubectl get pvc
-```
-- You should see something like this:
-```bash
-NAME             STATUS    VOLUME                                     CAPACITY   ACCESSMODES   AGE
-mysql-pv-claim   Bound     pvc-95402dbc-efc0-11e6-bc9a-0cc47a3459ee   20Gi       RWO           1m
-wp-pv-claim      Bound     pvc-39e43169-efc1-11e6-bc9a-0cc47a3459ee   20Gi       RWO           1m
-```
+ kubectl get svc wordpress
+ ```
 ]
-.debug[[kube/stockage_fr.md](https://github.com/RyaxTech/kube.training.git/tree/gh-pages//kube/stockage_fr.md)]
----
-
-## Example of dynamic provisioning of PersistentVolumes using Rook
-
-.exercise[
-- Once the wordpress and mysql pods are in the Running state, get the cluster IP of the wordpress app and enter it in your browser along with the port:
-
-```bash
-kubectl get svc wordpress
-```
-]
-You should see the wordpress app running.
+Vous devriez voir l'application wordpress en cours d'exécution.
 
 .debug[[kube/stockage_fr.md](https://github.com/RyaxTech/kube.training.git/tree/gh-pages//kube/stockage_fr.md)]
 ---
 
-## Launch another example of dynamic provisioning
+## Lancez un autre exemple de provisionnement dynamique
 
 .exercise[
 
-- Copy the file from here : https://github.com/zonca/jupyterhub-deploy-kubernetes-jetstream/blob/master/storage_rook/alpine-rook.yaml
+- Copiez le fichier à partir d'ici: https://github.com/zonca/jupyterhub-deploy-kubernetes-jetstream/blob/master/storage_rook/alpine-rook.yaml
 
-- Modify it so that it fits the specification you have at your cluster and run it using:
+- Modifiez-le pour qu'il corresponde aux spécifications de votre cluster et exécutez-le en utilisant:
   ```bash
   kubectl create -f alpine-rook.yaml
   ```
@@ -575,48 +540,46 @@ You should see the wordpress app running.
 .debug[[kube/stockage_fr.md](https://github.com/RyaxTech/kube.training.git/tree/gh-pages//kube/stockage_fr.md)]
 ---
 
-## Launch another example of dynamic provisioning (suite)
+## Lancez un autre exemple de provisionnement dynamique (suite)
 
-- It is a very small pod with Alpine Linux that creates a 2 GB volume from Rook and mounts it on /data.
+- C'est un petit pod avec Alpine Linux qui crée un volume de 2 Go à partir de Rook et le monte sur /data.
 
-- This creates a Pod with Alpine Linux that requests a Persistent Volume Claim to be mounted under /data. 
+- Cela crée un Pod avec Alpine Linux qui demande qu'un Persistent Volume Claim soit montée sous /data.
 
-- The Persistent Volume Claim specified the type of storage and its size. 
+- Le PersistentVolumeClaim spécifiait le type de stockage et sa taille.
 
-- Once the Pod is created, it asks the Persistent Volume Claim to actually request Rook to prepare a Persistent Volume that is then mounted into the Pod.
+- Une fois le Pod créé, il demande au PersistentVolumeClaim de demander à Rook de préparer un volume persistant qui sera ensuite monté dans le pod.
 
 .debug[[kube/stockage_fr.md](https://github.com/RyaxTech/kube.training.git/tree/gh-pages//kube/stockage_fr.md)]
 ---
 
-## Launch another example of dynamic provisioning (suite)
+## Lancez un autre exemple de provisionnement dynamique (suite)
 
-- We can verify the Persistent Volumes are created and associated with the pod, check:
+- Nous pouvons vérifier que les Volumes Persistants sont créés et associés au pod, vérifiez:
 
-.exercise[
+.exercice[
   ```bash
   kubectl get pv
   kubectl get pvc
   kubectl get logs alpine
   ```
-- Get a shell in the pod with:
+- Obtenez un shell dans le pod avec:
   ```bash
-  kubectl exec -it alpine  -- /bin/sh
+  kubectl exec -it alpine - /bin/sh
   ```
-- Access /data/ and write some files.
-- Exit the shell 
-- Now delete the pod and see if you can retrieve the data you wrote.
+- Access /data/ et écrire des fichiers.
+- Quitter le terminal
+- Maintenant supprimez le pod et voyez si vous pouvez récupérer les données que vous avez écrites.
 ]
 
 .debug[[kube/stockage_fr.md](https://github.com/RyaxTech/kube.training.git/tree/gh-pages//kube/stockage_fr.md)]
 ---
-## Launch another example of dynamic provisioning (suite)
+## Lancez un autre exemple de provisionnement dynamique (suite)
 
-.exercise[
-- How could have we retrieved the data in the last case?
-- Let's change the alpine-rook.yaml to `kind:deployment` write some files and kill again the pod to see what happens.
+.exercice[
+- Comment aurions-nous pu récupérer les données dans le dernier cas?
+- Changeons alpine-rook.yaml en `kind:deployment`, écrivez quelques fichiers et tuez à nouveau le pod pour voir ce qui se passe.
 ]
-
-
 
 
 
@@ -629,63 +592,63 @@ class: pic
 
 ---
 
-name: toc-decoupling-configuration-with-a-configmap
+name: toc-dcouplage-de-configuration-avec-un-configmap
 class: title
 
-Decoupling configuration with a ConfigMap
+Découplage de configuration avec un ConfigMap
 
 .nav[
-[Section précédente](#toc-rook-orchestration-of-distributed-storage)
+[Section précédente](#toc-rook-orchestration-de-stockage-distribu)
 |
 [Retour table des matières](#toc-chapter-2)
 |
-[Section suivante](#toc-introducing-secrets)
+[Section suivante](#toc-introduction-des-secrets)
 ]
 
 .debug[(automatically generated title slide)]
 
 ---
-# Decoupling configuration with a ConfigMap
+# Découplage de configuration avec un ConfigMap
 
-- The whole point of an app’s configuration is to keep the config options that vary between environments, or change frequently, separate from the application’s source
-code. 
+- Le but de la configuration d'une application est de garder les options de configuration qui varient d'un environnement à l'autre, ou de changer fréquemment, séparément de la source de l'application
+code.
 
-- If you think of a pod descriptor as source code for your app (it defines how to compose the individual components into a functioning system), it’s clear you should move the configuration out of the pod description.
-
-.debug[[kube/configs_fr.md](https://github.com/RyaxTech/kube.training.git/tree/gh-pages//kube/configs_fr.md)]
----
-
-## Introducing ConfigMap
-
-- Kubernetes allows separating configuration options into a separate object called a ConfigMap, which is a map containing key/value pairs with the values ranging from
-short literals to full config files.
-
-- An application doesn’t need to read the ConfigMap directly or even know that it exists. The contents of the map are instead passed to containers as either environment
-variables or as files in a volume. 
+- Si vous considérez un descripteur de pod comme un code source pour votre application (il définit comment composer les composants individuels dans un système fonctionnel), il est clair que vous devez supprimer la configuration de la description du pod.
 
 .debug[[kube/configs_fr.md](https://github.com/RyaxTech/kube.training.git/tree/gh-pages//kube/configs_fr.md)]
 ---
 
-## Introducing ConfigMap
+## Introduction de ConfigMap
 
-- You can define the map’s entries by passing literals to the kubectl command or you can create the ConfigMap from files stored on your disk. 
+- Kubernetes permet de séparer les options de configuration en un objet distinct appelé ConfigMap, qui est une carte contenant des paires clé / valeur avec des valeurs allant de
+des littéraux courts aux fichiers de configuration complets.
 
-- Use a simple literal first:
+- Une application n'a pas besoin de lire directement le ConfigMap ou même de savoir qu'il existe. Le contenu de la carte est plutôt transmis aux conteneurs comme environnement
+variables ou en tant que fichiers dans un volume.
+
+.debug[[kube/configs_fr.md](https://github.com/RyaxTech/kube.training.git/tree/gh-pages//kube/configs_fr.md)]
+---
+
+## Introduction de ConfigMap
+
+- Vous pouvez définir les entrées de la carte en transmettant des littéraux à la commande kubectl ou vous pouvez créer ConfigMap à partir de fichiers stockés sur votre disque.
+
+- Utilisez un littéral simple en premier:
 
 .exercise[
   ```bash
   kubectl create configmap fortune-config --from-literal=sleep-interval=25
   ```
 
-- NOTE ConfigMap keys must be a valid DNS subdomain (they may only contain alphanumeric characters, dashes, underscores, and dots). They may optionally include a leading dot.
+- REMARQUE Les clés ConfigMap doivent être un sous-domaine DNS valide (elles ne peuvent contenir que des caractères alphanumériques, des tirets, des traits de soulignement et des points). Ils peuvent éventuellement inclure un point leader.
 ]
 
 .debug[[kube/configs_fr.md](https://github.com/RyaxTech/kube.training.git/tree/gh-pages//kube/configs_fr.md)]
 ---
 
-## Explaining Configmaps in an example
+## Explication de Configmaps dans un exemple
 
-- Execute the example described here: https://kubernetes.io/docs/tutorials/configuration/configure-redis-using-configmap/
+- Exécutez l'exemple décrit ici: https://kubernetes.io/docs/tutorials/configuration/configure-redis-using-configmap/
 
 
 .debug[[kube/configs_fr.md](https://github.com/RyaxTech/kube.training.git/tree/gh-pages//kube/configs_fr.md)]
@@ -697,74 +660,62 @@ class: pic
 
 ---
 
-name: toc-introducing-secrets
+name: toc-introduction-des-secrets
 class: title
 
-Introducing Secrets
+Introduction des secrets
 
 .nav[
-[Section précédente](#toc-decoupling-configuration-with-a-configmap)
+[Section précédente](#toc-dcouplage-de-configuration-avec-un-configmap)
 |
 [Retour table des matières](#toc-chapter-2)
 |
-[Section suivante](#toc-isolation-and-network-policies)
+[Section suivante](#toc-isolation-et-politiques-de-rseau)
 ]
 
 .debug[(automatically generated title slide)]
 
 ---
 
-# Introducing Secrets
+# Introduction des secrets
 
-- Kubernetes provides a separate object called Secret. Secrets are much like ConfigMaps 
+- Kubernetes fournit un objet séparé appelé Secret. Les secrets ressemblent beaucoup à ConfigMaps
 
-- They’re also maps that hold key-value pairs. They can be used the same way as a ConfigMap. 
+- Ce sont aussi des cartes qui contiennent des paires clé-valeur. Ils peuvent être utilisés de la même manière qu'un ConfigMap.
 
-- You can Pass Secret entries to the container as environment variables
+- Vous pouvez passer des entrées secrètes au conteneur en tant que variables d'environnement
 
-- Expose Secret entries as files in a volume
-
-.debug[[kube/configs_fr.md](https://github.com/RyaxTech/kube.training.git/tree/gh-pages//kube/configs_fr.md)]
----
-
-## Introducing Secrets
-
-- Kubernetes helps keep your Secrets safe by making sure each Secret is only distributed
-to the nodes that run the pods that need access to the Secret. 
-
-- Also, on the nodes themselves, Secrets are always stored in memory and never written to physical storage,
-which would require wiping the disks after deleting the Secrets from them.
+- Expose les entrées secrètes en tant que fichiers dans un volume
 
 .debug[[kube/configs_fr.md](https://github.com/RyaxTech/kube.training.git/tree/gh-pages//kube/configs_fr.md)]
 ---
-## Introducing Secrets
 
-- On the master node itself etcd stores Secrets in encrypted form, making the system much more secure. Because of this, it’s imperative you properly
-choose when to use a Secret or a ConfigMap. Choosing between them is simple:
+## Introduction des secrets
 
- * Use a ConfigMap to store non-sensitive, plain configuration data.
+- Kubernetes aide à garder vos secrets en toute sécurité en s'assurant que chaque secret est seulement distribué
+aux nœuds qui exécutent les pods qui ont besoin d'accéder au secret.
+
+- De plus, sur les nœuds eux-mêmes, les Secrets sont toujours stockés en mémoire et jamais écrits dans le stockage physique,
+ce qui nécessiterait de nettoyer les disques après avoir supprimé les secrets d'eux.
+
+.debug[[kube/configs_fr.md](https://github.com/RyaxTech/kube.training.git/tree/gh-pages//kube/configs_fr.md)]
+---
+## Introduction des secrets
+
+- Sur le nœud maître proprement dit, etcd stocke les secrets sous forme cryptée, ce qui rend le système beaucoup plus sécurisé. Pour cette raison, il est impératif que vous choisissez correctement quand utiliser un Secret ou un ConfigMap. Choisir entre eux est simple:
+
+ * Utilisez un fichier ConfigMap pour stocker des données de configuration non sensibles et simples.
 --
 
- * Use a Secret to store any data that is sensitive in nature and needs to be kept under key. If a config file includes both sensitive and not-sensitive data, you
-should store the file in a Secret.
+ * Utilisez un secret pour stocker toutes les données sensibles et doivent être conservées sous clé. Si un fichier de configuration contient des données sensibles mais aussi non sensibles, vous
+devrez stocker le fichier dans un secret.
 
 .debug[[kube/configs_fr.md](https://github.com/RyaxTech/kube.training.git/tree/gh-pages//kube/configs_fr.md)]
 ---
 
-## Exercises using Secrets
+## Exercices utilisant des secrets
 
-- Some initial exercises using Secrets can be found here: https://kubernetes.io/docs/concepts/configuration/secret/
-
-.debug[[kube/configs_fr.md](https://github.com/RyaxTech/kube.training.git/tree/gh-pages//kube/configs_fr.md)]
----
-
-
-
-
-
-
-
-
+- Quelques exercices initiaux utilisant Secrets peuvent être trouvés ici: https://kubernetes.io/docs/concepts/configuration/secret/
 
 .debug[[kube/configs_fr.md](https://github.com/RyaxTech/kube.training.git/tree/gh-pages//kube/configs_fr.md)]
 ---
@@ -775,92 +726,91 @@ class: pic
 
 ---
 
-name: toc-isolation-and-network-policies
+name: toc-isolation-et-politiques-de-rseau
 class: title
 
-Isolation and network policies
+Isolation et politiques de réseau
 
 .nav[
-[Section précédente](#toc-introducing-secrets)
+[Section précédente](#toc-introduction-des-secrets)
 |
 [Retour table des matières](#toc-chapter-3)
 |
-[Section suivante](#toc-deploy-jupiter-on-kubernetes)
+[Section suivante](#toc-dploiement-de-jupiter-sur-kubernetes)
 ]
 
 .debug[(automatically generated title slide)]
 
 ---
-# Isolation and network policies
+# Isolation et politiques de réseau
 
-- Namespaces *do not* provide isolation
+- Les Namespaces *ne fournissent pas* de l'isolation
 
-- A pod in the `green` namespace can communicate with a pod in the `blue` namespace
+- Un pod dans un namespace vert peut communiquer avec un pod dans le namespace bleu.
 
-- A pod in the `default` namespace can communicate with a pod in the `kube-system` namespace
+- Un pod dans le namespace `default` peut communiquer avec un pod dans le namespace `kube-system`.
 
-- `kube-dns` uses a different subdomain for each namespace
+- kube-dns utilise un sous-domaine différent pour chaque espace de nommage
 
-- Example: from any pod in the cluster, you can connect to the Kubernetes API with:
+- Exemple : à partir de n'importe quel pod du cluster, vous pouvez vous connecter à l'API Kubernetes avec :
 
   `https://kubernetes.default.svc.cluster.local:443/`
 
 .debug[[kube/advanced_fr.md](https://github.com/RyaxTech/kube.training.git/tree/gh-pages//kube/advanced_fr.md)]
 ---
 
-## Isolating pods
+## Isolation de pods
 
-- Actual isolation is implemented with *network policies*
+- L'isolement réel est mis en œuvre avec des *politiques de réseau* (network policies).
 
-- Network policies are resources (like deployments, services, namespaces...)
+- Les politiques réseau sont des ressources (comme les déploiements, les services, les namespaces....).
 
-- Network policies specify which flows are allowed:
+- Les politiques de réseau spécifient les flux autorisés :
 
-  - between pods
+  - entre les pods
 
-  - from pods to the outside world
+  - du pod au monde extérieur
 
-  - and vice-versa
-
-.debug[[kube/advanced_fr.md](https://github.com/RyaxTech/kube.training.git/tree/gh-pages//kube/advanced_fr.md)]
----
-
-## Network policies overview
-
-- We can create as many network policies as we want
-
-- Each network policy has:
-
-  - a *pod selector*: "which pods are targeted by the policy?"
-
-  - lists of ingress and/or egress rules: "which peers and ports are allowed or blocked?"
-
-- If a pod is not targeted by any policy, traffic is allowed by default
-
-- If a pod is targeted by at least one policy, traffic must be allowed explicitly
+  - et vice-versa
 
 .debug[[kube/advanced_fr.md](https://github.com/RyaxTech/kube.training.git/tree/gh-pages//kube/advanced_fr.md)]
 ---
 
-## More about network policies
+## Network policies
 
-- This remains a high level overview of network policies
+- Nous pouvons créer autant de politiques de réseau que nous le voulons.
 
-- For more details, check:
+- Chaque politique de réseau a :
 
-  - the [Kubernetes documentation about network policies](https://kubernetes.io/docs/concepts/services-networking/network-policies/)
+  - un *pod selector* : "Quelles sont les pods visées par la politique ?"
 
-  - this [talk about network policies at KubeCon 2017 US](https://www.youtube.com/watch?v=3gGpMmYeEO8) by [@ahmetb](https://twitter.com/ahmetb)
+  - des listes de règles d'entrée (ingress) et/ou de sortie (egress) : "Quels pairs et ports sont autorisés ou bloqués ?"
+
+- Si un pod n'est pas visé par une politique, le trafic est autorisé par défaut.
+
+- Si un pod est visé par au moins une politique, le trafic doit être explicitement autorisé.
 
 .debug[[kube/advanced_fr.md](https://github.com/RyaxTech/kube.training.git/tree/gh-pages//kube/advanced_fr.md)]
 ---
 
-## Exercises on network policies
+## Plus d'infos sur Network policies 
+
+- Pour plus de détails, vérifiez :
+
+  - la documentation de Kubernetes sur les politiques de réseau](https://kubernetes.io/docs/concepts/services-networking/network-policies/)
+
+  - ce [talk sur network policies fait au KubeCon 2017 US](https://www.youtube.com/watch?v=3gGpMmYeEO8) par [@ahmetb](https://twitter.com/ahmetb)
+
+.debug[[kube/advanced_fr.md](https://github.com/RyaxTech/kube.training.git/tree/gh-pages//kube/advanced_fr.md)]
+---
+
+## Exercices sur les Network policies
 
 .exercise[
-- To execute some exercises on network policies we will follow some examples from here: 
+- Pour exécuter quelques exercices sur les politiques de réseau, nous allons suivre quelques exemples ici : 
   https://github.com/ahmetb/kubernetes-network-policy-recipes
 ]
+
 .debug[[kube/advanced_fr.md](https://github.com/RyaxTech/kube.training.git/tree/gh-pages//kube/advanced_fr.md)]
 ---
 
@@ -870,27 +820,27 @@ class: pic
 
 ---
 
-name: toc-deploy-jupiter-on-kubernetes
+name: toc-dploiement-de-jupiter-sur-kubernetes
 class: title
 
-Deploy Jupiter on Kubernetes
+Déploiement de Jupiter sur Kubernetes
 
 .nav[
-[Section précédente](#toc-isolation-and-network-policies)
+[Section précédente](#toc-isolation-et-politiques-de-rseau)
 |
 [Retour table des matières](#toc-chapter-3)
 |
-[Section suivante](#toc-advanced-scheduling-with-kubernetes)
+[Section suivante](#toc-scheduling-avance-avec-kubernetes)
 ]
 
 .debug[(automatically generated title slide)]
 
 ---
 
-# Deploy Jupiter on Kubernetes
+# Déploiement de Jupiter sur Kubernetes
 
 .exercise[
-- We will follow the procedure provided here: 
+- Nous suivrons la procédure fournie ici : 
   https://zonca.github.io/2017/12/scalable-jupyterhub-kubernetes-jetstream.html
 ]
 
@@ -903,17 +853,17 @@ class: pic
 
 ---
 
-name: toc-advanced-scheduling-with-kubernetes
+name: toc-scheduling-avance-avec-kubernetes
 class: title
 
-Advanced scheduling with Kubernetes
+Scheduling avancée avec Kubernetes
 
 .nav[
-[Section précédente](#toc-deploy-jupiter-on-kubernetes)
+[Section précédente](#toc-dploiement-de-jupiter-sur-kubernetes)
 |
 [Retour table des matières](#toc-chapter-3)
 |
-[Section suivante](#toc-autoscaling-with-kubernetes)
+[Section suivante](#toc-autoscaling-avec-kubernetes)
 ]
 
 .debug[(automatically generated title slide)]
@@ -921,10 +871,10 @@ Advanced scheduling with Kubernetes
 ---
 --- 
 
-# Advanced scheduling with Kubernetes
+# Scheduling avancée avec Kubernetes
 
 .exercise[
-- We will follow the procedure provided here: 
+- Nous suivrons la procédure fournie ici : 
    https://github.com/RyaxTech/kube-tutorial#4-activate-an-advanced-scheduling-policy-and-test-its-usage
 ]
 .debug[[kube/advanced_fr.md](https://github.com/RyaxTech/kube.training.git/tree/gh-pages//kube/advanced_fr.md)]
@@ -937,26 +887,26 @@ class: pic
 
 ---
 
-name: toc-autoscaling-with-kubernetes
+name: toc-autoscaling-avec-kubernetes
 class: title
 
-Autoscaling with Kubernetes
+Autoscaling avec Kubernetes
 
 .nav[
-[Section précédente](#toc-advanced-scheduling-with-kubernetes)
+[Section précédente](#toc-scheduling-avance-avec-kubernetes)
 |
 [Retour table des matières](#toc-chapter-3)
 |
-[Section suivante](#toc-big-data-analytics-on-kubernetes)
+[Section suivante](#toc-big-data-analytics-sur-kubernetes)
 ]
 
 .debug[(automatically generated title slide)]
 
 ---
-# Autoscaling with Kubernetes
+# Autoscaling avec Kubernetes
 
 .exercise[
-- We will follow the procedure provided here: 
+- Nous suivrons la procédure fournie ici : 
   https://github.com/RyaxTech/kube-tutorial#6-enable-and-use-pod-autoscaling
 ]
 .debug[[kube/advanced_fr.md](https://github.com/RyaxTech/kube.training.git/tree/gh-pages//kube/advanced_fr.md)]
@@ -969,13 +919,13 @@ class: pic
 
 ---
 
-name: toc-big-data-analytics-on-kubernetes
+name: toc-big-data-analytics-sur-kubernetes
 class: title
 
-Big Data analytics on Kubernetes
+Big Data analytics sur Kubernetes
 
 .nav[
-[Section précédente](#toc-autoscaling-with-kubernetes)
+[Section précédente](#toc-autoscaling-avec-kubernetes)
 |
 [Retour table des matières](#toc-chapter-3)
 |
@@ -985,12 +935,13 @@ Big Data analytics on Kubernetes
 .debug[(automatically generated title slide)]
 
 ---
-# Big Data analytics on Kubernetes
+# Big Data analytics sur Kubernetes
 
 .exercise[
-- We will follow the procedure provided here:
+- Nous suivrons la procédure fournie ici :
 https://github.com/RyaxTech/kube-tutorial#3-execute-big-data-job-with-spark-on-the-kubernetes-cluster
 ]
+
 
 
 .debug[[kube/advanced_fr.md](https://github.com/RyaxTech/kube.training.git/tree/gh-pages//kube/advanced_fr.md)]</textarea>
