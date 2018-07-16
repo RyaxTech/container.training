@@ -2,8 +2,6 @@
 
 - Les Namespaces *ne fournissent pas* de l'isolation
 
-- Un pod dans un namespace vert peut communiquer avec un pod dans le namespace bleu.
-
 - Un pod dans le namespace `default` peut communiquer avec un pod dans le namespace `kube-system`.
 
 - kube-dns utilise un sous-domaine différent pour chaque espace de nommage

@@ -9,27 +9,30 @@ code.
 
 ## Introduction de ConfigMap
 
-- Kubernetes permet de séparer les options de configuration en un objet distinct appelé ConfigMap, qui est une carte contenant des paires clé / valeur avec des valeurs allant de
+- Kubernetes permet de séparer les options de configuration en un objet distinct appelé ConfigMap, qui est une map contenant des paires clé / valeur avec des valeurs allant de
 des littéraux courts aux fichiers de configuration complets.
 
-- Une application n'a pas besoin de lire directement le ConfigMap ou même de savoir qu'il existe. Le contenu de la carte est plutôt transmis aux conteneurs comme environnement
+- Une application n'a pas besoin de lire directement le ConfigMap ou même de savoir qu'il existe. Le contenu de la map est plutôt transmis aux conteneurs comme environnement
 variables ou en tant que fichiers dans un volume.
 
 ---
 
 ## Introduction de ConfigMap
 
-- Vous pouvez définir les entrées de la carte en transmettant des littéraux à la commande kubectl ou vous pouvez créer ConfigMap à partir de fichiers stockés sur votre disque.
-
-- Utilisez un littéral simple en premier:
+- Vous pouvez définir les entrées de la map en transmettant des littéraux à la commande kubectl ou vous pouvez créer ConfigMap à partir de fichiers stockés sur votre disque.
 
 .exercise[
+- Pour créer une nouvelle entrée:
   ```bash
   kubectl create configmap fortune-config --from-literal=sleep-interval=25
   ```
-
-- REMARQUE Les clés ConfigMap doivent être un sous-domaine DNS valide (elles ne peuvent contenir que des caractères alphanumériques, des tirets, des traits de soulignement et des points). Ils peuvent éventuellement inclure un point leader.
+- Pour regarder les valeurs d'un ConfigMap:
+  ```bash
+  kubectl describe configmap fortune-config
+  ```
 ]
+
+- REMARQUE Les clés ConfigMap doivent être un sous-domaine DNS valide (elles ne peuvent contenir que des caractères alphanumériques, des tirets, des traits de soulignement et des points). Ils peuvent éventuellement commencer par un point.
 
 ---
 
@@ -37,6 +40,7 @@ variables ou en tant que fichiers dans un volume.
 
 - Exécutez l'exemple décrit ici: https://kubernetes.io/docs/tutorials/configuration/configure-redis-using-configmap/
 
+- Pour aller plus loin: https://kubernetes.io/docs/tasks/configure-pod-container/configure-pod-configmap/
 
 ---
 
@@ -44,7 +48,7 @@ variables ou en tant que fichiers dans un volume.
 
 - Kubernetes fournit un objet séparé appelé Secret. Les secrets ressemblent beaucoup à ConfigMaps
 
-- Ce sont aussi des cartes qui contiennent des paires clé-valeur. Ils peuvent être utilisés de la même manière qu'un ConfigMap.
+- Ce sont aussi des maps qui contiennent des paires clé-valeur. Ils peuvent être utilisés de la même manière qu'un ConfigMap.
 
 - Vous pouvez passer des entrées secrètes au conteneur en tant que variables d'environnement
 

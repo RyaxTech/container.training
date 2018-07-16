@@ -29,30 +29,26 @@ Kubernetes <br/>Stockage, Configuration, Secrets et Concepts Avancés <br/>
 
 .debug[
 ```
- M common/prereqs_fr.md
  M intro-fullday.yml.html
  M intro-selfpaced.yml.html
  M kube-fullday.yml.html
  M kube-halfday.yml.html
  M kube-jour1.yml.html
+ M kube-jour2.yml
  M kube-jour2.yml.html
  M kube-jour3.yml.html
  M kube-selfpaced.yml.html
- M kube/concepts-k8s_fr.md
- M kube/daemonset_fr.md
- M kube/helm_fr.md
- M kube/kubectlexpose_fr.md
- M kube/kubectlget_fr.md
- M kube/logs-centralized_fr.md
- M kube/ourapponkube_fr.md
- M kube/rollout_fr.md
- M logistics.md
+ M kube/advanced_fr.md
+ M kube/configs_fr.md
+ M kube/stockage_fr.md
  M swarm-fullday.yml.html
  M swarm-halfday.yml.html
  M swarm-selfpaced.yml.html
  M swarm-video.yml.html
 ?? .directory
 ?? common/.directory
+?? common/cncf_fr.md
+?? images/CloudNativeLandscape_latest.png
 ?? intro/.directory
 ?? kube/.directory
 ?? slides/
@@ -60,7 +56,7 @@ Kubernetes <br/>Stockage, Configuration, Secrets et Concepts Avancés <br/>
 
 ```
 
-These slides have been built from commit: 41b719d
+These slides have been built from commit: 527da17
 
 
 [common/title_fr.md](https://github.com/RyaxTech/kube.training.git/tree/gh-pages//common/title_fr.md)]
@@ -453,7 +449,7 @@ Rook orchestration de stockage distribué
    git clone https://github.com/rook/rook.git
    cd rook/cluster/examples/kubernetes/ceph
    kubectl create -f operator.yaml
-   kubect create -f cluster.yaml
+   kubectl create -f cluster.yaml
   ```
 - vérifiez pour voir si tout fonctionne comme prévu
   ```bash
@@ -481,10 +477,10 @@ Rook orchestration de stockage distribué
 ---
 ## Exemple de provisionnement dynamique de PersistentVolumes à l'aide de Rook
 
+<!--   kubectl create -f pool.yaml -->
 .exercise[
 - Créez le pool et le storage class:
   ```bash
-  kubectl create -f pool.yaml
   kubectl create -f storageclass.yaml
   ```
 ]
@@ -537,9 +533,12 @@ Vous devriez voir l'application wordpress en cours d'exécution.
 
 .exercise[
 
-- Copiez le fichier à partir d'ici: https://github.com/zonca/jupyterhub-deploy-kubernetes-jetstream/blob/master/storage_rook/alpine-rook.yaml
+- Récupérez le fichier:
+  ```bash
+  wget https://raw.githubusercontent.com/zonca/jupyterhub-deploy-kubernetes-jetstream/master/storage_rook/alpine-rook.yaml
+  ```
 
-- Modifiez-le pour qu'il corresponde aux spécifications de votre cluster et exécutez-le en utilisant:
+- Modifiez-le pour qu'il corresponde aux spécifications de votre cluster (notre `storageClassName` est `"rook-ceph-block"`) et exécutez-le en utilisant:
   ```bash
   kubectl create -f alpine-rook.yaml
   ```
@@ -574,21 +573,20 @@ Vous devriez voir l'application wordpress en cours d'exécution.
   ```
 - Obtenez un shell dans le pod avec:
   ```bash
-  kubectl exec -it alpine - /bin/sh
+  kubectl exec -it alpine /bin/sh
   ```
-- Access /data/ et écrire des fichiers.
+- Créer des fichiers dans `/data/`.
 - Quitter le terminal
-- Maintenant supprimez le pod et voyez si vous pouvez récupérer les données que vous avez écrites.
+- Maintenant supprimez le pod. Est-il encore possible daccéder ces données ? Si oui, comment ?
 ]
 
-.debug[[kube/stockage_fr.md](https://github.com/RyaxTech/kube.training.git/tree/gh-pages//kube/stockage_fr.md)]
----
+<!-----
 ## Lancez un autre exemple de provisionnement dynamique (suite)
 
 .exercice[
 - Comment aurions-nous pu récupérer les données dans le dernier cas?
 - Changeons alpine-rook.yaml en `kind:deployment`, écrivez quelques fichiers et tuez à nouveau le pod pour voir ce qui se passe.
-]
+]-->
 
 
 
@@ -629,10 +627,10 @@ code.
 
 ## Introduction de ConfigMap
 
-- Kubernetes permet de séparer les options de configuration en un objet distinct appelé ConfigMap, qui est une carte contenant des paires clé / valeur avec des valeurs allant de
+- Kubernetes permet de séparer les options de configuration en un objet distinct appelé ConfigMap, qui est une map contenant des paires clé / valeur avec des valeurs allant de
 des littéraux courts aux fichiers de configuration complets.
 
-- Une application n'a pas besoin de lire directement le ConfigMap ou même de savoir qu'il existe. Le contenu de la carte est plutôt transmis aux conteneurs comme environnement
+- Une application n'a pas besoin de lire directement le ConfigMap ou même de savoir qu'il existe. Le contenu de la map est plutôt transmis aux conteneurs comme environnement
 variables ou en tant que fichiers dans un volume.
 
 .debug[[kube/configs_fr.md](https://github.com/RyaxTech/kube.training.git/tree/gh-pages//kube/configs_fr.md)]
@@ -640,17 +638,20 @@ variables ou en tant que fichiers dans un volume.
 
 ## Introduction de ConfigMap
 
-- Vous pouvez définir les entrées de la carte en transmettant des littéraux à la commande kubectl ou vous pouvez créer ConfigMap à partir de fichiers stockés sur votre disque.
-
-- Utilisez un littéral simple en premier:
+- Vous pouvez définir les entrées de la map en transmettant des littéraux à la commande kubectl ou vous pouvez créer ConfigMap à partir de fichiers stockés sur votre disque.
 
 .exercise[
+- Pour créer une nouvelle entrée:
   ```bash
   kubectl create configmap fortune-config --from-literal=sleep-interval=25
   ```
-
-- REMARQUE Les clés ConfigMap doivent être un sous-domaine DNS valide (elles ne peuvent contenir que des caractères alphanumériques, des tirets, des traits de soulignement et des points). Ils peuvent éventuellement inclure un point leader.
+- Pour regarder les valeurs d'un ConfigMap:
+  ```bash
+  kubectl describe configmap fortune-config
+  ```
 ]
+
+- REMARQUE Les clés ConfigMap doivent être un sous-domaine DNS valide (elles ne peuvent contenir que des caractères alphanumériques, des tirets, des traits de soulignement et des points). Ils peuvent éventuellement commencer par un point.
 
 .debug[[kube/configs_fr.md](https://github.com/RyaxTech/kube.training.git/tree/gh-pages//kube/configs_fr.md)]
 ---
@@ -659,6 +660,7 @@ variables ou en tant que fichiers dans un volume.
 
 - Exécutez l'exemple décrit ici: https://kubernetes.io/docs/tutorials/configuration/configure-redis-using-configmap/
 
+- Pour aller plus loin: https://kubernetes.io/docs/tasks/configure-pod-container/configure-pod-configmap/
 
 .debug[[kube/configs_fr.md](https://github.com/RyaxTech/kube.training.git/tree/gh-pages//kube/configs_fr.md)]
 ---
@@ -690,7 +692,7 @@ Introduction des secrets
 
 - Kubernetes fournit un objet séparé appelé Secret. Les secrets ressemblent beaucoup à ConfigMaps
 
-- Ce sont aussi des cartes qui contiennent des paires clé-valeur. Ils peuvent être utilisés de la même manière qu'un ConfigMap.
+- Ce sont aussi des maps qui contiennent des paires clé-valeur. Ils peuvent être utilisés de la même manière qu'un ConfigMap.
 
 - Vous pouvez passer des entrées secrètes au conteneur en tant que variables d'environnement
 
@@ -754,8 +756,6 @@ Isolation et politiques de réseau
 # Isolation et politiques de réseau
 
 - Les Namespaces *ne fournissent pas* de l'isolation
-
-- Un pod dans un namespace vert peut communiquer avec un pod dans le namespace bleu.
 
 - Un pod dans le namespace `default` peut communiquer avec un pod dans le namespace `kube-system`.
 

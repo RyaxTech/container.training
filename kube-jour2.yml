@@ -20,6 +20,7 @@ chapters:
   #- kube/intro.md
   #- common/about-slides.md
 - common/toc.md
+- - common/cncf_fr.md
 - - kube/kubeobjects_fr.md
   - kube/kubectlexpose_fr.md
   - kube/ourapponkube_fr.md

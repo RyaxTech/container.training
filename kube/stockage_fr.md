@@ -217,7 +217,7 @@ class: pic
    git clone https://github.com/rook/rook.git
    cd rook/cluster/examples/kubernetes/ceph
    kubectl create -f operator.yaml
-   kubect create -f cluster.yaml
+   kubectl create -f cluster.yaml
   ```
 - vérifiez pour voir si tout fonctionne comme prévu
   ```bash
@@ -243,10 +243,10 @@ class: pic
 ---
 ## Exemple de provisionnement dynamique de PersistentVolumes à l'aide de Rook
 
+<!--   kubectl create -f pool.yaml -->
 .exercise[
 - Créez le pool et le storage class:
   ```bash
-  kubectl create -f pool.yaml
   kubectl create -f storageclass.yaml
   ```
 ]
@@ -296,9 +296,12 @@ Vous devriez voir l'application wordpress en cours d'exécution.
 
 .exercise[
 
-- Copiez le fichier à partir d'ici: https://github.com/zonca/jupyterhub-deploy-kubernetes-jetstream/blob/master/storage_rook/alpine-rook.yaml
+- Récupérez le fichier:
+  ```bash
+  wget https://raw.githubusercontent.com/zonca/jupyterhub-deploy-kubernetes-jetstream/master/storage_rook/alpine-rook.yaml
+  ```
 
-- Modifiez-le pour qu'il corresponde aux spécifications de votre cluster et exécutez-le en utilisant:
+- Modifiez-le pour qu'il corresponde aux spécifications de votre cluster (notre `storageClassName` est `"rook-ceph-block"`) et exécutez-le en utilisant:
   ```bash
   kubectl create -f alpine-rook.yaml
   ```
@@ -331,19 +334,19 @@ Vous devriez voir l'application wordpress en cours d'exécution.
   ```
 - Obtenez un shell dans le pod avec:
   ```bash
-  kubectl exec -it alpine - /bin/sh
+  kubectl exec -it alpine /bin/sh
   ```
-- Access /data/ et écrire des fichiers.
+- Créer des fichiers dans `/data/`.
 - Quitter le terminal
-- Maintenant supprimez le pod et voyez si vous pouvez récupérer les données que vous avez écrites.
+- Maintenant supprimez le pod. Est-il encore possible daccéder ces données ? Si oui, comment ?
 ]
 
----
+<!-----
 ## Lancez un autre exemple de provisionnement dynamique (suite)
 
 .exercice[
 - Comment aurions-nous pu récupérer les données dans le dernier cas?
 - Changeons alpine-rook.yaml en `kind:deployment`, écrivez quelques fichiers et tuez à nouveau le pod pour voir ce qui se passe.
-]
+]-->
 
 

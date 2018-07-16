@@ -29,30 +29,26 @@ Kubernetes <br/>Concepts de base, Services et Deploiement <br/>
 
 .debug[
 ```
- M common/prereqs_fr.md
  M intro-fullday.yml.html
  M intro-selfpaced.yml.html
  M kube-fullday.yml.html
  M kube-halfday.yml.html
  M kube-jour1.yml.html
+ M kube-jour2.yml
  M kube-jour2.yml.html
  M kube-jour3.yml.html
  M kube-selfpaced.yml.html
- M kube/concepts-k8s_fr.md
- M kube/daemonset_fr.md
- M kube/helm_fr.md
- M kube/kubectlexpose_fr.md
- M kube/kubectlget_fr.md
- M kube/logs-centralized_fr.md
- M kube/ourapponkube_fr.md
- M kube/rollout_fr.md
- M logistics.md
+ M kube/advanced_fr.md
+ M kube/configs_fr.md
+ M kube/stockage_fr.md
  M swarm-fullday.yml.html
  M swarm-halfday.yml.html
  M swarm-selfpaced.yml.html
  M swarm-video.yml.html
 ?? .directory
 ?? common/.directory
+?? common/cncf_fr.md
+?? images/CloudNativeLandscape_latest.png
 ?? intro/.directory
 ?? kube/.directory
 ?? slides/
@@ -60,7 +56,7 @@ Kubernetes <br/>Concepts de base, Services et Deploiement <br/>
 
 ```
 
-These slides have been built from commit: 41b719d
+These slides have been built from commit: 527da17
 
 
 [common/title_fr.md](https://github.com/RyaxTech/kube.training.git/tree/gh-pages//common/title_fr.md)]
@@ -78,6 +74,14 @@ name: toc-chapter-1
 
 ## Chapter 1
 
+- [L'écosystème de Kubernetes](#toc-lcosystme-de-kubernetes)
+
+.debug[(auto-generated TOC)]
+---
+name: toc-chapter-2
+
+## Chapter 2
+
 - [Les objets de Kubernetes](#toc-les-objets-de-kubernetes)
 
 - [Exposition des conteneurs](#toc-exposition-des-conteneurs)
@@ -92,9 +96,9 @@ name: toc-chapter-1
 
 .debug[(auto-generated TOC)]
 ---
-name: toc-chapter-2
+name: toc-chapter-3
 
-## Chapter 2
+## Chapter 3
 
 - [Daemon sets](#toc-daemon-sets)
 
@@ -108,9 +112,9 @@ name: toc-chapter-2
 
 .debug[(auto-generated TOC)]
 ---
-name: toc-chapter-3
+name: toc-chapter-4
 
-## Chapter 3
+## Chapter 4
 
 - [Gestion des stacks avec Helm](#toc-gestion-des-stacks-avec-helm)
 
@@ -129,15 +133,76 @@ class: pic
 
 ---
 
+name: toc-lcosystme-de-kubernetes
+class: title
+
+L'écosystème de Kubernetes
+
+.nav[
+[Section précédente](#toc-)
+|
+[Retour table des matières](#toc-chapter-1)
+|
+[Section suivante](#toc-les-objets-de-kubernetes)
+]
+
+.debug[(automatically generated title slide)]
+
+---
+# L'écosystème de Kubernetes
+
+
+- A l'origine développé par Google
+
+- Il est maintenu par la Cloud Native Computing Foundation (CNCF).
+
+- La CNCF est un projet de la Linux Fundation (mais kubernetes peut tout de même fonctionner sur Windows et Mac!)
+
+- Exemples de membres de la CNCF: Google, Twitter, Huawei, Intel, Cisco, IBM, Docker, Univa, VMware, Alibaba, jd.com, SAP, redhat, AT&T...
+
+- Délivre des certifications, organise les évenements "Kubecon", synchronise les developements, mais surtout développe l'écosystème de Kubernetes
+
+
+.debug[[common/cncf_fr.md](https://github.com/RyaxTech/kube.training.git/tree/gh-pages//common/cncf_fr.md)]
+---
+
+## Le paysage des projets Kubernetes
+
+- Kubernetes est composé d'un certains nombres de plugins et projets connexes. Par exemple:
+    - **Container Network Interface (CNI)**, définit un standard pour gérer le réseau.
+    - **coreDNS**, serveur DNS pour les micro-services
+    - **envoy**, un plugin CNI
+    - **linkerd**, "service mesh" (load balancing, CNI, DNS, security, policy...)
+    - **Vitess**, serveur SQL suivant une architecture micro-service
+
+- La CNCF essaye de tenir une liste de tous les projets dans leur *[landscape](https://landscape.cncf.io/)*
+
+.debug[[common/cncf_fr.md](https://github.com/RyaxTech/kube.training.git/tree/gh-pages//common/cncf_fr.md)]
+---
+
+class: pic
+![Landscape](images/CloudNativeLandscape_latest.png)
+
+
+
+.debug[[common/cncf_fr.md](https://github.com/RyaxTech/kube.training.git/tree/gh-pages//common/cncf_fr.md)]
+---
+
+class: pic
+
+.interstitial[![Image separating from the next chapter](https://gallant-turing-d0d520.netlify.com/containers/ShippingContainerSFBay.jpg)]
+
+---
+
 name: toc-les-objets-de-kubernetes
 class: title
 
 Les objets de Kubernetes
 
 .nav[
-[Section précédente](#toc-)
+[Section précédente](#toc-lcosystme-de-kubernetes)
 |
-[Retour table des matières](#toc-chapter-1)
+[Retour table des matières](#toc-chapter-2)
 |
 [Section suivante](#toc-exposition-des-conteneurs)
 ]
@@ -289,7 +354,7 @@ class: pic
 
 class: pic
 
-.interstitial[![Image separating from the next chapter](https://gallant-turing-d0d520.netlify.com/containers/ShippingContainerSFBay.jpg)]
+.interstitial[![Image separating from the next chapter](https://gallant-turing-d0d520.netlify.com/containers/aerial-view-of-containers.jpg)]
 
 ---
 
@@ -301,7 +366,7 @@ Exposition des conteneurs
 .nav[
 [Section précédente](#toc-les-objets-de-kubernetes)
 |
-[Retour table des matières](#toc-chapter-1)
+[Retour table des matières](#toc-chapter-2)
 |
 [Section suivante](#toc-dployer-un-registre-auto-hberg)
 ]
@@ -661,7 +726,7 @@ Dans cette partie, nous allons:
 
 class: pic
 
-.interstitial[![Image separating from the next chapter](https://gallant-turing-d0d520.netlify.com/containers/aerial-view-of-containers.jpg)]
+.interstitial[![Image separating from the next chapter](https://gallant-turing-d0d520.netlify.com/containers/blue-containers.jpg)]
 
 ---
 
@@ -673,7 +738,7 @@ Déployer un registre auto-hébergé
 .nav[
 [Section précédente](#toc-exposition-des-conteneurs)
 |
-[Retour table des matières](#toc-chapter-1)
+[Retour table des matières](#toc-chapter-2)
 |
 [Section suivante](#toc-exposant-des-services-en-interne)
 ]
@@ -920,7 +985,7 @@ class: extra-details
 
 class: pic
 
-.interstitial[![Image separating from the next chapter](https://gallant-turing-d0d520.netlify.com/containers/blue-containers.jpg)]
+.interstitial[![Image separating from the next chapter](https://gallant-turing-d0d520.netlify.com/containers/chinook-helicopter-container.jpg)]
 
 ---
 
@@ -932,7 +997,7 @@ Exposant des services en interne
 .nav[
 [Section précédente](#toc-dployer-un-registre-auto-hberg)
 |
-[Retour table des matières](#toc-chapter-1)
+[Retour table des matières](#toc-chapter-2)
 |
 [Section suivante](#toc-exposant-des-services-pour-un-accs-externe)
 ]
@@ -987,7 +1052,7 @@ Nous devrions maintenant voir le «travailleur», bien, travaillant heureusement
 
 class: pic
 
-.interstitial[![Image separating from the next chapter](https://gallant-turing-d0d520.netlify.com/containers/chinook-helicopter-container.jpg)]
+.interstitial[![Image separating from the next chapter](https://gallant-turing-d0d520.netlify.com/containers/container-cranes.jpg)]
 
 ---
 
@@ -999,7 +1064,7 @@ Exposant des services pour un accès externe
 .nav[
 [Section précédente](#toc-exposant-des-services-en-interne)
 |
-[Retour table des matières](#toc-chapter-1)
+[Retour table des matières](#toc-chapter-2)
 |
 [Section suivante](#toc-passage--lchelle-scaling-dun-dploiement)
 ]
@@ -1053,7 +1118,7 @@ Exposant des services pour un accès externe
 
 class: pic
 
-.interstitial[![Image separating from the next chapter](https://gallant-turing-d0d520.netlify.com/containers/container-cranes.jpg)]
+.interstitial[![Image separating from the next chapter](https://gallant-turing-d0d520.netlify.com/containers/container-housing.jpg)]
 
 ---
 
@@ -1065,7 +1130,7 @@ Passage à l'échelle (scaling) d'un déploiement
 .nav[
 [Section précédente](#toc-exposant-des-services-pour-un-accs-externe)
 |
-[Retour table des matières](#toc-chapter-1)
+[Retour table des matières](#toc-chapter-2)
 |
 [Section suivante](#toc-daemon-sets)
 ]
@@ -1104,7 +1169,7 @@ Après quelques secondes, le graphique dans l'interface utilisateur Web devrait 
 
 class: pic
 
-.interstitial[![Image separating from the next chapter](https://gallant-turing-d0d520.netlify.com/containers/container-housing.jpg)]
+.interstitial[![Image separating from the next chapter](https://gallant-turing-d0d520.netlify.com/containers/containers-by-the-water.jpg)]
 
 ---
 
@@ -1116,7 +1181,7 @@ Daemon sets
 .nav[
 [Section précédente](#toc-passage--lchelle-scaling-dun-dploiement)
 |
-[Retour table des matières](#toc-chapter-2)
+[Retour table des matières](#toc-chapter-3)
 |
 [Section suivante](#toc-mise--jour-dun-service-via-des-labels-et-des-selectors)
 ]
@@ -1482,7 +1547,7 @@ Le selector du replica set possède également un `pod-template-hash`, contraire
 
 class: pic
 
-.interstitial[![Image separating from the next chapter](https://gallant-turing-d0d520.netlify.com/containers/containers-by-the-water.jpg)]
+.interstitial[![Image separating from the next chapter](https://gallant-turing-d0d520.netlify.com/containers/distillery-containers.jpg)]
 
 ---
 
@@ -1494,7 +1559,7 @@ Mise à jour d'un service via des labels et des selectors
 .nav[
 [Section précédente](#toc-daemon-sets)
 |
-[Retour table des matières](#toc-chapter-2)
+[Retour table des matières](#toc-chapter-3)
 |
 [Section suivante](#toc-rolling-updates)
 ]
@@ -1758,7 +1823,7 @@ Ding, dong, le déploiement est mort! Et le daemon set continue à vivre.
 
 class: pic
 
-.interstitial[![Image separating from the next chapter](https://gallant-turing-d0d520.netlify.com/containers/distillery-containers.jpg)]
+.interstitial[![Image separating from the next chapter](https://gallant-turing-d0d520.netlify.com/containers/lots-of-containers.jpg)]
 
 ---
 
@@ -1770,7 +1835,7 @@ Rolling updates
 .nav[
 [Section précédente](#toc-mise--jour-dun-service-via-des-labels-et-des-selectors)
 |
-[Retour table des matières](#toc-chapter-2)
+[Retour table des matières](#toc-chapter-3)
 |
 [Section suivante](#toc-accs-aux-logs-depuis-le-cli)
 ]
@@ -2077,7 +2142,7 @@ spec:
 
 class: pic
 
-.interstitial[![Image separating from the next chapter](https://gallant-turing-d0d520.netlify.com/containers/lots-of-containers.jpg)]
+.interstitial[![Image separating from the next chapter](https://gallant-turing-d0d520.netlify.com/containers/plastic-containers.JPG)]
 
 ---
 
@@ -2089,7 +2154,7 @@ Accès aux logs depuis le CLI
 .nav[
 [Section précédente](#toc-rolling-updates)
 |
-[Retour table des matières](#toc-chapter-2)
+[Retour table des matières](#toc-chapter-3)
 |
 [Section suivante](#toc-logs-centralise)
 ]
@@ -2233,7 +2298,7 @@ Ces instructions d'installation fonctionneront sur nos clusters, car ce sont des
 
 class: pic
 
-.interstitial[![Image separating from the next chapter](https://gallant-turing-d0d520.netlify.com/containers/plastic-containers.JPG)]
+.interstitial[![Image separating from the next chapter](https://gallant-turing-d0d520.netlify.com/containers/train-of-containers-1.jpg)]
 
 ---
 
@@ -2245,7 +2310,7 @@ Logs centralisée
 .nav[
 [Section précédente](#toc-accs-aux-logs-depuis-le-cli)
 |
-[Retour table des matières](#toc-chapter-2)
+[Retour table des matières](#toc-chapter-3)
 |
 [Section suivante](#toc-gestion-des-stacks-avec-helm)
 ]
@@ -2414,7 +2479,7 @@ créez les ressources dans l'espace de noms `kube-system` ou dans un espace de n
 
 class: pic
 
-.interstitial[![Image separating from the next chapter](https://gallant-turing-d0d520.netlify.com/containers/train-of-containers-1.jpg)]
+.interstitial[![Image separating from the next chapter](https://gallant-turing-d0d520.netlify.com/containers/train-of-containers-2.jpg)]
 
 ---
 
@@ -2426,7 +2491,7 @@ Gestion des stacks avec Helm
 .nav[
 [Section précédente](#toc-logs-centralise)
 |
-[Retour table des matières](#toc-chapter-3)
+[Retour table des matières](#toc-chapter-4)
 |
 [Section suivante](#toc-namespaces)
 ]
@@ -2668,7 +2733,7 @@ Les métadonnées du chart incluent une URL vers la page d'accueil du projet.
 
 class: pic
 
-.interstitial[![Image separating from the next chapter](https://gallant-turing-d0d520.netlify.com/containers/train-of-containers-2.jpg)]
+.interstitial[![Image separating from the next chapter](https://gallant-turing-d0d520.netlify.com/containers/two-containers-on-a-truck.jpg)]
 
 ---
 
@@ -2680,7 +2745,7 @@ Namespaces
 .nav[
 [Section précédente](#toc-gestion-des-stacks-avec-helm)
 |
-[Retour table des matières](#toc-chapter-3)
+[Retour table des matières](#toc-chapter-4)
 |
 [Section suivante](#toc-)
 ]
