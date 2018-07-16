@@ -70,7 +70,7 @@
 
 - Allez dans le répertoire `stacks`:
   ```bash
-  cd ~/container.training/stacks
+  cd ~/kube.training/stacks
   ```
 
 - Editez `dockercoins/worker/worker.py`, mettez à jour la ligne `sleep` pour dormir 1 seconde

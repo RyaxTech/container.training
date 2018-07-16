@@ -142,6 +142,26 @@ class: pic
 
 ---
 
+## A savoir...
+
+- Comment prononce-t-on kubernetes?
+    - Mot venant du grecque κυβερνήτης, prononcé "kivernitis"
+    - En anglais : "coubernetis"
+    - En français : "cubernetesse" ou "cubernette"
+
+- On peut abbréger Kubernetes en k8s
+
+- Kubernetes viens avec de l'autocomplétion à intégrer dans votre bash :
+
+`source <(kubectl completion bash)`
+
+Ça complète les commandes mais aussi les noms des objets!
+
+Commande déjà éfféctuée dans vos VMs.
+
+
+---
+
 ## Architecture de Kubernetes: les noeuds
 
 - Les nœuds exécutant nos conteneurs exécutent une collection de services:

@@ -29,19 +29,28 @@ Kubernetes<br/>Introduction, Architecture et Installation<br/>
 
 .debug[
 ```
+ M common/prereqs_fr.md
  M intro-fullday.yml.html
  M intro-selfpaced.yml.html
  M kube-fullday.yml.html
  M kube-halfday.yml.html
-UU kube-jour1.yml.html
-UU kube-jour2.yml.html
-UU kube-jour3.yml.html
-A  kube/advanced.md
-M  kube/advanced_fr.md
-A  kube/configs.md
-M  kube/configs_fr.md
-A  kube/stockage.md
-M  kube/stockage_fr.md
+ M kube-jour1.yml.html
+ M kube-jour2.yml.html
+ M kube-jour3.yml.html
+ M kube-selfpaced.yml.html
+ M kube/concepts-k8s_fr.md
+ M kube/daemonset_fr.md
+ M kube/helm_fr.md
+ M kube/kubectlexpose_fr.md
+ M kube/kubectlget_fr.md
+ M kube/logs-centralized_fr.md
+ M kube/ourapponkube_fr.md
+ M kube/rollout_fr.md
+ M logistics.md
+ M swarm-fullday.yml.html
+ M swarm-halfday.yml.html
+ M swarm-selfpaced.yml.html
+ M swarm-video.yml.html
 ?? .directory
 ?? common/.directory
 ?? intro/.directory
@@ -51,7 +60,7 @@ M  kube/stockage_fr.md
 
 ```
 
-These slides have been built from commit: 52d8949
+These slides have been built from commit: 41b719d
 
 
 [common/title_fr.md](https://github.com/RyaxTech/kube.training.git/tree/gh-pages//common/title_fr.md)]
@@ -79,14 +88,11 @@ Kubernetes<br/>Introduction, Architecture et Installation<br/><br/></br>
 
 - La formation se déroulera de 9h à 17h
 
-- Il y aura une pause déjeuner à 12h30
+- Il y aura une pause déjeuner à 12h30 à 13h30
 
 - N'hésitez pas à interrompre pour des questions à tout moment
 
 - *Surtout quand vous voyez des photos de conteneurs en plein écran!*
-
-.debug[[logistics.md](https://github.com/RyaxTech/kube.training.git/tree/gh-pages//logistics.md)]
----
 
 .debug[[logistics.md](https://github.com/RyaxTech/kube.training.git/tree/gh-pages//logistics.md)]
 ---
@@ -838,7 +844,7 @@ Misattribué à Benjamin Franklin
 
 - C'est ce que tu es censé faire!
 
-- Allez dans [kube.training] (https://ryaxtech.github.io/kube.training/) pour voir ces diapositives
+- Allez dans [kube.training] (https://goo.gl/dekbTb) pour voir ces diapositives
 
 ]
 
@@ -869,7 +875,7 @@ class: in person
 
 - Vous pouvez automatiquement SSH d'une VM à l'autre
 
-- Les nœuds ont des alias: `asterix-1`,` asterix-2`, etc *ou* `obelix-1`,` obelix-2`, etc *ou* etc
+- Les nœuds ont des alias: `node1`, `node2`...
 
 .debug[[common/prereqs_fr.md](https://github.com/RyaxTech/kube.training.git/tree/gh-pages//common/prereqs_fr.md)]
 ---
@@ -899,13 +905,11 @@ class: in person
 
 .exercise[
 
-- Chaqu'un m'envoie la cles SSH publique de son poste par email au yiannis.georgiou@ryax.org
+- Connectez-vous à la première machine virtuelle (`node1`) avec votre client SSH
 
-- Connectez-vous à la première machine virtuelle (`asterix-1`) avec votre client SSH
-
-- Vérifiez que vous pouvez SSH (sans mot de passe) à `asterix-2`:
+- Vérifiez que vous pouvez SSH (sans mot de passe) à `node2`:
   ```bash
-  ssh asterix-2
+  ssh node2
   ```
 - Tapez `exit` ou` ^ D` pour revenir à `asterix-1`
 
@@ -937,13 +941,13 @@ Si quelque chose ne va pas, demandez de l'aide!
 .debug[[common/prereqs_fr.md](https://github.com/RyaxTech/kube.training.git/tree/gh-pages//common/prereqs_fr.md)]
 ---
 
-## Nous allons (surtout) interagir avec asterix-1 seulement
+## Nous allons (surtout) interagir avec node1 seulement
 
 *Ces remarques ne s'appliquent que lorsque vous utilisez plusieurs nœuds, bien sûr.*
 
-- Sauf instructions, **toutes les commandes doivent être exécutées à partir de la première VM, `asterix-1`**
+- Sauf instructions, **toutes les commandes doivent être exécutées à partir de la première VM, `node1`**
 
-- Nous allons seulement vérifier / copier le code sur `asterix-1`
+- Nous allons seulement vérifier / copier le code sur `node1`
 
 - Pendant les opérations normales, nous n'avons pas besoin d'accéder aux autres nœuds
 
@@ -1653,6 +1657,27 @@ class: pic
 .debug[[kube/concepts-k8s_fr.md](https://github.com/RyaxTech/kube.training.git/tree/gh-pages//kube/concepts-k8s_fr.md)]
 ---
 
+## A savoir...
+
+- Comment prononce-t-on kubernetes?
+    - Mot venant du grecque κυβερνήτης, prononcé "kivernitis"
+    - En anglais : "coubernetis"
+    - En français : "cubernetesse" ou "cubernette"
+
+- On peut abbréger Kubernetes en k8s
+
+- Kubernetes viens avec de l'autocomplétion à intégrer dans votre bash :
+
+`source <(kubectl completion bash)`
+
+Ça complète les commandes mais aussi les noms des objets!
+
+Commande déjà éfféctuée dans vos VMs.
+
+
+.debug[[kube/concepts-k8s_fr.md](https://github.com/RyaxTech/kube.training.git/tree/gh-pages//kube/concepts-k8s_fr.md)]
+---
+
 ## Architecture de Kubernetes: les noeuds
 
 - Les nœuds exécutant nos conteneurs exécutent une collection de services:
@@ -2329,13 +2354,13 @@ L'espace de noms `kube-system` est utilisé pour le "Control Plane".
 
 - `kube-apiserver` est le serveur API
 
-- `kube-controller-manager` et` kube-scheduler` sont d'autres composants principaux
+- `kube-controller-manager` et `kube-scheduler` sont d'autres composants principaux
 
-- `kube-dns` est un composant supplémentaire (pas obligatoire mais super utile, donc c'est là)
+- `kube-dns` (ou `coredns`) est un composant supplémentaire (pas obligatoire mais super utile, donc c'est là)
 
 - `kube-proxy` est le composant (par noeud) gérant les mappages de ports et tel
 
-- `weave` est le composant (par noeud) gérant le overlay du réseau
+- `weave` est le composant (par noeud) gérant l'overlay du réseau
 
 - la colonne `READY` indique le nombre de conteneurs dans chaque pod
 

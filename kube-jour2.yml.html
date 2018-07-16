@@ -29,19 +29,28 @@ Kubernetes <br/>Concepts de base, Services et Deploiement <br/>
 
 .debug[
 ```
+ M common/prereqs_fr.md
  M intro-fullday.yml.html
  M intro-selfpaced.yml.html
  M kube-fullday.yml.html
  M kube-halfday.yml.html
-UU kube-jour1.yml.html
-UU kube-jour2.yml.html
-UU kube-jour3.yml.html
-A  kube/advanced.md
-M  kube/advanced_fr.md
-A  kube/configs.md
-M  kube/configs_fr.md
-A  kube/stockage.md
-M  kube/stockage_fr.md
+ M kube-jour1.yml.html
+ M kube-jour2.yml.html
+ M kube-jour3.yml.html
+ M kube-selfpaced.yml.html
+ M kube/concepts-k8s_fr.md
+ M kube/daemonset_fr.md
+ M kube/helm_fr.md
+ M kube/kubectlexpose_fr.md
+ M kube/kubectlget_fr.md
+ M kube/logs-centralized_fr.md
+ M kube/ourapponkube_fr.md
+ M kube/rollout_fr.md
+ M logistics.md
+ M swarm-fullday.yml.html
+ M swarm-halfday.yml.html
+ M swarm-selfpaced.yml.html
+ M swarm-video.yml.html
 ?? .directory
 ?? common/.directory
 ?? intro/.directory
@@ -51,7 +60,7 @@ M  kube/stockage_fr.md
 
 ```
 
-These slides have been built from commit: 52d8949
+These slides have been built from commit: 41b719d
 
 
 [common/title_fr.md](https://github.com/RyaxTech/kube.training.git/tree/gh-pages//common/title_fr.md)]
@@ -562,6 +571,16 @@ error: the server doesn't have a resource type "endpoint"
 
 - Le type ne représente pas un seul endpoint, mais une liste de endpoints
 
+.debug[[kube/kubectlexpose_fr.md](https://github.com/RyaxTech/kube.training.git/tree/gh-pages//kube/kubectlexpose_fr.md)]
+---
+
+## Reset
+
+- Une fois que vous avez fini de jouer avec ce deployement:
+
+```bash
+kubectl delete deployments elastic
+```
 
 
 .debug[[kube/kubectlexpose_fr.md](https://github.com/RyaxTech/kube.training.git/tree/gh-pages//kube/kubectlexpose_fr.md)]
@@ -759,7 +778,7 @@ Nous devrions voir:
 
 - Assurez-vous que notre image busybox est maintenant dans le registre local:
   ```bash
-  curl $ REGISTRY / v2 / _catalog
+  curl $REGISTRY/v2/_catalog
   ```
 
 ]
@@ -780,7 +799,7 @@ La commande curl devrait maintenant sortir:
 
 - Allez dans le répertoire `stacks`:
   ```bash
-  cd ~/container.training/stacks
+  cd ~/kube.training/stacks/
   ```
 
 - Construire et pousser les images:
@@ -1001,12 +1020,12 @@ Exposant des services pour un accès externe
 
 - Créez un service `NodePort` pour l'interface Web:
   ```bash
-  kubectl expose deploy/webui --type=NodePort --port=8080
+  kubectl expose deploy/webui --type=NodePort --port=80
   ```
 
 - Vérifiez le port qui a été alloué:
   ```bash
-  kubectl obtenir svc
+  kubectl get svc
   ```
 
 ]
@@ -1119,7 +1138,7 @@ Daemon sets
 
   - Si nous supprimons (ou redémarrons) un nœud, un conteneur `rng` va redémarrer ailleurs
 
-- Au lieu d'un `deploiyment`, nous utiliserons un `daemonset`
+- Au lieu d'un `deployment`, nous utiliserons un `daemonset`
 
 .debug[[kube/daemonset_fr.md](https://github.com/RyaxTech/kube.training.git/tree/gh-pages//kube/daemonset_fr.md)]
 ---
@@ -1284,7 +1303,7 @@ Attendez ... Maintenant, cela peut-il être * aussi facile?
 
 - Regardez les ressources que nous avons maintenant:
   ```bash
-  Kubectl get all
+  kubectl get all
   ```
 
 ]
@@ -1304,7 +1323,7 @@ Nous avons aussi un trop grand nombre de pods.
 .debug[[kube/daemonset_fr.md](https://github.com/RyaxTech/kube.training.git/tree/gh-pages//kube/daemonset_fr.md)]
 ---
 
-## `deploy / rng` et` ds / rng`
+## `deploy/rng` et `ds/rng`
 
 - Vous pouvez avoir différents types de ressources avec le même nom
 
@@ -1331,9 +1350,7 @@ daemonset.apps/rng  2        2        2      2           2          <none>      
 ## Trop de pods
 
 - Si nous vérifions avec `kubectl get pods`, nous voyons:
-
   - *un pod* pour le deployment (nommé `rng-xxxxxxxxxx-yyyyy`)
-
   - *un pod par nœud* pour le daemon set (nommé `rng-zzzzz`)
 
   ```
@@ -1345,13 +1362,12 @@ daemonset.apps/rng  2        2        2      2           2          <none>      
   ```
 --
 
-Le daemon set a créé un pod par nœud, sauf sur le nœud master.
-
+Le daemon set a créé un pod par nœud, sauf sur le nœud master. 
 Le nœud principal a [taints](https://kubernetes.io/docs/concepts/configuration/taint-and-toleration/) empêchant les pods de s'exécuter.
 
-(Pour planifier un pod sur ce nœud de toute façon, le pod requiert les [tolerations](https://kubernetes.io/docs/concepts/configuration/taint-and-toleration/).) appropriées
+(Pour planifier un pod sur ce nœud de toute façon, le pod requiert les [tolerations](https://kubernetes.io/docs/concepts/configuration/taint-and-toleration/) appropriées.)
 
-.footnote [(Désactivé par un? Nous n'exécutons pas ces pods sur le nœud hébergeant le Control Plane.)]
+<!-- .footnote[(Désactivé par un? Nous n'exécutons pas ces pods sur le nœud hébergeant le Control Plane.)] -->
 
 .debug[[kube/daemonset_fr.md](https://github.com/RyaxTech/kube.training.git/tree/gh-pages//kube/daemonset_fr.md)]
 ---
@@ -1531,8 +1547,7 @@ Bien sûr, l'option 2 offre plus d'opportunités d'apprentissage. Non?
 
 ## Nous avons mis des ressources dans vos ressources
 
-- Rappel: un daemon set est une ressource qui crée plus de ressources!
-
+- Rappel : un daemon set est une ressource qui crée plus de ressources!
 - Il y a une différence entre:
 
   - le(s) label(s) d'une ressource (dans le bloc `metadata` au début)
@@ -1544,7 +1559,6 @@ Bien sûr, l'option 2 offre plus d'opportunités d'apprentissage. Non?
 - Vous devez mettre à jour le selector et le template (les labels de metadata ne sont pas obligatoires)
 
 - Le template doit correspondre au selector
-
   (c'est-à-dire que la ressource refusera de créer des ressources qu'elle ne sélectionnera pas)
 
 .debug[[kube/daemonset_fr.md](https://github.com/RyaxTech/kube.training.git/tree/gh-pages//kube/daemonset_fr.md)]
@@ -1558,12 +1572,12 @@ Bien sûr, l'option 2 offre plus d'opportunités d'apprentissage. Non?
 
 .exercise[
 
-- Mettre à jour le daemon set pour ajouter `isactive:" yes "` au label du selector et du template:
+- Mettre à jour le daemon set pour ajouter `isactive: "yes"` au label du selector et du template:
   ```bash
   kubectl edit daemonset rng
   ```
 
-- Mettre à jour le service pour ajouter `isactive:" yes "` à son selector:
+- Mettre à jour le service pour ajouter `isactive: "yes"` à son selector:
   ```bash
   kubectl edit service rng
   ```
@@ -1708,7 +1722,7 @@ Ding, dong, le déploiement est mort! Et le daemon set continue à vivre.
 
 - Mais on peut aussi changer ses labels
 
-- Il sera supprimé de l'équilibreur de charge (load balancerr) (il ne recevra plus de trafic)
+- Il sera supprimé de l'équilibreur de charge (load balancer) (il ne recevra plus de trafic)
 
 - Un autre pod sera recréé immédiatement
 
@@ -1840,7 +1854,7 @@ Rolling updates
 
 - Allez dans le répertoire `stacks`:
   ```bash
-  cd ~/container.training/stacks
+  cd ~/kube.training/stacks
   ```
 
 - Editez `dockercoins/worker/worker.py`, mettez à jour la ligne `sleep` pour dormir 1 seconde
@@ -2277,13 +2291,16 @@ Logs centralisée
 
 ## Déploiement de EFK sur notre cluster
 
-- Nous allons utiliser un fichier YAML décrivant toutes les ressources nécessaires
+- Nous allons utiliser un fichier YAML décrivant toutes les ressources nécessaires. Celui-ci contient une erreur, qu'il va falloir corriger.
 
 .exercise[
-
+  ```bash
+  wget https://goo.gl/MUZhE4 -O efk.yaml
+  ```
+- Éditez le fichier YAML pour ajouter la variable d'environement `FLUENT_UID` avec la valeure `"0"` au container fluentd.
 - Chargez le fichier YAML dans notre cluster:
   ```bash
-  kubectl apply -f https://goo.gl/MUZhE4
+  kubectl apply -f efk.yaml
   ```
 
 
@@ -2357,7 +2374,7 @@ et quelques roles et roles bindings (pour donner à fluentd les permissions requ
 
 ## Utiliser Kibana
 
-* Remarque: ce n'est pas un atelier Kibana! Donc cette section est délibérément très laconique. *
+* Remarque: ce n'est pas un atelier Kibana! Donc cette section est délibérément très succinte. *
 
 - La première fois que vous vous connectez à Kibana, vous devez "configure an index pattern"
 
@@ -2471,7 +2488,7 @@ Gestion des stacks avec Helm
   helm init
   ```
 
-- Ajouter l'achèvement `helm`:
+- Ajouter l'auto-complétion `helm`:
   ```bash
   . <(helm completion $(basename $SHELL))
   ```
@@ -2500,7 +2517,7 @@ Gestion des stacks avec Helm
 
 (Définir les rôles et les autorisations exacts sur votre cluster nécessite
 une connaissance plus approfondie du modèle RBAC de Kubernetes. La commande ci-dessus est
-amende pour les clusters personnels et de développement.)
+adaptée pour les clusters personnels et de développement.)
 
 .debug[[kube/helm_fr.md](https://github.com/RyaxTech/kube.training.git/tree/gh-pages//kube/helm_fr.md)]
 ---
@@ -2567,7 +2584,7 @@ D'où viennent ces options `--set`?
 
 Les métadonnées du chart incluent une URL vers la page d'accueil du projet.
 
-(Parfois, il pointe facilement vers la documentation de la carte.)
+(Parfois, il pointe simplement vers la documentation du chart.)
 
 .debug[[kube/helm_fr.md](https://github.com/RyaxTech/kube.training.git/tree/gh-pages//kube/helm_fr.md)]
 ---

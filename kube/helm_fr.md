@@ -50,7 +50,7 @@
   helm init
   ```
 
-- Ajouter l'achèvement `helm`:
+- Ajouter l'auto-complétion `helm`:
   ```bash
   . <(helm completion $(basename $SHELL))
   ```
@@ -78,7 +78,7 @@
 
 (Définir les rôles et les autorisations exacts sur votre cluster nécessite
 une connaissance plus approfondie du modèle RBAC de Kubernetes. La commande ci-dessus est
-amende pour les clusters personnels et de développement.)
+adaptée pour les clusters personnels et de développement.)
 
 ---
 
@@ -142,7 +142,7 @@ D'où viennent ces options `--set`?
 
 Les métadonnées du chart incluent une URL vers la page d'accueil du projet.
 
-(Parfois, il pointe facilement vers la documentation de la carte.)
+(Parfois, il pointe simplement vers la documentation du chart.)
 
 ---
 

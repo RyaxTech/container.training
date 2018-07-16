@@ -12,7 +12,7 @@
 
   - Si nous supprimons (ou redémarrons) un nœud, un conteneur `rng` va redémarrer ailleurs
 
-- Au lieu d'un `deploiyment`, nous utiliserons un `daemonset`
+- Au lieu d'un `deployment`, nous utiliserons un `daemonset`
 
 ---
 
@@ -170,7 +170,7 @@ Attendez ... Maintenant, cela peut-il être * aussi facile?
 
 - Regardez les ressources que nous avons maintenant:
   ```bash
-  Kubectl get all
+  kubectl get all
   ```
 
 ]
@@ -189,7 +189,7 @@ Nous avons aussi un trop grand nombre de pods.
 
 ---
 
-## `deploy / rng` et` ds / rng`
+## `deploy/rng` et `ds/rng`
 
 - Vous pouvez avoir différents types de ressources avec le même nom
 
@@ -215,9 +215,7 @@ daemonset.apps/rng  2        2        2      2           2          <none>      
 ## Trop de pods
 
 - Si nous vérifions avec `kubectl get pods`, nous voyons:
-
   - *un pod* pour le deployment (nommé `rng-xxxxxxxxxx-yyyyy`)
-
   - *un pod par nœud* pour le daemon set (nommé `rng-zzzzz`)
 
   ```
@@ -229,13 +227,12 @@ daemonset.apps/rng  2        2        2      2           2          <none>      
   ```
 --
 
-Le daemon set a créé un pod par nœud, sauf sur le nœud master.
-
+Le daemon set a créé un pod par nœud, sauf sur le nœud master. 
 Le nœud principal a [taints](https://kubernetes.io/docs/concepts/configuration/taint-and-toleration/) empêchant les pods de s'exécuter.
 
-(Pour planifier un pod sur ce nœud de toute façon, le pod requiert les [tolerations](https://kubernetes.io/docs/concepts/configuration/taint-and-toleration/).) appropriées
+(Pour planifier un pod sur ce nœud de toute façon, le pod requiert les [tolerations](https://kubernetes.io/docs/concepts/configuration/taint-and-toleration/) appropriées.)
 
-.footnote [(Désactivé par un? Nous n'exécutons pas ces pods sur le nœud hébergeant le Control Plane.)]
+<!-- .footnote[(Désactivé par un? Nous n'exécutons pas ces pods sur le nœud hébergeant le Control Plane.)] -->
 
 ---
 
@@ -385,8 +382,7 @@ Bien sûr, l'option 2 offre plus d'opportunités d'apprentissage. Non?
 
 ## Nous avons mis des ressources dans vos ressources
 
-- Rappel: un daemon set est une ressource qui crée plus de ressources!
-
+- Rappel : un daemon set est une ressource qui crée plus de ressources!
 - Il y a une différence entre:
 
   - le(s) label(s) d'une ressource (dans le bloc `metadata` au début)
@@ -398,7 +394,6 @@ Bien sûr, l'option 2 offre plus d'opportunités d'apprentissage. Non?
 - Vous devez mettre à jour le selector et le template (les labels de metadata ne sont pas obligatoires)
 
 - Le template doit correspondre au selector
-
   (c'est-à-dire que la ressource refusera de créer des ressources qu'elle ne sélectionnera pas)
 
 ---
@@ -411,12 +406,12 @@ Bien sûr, l'option 2 offre plus d'opportunités d'apprentissage. Non?
 
 .exercise[
 
-- Mettre à jour le daemon set pour ajouter `isactive:" yes "` au label du selector et du template:
+- Mettre à jour le daemon set pour ajouter `isactive: "yes"` au label du selector et du template:
   ```bash
   kubectl edit daemonset rng
   ```
 
-- Mettre à jour le service pour ajouter `isactive:" yes "` à son selector:
+- Mettre à jour le service pour ajouter `isactive: "yes"` à son selector:
   ```bash
   kubectl edit service rng
   ```
@@ -555,7 +550,7 @@ Ding, dong, le déploiement est mort! Et le daemon set continue à vivre.
 
 - Mais on peut aussi changer ses labels
 
-- Il sera supprimé de l'équilibreur de charge (load balancerr) (il ne recevra plus de trafic)
+- Il sera supprimé de l'équilibreur de charge (load balancer) (il ne recevra plus de trafic)
 
 - Un autre pod sera recréé immédiatement
 

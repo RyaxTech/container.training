@@ -222,13 +222,13 @@ L'espace de noms `kube-system` est utilisé pour le "Control Plane".
 
 - `kube-apiserver` est le serveur API
 
-- `kube-controller-manager` et` kube-scheduler` sont d'autres composants principaux
+- `kube-controller-manager` et `kube-scheduler` sont d'autres composants principaux
 
-- `kube-dns` est un composant supplémentaire (pas obligatoire mais super utile, donc c'est là)
+- `kube-dns` (ou `coredns`) est un composant supplémentaire (pas obligatoire mais super utile, donc c'est là)
 
 - `kube-proxy` est le composant (par noeud) gérant les mappages de ports et tel
 
-- `weave` est le composant (par noeud) gérant le overlay du réseau
+- `weave` est le composant (par noeud) gérant l'overlay du réseau
 
 - la colonne `READY` indique le nombre de conteneurs dans chaque pod
 

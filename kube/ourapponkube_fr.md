@@ -159,7 +159,7 @@ Nous devrions voir:
 
 - Assurez-vous que notre image busybox est maintenant dans le registre local:
   ```bash
-  curl $ REGISTRY / v2 / _catalog
+  curl $REGISTRY/v2/_catalog
   ```
 
 ]
@@ -179,7 +179,7 @@ La commande curl devrait maintenant sortir:
 
 - Allez dans le répertoire `stacks`:
   ```bash
-  cd ~/container.training/stacks
+  cd ~/kube.training/stacks/
   ```
 
 - Construire et pousser les images:
@@ -347,12 +347,12 @@ Nous devrions maintenant voir le «travailleur», bien, travaillant heureusement
 
 - Créez un service `NodePort` pour l'interface Web:
   ```bash
-  kubectl expose deploy/webui --type=NodePort --port=8080
+  kubectl expose deploy/webui --type=NodePort --port=80
   ```
 
 - Vérifiez le port qui a été alloué:
   ```bash
-  kubectl obtenir svc
+  kubectl get svc
   ```
 
 ]

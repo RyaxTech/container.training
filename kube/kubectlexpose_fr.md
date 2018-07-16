@@ -249,4 +249,13 @@ error: the server doesn't have a resource type "endpoint"
 
 - Le type ne représente pas un seul endpoint, mais une liste de endpoints
 
+---
+
+## Reset
+
+- Une fois que vous avez fini de jouer avec ce deployement:
+
+```bash
+kubectl delete deployments elastic
+```
 
