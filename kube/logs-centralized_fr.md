@@ -146,3 +146,13 @@ Mais ceci sort du cadre de ce chapitre.
 Le fichier YAML que nous avons utilisé crée toutes les ressources dans le
 espace de noms `default`, pour plus de simplicité. Dans un scénario réel, vous allez
 créez les ressources dans l'espace de noms `kube-system` ou dans un espace de noms dédié.
+
+
+---
+
+## Pour aller plus loin
+
+- Architecure de [fluentd](https://www.fluentd.org/architecture)
+
+- Le [quickstart](https://docs.fluentd.org/v1.0/articles/quickstart) de fluentd
+

@@ -372,4 +372,10 @@ Nous devrions maintenant voir le «travailleur», bien, travaillant heureusement
 
 *D'accord, nous sommes de retour là où nous avons commencé, quand nous utilisions un seul nœud!*
 
+---
 
+## Pour aller plus loin
+
+- Utiliser un [registre](https://kubernetes.io/docs/concepts/containers/images/) privé ou public.
+
+- [Connécter des services](https://kubernetes.io/docs/concepts/services-networking/connect-applications-service/).

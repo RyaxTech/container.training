@@ -29,6 +29,7 @@ Kubernetes<br/>Introduction, Architecture et Installation<br/>
 
 .debug[
 ```
+ M common/composedown_fr.md
  M intro-fullday.yml.html
  M intro-selfpaced.yml.html
  M kube-fullday.yml.html
@@ -39,24 +40,33 @@ Kubernetes<br/>Introduction, Architecture et Installation<br/>
  M kube-jour3.yml.html
  M kube-selfpaced.yml.html
  M kube/advanced_fr.md
- M kube/configs_fr.md
- M kube/stockage_fr.md
+ M kube/daemonset_fr.md
+ M kube/dashboard_fr.md
+ M kube/helm_fr.md
+ M kube/kubectlexpose_fr.md
+ M kube/kubectlget_fr.md
+ M kube/kubectlrun_fr.md
+ M kube/logs-centralized_fr.md
+ M kube/namespaces_fr.md
+ M kube/ourapponkube_fr.md
+ M kube/rollout_fr.md
+ M kube/setup-k8s_fr.md
  M swarm-fullday.yml.html
  M swarm-halfday.yml.html
  M swarm-selfpaced.yml.html
  M swarm-video.yml.html
 ?? .directory
 ?? common/.directory
-?? common/cncf_fr.md
-?? images/CloudNativeLandscape_latest.png
 ?? intro/.directory
 ?? kube/.directory
+?? kube/netisolation_fr.md
+?? kube/recapj1_fr.md
 ?? slides/
 ?? swarm/.directory
 
 ```
 
-These slides have been built from commit: 527da17
+These slides have been built from commit: 071630c
 
 
 [common/title_fr.md](https://github.com/RyaxTech/kube.training.git/tree/gh-pages//common/title_fr.md)]
@@ -1476,6 +1486,14 @@ Note: ceci est une fiction! Nous avons assez d'entropie. Mais nous avons besoin 
 .debug[[common/composedown_fr.md](https://github.com/RyaxTech/kube.training.git/tree/gh-pages//common/composedown_fr.md)]
 ---
 
+## Pour aller plus loin avec Docker Compose
+
+- Lisez l'[overview](https://docs.docker.com/compose/overview/) de la documentation officielle.
+
+- Les exemples sont aussi intéréssant, comme le [Quickstart: Compose and WordPress](https://docs.docker.com/compose/wordpress/).
+.debug[[common/composedown_fr.md](https://github.com/RyaxTech/kube.training.git/tree/gh-pages//common/composedown_fr.md)]
+---
+
 class: pic
 
 .interstitial[![Image separating from the next chapter](https://gallant-turing-d0d520.netlify.com/containers/container-cranes.jpg)]
@@ -2400,6 +2418,18 @@ L'espace de noms `kube-system` est utilisé pour le "Control Plane".
 .debug[[kube/kubectlget_fr.md](https://github.com/RyaxTech/kube.training.git/tree/gh-pages//kube/kubectlget_fr.md)]
 ---
 
+## Pour aller plus loin
+
+- Les [composants de bases](https://kubernetes.io/docs/concepts/overview/components/) de Kubernetes.
+
+- Comprendre [les objets](https://kubernetes.io/docs/concepts/overview/working-with-objects/kubernetes-objects/) de Kubernetes.
+
+
+
+
+.debug[[kube/kubectlget_fr.md](https://github.com/RyaxTech/kube.training.git/tree/gh-pages//kube/kubectlget_fr.md)]
+---
+
 class: pic
 
 .interstitial[![Image separating from the next chapter](https://gallant-turing-d0d520.netlify.com/containers/lots-of-containers.jpg)]
@@ -2468,7 +2498,7 @@ OK, qu'est-ce qui vient de se passer?
 
 - Listez la plupart des types de ressources:
   ```bash
-  Kubectl get all
+  kubectl get all
   ```
 
 ]
@@ -2630,16 +2660,15 @@ Nous pourrions! Mais le *deployment* le remarquerait tout de suite et reviendrai
 
 - Et si nous voulions démarrer un conteneur "one-shot" qui ne redémarre pas?
 
-- Nous pourrions utiliser `kubectl run --restart=OnFailure` ouv`kubectl run --restart=Never`
+- Nous pourrions utiliser `kubectl run --restart=OnFailure` ou `kubectl run --restart=Never`
 
 - Ces commandes créeraient *jobs* ou *pods* au lieu de *deployments*
 
 - Sous le tapis, `kubectl run` invoque des "generators" pour créer des descriptions de ressources
 
-- Nous pourrions aussi écrire nous-mêmes ces descriptions de ressources (typiquement en YAML),
-  <br/> et créez-les sur le cluster avec `kubectl apply -f` (discuté plus tard)
+- Nous pourrions aussi écrire nous-mêmes ces descriptions de ressources (typiquement en YAML), et les créer sur le cluster avec `kubectl apply -f` (discuté plus tard)
 
-- Avec `kubectl run --schedule = ...`, nous pouvons aussi créer *cronjobs*
+- Avec `kubectl run --schedule=...`, nous pouvons aussi créer des *cronjobs*
 
 .debug[[kube/kubectlrun_fr.md](https://github.com/RyaxTech/kube.training.git/tree/gh-pages//kube/kubectlrun_fr.md)]
 ---
@@ -2680,6 +2709,31 @@ Malheureusement, `--follow` ne peut pas (encore) être utilisé pour diffuser le
 
 - Il est très peu probable que nos pings concertés parviennent à produire
   même un modeste coup au Cloudflare!
+
+.debug[[kube/kubectlrun_fr.md](https://github.com/RyaxTech/kube.training.git/tree/gh-pages//kube/kubectlrun_fr.md)]
+---
+
+## Tout couper
+
+.exercise[
+
+- Arrétez le deployment:
+  ```bash
+  kubectl delete deploy/pingpong
+  ```
+- Quel est l'état de l'application ?
+  ```bash
+  kubectl get all
+  ```
+
+]
+
+- Pour aller plus loin:
+
+  - [Lancer un deployement dupuis un fichier YAML](https://kubernetes.io/docs/tasks/run-application/run-stateless-application-deployment/)
+
+  - [Lancer un *cronjob*](https://kubernetes.io/docs/tasks/job/automated-tasks-with-cron-jobs/)
+
 
 .debug[[kube/kubectlrun_fr.md](https://github.com/RyaxTech/kube.training.git/tree/gh-pages//kube/kubectlrun_fr.md)]
 ---
@@ -2796,6 +2850,15 @@ Installation de Kubernetes
 - Pour une liste plus longue, consultez la documentation de Kubernetes:
   <br/>
   il a un excellent guide pour [choisir la bonne solution](https://kubernetes.io/docs/setup/pick-right-solution/) pour configurer Kubernetes.
+
+.debug[[kube/setup-k8s_fr.md](https://github.com/RyaxTech/kube.training.git/tree/gh-pages//kube/setup-k8s_fr.md)]
+---
+
+## Installation avec Kubeadm
+
+- Nous n'allons pas faire l'installation de Kubernetes.
+
+- Les slides suivantes vous permettes d'avoir les bases avec Kubeadm.
 
 .debug[[kube/setup-k8s_fr.md](https://github.com/RyaxTech/kube.training.git/tree/gh-pages//kube/setup-k8s_fr.md)]
 ---
@@ -3192,6 +3255,28 @@ Les implications de sécurité de `kubectl apply`
 
 - Il introduit de nouveaux modes de défaillance (comme si vous essayez d'appliquer yaml à partir d'un lien qui n'est plus valide)
 
+
+.debug[[kube/dashboard_fr.md](https://github.com/RyaxTech/kube.training.git/tree/gh-pages//kube/dashboard_fr.md)]
+---
+
+## Pour aller plus loin
+
+
+.exercise[
+- Relancez l'exemple préçédent
+  ```bash
+  kubectl run pingpong --image alpine ping 1.1.1.1
+  ```
+- Observez le deployment et son pod. Trouvez-vous les logs du pod?
+
+- Arrétez le deployment.
+
+]
+
+Vous pouvez stopper le dashboard ou le laisser. Comme le dashboard n'est pas sécurisé, nous conseillons de l'arréter.
+```bash
+  kubectl delete -f https://goo.gl/CHsLTA
+  ```
 
 
 

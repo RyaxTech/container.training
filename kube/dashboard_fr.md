@@ -261,4 +261,25 @@ Le dashboard vous demandera ensuite l'authentification que vous souhaitez utilis
 - Il introduit de nouveaux modes de défaillance (comme si vous essayez d'appliquer yaml à partir d'un lien qui n'est plus valide)
 
 
+---
+
+## Pour aller plus loin
+
+
+.exercise[
+- Relancez l'exemple préçédent
+  ```bash
+  kubectl run pingpong --image alpine ping 1.1.1.1
+  ```
+- Observez le deployment et son pod. Trouvez-vous les logs du pod?
+
+- Arrétez le deployment.
+
+]
+
+Vous pouvez stopper le dashboard ou le laisser. Comme le dashboard n'est pas sécurisé, nous conseillons de l'arréter.
+```bash
+  kubectl delete -f https://goo.gl/CHsLTA
+  ```
+
 

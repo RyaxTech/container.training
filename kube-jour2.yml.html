@@ -29,6 +29,7 @@ Kubernetes <br/>Concepts de base, Services et Deploiement <br/>
 
 .debug[
 ```
+ M common/composedown_fr.md
  M intro-fullday.yml.html
  M intro-selfpaced.yml.html
  M kube-fullday.yml.html
@@ -39,24 +40,33 @@ Kubernetes <br/>Concepts de base, Services et Deploiement <br/>
  M kube-jour3.yml.html
  M kube-selfpaced.yml.html
  M kube/advanced_fr.md
- M kube/configs_fr.md
- M kube/stockage_fr.md
+ M kube/daemonset_fr.md
+ M kube/dashboard_fr.md
+ M kube/helm_fr.md
+ M kube/kubectlexpose_fr.md
+ M kube/kubectlget_fr.md
+ M kube/kubectlrun_fr.md
+ M kube/logs-centralized_fr.md
+ M kube/namespaces_fr.md
+ M kube/ourapponkube_fr.md
+ M kube/rollout_fr.md
+ M kube/setup-k8s_fr.md
  M swarm-fullday.yml.html
  M swarm-halfday.yml.html
  M swarm-selfpaced.yml.html
  M swarm-video.yml.html
 ?? .directory
 ?? common/.directory
-?? common/cncf_fr.md
-?? images/CloudNativeLandscape_latest.png
 ?? intro/.directory
 ?? kube/.directory
+?? kube/netisolation_fr.md
+?? kube/recapj1_fr.md
 ?? slides/
 ?? swarm/.directory
 
 ```
 
-These slides have been built from commit: 527da17
+These slides have been built from commit: 071630c
 
 
 [common/title_fr.md](https://github.com/RyaxTech/kube.training.git/tree/gh-pages//common/title_fr.md)]
@@ -104,6 +114,8 @@ name: toc-chapter-3
 
 - [Mise à jour d'un service via des labels et des selectors](#toc-mise--jour-dun-service-via-des-labels-et-des-selectors)
 
+- [Recap Jour 1](#toc-recap-jour-)
+
 - [Rolling updates](#toc-rolling-updates)
 
 - [Accès aux logs depuis le CLI](#toc-accs-aux-logs-depuis-le-cli)
@@ -119,6 +131,8 @@ name: toc-chapter-4
 - [Gestion des stacks avec Helm](#toc-gestion-des-stacks-avec-helm)
 
 - [Namespaces](#toc-namespaces)
+
+- [Isolation de Pods](#toc-isolation-de-pods)
 
 .debug[(auto-generated TOC)]
 
@@ -646,6 +660,9 @@ error: the server doesn't have a resource type "endpoint"
 ```bash
 kubectl delete deployments elastic
 ```
+- Pour aller plus loin:
+  - Le [concept](https://kubernetes.io/docs/concepts/services-networking/service/) des services de la doc officiel
+  - [DNS pour les services](https://kubernetes.io/docs/concepts/services-networking/dns-pod-service/)
 
 
 .debug[[kube/kubectlexpose_fr.md](https://github.com/RyaxTech/kube.training.git/tree/gh-pages//kube/kubectlexpose_fr.md)]
@@ -1111,7 +1128,14 @@ Exposant des services pour un accès externe
 
 *D'accord, nous sommes de retour là où nous avons commencé, quand nous utilisions un seul nœud!*
 
+.debug[[kube/ourapponkube_fr.md](https://github.com/RyaxTech/kube.training.git/tree/gh-pages//kube/ourapponkube_fr.md)]
+---
 
+## Pour aller plus loin
+
+- Utiliser un [registre](https://kubernetes.io/docs/concepts/containers/images/) privé ou public.
+
+- [Connécter des services](https://kubernetes.io/docs/concepts/services-networking/connect-applications-service/).
 
 .debug[[kube/ourapponkube_fr.md](https://github.com/RyaxTech/kube.training.git/tree/gh-pages//kube/ourapponkube_fr.md)]
 ---
@@ -1561,7 +1585,7 @@ Mise à jour d'un service via des labels et des selectors
 |
 [Retour table des matières](#toc-chapter-3)
 |
-[Section suivante](#toc-rolling-updates)
+[Section suivante](#toc-recap-jour-)
 ]
 
 .debug[(automatically generated title slide)]
@@ -1816,6 +1840,17 @@ Ding, dong, le déploiement est mort! Et le daemon set continue à vivre.
 
 - Cela nous donne des blocs de construction pour les "canary" et "blue/green deployments"
 
+.debug[[kube/daemonset_fr.md](https://github.com/RyaxTech/kube.training.git/tree/gh-pages//kube/daemonset_fr.md)]
+---
+
+## Pour aller plus loin
+
+- Comprendre le concept des [DaemonSet](https://kubernetes.io/docs/concepts/workloads/controllers/daemonset/)
+
+- Comprendre les [labels et selectors](https://kubernetes.io/docs/concepts/overview/working-with-objects/labels/)
+
+
+
 
 
 .debug[[kube/daemonset_fr.md](https://github.com/RyaxTech/kube.training.git/tree/gh-pages//kube/daemonset_fr.md)]
@@ -1827,13 +1862,125 @@ class: pic
 
 ---
 
+name: toc-recap-jour-
+class: title
+
+Recap Jour 1
+
+.nav[
+[Section précédente](#toc-mise--jour-dun-service-via-des-labels-et-des-selectors)
+|
+[Retour table des matières](#toc-chapter-3)
+|
+[Section suivante](#toc-rolling-updates)
+]
+
+.debug[(automatically generated title slide)]
+
+---
+
+# Recap Jour 1
+
+Obectif: déployee un service faisant du A/B Testing.
+
+- Mise en place...
+
+.debug[[kube/recapj1_fr.md](https://github.com/RyaxTech/kube.training.git/tree/gh-pages//kube/recapj1_fr.md)]
+---
+
+## Construction des containers
+
+.exercise[
+
+- Dans un nouveau dossier vide, créer:
+
+`Dockerfile_A`:
+  ```
+FROM alpine
+RUN apk add python2
+RUN echo "A" > /tmp/whoami.txt
+CMD cd /tmp ; python -m SimpleHTTPServer 80
+  ```
+
+`Dockerfile_B`:
+  ```
+FROM alpine
+RUN apk add python2
+RUN echo "B" > /tmp/whoami.txt
+CMD cd /tmp ; python -m SimpleHTTPServer 80
+  ```
+
+]
+
+.debug[[kube/recapj1_fr.md](https://github.com/RyaxTech/kube.training.git/tree/gh-pages//kube/recapj1_fr.md)]
+---
+
+## Mise en place des containers
+
+.exercise[
+
+- On récupère l'URL de notre registery docker:
+  ```bash
+  NODEPORT=$(kubectl get svc/registry -o json | jq .spec.ports[0].nodePort)
+  REGISTRY=127.0.0.1:$NODEPORT
+  ```
+- Build et push les images:
+  ```bash
+docker build -t $REGISTRY/serverweb:vA -f Dockerfile_A .
+docker build -t $REGISTRY/serverweb:vB -f Dockerfile_B .
+docker tag $REGISTRY/serverweb:vA $REGISTRY/serverweb:vA
+docker tag $REGISTRY/serverweb:vB $REGISTRY/serverweb:vB
+docker push $REGISTRY/serverweb:vA
+docker push $REGISTRY/serverweb:vB
+  ```
+
+]
+
+.debug[[kube/recapj1_fr.md](https://github.com/RyaxTech/kube.training.git/tree/gh-pages//kube/recapj1_fr.md)]
+---
+
+## C'est parti!
+
+.exercise[
+
+- Maintenant créez un service qui va servir soit A, soit B
+
+- Conseil: ne foncez pas tête baisser. Faites un plan, puis éxecutez le.
+
+- Bonus: faites ça en un seul fichier yaml.
+
+]
+
+<!--
+kubectl run serverweba --image $REGISTRY/serverweb:vA
+kubectl run serverwebb --image $REGISTRY/serverweb:vB
+
+kubectl expose serverwebab --type=NodePort --port 80
+
+=> edit each service (and their template) to have a common key/value
+=> edit the service to select this key/value.-->
+
+
+
+
+
+
+.debug[[kube/recapj1_fr.md](https://github.com/RyaxTech/kube.training.git/tree/gh-pages//kube/recapj1_fr.md)]
+---
+
+class: pic
+
+.interstitial[![Image separating from the next chapter](https://gallant-turing-d0d520.netlify.com/containers/plastic-containers.JPG)]
+
+---
+
 name: toc-rolling-updates
 class: title
 
 Rolling updates
 
 .nav[
-[Section précédente](#toc-mise--jour-dun-service-via-des-labels-et-des-selectors)
+[Section précédente](#toc-recap-jour-)
 |
 [Retour table des matières](#toc-chapter-3)
 |
@@ -2140,9 +2287,18 @@ spec:
 .debug[[kube/rollout_fr.md](https://github.com/RyaxTech/kube.training.git/tree/gh-pages//kube/rollout_fr.md)]
 ---
 
+## Pour aller plus loin
+
+- Rolout de [deployment](https://kubernetes.io/docs/concepts/workloads/controllers/deployment/)
+
+- Mise-à-jour des containeurs dans [kubernetes](https://www.linux.com/learn/rolling-updates-and-rollbacks-using-kubernetes-deployments)
+
+.debug[[kube/rollout_fr.md](https://github.com/RyaxTech/kube.training.git/tree/gh-pages//kube/rollout_fr.md)]
+---
+
 class: pic
 
-.interstitial[![Image separating from the next chapter](https://gallant-turing-d0d520.netlify.com/containers/plastic-containers.JPG)]
+.interstitial[![Image separating from the next chapter](https://gallant-turing-d0d520.netlify.com/containers/train-of-containers-1.jpg)]
 
 ---
 
@@ -2298,7 +2454,7 @@ Ces instructions d'installation fonctionneront sur nos clusters, car ce sont des
 
 class: pic
 
-.interstitial[![Image separating from the next chapter](https://gallant-turing-d0d520.netlify.com/containers/train-of-containers-1.jpg)]
+.interstitial[![Image separating from the next chapter](https://gallant-turing-d0d520.netlify.com/containers/train-of-containers-2.jpg)]
 
 ---
 
@@ -2474,12 +2630,23 @@ Le fichier YAML que nous avons utilisé crée toutes les ressources dans le
 espace de noms `default`, pour plus de simplicité. Dans un scénario réel, vous allez
 créez les ressources dans l'espace de noms `kube-system` ou dans un espace de noms dédié.
 
+
+.debug[[kube/logs-centralized_fr.md](https://github.com/RyaxTech/kube.training.git/tree/gh-pages//kube/logs-centralized_fr.md)]
+---
+
+## Pour aller plus loin
+
+- Architecure de [fluentd](https://www.fluentd.org/architecture)
+
+- Le [quickstart](https://docs.fluentd.org/v1.0/articles/quickstart) de fluentd
+
+
 .debug[[kube/logs-centralized_fr.md](https://github.com/RyaxTech/kube.training.git/tree/gh-pages//kube/logs-centralized_fr.md)]
 ---
 
 class: pic
 
-.interstitial[![Image separating from the next chapter](https://gallant-turing-d0d520.netlify.com/containers/train-of-containers-2.jpg)]
+.interstitial[![Image separating from the next chapter](https://gallant-turing-d0d520.netlify.com/containers/two-containers-on-a-truck.jpg)]
 
 ---
 
@@ -2728,12 +2895,21 @@ Les métadonnées du chart incluent une URL vers la page d'accueil du projet.
 
 - Pour éviter les conflits de noms, nous allons déployer l'application dans un autre *namespace*
 
+
+.debug[[kube/helm_fr.md](https://github.com/RyaxTech/kube.training.git/tree/gh-pages//kube/helm_fr.md)]
+---
+
+## Pour aller plus loin
+
+- Le [quickstart](https://docs.helm.sh/using_helm/#quickstart) de helm.
+
+- Le dépot public de [charts helm](https://hub.kubeapps.com/)
 .debug[[kube/helm_fr.md](https://github.com/RyaxTech/kube.training.git/tree/gh-pages//kube/helm_fr.md)]
 ---
 
 class: pic
 
-.interstitial[![Image separating from the next chapter](https://gallant-turing-d0d520.netlify.com/containers/two-containers-on-a-truck.jpg)]
+.interstitial[![Image separating from the next chapter](https://gallant-turing-d0d520.netlify.com/containers/wall-of-containers.jpeg)]
 
 ---
 
@@ -2747,7 +2923,7 @@ Namespaces
 |
 [Retour table des matières](#toc-chapter-4)
 |
-[Section suivante](#toc-)
+[Section suivante](#toc-isolation-de-pods)
 ]
 
 .debug[(automatically generated title slide)]
@@ -2915,7 +3091,29 @@ Remarque: l'application peut prendre une minute ou deux pour être opérationnel
 .debug[[kube/namespaces_fr.md](https://github.com/RyaxTech/kube.training.git/tree/gh-pages//kube/namespaces_fr.md)]
 ---
 
-## Isolation de Pods
+class: pic
+
+.interstitial[![Image separating from the next chapter](https://gallant-turing-d0d520.netlify.com/containers/Container-Ship-Freighter-Navigation-Elbe-Romance-1782991.jpg)]
+
+---
+
+name: toc-isolation-de-pods
+class: title
+
+Isolation de Pods
+
+.nav[
+[Section précédente](#toc-namespaces)
+|
+[Retour table des matières](#toc-chapter-4)
+|
+[Section suivante](#toc-)
+]
+
+.debug[(automatically generated title slide)]
+
+---
+# Isolation de Pods
 
 - L'isolation réelle est implémentée avec les *network policies* (politiques de réseau)
 
@@ -2929,12 +3127,13 @@ Remarque: l'application peut prendre une minute ou deux pour être opérationnel
 
   - et vice versa
 
-.debug[[kube/namespaces_fr.md](https://github.com/RyaxTech/kube.training.git/tree/gh-pages//kube/namespaces_fr.md)]
+(le plugin CNI doit supporter les *NetworkPolicy*)
+.debug[[kube/netisolation_fr.md](https://github.com/RyaxTech/kube.training.git/tree/gh-pages//kube/netisolation_fr.md)]
 ---
 
 ## Présentation des network policies
 
-- Nous pouvons créer autant de politiques de réseau *network policies* que nous voulons
+- Nous pouvons créer autant de politiques de réseau *NetworkPolicy* que nous voulons
 
 - Chaque network policy a:
 
@@ -2946,12 +3145,132 @@ Remarque: l'application peut prendre une minute ou deux pour être opérationnel
 
 - Si un pod est ciblé par au moins une politique, le trafic doit être autorisé explicitement
 
-.debug[[kube/namespaces_fr.md](https://github.com/RyaxTech/kube.training.git/tree/gh-pages//kube/namespaces_fr.md)]
+- Si un pod match plusieurs *NetworkPolicy*, l'union des règles est utilisé (policyA *ou* poliyB)
+
+.debug[[kube/netisolation_fr.md](https://github.com/RyaxTech/kube.training.git/tree/gh-pages//kube/netisolation_fr.md)]
+---
+
+## Mise en place de l'exemple
+
+.exercise[
+
+- Déployons un nginx.
+  ```bash
+kubectl run nginx --image=nginx --replicas=2
+kubectl expose deployment nginx --port=80
+  ```
+
+- Regardons que tout s'est bien passé
+  ```bash
+kubectl get svc,pod | grep nginx
+  ```
+
+]
+
+.debug[[kube/netisolation_fr.md](https://github.com/RyaxTech/kube.training.git/tree/gh-pages//kube/netisolation_fr.md)]
+---
+
+## Mise en place de l'exemple
+
+.exercise[
+
+- Testons le service depuis un pod
+  ```bash
+kubectl run -i --tty interactivetest --image=alpine --restart=Never --rm -- sh
+  ```
+(ceci va démarrer une session interractive où les entrés clavier et sorties terminal sont redirigées un pod appelé *hackerz*, qui contient un container *alpine*, qui ne sera jamais redémarré, supprimé une fois la commande finie, et qui lance la commande *sh*)
+
+- On vérifie l'accès à nginx:
+  ```bash
+wget -qO- nginx
+  ```
+
+]
+
+.debug[[kube/netisolation_fr.md](https://github.com/RyaxTech/kube.training.git/tree/gh-pages//kube/netisolation_fr.md)]
+---
+
+## Interdir tout le trafic
+
+.exercise[
+
+- Créez un fichier yaml contenant:
+```yaml
+kind: NetworkPolicy
+apiVersion: networking.k8s.io/v1
+metadata:
+  name: access-nginx
+spec:
+  podSelector:
+    matchLabels:
+      run: nginx
+  ingress:
+  - from:
+    - podSelector:
+        matchLabels:
+            iamnice: yeah
+```
+et déployez-le.
+
+]
+
+.debug[[kube/netisolation_fr.md](https://github.com/RyaxTech/kube.training.git/tree/gh-pages//kube/netisolation_fr.md)]
+---
+
+## Interdir tout le trafic, vraiment ?
+
+.exercise[
+
+- ré-éssayons de nous connecter au nginx:
+
+  ```bash
+wget -qO- nginx
+```
+
+- le traffic est bloqué !
+
+]
+.debug[[kube/netisolation_fr.md](https://github.com/RyaxTech/kube.training.git/tree/gh-pages//kube/netisolation_fr.md)]
+---
+
+## Interdir tout le trafic sauf à *iamnice*
+
+.exercise[
+
+- Redémarrons notre pod de test avec les bons labels (ctrl+d ou exit pour quitter l'ancien):
+
+  ```bash
+kubectl run -i --tty interactivetest --image=alpine --labels="iamnice=yeah" --restart=Never --rm -- sh
+```
+
+Depuis ce pod, l'accès  devrait fonctionner...
+  ```bash
+wget -qO- nginx
+```
+
+]
+
+.debug[[kube/netisolation_fr.md](https://github.com/RyaxTech/kube.training.git/tree/gh-pages//kube/netisolation_fr.md)]
+---
+
+## Reset
+
+Supprimez le service, le deployement et le network policy de cet exemple.
+
+
+
+.debug[[kube/netisolation_fr.md](https://github.com/RyaxTech/kube.training.git/tree/gh-pages//kube/netisolation_fr.md)]
 ---
 
 ## En savoir plus sur les network policies
 
-- Cela reste un aperçu de haut niveau des network policies
+- On peut aussi faire des *selectors* sur les namespaces
+    - très utile pour interdire aux containeurs d'accèder à l'API kubernetes!
+
+- On peut interdire/autoriser les communications vers/depuis des ports particuliers
+
+- Idem avec des IPs et blocs d'IPs.
+
 
 - Pour plus de détails regardez:
 
@@ -2959,7 +3278,9 @@ Remarque: l'application peut prendre une minute ou deux pour être opérationnel
 
   - ceci [presentation de network policies chez KubeCon 2017 US](https://www.youtube.com/watch?v=3gGpMmYeEO8) par [@ahmetb](https://twitter.com/ahmetb)
 
-.debug[[kube/namespaces_fr.md](https://github.com/RyaxTech/kube.training.git/tree/gh-pages//kube/namespaces_fr.md)]</textarea>
+  - et des [exercices](https://github.com/ahmetb/kubernetes-network-policy-recipes)
+
+.debug[[kube/netisolation_fr.md](https://github.com/RyaxTech/kube.training.git/tree/gh-pages//kube/netisolation_fr.md)]</textarea>
     <script src="remark.min.js" type="text/javascript">
     </script>
     <script type="text/javascript">

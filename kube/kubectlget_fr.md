@@ -267,3 +267,14 @@ L'espace de noms `kube-system` est utilisé pour le "Control Plane".
 
 - `kube-public` est créé par kubeadm & [utilisé pour le bootstrap de sécurité](https://kubernetes.io/blog/2017/01/stronger-foundation-for-creating-and-managing-kubernetes-clusters)
 
+
+---
+
+## Pour aller plus loin
+
+- Les [composants de bases](https://kubernetes.io/docs/concepts/overview/components/) de Kubernetes.
+
+- Comprendre [les objets](https://kubernetes.io/docs/concepts/overview/working-with-objects/kubernetes-objects/) de Kubernetes.
+
+
+

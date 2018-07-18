@@ -217,3 +217,12 @@ Les métadonnées du chart incluent une URL vers la page d'accueil du projet.
 `Error: release loitering-otter failed: services "hasher" already exists`
 
 - Pour éviter les conflits de noms, nous allons déployer l'application dans un autre *namespace*
+
+
+---
+
+## Pour aller plus loin
+
+- Le [quickstart](https://docs.helm.sh/using_helm/#quickstart) de helm.
+
+- Le dépot public de [charts helm](https://hub.kubeapps.com/)

@@ -278,3 +278,11 @@ spec:
 ]
 
 
+
+---
+
+## Pour aller plus loin
+
+- Rolout de [deployment](https://kubernetes.io/docs/concepts/workloads/controllers/deployment/)
+
+- Mise-à-jour des containeurs dans [kubernetes](https://www.linux.com/learn/rolling-updates-and-rollbacks-using-kubernetes-deployments)

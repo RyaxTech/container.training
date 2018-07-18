@@ -578,4 +578,14 @@ Ding, dong, le déploiement est mort! Et le daemon set continue à vivre.
 
 - Cela nous donne des blocs de construction pour les "canary" et "blue/green deployments"
 
+---
+
+## Pour aller plus loin
+
+- Comprendre le concept des [DaemonSet](https://kubernetes.io/docs/concepts/workloads/controllers/daemonset/)
+
+- Comprendre les [labels et selectors](https://kubernetes.io/docs/concepts/overview/working-with-objects/labels/)
+
+
+
 

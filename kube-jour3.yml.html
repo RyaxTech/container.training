@@ -29,6 +29,7 @@ Kubernetes <br/>Stockage, Configuration, Secrets et Concepts Avancés <br/>
 
 .debug[
 ```
+ M common/composedown_fr.md
  M intro-fullday.yml.html
  M intro-selfpaced.yml.html
  M kube-fullday.yml.html
@@ -39,24 +40,33 @@ Kubernetes <br/>Stockage, Configuration, Secrets et Concepts Avancés <br/>
  M kube-jour3.yml.html
  M kube-selfpaced.yml.html
  M kube/advanced_fr.md
- M kube/configs_fr.md
- M kube/stockage_fr.md
+ M kube/daemonset_fr.md
+ M kube/dashboard_fr.md
+ M kube/helm_fr.md
+ M kube/kubectlexpose_fr.md
+ M kube/kubectlget_fr.md
+ M kube/kubectlrun_fr.md
+ M kube/logs-centralized_fr.md
+ M kube/namespaces_fr.md
+ M kube/ourapponkube_fr.md
+ M kube/rollout_fr.md
+ M kube/setup-k8s_fr.md
  M swarm-fullday.yml.html
  M swarm-halfday.yml.html
  M swarm-selfpaced.yml.html
  M swarm-video.yml.html
 ?? .directory
 ?? common/.directory
-?? common/cncf_fr.md
-?? images/CloudNativeLandscape_latest.png
 ?? intro/.directory
 ?? kube/.directory
+?? kube/netisolation_fr.md
+?? kube/recapj1_fr.md
 ?? slides/
 ?? swarm/.directory
 
 ```
 
-These slides have been built from commit: 527da17
+These slides have been built from commit: 071630c
 
 
 [common/title_fr.md](https://github.com/RyaxTech/kube.training.git/tree/gh-pages//common/title_fr.md)]
@@ -97,8 +107,6 @@ name: toc-chapter-2
 name: toc-chapter-3
 
 ## Chapter 3
-
-- [Isolation et politiques de réseau](#toc-isolation-et-politiques-de-rseau)
 
 - [Déploiement de Jupiter sur Kubernetes](#toc-dploiement-de-jupiter-sur-kubernetes)
 
@@ -681,7 +689,7 @@ Introduction des secrets
 |
 [Retour table des matières](#toc-chapter-2)
 |
-[Section suivante](#toc-isolation-et-politiques-de-rseau)
+[Section suivante](#toc-dploiement-de-jupiter-sur-kubernetes)
 ]
 
 .debug[(automatically generated title slide)]
@@ -737,105 +745,13 @@ class: pic
 
 ---
 
-name: toc-isolation-et-politiques-de-rseau
-class: title
-
-Isolation et politiques de réseau
-
-.nav[
-[Section précédente](#toc-introduction-des-secrets)
-|
-[Retour table des matières](#toc-chapter-3)
-|
-[Section suivante](#toc-dploiement-de-jupiter-sur-kubernetes)
-]
-
-.debug[(automatically generated title slide)]
-
----
-# Isolation et politiques de réseau
-
-- Les Namespaces *ne fournissent pas* de l'isolation
-
-- Un pod dans le namespace `default` peut communiquer avec un pod dans le namespace `kube-system`.
-
-- kube-dns utilise un sous-domaine différent pour chaque espace de nommage
-
-- Exemple : à partir de n'importe quel pod du cluster, vous pouvez vous connecter à l'API Kubernetes avec :
-
-  `https://kubernetes.default.svc.cluster.local:443/`
-
-.debug[[kube/advanced_fr.md](https://github.com/RyaxTech/kube.training.git/tree/gh-pages//kube/advanced_fr.md)]
----
-
-## Isolation de pods
-
-- L'isolement réel est mis en œuvre avec des *politiques de réseau* (network policies).
-
-- Les politiques réseau sont des ressources (comme les déploiements, les services, les namespaces....).
-
-- Les politiques de réseau spécifient les flux autorisés :
-
-  - entre les pods
-
-  - du pod au monde extérieur
-
-  - et vice-versa
-
-.debug[[kube/advanced_fr.md](https://github.com/RyaxTech/kube.training.git/tree/gh-pages//kube/advanced_fr.md)]
----
-
-## Network policies
-
-- Nous pouvons créer autant de politiques de réseau que nous le voulons.
-
-- Chaque politique de réseau a :
-
-  - un *pod selector* : "Quelles sont les pods visées par la politique ?"
-
-  - des listes de règles d'entrée (ingress) et/ou de sortie (egress) : "Quels pairs et ports sont autorisés ou bloqués ?"
-
-- Si un pod n'est pas visé par une politique, le trafic est autorisé par défaut.
-
-- Si un pod est visé par au moins une politique, le trafic doit être explicitement autorisé.
-
-.debug[[kube/advanced_fr.md](https://github.com/RyaxTech/kube.training.git/tree/gh-pages//kube/advanced_fr.md)]
----
-
-## Plus d'infos sur Network policies 
-
-- Pour plus de détails, vérifiez :
-
-  - la documentation de Kubernetes sur les politiques de réseau](https://kubernetes.io/docs/concepts/services-networking/network-policies/)
-
-  - ce [talk sur network policies fait au KubeCon 2017 US](https://www.youtube.com/watch?v=3gGpMmYeEO8) par [@ahmetb](https://twitter.com/ahmetb)
-
-.debug[[kube/advanced_fr.md](https://github.com/RyaxTech/kube.training.git/tree/gh-pages//kube/advanced_fr.md)]
----
-
-## Exercices sur les Network policies
-
-.exercise[
-- Pour exécuter quelques exercices sur les politiques de réseau, nous allons suivre quelques exemples ici : 
-  https://github.com/ahmetb/kubernetes-network-policy-recipes
-]
-
-.debug[[kube/advanced_fr.md](https://github.com/RyaxTech/kube.training.git/tree/gh-pages//kube/advanced_fr.md)]
----
-
-class: pic
-
-.interstitial[![Image separating from the next chapter](https://gallant-turing-d0d520.netlify.com/containers/containers-by-the-water.jpg)]
-
----
-
 name: toc-dploiement-de-jupiter-sur-kubernetes
 class: title
 
 Déploiement de Jupiter sur Kubernetes
 
 .nav[
-[Section précédente](#toc-isolation-et-politiques-de-rseau)
+[Section précédente](#toc-introduction-des-secrets)
 |
 [Retour table des matières](#toc-chapter-3)
 |
@@ -858,7 +774,7 @@ Déploiement de Jupiter sur Kubernetes
 
 class: pic
 
-.interstitial[![Image separating from the next chapter](https://gallant-turing-d0d520.netlify.com/containers/distillery-containers.jpg)]
+.interstitial[![Image separating from the next chapter](https://gallant-turing-d0d520.netlify.com/containers/containers-by-the-water.jpg)]
 
 ---
 
@@ -892,7 +808,7 @@ Scheduling avancée avec Kubernetes
 
 class: pic
 
-.interstitial[![Image separating from the next chapter](https://gallant-turing-d0d520.netlify.com/containers/lots-of-containers.jpg)]
+.interstitial[![Image separating from the next chapter](https://gallant-turing-d0d520.netlify.com/containers/distillery-containers.jpg)]
 
 ---
 
@@ -924,7 +840,7 @@ Autoscaling avec Kubernetes
 
 class: pic
 
-.interstitial[![Image separating from the next chapter](https://gallant-turing-d0d520.netlify.com/containers/plastic-containers.JPG)]
+.interstitial[![Image separating from the next chapter](https://gallant-turing-d0d520.netlify.com/containers/lots-of-containers.jpg)]
 
 ---
 
