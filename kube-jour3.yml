@@ -20,6 +20,7 @@ chapters:
   #- kube/intro.md
   #- common/about-slides.md
 - common/toc.md
+- - kube/serverless_fr.md
 - - kube/stockage_fr.md
 - - kube/configs_fr.md
 - - kube/advanced_fr.md  

@@ -29,28 +29,20 @@ Kubernetes <br/>Stockage, Configuration, Secrets et Concepts Avancés <br/>
 
 .debug[
 ```
- M common/composedown_fr.md
+A  images/CloudNativeLandscape_Serverless_latest.png
+A  images/serverless_apigateway.png
  M intro-fullday.yml.html
  M intro-selfpaced.yml.html
  M kube-fullday.yml.html
  M kube-halfday.yml.html
  M kube-jour1.yml.html
- M kube-jour2.yml
  M kube-jour2.yml.html
+ M kube-jour3.yml
  M kube-jour3.yml.html
  M kube-selfpaced.yml.html
- M kube/advanced_fr.md
- M kube/daemonset_fr.md
- M kube/dashboard_fr.md
- M kube/helm_fr.md
- M kube/kubectlexpose_fr.md
- M kube/kubectlget_fr.md
- M kube/kubectlrun_fr.md
- M kube/logs-centralized_fr.md
- M kube/namespaces_fr.md
- M kube/ourapponkube_fr.md
- M kube/rollout_fr.md
- M kube/setup-k8s_fr.md
+A  kube/netisolation_fr.md
+A  kube/recapj1_fr.md
+A  kube/serverless_fr.md
  M swarm-fullday.yml.html
  M swarm-halfday.yml.html
  M swarm-selfpaced.yml.html
@@ -59,14 +51,11 @@ Kubernetes <br/>Stockage, Configuration, Secrets et Concepts Avancés <br/>
 ?? common/.directory
 ?? intro/.directory
 ?? kube/.directory
-?? kube/netisolation_fr.md
-?? kube/recapj1_fr.md
-?? slides/
 ?? swarm/.directory
 
 ```
 
-These slides have been built from commit: 071630c
+These slides have been built from commit: f13c895
 
 
 [common/title_fr.md](https://github.com/RyaxTech/kube.training.git/tree/gh-pages//common/title_fr.md)]
@@ -84,6 +73,14 @@ name: toc-chapter-1
 
 ## Chapter 1
 
+- [Serverless](#toc-serverless)
+
+.debug[(auto-generated TOC)]
+---
+name: toc-chapter-2
+
+## Chapter 2
+
 - [Introduction aux volumes](#toc-introduction-aux-volumes)
 
 - [Introduction de PersistentVolumes et PersistentVolumeClaims](#toc-introduction-de-persistentvolumes-et-persistentvolumeclaims)
@@ -94,9 +91,9 @@ name: toc-chapter-1
 
 .debug[(auto-generated TOC)]
 ---
-name: toc-chapter-2
+name: toc-chapter-3
 
-## Chapter 2
+## Chapter 3
 
 - [Découplage de configuration avec un ConfigMap](#toc-dcouplage-de-configuration-avec-un-configmap)
 
@@ -104,9 +101,9 @@ name: toc-chapter-2
 
 .debug[(auto-generated TOC)]
 ---
-name: toc-chapter-3
+name: toc-chapter-4
 
-## Chapter 3
+## Chapter 4
 
 - [Déploiement de Jupiter sur Kubernetes](#toc-dploiement-de-jupiter-sur-kubernetes)
 
@@ -129,15 +126,172 @@ class: pic
 
 ---
 
+name: toc-serverless
+class: title
+
+Serverless
+
+.nav[
+[Section précédente](#toc-)
+|
+[Retour table des matières](#toc-chapter-1)
+|
+[Section suivante](#toc-introduction-aux-volumes)
+]
+
+.debug[(automatically generated title slide)]
+
+---
+
+# Serverless
+
+.debug[[kube/serverless_fr.md](https://github.com/RyaxTech/kube.training.git/tree/gh-pages//kube/serverless_fr.md)]
+---
+class: pic
+
+![apigateway](images/serverless_apigateway.png)
+
+.debug[[kube/serverless_fr.md](https://github.com/RyaxTech/kube.training.git/tree/gh-pages//kube/serverless_fr.md)]
+---
+
+## Exemple d'une fonction serverless
+```python
+import json, logging, os, time, uuid
+import boto3
+dynamodb = boto3.resource('dynamodb')
+
+def create(event, context):
+    data = json.loads(event['body'])
+    table = dynamodb.Table(os.environ['DYNAMODB_TABLE'])
+
+    item = {
+        'id': str(uuid.uuid1()),
+        'text': data['text'],
+        'createdAt': int(time.time() * 1000),
+    }
+
+    table.put_item(Item=item)
+    return {
+        "statusCode": 200,
+        "body": json.dumps(item)
+    }
+```
+.debug[[kube/serverless_fr.md](https://github.com/RyaxTech/kube.training.git/tree/gh-pages//kube/serverless_fr.md)]
+---
+
+## Que faire de ça ?
+
+1) l'uploader sur une plateforme de serverless
+
+2) configurer l'API Gateway de cette plateforme pour que la fonction soit appelé lors d'un evenement choisi.
+
+
+.debug[[kube/serverless_fr.md](https://github.com/RyaxTech/kube.training.git/tree/gh-pages//kube/serverless_fr.md)]
+---
+
+## Les avantages du serverless
+
+- Pas d'administration (pour l'utilisateur)
+
+- Auto-scaling
+
+- Pay-per-use
+
+- déployer plus souvent et plus rapidement
+
+- Applications multi-language
+
+- Le développeur n'a pas à se soucier de la scalabilité de son code
+
+.debug[[kube/serverless_fr.md](https://github.com/RyaxTech/kube.training.git/tree/gh-pages//kube/serverless_fr.md)]
+---
+
+## Les défauts du serverless
+
+- Le développeur n'a pas à se soucier de la scalabilité de son code
+    - la difficulté de parallélisation est dans la base de donnée sous jacente (ex: dynamoDB)
+
+- Plus d'éléments indépendants à gérer
+
+- Une erreur peut être propager à travers plusieurs fonctions avant de causer des problèmes
+
+- Programmer des fonctions *"purs"* peut être difficile
+
+- Les sysadmins changent du code (en mettant à jour par exemple python), sans connaitre le code qui l'utilise => possibilité de bugs!
+
+
+.debug[[kube/serverless_fr.md](https://github.com/RyaxTech/kube.training.git/tree/gh-pages//kube/serverless_fr.md)]
+---
+
+## Les Use Cases
+
+- Gestion de contenu (ex: genérer des aperçus d'images)
+- Traiter des évenements venant de SaaS (ex: quand un msg "pizza" reçu sur slack, commander un pizza)
+- Auto-scaling des sites webs et des APIs
+- Hybrid-cloud Applications
+- Data Pipeline, principalement du Extract-Transform-Load
+- Notifications
+- Real time update
+- Client access : un fonction pour valider un token
+- Live data migration
+- CI/CD
+
+
+.debug[[kube/serverless_fr.md](https://github.com/RyaxTech/kube.training.git/tree/gh-pages//kube/serverless_fr.md)]
+---
+
+## Exemple de use case
+
+
+- Exemple avec un site web de livraison mensuel de box de chocolats:
+
+    - le frontend est gérer par un service wordpress
+    - les formulaires sont géré par un service externe (ex: formstack)
+    - le paiement est géré par un service externe (ex: stripe, paypal)
+    - la base de donnée client est géré par un service externe (ex: google sheet, firebase)
+    - la gestion des stocks est faites via un service externe (ex: Odoo, SAP)
+    - quand un nouvel utilisateur s'enregistre, ses informations sont rajouté dans la base client
+    - quand un nouveau client est entrée dans la base, la commande est ajouter dans le gestionnaire de stock
+    - quand un nouveau mail apparet dans la base client, des mails marketing sont envoyé (pour acheter des *super* boites, avec plus de chocolats)
+    - ...
+
+.debug[[kube/serverless_fr.md](https://github.com/RyaxTech/kube.training.git/tree/gh-pages//kube/serverless_fr.md)]
+---
+
+## Le serverless permet un découplage
+
+- Une application coder avec du serverless permet de découpler les services, des données, de l'intéligence.
+
+- Le developpeur a juste à connécter les bons services entre eux.
+
+- Voir "API economy".
+
+
+
+.debug[[kube/serverless_fr.md](https://github.com/RyaxTech/kube.training.git/tree/gh-pages//kube/serverless_fr.md)]
+---
+
+class: pic
+![Landscape](images/CloudNativeLandscape_Serverless_latest.png)
+
+.debug[[kube/serverless_fr.md](https://github.com/RyaxTech/kube.training.git/tree/gh-pages//kube/serverless_fr.md)]
+---
+
+class: pic
+
+.interstitial[![Image separating from the next chapter](https://gallant-turing-d0d520.netlify.com/containers/ShippingContainerSFBay.jpg)]
+
+---
+
 name: toc-introduction-aux-volumes
 class: title
 
 Introduction aux volumes
 
 .nav[
-[Section précédente](#toc-)
+[Section précédente](#toc-serverless)
 |
-[Retour table des matières](#toc-chapter-1)
+[Retour table des matières](#toc-chapter-2)
 |
 [Section suivante](#toc-introduction-de-persistentvolumes-et-persistentvolumeclaims)
 ]
@@ -269,7 +423,7 @@ spec:
 
 class: pic
 
-.interstitial[![Image separating from the next chapter](https://gallant-turing-d0d520.netlify.com/containers/ShippingContainerSFBay.jpg)]
+.interstitial[![Image separating from the next chapter](https://gallant-turing-d0d520.netlify.com/containers/aerial-view-of-containers.jpg)]
 
 ---
 
@@ -281,7 +435,7 @@ Introduction de PersistentVolumes et PersistentVolumeClaims
 .nav[
 [Section précédente](#toc-introduction-aux-volumes)
 |
-[Retour table des matières](#toc-chapter-1)
+[Retour table des matières](#toc-chapter-2)
 |
 [Section suivante](#toc-provisionnement-dynamique-des-volumes-persistants)
 ]
@@ -351,7 +505,7 @@ class: pic
 
 class: pic
 
-.interstitial[![Image separating from the next chapter](https://gallant-turing-d0d520.netlify.com/containers/aerial-view-of-containers.jpg)]
+.interstitial[![Image separating from the next chapter](https://gallant-turing-d0d520.netlify.com/containers/blue-containers.jpg)]
 
 ---
 
@@ -363,7 +517,7 @@ Provisionnement dynamique des volumes persistants
 .nav[
 [Section précédente](#toc-introduction-de-persistentvolumes-et-persistentvolumeclaims)
 |
-[Retour table des matières](#toc-chapter-1)
+[Retour table des matières](#toc-chapter-2)
 |
 [Section suivante](#toc-rook-orchestration-de-stockage-distribu)
 ]
@@ -409,7 +563,7 @@ class: pic
 
 class: pic
 
-.interstitial[![Image separating from the next chapter](https://gallant-turing-d0d520.netlify.com/containers/blue-containers.jpg)]
+.interstitial[![Image separating from the next chapter](https://gallant-turing-d0d520.netlify.com/containers/chinook-helicopter-container.jpg)]
 
 ---
 
@@ -421,7 +575,7 @@ Rook orchestration de stockage distribué
 .nav[
 [Section précédente](#toc-provisionnement-dynamique-des-volumes-persistants)
 |
-[Retour table des matières](#toc-chapter-1)
+[Retour table des matières](#toc-chapter-2)
 |
 [Section suivante](#toc-dcouplage-de-configuration-avec-un-configmap)
 ]
@@ -603,7 +757,7 @@ Vous devriez voir l'application wordpress en cours d'exécution.
 
 class: pic
 
-.interstitial[![Image separating from the next chapter](https://gallant-turing-d0d520.netlify.com/containers/chinook-helicopter-container.jpg)]
+.interstitial[![Image separating from the next chapter](https://gallant-turing-d0d520.netlify.com/containers/container-cranes.jpg)]
 
 ---
 
@@ -615,7 +769,7 @@ Découplage de configuration avec un ConfigMap
 .nav[
 [Section précédente](#toc-rook-orchestration-de-stockage-distribu)
 |
-[Retour table des matières](#toc-chapter-2)
+[Retour table des matières](#toc-chapter-3)
 |
 [Section suivante](#toc-introduction-des-secrets)
 ]
@@ -675,7 +829,7 @@ variables ou en tant que fichiers dans un volume.
 
 class: pic
 
-.interstitial[![Image separating from the next chapter](https://gallant-turing-d0d520.netlify.com/containers/container-cranes.jpg)]
+.interstitial[![Image separating from the next chapter](https://gallant-turing-d0d520.netlify.com/containers/container-housing.jpg)]
 
 ---
 
@@ -687,7 +841,7 @@ Introduction des secrets
 .nav[
 [Section précédente](#toc-dcouplage-de-configuration-avec-un-configmap)
 |
-[Retour table des matières](#toc-chapter-2)
+[Retour table des matières](#toc-chapter-3)
 |
 [Section suivante](#toc-dploiement-de-jupiter-sur-kubernetes)
 ]
@@ -741,7 +895,7 @@ devrez stocker le fichier dans un secret.
 
 class: pic
 
-.interstitial[![Image separating from the next chapter](https://gallant-turing-d0d520.netlify.com/containers/container-housing.jpg)]
+.interstitial[![Image separating from the next chapter](https://gallant-turing-d0d520.netlify.com/containers/containers-by-the-water.jpg)]
 
 ---
 
@@ -753,7 +907,7 @@ Déploiement de Jupiter sur Kubernetes
 .nav[
 [Section précédente](#toc-introduction-des-secrets)
 |
-[Retour table des matières](#toc-chapter-3)
+[Retour table des matières](#toc-chapter-4)
 |
 [Section suivante](#toc-scheduling-avance-avec-kubernetes)
 ]
@@ -774,7 +928,7 @@ Déploiement de Jupiter sur Kubernetes
 
 class: pic
 
-.interstitial[![Image separating from the next chapter](https://gallant-turing-d0d520.netlify.com/containers/containers-by-the-water.jpg)]
+.interstitial[![Image separating from the next chapter](https://gallant-turing-d0d520.netlify.com/containers/distillery-containers.jpg)]
 
 ---
 
@@ -786,7 +940,7 @@ Scheduling avancée avec Kubernetes
 .nav[
 [Section précédente](#toc-dploiement-de-jupiter-sur-kubernetes)
 |
-[Retour table des matières](#toc-chapter-3)
+[Retour table des matières](#toc-chapter-4)
 |
 [Section suivante](#toc-autoscaling-avec-kubernetes)
 ]
@@ -808,7 +962,7 @@ Scheduling avancée avec Kubernetes
 
 class: pic
 
-.interstitial[![Image separating from the next chapter](https://gallant-turing-d0d520.netlify.com/containers/distillery-containers.jpg)]
+.interstitial[![Image separating from the next chapter](https://gallant-turing-d0d520.netlify.com/containers/lots-of-containers.jpg)]
 
 ---
 
@@ -820,7 +974,7 @@ Autoscaling avec Kubernetes
 .nav[
 [Section précédente](#toc-scheduling-avance-avec-kubernetes)
 |
-[Retour table des matières](#toc-chapter-3)
+[Retour table des matières](#toc-chapter-4)
 |
 [Section suivante](#toc-big-data-analytics-sur-kubernetes)
 ]
@@ -840,7 +994,7 @@ Autoscaling avec Kubernetes
 
 class: pic
 
-.interstitial[![Image separating from the next chapter](https://gallant-turing-d0d520.netlify.com/containers/lots-of-containers.jpg)]
+.interstitial[![Image separating from the next chapter](https://gallant-turing-d0d520.netlify.com/containers/plastic-containers.JPG)]
 
 ---
 
@@ -852,7 +1006,7 @@ Big Data analytics sur Kubernetes
 .nav[
 [Section précédente](#toc-autoscaling-avec-kubernetes)
 |
-[Retour table des matières](#toc-chapter-3)
+[Retour table des matières](#toc-chapter-4)
 |
 [Section suivante](#toc-)
 ]
