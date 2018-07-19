@@ -29,26 +29,33 @@ Kubernetes <br/>Stockage, Configuration, Secrets et Concepts Avancés <br/>
 
 .debug[
 ```
+A  images/CloudNativeLandscape_Serverless_latest.png
+A  images/serverless_apigateway.png
  M intro-fullday.yml.html
  M intro-selfpaced.yml.html
  M kube-fullday.yml.html
  M kube-halfday.yml.html
  M kube-jour1.yml.html
  M kube-jour2.yml.html
+ M kube-jour3.yml
  M kube-jour3.yml.html
  M kube-selfpaced.yml.html
- M kube/advanced_fr.md
- M kube/configs_fr.md
- M kube/stockage_fr.md
+A  kube/netisolation_fr.md
+A  kube/recapj1_fr.md
+A  kube/serverless_fr.md
  M swarm-fullday.yml.html
  M swarm-halfday.yml.html
  M swarm-selfpaced.yml.html
  M swarm-video.yml.html
-?? Kubernetes Introduction, Architecture et Installation.pdf
+?? .directory
+?? common/.directory
+?? intro/.directory
+?? kube/.directory
+?? swarm/.directory
 
 ```
 
-These slides have been built from commit: 2604bca
+These slides have been built from commit: f13c895
 
 
 [common/title_fr.md](https://github.com/RyaxTech/kube.training.git/tree/gh-pages//common/title_fr.md)]
@@ -66,6 +73,14 @@ name: toc-chapter-1
 
 ## Chapter 1
 
+- [Serverless](#toc-serverless)
+
+.debug[(auto-generated TOC)]
+---
+name: toc-chapter-2
+
+## Chapter 2
+
 - [Introduction aux volumes](#toc-introduction-aux-volumes)
 
 - [Introduction de PersistentVolumes et PersistentVolumeClaims](#toc-introduction-de-persistentvolumes-et-persistentvolumeclaims)
@@ -76,9 +91,9 @@ name: toc-chapter-1
 
 .debug[(auto-generated TOC)]
 ---
-name: toc-chapter-2
+name: toc-chapter-3
 
-## Chapter 2
+## Chapter 3
 
 - [Découplage de configuration avec un ConfigMap](#toc-dcouplage-de-configuration-avec-un-configmap)
 
@@ -86,11 +101,9 @@ name: toc-chapter-2
 
 .debug[(auto-generated TOC)]
 ---
-name: toc-chapter-3
+name: toc-chapter-4
 
-## Chapter 3
-
-- [Isolation et politiques de réseau](#toc-isolation-et-politiques-de-rseau)
+## Chapter 4
 
 - [Déploiement de Jupiter sur Kubernetes](#toc-dploiement-de-jupiter-sur-kubernetes)
 
@@ -113,15 +126,172 @@ class: pic
 
 ---
 
+name: toc-serverless
+class: title
+
+Serverless
+
+.nav[
+[Section précédente](#toc-)
+|
+[Retour table des matières](#toc-chapter-1)
+|
+[Section suivante](#toc-introduction-aux-volumes)
+]
+
+.debug[(automatically generated title slide)]
+
+---
+
+# Serverless
+
+.debug[[kube/serverless_fr.md](https://github.com/RyaxTech/kube.training.git/tree/gh-pages//kube/serverless_fr.md)]
+---
+class: pic
+
+![apigateway](images/serverless_apigateway.png)
+
+.debug[[kube/serverless_fr.md](https://github.com/RyaxTech/kube.training.git/tree/gh-pages//kube/serverless_fr.md)]
+---
+
+## Exemple d'une fonction serverless
+```python
+import json, logging, os, time, uuid
+import boto3
+dynamodb = boto3.resource('dynamodb')
+
+def create(event, context):
+    data = json.loads(event['body'])
+    table = dynamodb.Table(os.environ['DYNAMODB_TABLE'])
+
+    item = {
+        'id': str(uuid.uuid1()),
+        'text': data['text'],
+        'createdAt': int(time.time() * 1000),
+    }
+
+    table.put_item(Item=item)
+    return {
+        "statusCode": 200,
+        "body": json.dumps(item)
+    }
+```
+.debug[[kube/serverless_fr.md](https://github.com/RyaxTech/kube.training.git/tree/gh-pages//kube/serverless_fr.md)]
+---
+
+## Que faire de ça ?
+
+1) l'uploader sur une plateforme de serverless
+
+2) configurer l'API Gateway de cette plateforme pour que la fonction soit appelé lors d'un evenement choisi.
+
+
+.debug[[kube/serverless_fr.md](https://github.com/RyaxTech/kube.training.git/tree/gh-pages//kube/serverless_fr.md)]
+---
+
+## Les avantages du serverless
+
+- Pas d'administration (pour l'utilisateur)
+
+- Auto-scaling
+
+- Pay-per-use
+
+- déployer plus souvent et plus rapidement
+
+- Applications multi-language
+
+- Le développeur n'a pas à se soucier de la scalabilité de son code
+
+.debug[[kube/serverless_fr.md](https://github.com/RyaxTech/kube.training.git/tree/gh-pages//kube/serverless_fr.md)]
+---
+
+## Les défauts du serverless
+
+- Le développeur n'a pas à se soucier de la scalabilité de son code
+    - la difficulté de parallélisation est dans la base de donnée sous jacente (ex: dynamoDB)
+
+- Plus d'éléments indépendants à gérer
+
+- Une erreur peut être propager à travers plusieurs fonctions avant de causer des problèmes
+
+- Programmer des fonctions *"purs"* peut être difficile
+
+- Les sysadmins changent du code (en mettant à jour par exemple python), sans connaitre le code qui l'utilise => possibilité de bugs!
+
+
+.debug[[kube/serverless_fr.md](https://github.com/RyaxTech/kube.training.git/tree/gh-pages//kube/serverless_fr.md)]
+---
+
+## Les Use Cases
+
+- Gestion de contenu (ex: genérer des aperçus d'images)
+- Traiter des évenements venant de SaaS (ex: quand un msg "pizza" reçu sur slack, commander un pizza)
+- Auto-scaling des sites webs et des APIs
+- Hybrid-cloud Applications
+- Data Pipeline, principalement du Extract-Transform-Load
+- Notifications
+- Real time update
+- Client access : un fonction pour valider un token
+- Live data migration
+- CI/CD
+
+
+.debug[[kube/serverless_fr.md](https://github.com/RyaxTech/kube.training.git/tree/gh-pages//kube/serverless_fr.md)]
+---
+
+## Exemple de use case
+
+
+- Exemple avec un site web de livraison mensuel de box de chocolats:
+
+    - le frontend est gérer par un service wordpress
+    - les formulaires sont géré par un service externe (ex: formstack)
+    - le paiement est géré par un service externe (ex: stripe, paypal)
+    - la base de donnée client est géré par un service externe (ex: google sheet, firebase)
+    - la gestion des stocks est faites via un service externe (ex: Odoo, SAP)
+    - quand un nouvel utilisateur s'enregistre, ses informations sont rajouté dans la base client
+    - quand un nouveau client est entrée dans la base, la commande est ajouter dans le gestionnaire de stock
+    - quand un nouveau mail apparet dans la base client, des mails marketing sont envoyé (pour acheter des *super* boites, avec plus de chocolats)
+    - ...
+
+.debug[[kube/serverless_fr.md](https://github.com/RyaxTech/kube.training.git/tree/gh-pages//kube/serverless_fr.md)]
+---
+
+## Le serverless permet un découplage
+
+- Une application coder avec du serverless permet de découpler les services, des données, de l'intéligence.
+
+- Le developpeur a juste à connécter les bons services entre eux.
+
+- Voir "API economy".
+
+
+
+.debug[[kube/serverless_fr.md](https://github.com/RyaxTech/kube.training.git/tree/gh-pages//kube/serverless_fr.md)]
+---
+
+class: pic
+![Landscape](images/CloudNativeLandscape_Serverless_latest.png)
+
+.debug[[kube/serverless_fr.md](https://github.com/RyaxTech/kube.training.git/tree/gh-pages//kube/serverless_fr.md)]
+---
+
+class: pic
+
+.interstitial[![Image separating from the next chapter](https://gallant-turing-d0d520.netlify.com/containers/ShippingContainerSFBay.jpg)]
+
+---
+
 name: toc-introduction-aux-volumes
 class: title
 
 Introduction aux volumes
 
 .nav[
-[Section précédente](#toc-)
+[Section précédente](#toc-serverless)
 |
-[Retour table des matières](#toc-chapter-1)
+[Retour table des matières](#toc-chapter-2)
 |
 [Section suivante](#toc-introduction-de-persistentvolumes-et-persistentvolumeclaims)
 ]
@@ -253,7 +423,7 @@ spec:
 
 class: pic
 
-.interstitial[![Image separating from the next chapter](https://gallant-turing-d0d520.netlify.com/containers/ShippingContainerSFBay.jpg)]
+.interstitial[![Image separating from the next chapter](https://gallant-turing-d0d520.netlify.com/containers/aerial-view-of-containers.jpg)]
 
 ---
 
@@ -265,7 +435,7 @@ Introduction de PersistentVolumes et PersistentVolumeClaims
 .nav[
 [Section précédente](#toc-introduction-aux-volumes)
 |
-[Retour table des matières](#toc-chapter-1)
+[Retour table des matières](#toc-chapter-2)
 |
 [Section suivante](#toc-provisionnement-dynamique-des-volumes-persistants)
 ]
@@ -335,7 +505,7 @@ class: pic
 
 class: pic
 
-.interstitial[![Image separating from the next chapter](https://gallant-turing-d0d520.netlify.com/containers/aerial-view-of-containers.jpg)]
+.interstitial[![Image separating from the next chapter](https://gallant-turing-d0d520.netlify.com/containers/blue-containers.jpg)]
 
 ---
 
@@ -347,7 +517,7 @@ Provisionnement dynamique des volumes persistants
 .nav[
 [Section précédente](#toc-introduction-de-persistentvolumes-et-persistentvolumeclaims)
 |
-[Retour table des matières](#toc-chapter-1)
+[Retour table des matières](#toc-chapter-2)
 |
 [Section suivante](#toc-rook-orchestration-de-stockage-distribu)
 ]
@@ -393,7 +563,7 @@ class: pic
 
 class: pic
 
-.interstitial[![Image separating from the next chapter](https://gallant-turing-d0d520.netlify.com/containers/blue-containers.jpg)]
+.interstitial[![Image separating from the next chapter](https://gallant-turing-d0d520.netlify.com/containers/chinook-helicopter-container.jpg)]
 
 ---
 
@@ -405,7 +575,7 @@ Rook orchestration de stockage distribué
 .nav[
 [Section précédente](#toc-provisionnement-dynamique-des-volumes-persistants)
 |
-[Retour table des matières](#toc-chapter-1)
+[Retour table des matières](#toc-chapter-2)
 |
 [Section suivante](#toc-dcouplage-de-configuration-avec-un-configmap)
 ]
@@ -441,7 +611,7 @@ Rook orchestration de stockage distribué
    git clone https://github.com/rook/rook.git
    cd rook/cluster/examples/kubernetes/ceph
    kubectl create -f operator.yaml
-   kubect create -f cluster.yaml
+   kubectl create -f cluster.yaml
   ```
 - vérifiez pour voir si tout fonctionne comme prévu
   ```bash
@@ -469,10 +639,10 @@ Rook orchestration de stockage distribué
 ---
 ## Exemple de provisionnement dynamique de PersistentVolumes à l'aide de Rook
 
+<!--   kubectl create -f pool.yaml -->
 .exercise[
 - Créez le pool et le storage class:
   ```bash
-  kubectl create -f pool.yaml
   kubectl create -f storageclass.yaml
   ```
 ]
@@ -525,9 +695,12 @@ Vous devriez voir l'application wordpress en cours d'exécution.
 
 .exercise[
 
-- Copiez le fichier à partir d'ici: https://github.com/zonca/jupyterhub-deploy-kubernetes-jetstream/blob/master/storage_rook/alpine-rook.yaml
+- Récupérez le fichier:
+  ```bash
+  wget https://raw.githubusercontent.com/zonca/jupyterhub-deploy-kubernetes-jetstream/master/storage_rook/alpine-rook.yaml
+  ```
 
-- Modifiez-le pour qu'il corresponde aux spécifications de votre cluster et exécutez-le en utilisant:
+- Modifiez-le pour qu'il corresponde aux spécifications de votre cluster (notre `storageClassName` est `"rook-ceph-block"`) et exécutez-le en utilisant:
   ```bash
   kubectl create -f alpine-rook.yaml
   ```
@@ -562,21 +735,20 @@ Vous devriez voir l'application wordpress en cours d'exécution.
   ```
 - Obtenez un shell dans le pod avec:
   ```bash
-  kubectl exec -it alpine - /bin/sh
+  kubectl exec -it alpine /bin/sh
   ```
-- Access /data/ et écrire des fichiers.
+- Créer des fichiers dans `/data/`.
 - Quitter le terminal
-- Maintenant supprimez le pod et voyez si vous pouvez récupérer les données que vous avez écrites.
+- Maintenant supprimez le pod. Est-il encore possible daccéder ces données ? Si oui, comment ?
 ]
 
-.debug[[kube/stockage_fr.md](https://github.com/RyaxTech/kube.training.git/tree/gh-pages//kube/stockage_fr.md)]
----
+<!-----
 ## Lancez un autre exemple de provisionnement dynamique (suite)
 
 .exercice[
 - Comment aurions-nous pu récupérer les données dans le dernier cas?
 - Changeons alpine-rook.yaml en `kind:deployment`, écrivez quelques fichiers et tuez à nouveau le pod pour voir ce qui se passe.
-]
+]-->
 
 
 
@@ -585,7 +757,7 @@ Vous devriez voir l'application wordpress en cours d'exécution.
 
 class: pic
 
-.interstitial[![Image separating from the next chapter](https://gallant-turing-d0d520.netlify.com/containers/chinook-helicopter-container.jpg)]
+.interstitial[![Image separating from the next chapter](https://gallant-turing-d0d520.netlify.com/containers/container-cranes.jpg)]
 
 ---
 
@@ -597,7 +769,7 @@ Découplage de configuration avec un ConfigMap
 .nav[
 [Section précédente](#toc-rook-orchestration-de-stockage-distribu)
 |
-[Retour table des matières](#toc-chapter-2)
+[Retour table des matières](#toc-chapter-3)
 |
 [Section suivante](#toc-introduction-des-secrets)
 ]
@@ -617,10 +789,10 @@ code.
 
 ## Introduction de ConfigMap
 
-- Kubernetes permet de séparer les options de configuration en un objet distinct appelé ConfigMap, qui est une carte contenant des paires clé / valeur avec des valeurs allant de
+- Kubernetes permet de séparer les options de configuration en un objet distinct appelé ConfigMap, qui est une map contenant des paires clé / valeur avec des valeurs allant de
 des littéraux courts aux fichiers de configuration complets.
 
-- Une application n'a pas besoin de lire directement le ConfigMap ou même de savoir qu'il existe. Le contenu de la carte est plutôt transmis aux conteneurs comme environnement
+- Une application n'a pas besoin de lire directement le ConfigMap ou même de savoir qu'il existe. Le contenu de la map est plutôt transmis aux conteneurs comme environnement
 variables ou en tant que fichiers dans un volume.
 
 .debug[[kube/configs_fr.md](https://github.com/RyaxTech/kube.training.git/tree/gh-pages//kube/configs_fr.md)]
@@ -628,17 +800,20 @@ variables ou en tant que fichiers dans un volume.
 
 ## Introduction de ConfigMap
 
-- Vous pouvez définir les entrées de la carte en transmettant des littéraux à la commande kubectl ou vous pouvez créer ConfigMap à partir de fichiers stockés sur votre disque.
-
-- Utilisez un littéral simple en premier:
+- Vous pouvez définir les entrées de la map en transmettant des littéraux à la commande kubectl ou vous pouvez créer ConfigMap à partir de fichiers stockés sur votre disque.
 
 .exercise[
+- Pour créer une nouvelle entrée:
   ```bash
   kubectl create configmap fortune-config --from-literal=sleep-interval=25
   ```
-
-- REMARQUE Les clés ConfigMap doivent être un sous-domaine DNS valide (elles ne peuvent contenir que des caractères alphanumériques, des tirets, des traits de soulignement et des points). Ils peuvent éventuellement inclure un point leader.
+- Pour regarder les valeurs d'un ConfigMap:
+  ```bash
+  kubectl describe configmap fortune-config
+  ```
 ]
+
+- REMARQUE Les clés ConfigMap doivent être un sous-domaine DNS valide (elles ne peuvent contenir que des caractères alphanumériques, des tirets, des traits de soulignement et des points). Ils peuvent éventuellement commencer par un point.
 
 .debug[[kube/configs_fr.md](https://github.com/RyaxTech/kube.training.git/tree/gh-pages//kube/configs_fr.md)]
 ---
@@ -647,13 +822,14 @@ variables ou en tant que fichiers dans un volume.
 
 - Exécutez l'exemple décrit ici: https://kubernetes.io/docs/tutorials/configuration/configure-redis-using-configmap/
 
+- Pour aller plus loin: https://kubernetes.io/docs/tasks/configure-pod-container/configure-pod-configmap/
 
 .debug[[kube/configs_fr.md](https://github.com/RyaxTech/kube.training.git/tree/gh-pages//kube/configs_fr.md)]
 ---
 
 class: pic
 
-.interstitial[![Image separating from the next chapter](https://gallant-turing-d0d520.netlify.com/containers/container-cranes.jpg)]
+.interstitial[![Image separating from the next chapter](https://gallant-turing-d0d520.netlify.com/containers/container-housing.jpg)]
 
 ---
 
@@ -665,9 +841,9 @@ Introduction des secrets
 .nav[
 [Section précédente](#toc-dcouplage-de-configuration-avec-un-configmap)
 |
-[Retour table des matières](#toc-chapter-2)
+[Retour table des matières](#toc-chapter-3)
 |
-[Section suivante](#toc-isolation-et-politiques-de-rseau)
+[Section suivante](#toc-dploiement-de-jupiter-sur-kubernetes)
 ]
 
 .debug[(automatically generated title slide)]
@@ -678,7 +854,7 @@ Introduction des secrets
 
 - Kubernetes fournit un objet séparé appelé Secret. Les secrets ressemblent beaucoup à ConfigMaps
 
-- Ce sont aussi des cartes qui contiennent des paires clé-valeur. Ils peuvent être utilisés de la même manière qu'un ConfigMap.
+- Ce sont aussi des maps qui contiennent des paires clé-valeur. Ils peuvent être utilisés de la même manière qu'un ConfigMap.
 
 - Vous pouvez passer des entrées secrètes au conteneur en tant que variables d'environnement
 
@@ -719,100 +895,6 @@ devrez stocker le fichier dans un secret.
 
 class: pic
 
-.interstitial[![Image separating from the next chapter](https://gallant-turing-d0d520.netlify.com/containers/container-housing.jpg)]
-
----
-
-name: toc-isolation-et-politiques-de-rseau
-class: title
-
-Isolation et politiques de réseau
-
-.nav[
-[Section précédente](#toc-introduction-des-secrets)
-|
-[Retour table des matières](#toc-chapter-3)
-|
-[Section suivante](#toc-dploiement-de-jupiter-sur-kubernetes)
-]
-
-.debug[(automatically generated title slide)]
-
----
-# Isolation et politiques de réseau
-
-- Les Namespaces *ne fournissent pas* de l'isolation
-
-- Un pod dans un namespace vert peut communiquer avec un pod dans le namespace bleu.
-
-- Un pod dans le namespace `default` peut communiquer avec un pod dans le namespace `kube-system`.
-
-- kube-dns utilise un sous-domaine différent pour chaque espace de nommage
-
-- Exemple : à partir de n'importe quel pod du cluster, vous pouvez vous connecter à l'API Kubernetes avec :
-
-  `https://kubernetes.default.svc.cluster.local:443/`
-
-.debug[[kube/advanced_fr.md](https://github.com/RyaxTech/kube.training.git/tree/gh-pages//kube/advanced_fr.md)]
----
-
-## Isolation de pods
-
-- L'isolement réel est mis en œuvre avec des *politiques de réseau* (network policies).
-
-- Les politiques réseau sont des ressources (comme les déploiements, les services, les namespaces....).
-
-- Les politiques de réseau spécifient les flux autorisés :
-
-  - entre les pods
-
-  - du pod au monde extérieur
-
-  - et vice-versa
-
-.debug[[kube/advanced_fr.md](https://github.com/RyaxTech/kube.training.git/tree/gh-pages//kube/advanced_fr.md)]
----
-
-## Network policies
-
-- Nous pouvons créer autant de politiques de réseau que nous le voulons.
-
-- Chaque politique de réseau a :
-
-  - un *pod selector* : "Quelles sont les pods visées par la politique ?"
-
-  - des listes de règles d'entrée (ingress) et/ou de sortie (egress) : "Quels pairs et ports sont autorisés ou bloqués ?"
-
-- Si un pod n'est pas visé par une politique, le trafic est autorisé par défaut.
-
-- Si un pod est visé par au moins une politique, le trafic doit être explicitement autorisé.
-
-.debug[[kube/advanced_fr.md](https://github.com/RyaxTech/kube.training.git/tree/gh-pages//kube/advanced_fr.md)]
----
-
-## Plus d'infos sur Network policies 
-
-- Pour plus de détails, vérifiez :
-
-  - la documentation de Kubernetes sur les politiques de réseau](https://kubernetes.io/docs/concepts/services-networking/network-policies/)
-
-  - ce [talk sur network policies fait au KubeCon 2017 US](https://www.youtube.com/watch?v=3gGpMmYeEO8) par [@ahmetb](https://twitter.com/ahmetb)
-
-.debug[[kube/advanced_fr.md](https://github.com/RyaxTech/kube.training.git/tree/gh-pages//kube/advanced_fr.md)]
----
-
-## Exercices sur les Network policies
-
-.exercise[
-- Pour exécuter quelques exercices sur les politiques de réseau, nous allons suivre quelques exemples ici : 
-  https://github.com/ahmetb/kubernetes-network-policy-recipes
-]
-
-.debug[[kube/advanced_fr.md](https://github.com/RyaxTech/kube.training.git/tree/gh-pages//kube/advanced_fr.md)]
----
-
-class: pic
-
 .interstitial[![Image separating from the next chapter](https://gallant-turing-d0d520.netlify.com/containers/containers-by-the-water.jpg)]
 
 ---
@@ -823,9 +905,9 @@ class: title
 Déploiement de Jupiter sur Kubernetes
 
 .nav[
-[Section précédente](#toc-isolation-et-politiques-de-rseau)
+[Section précédente](#toc-introduction-des-secrets)
 |
-[Retour table des matières](#toc-chapter-3)
+[Retour table des matières](#toc-chapter-4)
 |
 [Section suivante](#toc-scheduling-avance-avec-kubernetes)
 ]
@@ -858,7 +940,7 @@ Scheduling avancée avec Kubernetes
 .nav[
 [Section précédente](#toc-dploiement-de-jupiter-sur-kubernetes)
 |
-[Retour table des matières](#toc-chapter-3)
+[Retour table des matières](#toc-chapter-4)
 |
 [Section suivante](#toc-autoscaling-avec-kubernetes)
 ]
@@ -892,7 +974,7 @@ Autoscaling avec Kubernetes
 .nav[
 [Section précédente](#toc-scheduling-avance-avec-kubernetes)
 |
-[Retour table des matières](#toc-chapter-3)
+[Retour table des matières](#toc-chapter-4)
 |
 [Section suivante](#toc-big-data-analytics-sur-kubernetes)
 ]
@@ -924,7 +1006,7 @@ Big Data analytics sur Kubernetes
 .nav[
 [Section précédente](#toc-autoscaling-avec-kubernetes)
 |
-[Retour table des matières](#toc-chapter-3)
+[Retour table des matières](#toc-chapter-4)
 |
 [Section suivante](#toc-)
 ]

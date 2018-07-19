@@ -42,7 +42,7 @@ OK, qu'est-ce qui vient de se passer?
 
 - Listez la plupart des types de ressources:
   ```bash
-  Kubectl get all
+  kubectl get all
   ```
 
 ]
@@ -197,16 +197,15 @@ Nous pourrions! Mais le *deployment* le remarquerait tout de suite et reviendrai
 
 - Et si nous voulions démarrer un conteneur "one-shot" qui ne redémarre pas?
 
-- Nous pourrions utiliser `kubectl run --restart=OnFailure` ouv`kubectl run --restart=Never`
+- Nous pourrions utiliser `kubectl run --restart=OnFailure` ou `kubectl run --restart=Never`
 
 - Ces commandes créeraient *jobs* ou *pods* au lieu de *deployments*
 
 - Sous le tapis, `kubectl run` invoque des "generators" pour créer des descriptions de ressources
 
-- Nous pourrions aussi écrire nous-mêmes ces descriptions de ressources (typiquement en YAML),
-  <br/> et créez-les sur le cluster avec `kubectl apply -f` (discuté plus tard)
+- Nous pourrions aussi écrire nous-mêmes ces descriptions de ressources (typiquement en YAML), et les créer sur le cluster avec `kubectl apply -f` (discuté plus tard)
 
-- Avec `kubectl run --schedule = ...`, nous pouvons aussi créer *cronjobs*
+- Avec `kubectl run --schedule=...`, nous pouvons aussi créer des *cronjobs*
 
 ---
 
@@ -245,3 +244,27 @@ Malheureusement, `--follow` ne peut pas (encore) être utilisé pour diffuser le
 
 - Il est très peu probable que nos pings concertés parviennent à produire
   même un modeste coup au Cloudflare!
+
+---
+
+## Tout couper
+
+.exercise[
+
+- Arrétez le deployment:
+  ```bash
+  kubectl delete deploy/pingpong
+  ```
+- Quel est l'état de l'application ?
+  ```bash
+  kubectl get all
+  ```
+
+]
+
+- Pour aller plus loin:
+
+  - [Lancer un deployement dupuis un fichier YAML](https://kubernetes.io/docs/tasks/run-application/run-stateless-application-deployment/)
+
+  - [Lancer un *cronjob*](https://kubernetes.io/docs/tasks/job/automated-tasks-with-cron-jobs/)
+

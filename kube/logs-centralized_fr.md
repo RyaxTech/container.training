@@ -34,13 +34,16 @@
 
 ## Déploiement de EFK sur notre cluster
 
-- Nous allons utiliser un fichier YAML décrivant toutes les ressources nécessaires
+- Nous allons utiliser un fichier YAML décrivant toutes les ressources nécessaires. Celui-ci contient une erreur, qu'il va falloir corriger.
 
 .exercise[
-
+  ```bash
+  wget https://goo.gl/MUZhE4 -O efk.yaml
+  ```
+- Éditez le fichier YAML pour ajouter la variable d'environement `FLUENT_UID` avec la valeure `"0"` au container fluentd.
 - Chargez le fichier YAML dans notre cluster:
   ```bash
-  kubectl apply -f https://goo.gl/MUZhE4
+  kubectl apply -f efk.yaml
   ```
 
 
@@ -110,7 +113,7 @@ et quelques roles et roles bindings (pour donner à fluentd les permissions requ
 
 ## Utiliser Kibana
 
-* Remarque: ce n'est pas un atelier Kibana! Donc cette section est délibérément très laconique. *
+* Remarque: ce n'est pas un atelier Kibana! Donc cette section est délibérément très succinte. *
 
 - La première fois que vous vous connectez à Kibana, vous devez "configure an index pattern"
 
@@ -143,3 +146,13 @@ Mais ceci sort du cadre de ce chapitre.
 Le fichier YAML que nous avons utilisé crée toutes les ressources dans le
 espace de noms `default`, pour plus de simplicité. Dans un scénario réel, vous allez
 créez les ressources dans l'espace de noms `kube-system` ou dans un espace de noms dédié.
+
+
+---
+
+## Pour aller plus loin
+
+- Architecure de [fluentd](https://www.fluentd.org/architecture)
+
+- Le [quickstart](https://docs.fluentd.org/v1.0/articles/quickstart) de fluentd
+

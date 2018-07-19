@@ -20,15 +20,18 @@ chapters:
   #- kube/intro.md
   #- common/about-slides.md
 - common/toc.md
+- - common/cncf_fr.md
 - - kube/kubeobjects_fr.md
   - kube/kubectlexpose_fr.md
   - kube/ourapponkube_fr.md
   - kube/kubectlscale_fr.md
 - - kube/daemonset_fr.md
+  - kube/recapj1_fr.md
   - kube/rollout_fr.md
   - kube/logs-cli_fr.md
   - kube/logs-centralized_fr.md
 - - kube/helm_fr.md
   - kube/namespaces_fr.md  
+  - kube/netisolation_fr.md
   #  - kube/whatsnext.md
   #- kube/links.md

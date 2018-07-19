@@ -48,7 +48,7 @@ Misattribué à Benjamin Franklin
 
 - C'est ce que tu es censé faire!
 
-- Allez dans [kube.training] (https://ryaxtech.github.io/kube.training/) pour voir ces diapositives
+- Allez dans [kube.training] (https://goo.gl/dekbTb) pour voir ces diapositives
 
 ]
 
@@ -76,7 +76,7 @@ class: in person
 
 - Vous pouvez automatiquement SSH d'une VM à l'autre
 
-- Les nœuds ont des alias: `asterix-1`,` asterix-2`, etc *ou* `obelix-1`,` obelix-2`, etc *ou* etc
+- Les nœuds ont des alias: `node1`, `node2`...
 
 ---
 
@@ -104,13 +104,11 @@ class: in person
 
 .exercise[
 
-- Chaqu'un m'envoie la cles SSH publique de son poste par email au yiannis.georgiou@ryax.org
+- Connectez-vous à la première machine virtuelle (`node1`) avec votre client SSH
 
-- Connectez-vous à la première machine virtuelle (`asterix-1`) avec votre client SSH
-
-- Vérifiez que vous pouvez SSH (sans mot de passe) à `asterix-2`:
+- Vérifiez que vous pouvez SSH (sans mot de passe) à `node2`:
   ```bash
-  ssh asterix-2
+  ssh node2
   ```
 - Tapez `exit` ou` ^ D` pour revenir à `asterix-1`
 
@@ -140,13 +138,13 @@ Si quelque chose ne va pas, demandez de l'aide!
 
 ---
 
-## Nous allons (surtout) interagir avec asterix-1 seulement
+## Nous allons (surtout) interagir avec node1 seulement
 
 *Ces remarques ne s'appliquent que lorsque vous utilisez plusieurs nœuds, bien sûr.*
 
-- Sauf instructions, **toutes les commandes doivent être exécutées à partir de la première VM, `asterix-1`**
+- Sauf instructions, **toutes les commandes doivent être exécutées à partir de la première VM, `node1`**
 
-- Nous allons seulement vérifier / copier le code sur `asterix-1`
+- Nous allons seulement vérifier / copier le code sur `node1`
 
 - Pendant les opérations normales, nous n'avons pas besoin d'accéder aux autres nœuds
 

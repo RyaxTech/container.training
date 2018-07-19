@@ -249,4 +249,16 @@ error: the server doesn't have a resource type "endpoint"
 
 - Le type ne représente pas un seul endpoint, mais une liste de endpoints
 
+---
+
+## Reset
+
+- Une fois que vous avez fini de jouer avec ce deployement:
+
+```bash
+kubectl delete deployments elastic
+```
+- Pour aller plus loin:
+  - Le [concept](https://kubernetes.io/docs/concepts/services-networking/service/) des services de la doc officiel
+  - [DNS pour les services](https://kubernetes.io/docs/concepts/services-networking/dns-pod-service/)
 

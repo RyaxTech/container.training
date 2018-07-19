@@ -16,7 +16,7 @@ Il y a une étape supplémentaire pour rendre le dashboard disponible de l'exté
 
 --
 
-.footnote [.warning [Oui, cela ouvrira notre cluster à toutes sortes de manigances. Ne fais pas ça à la maison.]]
+.footnote[.warning[Oui, cela ouvrira notre cluster à toutes sortes de manigances. Ne fais pas ça à la maison.]]
 
 ---
 
@@ -56,7 +56,7 @@ L'URL de goo.gl se développe pour:
 
 - ... Mais pour plus de commodité, pour cet atelier, nous transmettrons HTTP à HTTPS
 
-.warning [Ne le faites pas à la maison, ou pire, au travail!]
+.warning[Ne le faites pas à la maison, ou pire, au travail!]
 
 ---
 
@@ -142,7 +142,7 @@ Le dashboard vous demandera ensuite l'authentification que vous souhaitez utilis
 
 --
 
-.warning [Au fait, nous venons d'ajouter une porte dérobée à notre cluster Kubernetes!]
+.warning[Au fait, nous venons d'ajouter une porte dérobée à notre cluster Kubernetes!]
 
 ---
 
@@ -188,7 +188,7 @@ Le dashboard vous demandera ensuite l'authentification que vous souhaitez utilis
   kubectl -n kube-system edit service kubernetes-dashboard
   ```
 
-- Changez `ClusterIP` en `NodePort`, sauvegardez et quittez
+- Changez `type: ClusterIP` en `type: NodePort`, sauvegardez et quittez
 
 - Vérifiez le port qui a été assigné avec `kubectl -n kube-system get services`
 
@@ -260,5 +260,26 @@ Le dashboard vous demandera ensuite l'authentification que vous souhaitez utilis
 
 - Il introduit de nouveaux modes de défaillance (comme si vous essayez d'appliquer yaml à partir d'un lien qui n'est plus valide)
 
+
+---
+
+## Pour aller plus loin
+
+
+.exercise[
+- Relancez l'exemple préçédent
+  ```bash
+  kubectl run pingpong --image alpine ping 1.1.1.1
+  ```
+- Observez le deployment et son pod. Trouvez-vous les logs du pod?
+
+- Arrétez le deployment.
+
+]
+
+Vous pouvez stopper le dashboard ou le laisser. Comme le dashboard n'est pas sécurisé, nous conseillons de l'arréter.
+```bash
+  kubectl delete -f https://goo.gl/CHsLTA
+  ```
 
 

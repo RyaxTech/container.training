@@ -70,7 +70,7 @@
 
 - Allez dans le répertoire `stacks`:
   ```bash
-  cd ~/container.training/stacks
+  cd ~/kube.training/stacks
   ```
 
 - Editez `dockercoins/worker/worker.py`, mettez à jour la ligne `sleep` pour dormir 1 seconde
@@ -278,3 +278,11 @@ spec:
 ]
 
 
+
+---
+
+## Pour aller plus loin
+
+- Rolout de [deployment](https://kubernetes.io/docs/concepts/workloads/controllers/deployment/)
+
+- Mise-à-jour des containeurs dans [kubernetes](https://www.linux.com/learn/rolling-updates-and-rollbacks-using-kubernetes-deployments)

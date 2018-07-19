@@ -29,26 +29,33 @@ Kubernetes<br/>Introduction, Architecture et Installation<br/>
 
 .debug[
 ```
+A  images/CloudNativeLandscape_Serverless_latest.png
+A  images/serverless_apigateway.png
  M intro-fullday.yml.html
  M intro-selfpaced.yml.html
  M kube-fullday.yml.html
  M kube-halfday.yml.html
  M kube-jour1.yml.html
  M kube-jour2.yml.html
+ M kube-jour3.yml
  M kube-jour3.yml.html
  M kube-selfpaced.yml.html
- M kube/advanced_fr.md
- M kube/configs_fr.md
- M kube/stockage_fr.md
+A  kube/netisolation_fr.md
+A  kube/recapj1_fr.md
+A  kube/serverless_fr.md
  M swarm-fullday.yml.html
  M swarm-halfday.yml.html
  M swarm-selfpaced.yml.html
  M swarm-video.yml.html
-?? Kubernetes Introduction, Architecture et Installation.pdf
+?? .directory
+?? common/.directory
+?? intro/.directory
+?? kube/.directory
+?? swarm/.directory
 
 ```
 
-These slides have been built from commit: 2604bca
+These slides have been built from commit: f13c895
 
 
 [common/title_fr.md](https://github.com/RyaxTech/kube.training.git/tree/gh-pages//common/title_fr.md)]
@@ -63,11 +70,11 @@ Kubernetes<br/>Introduction, Architecture et Installation<br/><br/></br>
 ---
 ## Quelques infos sur le formateur
 
-- Yiannis Georgiou - CTO Ryax Technologies
+- David Glesser - CPO Ryax Technologies
 
 - PhD Université Grenoble-Alpes - Gestion de ressources et orchestration sur de systèmes de calcul intensif
 
-- 11 ans à Bull/Atos Technologies - Ingenieur R&D / Architecte
+- 5 ans à Bull/Atos Technologies - Ingenieur R&D
 
 .debug[[logistics.md](https://github.com/RyaxTech/kube.training.git/tree/gh-pages//logistics.md)]
 ---
@@ -76,28 +83,25 @@ Kubernetes<br/>Introduction, Architecture et Installation<br/><br/></br>
 
 - La formation se déroulera de 9h à 17h
 
-- Il y aura une pause déjeuner à 12h30
+- Il y aura une pause déjeuner à 12h30 à 13h30
 
 - N'hésitez pas à interrompre pour des questions à tout moment
 
-- * Surtout quand vous voyez des photos de conteneurs en plein écran! *
-
-.debug[[logistics.md](https://github.com/RyaxTech/kube.training.git/tree/gh-pages//logistics.md)]
----
+- *Surtout quand vous voyez des photos de conteneurs en plein écran!*
 
 .debug[[logistics.md](https://github.com/RyaxTech/kube.training.git/tree/gh-pages//logistics.md)]
 ---
 ## Les slides de la formation
 
-Tout le contenu est disponible à un depot Github:
+Tout le contenu est disponible dans un depot Github:
 
   https://github.com/RyaxTech/kube.training
 
-- Le contenu est basé sur les slides écrites initiallement par [Jérôme Petazzoni](https://twitter.com/jpetazzo) pour supporter de workshops et tutoriels autour de Conteneurs et Kubernetes. 
+- Le contenu est basé sur les slides écrites initiallement par [Jérôme Petazzoni](https://twitter.com/jpetazzo) pour supporter de workshops et tutoriels autour des Conteneurs et de Kubernetes. 
 
-- Pour cette formation les slides ont été traduites en français et adaptés aux besoins particuliers.
+- Pour cette formation, les slides ont été traduites en français et adaptées.
 
-- Plusieurs mots et termes liées aux concepts de Kubernetes n'ont pas été traduit pour de raison de simplicité
+- Plusieurs mots et termes liées aux concepts de Kubernetes n'ont pas été traduit pour des raisons de simplicité
 
 * En dehors de la formation: 
   * ...si vous voulez passer plus de temps pour approfondir sur Kubernetes vous pouvez suivre la [documentation](https://kubernetes.io/docs/) officiel ...
@@ -835,7 +839,7 @@ Misattribué à Benjamin Franklin
 
 - C'est ce que tu es censé faire!
 
-- Allez dans [kube.training] (https://ryaxtech.github.io/kube.training/) pour voir ces diapositives
+- Allez dans [kube.training] (https://goo.gl/dekbTb) pour voir ces diapositives
 
 ]
 
@@ -866,7 +870,7 @@ class: in person
 
 - Vous pouvez automatiquement SSH d'une VM à l'autre
 
-- Les nœuds ont des alias: `asterix-1`,` asterix-2`, etc *ou* `obelix-1`,` obelix-2`, etc *ou* etc
+- Les nœuds ont des alias: `node1`, `node2`...
 
 .debug[[common/prereqs_fr.md](https://github.com/RyaxTech/kube.training.git/tree/gh-pages//common/prereqs_fr.md)]
 ---
@@ -896,13 +900,11 @@ class: in person
 
 .exercise[
 
-- Chaqu'un m'envoie la cles SSH publique de son poste par email au yiannis.georgiou@ryax.org
+- Connectez-vous à la première machine virtuelle (`node1`) avec votre client SSH
 
-- Connectez-vous à la première machine virtuelle (`asterix-1`) avec votre client SSH
-
-- Vérifiez que vous pouvez SSH (sans mot de passe) à `asterix-2`:
+- Vérifiez que vous pouvez SSH (sans mot de passe) à `node2`:
   ```bash
-  ssh asterix-2
+  ssh node2
   ```
 - Tapez `exit` ou` ^ D` pour revenir à `asterix-1`
 
@@ -934,13 +936,13 @@ Si quelque chose ne va pas, demandez de l'aide!
 .debug[[common/prereqs_fr.md](https://github.com/RyaxTech/kube.training.git/tree/gh-pages//common/prereqs_fr.md)]
 ---
 
-## Nous allons (surtout) interagir avec asterix-1 seulement
+## Nous allons (surtout) interagir avec node1 seulement
 
 *Ces remarques ne s'appliquent que lorsque vous utilisez plusieurs nœuds, bien sûr.*
 
-- Sauf instructions, **toutes les commandes doivent être exécutées à partir de la première VM, `asterix-1`**
+- Sauf instructions, **toutes les commandes doivent être exécutées à partir de la première VM, `node1`**
 
-- Nous allons seulement vérifier / copier le code sur `asterix-1`
+- Nous allons seulement vérifier / copier le code sur `node1`
 
 - Pendant les opérations normales, nous n'avons pas besoin d'accéder aux autres nœuds
 
@@ -1314,7 +1316,7 @@ Nous avons des ressources disponibles.
 
 - Démarrer un autre conteneur `worker`:
   ```bash
-  docker-compose up --scale worker = 2
+  docker-compose scale worker=2
   ```
 
 - Regardez le graphique de performance (il devrait montrer une amélioration de x2)
@@ -1336,7 +1338,7 @@ Nous avons des ressources disponibles.
 
 - Commencez huit autres conteneurs «worker»:
   ```bash
-  docker-compose up --scale worker = 10
+  docker-compose scale worker=10
   ```
 
 - Regardez le graphique des performances: montre-t-il une amélioration x10?
@@ -1379,7 +1381,7 @@ Identifier les goulots d'étranglement
 
 - L'ajout de workers n'a pas entraîné d'amélioration linéaire
 
-- * Quelque chose d'autre * nous ralentit
+- *Quelque chose d'autre* nous ralentit
 
 -
 
@@ -1426,12 +1428,12 @@ Nous allons utiliser `httping`.
 
 - Vérifiez la latence de `rng`:
   ```bash
-  https -c 3 localhost: 8001
+  httping -c 3 localhost:8001
   ```
 
 - Vérifiez la latence de `hasher`:
   ```bash
-  https -c 3 localhost: 8002
+  httping -c 3 localhost:8002
   ```
 
 ]
@@ -1470,6 +1472,14 @@ Note: ceci est une fiction! Nous avons assez d'entropie. Mais nous avons besoin 
 
 ]
 
+.debug[[common/composedown_fr.md](https://github.com/RyaxTech/kube.training.git/tree/gh-pages//common/composedown_fr.md)]
+---
+
+## Pour aller plus loin avec Docker Compose
+
+- Lisez l'[overview](https://docs.docker.com/compose/overview/) de la documentation officielle.
+
+- Les exemples sont aussi intéréssant, comme le [Quickstart: Compose and WordPress](https://docs.docker.com/compose/wordpress/).
 .debug[[common/composedown_fr.md](https://github.com/RyaxTech/kube.training.git/tree/gh-pages//common/composedown_fr.md)]
 ---
 
@@ -1646,6 +1656,27 @@ class: pic
 - Le troisieme est une représentation simplifiée d'un cluster Kubernetes
 
   (Source: [Imesh Gunaratne](https://medium.com/containermind/a-reference-architecture-for-deploying-wso2-middleware-on-kubernetes-d4dee7601e8e))
+
+.debug[[kube/concepts-k8s_fr.md](https://github.com/RyaxTech/kube.training.git/tree/gh-pages//kube/concepts-k8s_fr.md)]
+---
+
+## A savoir...
+
+- Comment prononce-t-on kubernetes?
+    - Mot venant du grecque κυβερνήτης, prononcé "kivernitis"
+    - En anglais : "coubernetis"
+    - En français : "cubernetesse" ou "cubernette"
+
+- On peut abbréger Kubernetes en k8s
+
+- Kubernetes viens avec de l'autocomplétion à intégrer dans votre bash :
+
+`source <(kubectl completion bash)`
+
+Ça complète les commandes mais aussi les noms des objets!
+
+Commande déjà éfféctuée dans vos VMs.
+
 
 .debug[[kube/concepts-k8s_fr.md](https://github.com/RyaxTech/kube.training.git/tree/gh-pages//kube/concepts-k8s_fr.md)]
 ---
@@ -2326,13 +2357,13 @@ L'espace de noms `kube-system` est utilisé pour le "Control Plane".
 
 - `kube-apiserver` est le serveur API
 
-- `kube-controller-manager` et` kube-scheduler` sont d'autres composants principaux
+- `kube-controller-manager` et `kube-scheduler` sont d'autres composants principaux
 
-- `kube-dns` est un composant supplémentaire (pas obligatoire mais super utile, donc c'est là)
+- `kube-dns` (ou `coredns`) est un composant supplémentaire (pas obligatoire mais super utile, donc c'est là)
 
 - `kube-proxy` est le composant (par noeud) gérant les mappages de ports et tel
 
-- `weave` est le composant (par noeud) gérant le overlay du réseau
+- `weave` est le composant (par noeud) gérant l'overlay du réseau
 
 - la colonne `READY` indique le nombre de conteneurs dans chaque pod
 
@@ -2371,6 +2402,18 @@ L'espace de noms `kube-system` est utilisé pour le "Control Plane".
 --
 
 - `kube-public` est créé par kubeadm & [utilisé pour le bootstrap de sécurité](https://kubernetes.io/blog/2017/01/stronger-foundation-for-creating-and-managing-kubernetes-clusters)
+
+
+.debug[[kube/kubectlget_fr.md](https://github.com/RyaxTech/kube.training.git/tree/gh-pages//kube/kubectlget_fr.md)]
+---
+
+## Pour aller plus loin
+
+- Les [composants de bases](https://kubernetes.io/docs/concepts/overview/components/) de Kubernetes.
+
+- Comprendre [les objets](https://kubernetes.io/docs/concepts/overview/working-with-objects/kubernetes-objects/) de Kubernetes.
+
+
 
 
 .debug[[kube/kubectlget_fr.md](https://github.com/RyaxTech/kube.training.git/tree/gh-pages//kube/kubectlget_fr.md)]
@@ -2444,7 +2487,7 @@ OK, qu'est-ce qui vient de se passer?
 
 - Listez la plupart des types de ressources:
   ```bash
-  Kubectl get all
+  kubectl get all
   ```
 
 ]
@@ -2606,16 +2649,15 @@ Nous pourrions! Mais le *deployment* le remarquerait tout de suite et reviendrai
 
 - Et si nous voulions démarrer un conteneur "one-shot" qui ne redémarre pas?
 
-- Nous pourrions utiliser `kubectl run --restart=OnFailure` ouv`kubectl run --restart=Never`
+- Nous pourrions utiliser `kubectl run --restart=OnFailure` ou `kubectl run --restart=Never`
 
 - Ces commandes créeraient *jobs* ou *pods* au lieu de *deployments*
 
 - Sous le tapis, `kubectl run` invoque des "generators" pour créer des descriptions de ressources
 
-- Nous pourrions aussi écrire nous-mêmes ces descriptions de ressources (typiquement en YAML),
-  <br/> et créez-les sur le cluster avec `kubectl apply -f` (discuté plus tard)
+- Nous pourrions aussi écrire nous-mêmes ces descriptions de ressources (typiquement en YAML), et les créer sur le cluster avec `kubectl apply -f` (discuté plus tard)
 
-- Avec `kubectl run --schedule = ...`, nous pouvons aussi créer *cronjobs*
+- Avec `kubectl run --schedule=...`, nous pouvons aussi créer des *cronjobs*
 
 .debug[[kube/kubectlrun_fr.md](https://github.com/RyaxTech/kube.training.git/tree/gh-pages//kube/kubectlrun_fr.md)]
 ---
@@ -2656,6 +2698,31 @@ Malheureusement, `--follow` ne peut pas (encore) être utilisé pour diffuser le
 
 - Il est très peu probable que nos pings concertés parviennent à produire
   même un modeste coup au Cloudflare!
+
+.debug[[kube/kubectlrun_fr.md](https://github.com/RyaxTech/kube.training.git/tree/gh-pages//kube/kubectlrun_fr.md)]
+---
+
+## Tout couper
+
+.exercise[
+
+- Arrétez le deployment:
+  ```bash
+  kubectl delete deploy/pingpong
+  ```
+- Quel est l'état de l'application ?
+  ```bash
+  kubectl get all
+  ```
+
+]
+
+- Pour aller plus loin:
+
+  - [Lancer un deployement dupuis un fichier YAML](https://kubernetes.io/docs/tasks/run-application/run-stateless-application-deployment/)
+
+  - [Lancer un *cronjob*](https://kubernetes.io/docs/tasks/job/automated-tasks-with-cron-jobs/)
+
 
 .debug[[kube/kubectlrun_fr.md](https://github.com/RyaxTech/kube.training.git/tree/gh-pages//kube/kubectlrun_fr.md)]
 ---
@@ -2778,6 +2845,15 @@ Installation de Kubernetes
 
 ## Installation avec Kubeadm
 
+- Nous n'allons pas faire l'installation de Kubernetes.
+
+- Les slides suivantes vous permettes d'avoir les bases avec Kubeadm.
+
+.debug[[kube/setup-k8s_fr.md](https://github.com/RyaxTech/kube.training.git/tree/gh-pages//kube/setup-k8s_fr.md)]
+---
+
+## Installation avec Kubeadm
+
 
 .exercise[
 
@@ -2890,7 +2966,7 @@ Il y a une étape supplémentaire pour rendre le dashboard disponible de l'exté
 
 --
 
-.footnote [.warning [Oui, cela ouvrira notre cluster à toutes sortes de manigances. Ne fais pas ça à la maison.]]
+.footnote[.warning[Oui, cela ouvrira notre cluster à toutes sortes de manigances. Ne fais pas ça à la maison.]]
 
 .debug[[kube/dashboard_fr.md](https://github.com/RyaxTech/kube.training.git/tree/gh-pages//kube/dashboard_fr.md)]
 ---
@@ -2932,7 +3008,7 @@ L'URL de goo.gl se développe pour:
 
 - ... Mais pour plus de commodité, pour cet atelier, nous transmettrons HTTP à HTTPS
 
-.warning [Ne le faites pas à la maison, ou pire, au travail!]
+.warning[Ne le faites pas à la maison, ou pire, au travail!]
 
 .debug[[kube/dashboard_fr.md](https://github.com/RyaxTech/kube.training.git/tree/gh-pages//kube/dashboard_fr.md)]
 ---
@@ -3022,7 +3098,7 @@ Le dashboard vous demandera ensuite l'authentification que vous souhaitez utilis
 
 --
 
-.warning [Au fait, nous venons d'ajouter une porte dérobée à notre cluster Kubernetes!]
+.warning[Au fait, nous venons d'ajouter une porte dérobée à notre cluster Kubernetes!]
 
 .debug[[kube/dashboard_fr.md](https://github.com/RyaxTech/kube.training.git/tree/gh-pages//kube/dashboard_fr.md)]
 ---
@@ -3070,7 +3146,7 @@ Le dashboard vous demandera ensuite l'authentification que vous souhaitez utilis
   kubectl -n kube-system edit service kubernetes-dashboard
   ```
 
-- Changez `ClusterIP` en `NodePort`, sauvegardez et quittez
+- Changez `type: ClusterIP` en `type: NodePort`, sauvegardez et quittez
 
 - Vérifiez le port qui a été assigné avec `kubectl -n kube-system get services`
 
@@ -3168,6 +3244,28 @@ Les implications de sécurité de `kubectl apply`
 
 - Il introduit de nouveaux modes de défaillance (comme si vous essayez d'appliquer yaml à partir d'un lien qui n'est plus valide)
 
+
+.debug[[kube/dashboard_fr.md](https://github.com/RyaxTech/kube.training.git/tree/gh-pages//kube/dashboard_fr.md)]
+---
+
+## Pour aller plus loin
+
+
+.exercise[
+- Relancez l'exemple préçédent
+  ```bash
+  kubectl run pingpong --image alpine ping 1.1.1.1
+  ```
+- Observez le deployment et son pod. Trouvez-vous les logs du pod?
+
+- Arrétez le deployment.
+
+]
+
+Vous pouvez stopper le dashboard ou le laisser. Comme le dashboard n'est pas sécurisé, nous conseillons de l'arréter.
+```bash
+  kubectl delete -f https://goo.gl/CHsLTA
+  ```
 
 
 

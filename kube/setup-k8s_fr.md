@@ -90,6 +90,14 @@
 
 ## Installation avec Kubeadm
 
+- Nous n'allons pas faire l'installation de Kubernetes.
+
+- Les slides suivantes vous permettes d'avoir les bases avec Kubeadm.
+
+---
+
+## Installation avec Kubeadm
+
 
 .exercise[
 
