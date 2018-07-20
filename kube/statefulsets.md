@@ -59,12 +59,94 @@ class: pic
 - Les schemas ont été repris du livre de Marko Luksa "Kubernetes in Action"
 
 .exercise[
-- We will perform the exercise from the following link:
-  https://blog.openshift.com/kubernetes-statefulset-in-action/
 
-- with the following differences:
-  * we won't use Openshift but our simple kubernetes cluster
-  * instead of "ebs" storage class we will make use of our rook storage provisioner, so the manifests need to be adapted appropriately to fit our rook storage class
+- *mehdb* est une base de donnée pas super (*meh* en anglais).
+Elle réplique automatiquement les données entre chaque instance.
+
+  ```bash
+wget https://gist.githubusercontent.com/glesserd/a0db0439e69426d92c632fb5c9bcba1c/raw/56b05fcdf9d4d1bbdf5f5cdca3fc104d7dca7d24/app.yaml
+  ```
+
+- Regardons le yaml ensemble...
+
+]
+
+Attention ! Cette application ne fonctionne pas... En effet les données ne sont pas répliqué. Mais cela n'est pas important pour nos tests avec Kubernetes.
+
+
+---
+## Déploiement
+.exercise[
+- Déployez le
+
+  ```bash
+kubectl get statefulset
+kubectl get sts
+  ```
+
+- On scale la bdd
+
+  ```bash
+kubectl scale sts mehdb --replicas=4
+  ```
+
+- Tout s'est bien passé ?
+  ```bash
+kubectl get sts
+kubectl get pvc
+  ```
+
+]
+
+---
+## Resistance aux crashs
+
+.exercise[
+- Tuons un pod !
+
+  ```bash
+kubectl delete pod mehdb-1
+  ```
+
+- Quel pod va être recréé ?
+
+  ```bash
+kubectl get pod
+  ```
+
+]
+
+---
+## Scale down
+
+.exercise[
+- Maintenant scale down:
+  ```bash
+kubectl scale sts mehdb --replicas=2
+  ```
+
+
+- Tout s'est bien passé ?
+  ```bash
+kubectl get sts
+kubectl get pvc
+  ```
+
+- Les pvc sont toujours la comme attendu !
+
+]
+
+---
+## Le reset
+
+.exercise[
+- Reset:
+
+  ```bash
+kubectl delete -f app.yaml
+  ```
+
+* Il ne faut pas oublier de supprimer les pvc !!!*
 
 ]
 
