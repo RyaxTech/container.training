@@ -35,12 +35,8 @@ Kubernetes <br/>Stockage, Configuration, Secrets et Concepts Avancés <br/>
  M kube-halfday.yml.html
  M kube-jour1.yml.html
  M kube-jour2.yml.html
- M kube-jour3.yml
  M kube-jour3.yml.html
  M kube-selfpaced.yml.html
- M kube/advanced_fr.md
- M kube/monitoring_fr.md
- M kube/statefulsets.md
  M swarm-fullday.yml.html
  M swarm-halfday.yml.html
  M swarm-selfpaced.yml.html
@@ -49,13 +45,12 @@ Kubernetes <br/>Stockage, Configuration, Secrets et Concepts Avancés <br/>
 ?? common/.directory
 ?? intro/.directory
 ?? kube/.directory
-?? kube/.recapj2_fr.md.kate-swp
 ?? kube/recapj2_fr.md
 ?? swarm/.directory
 
 ```
 
-These slides have been built from commit: cadc5d1
+These slides have been built from commit: e25e007
 
 
 [common/title_fr.md](https://github.com/RyaxTech/kube.training.git/tree/gh-pages//common/title_fr.md)]
@@ -809,7 +804,7 @@ Recap Jour 2
 
 L'équipe marketing à determiner que la vA du serveurweb était la meilleure.
 
-Vous aller donc lancer un service qui répartira la charge sur 5 instances du serveur web version A.
+Vous aller donc lancer un service qui exposera un pod.
 
 Cependant, ils veulent aussi que vous rajoutiez un dossier `bonus` dans /tmp/ qui contiendra un fichier `bonus.txt`. Ce fichier aura juste le texte "bonus" dedans.
 
@@ -817,19 +812,60 @@ Lors de la réunion vous sentez que ce fichier va surement changer souvent... Vo
 
 - Conseil: ne foncez pas tête baisser. Faites un plan, puis éxecutez le.
 
-
+- Vous *devez* passer par l'écriture d'un Yaml. Le mieux est d'en recopier un qui existe déjà... Soit qu'on a déjà vu, soit en faisant des commandes en CLI puis d'exporter au format yaml avec l'option --export:
+  ```bash
+kubectl get pod serverweba --export -o yaml
+  ```
 
 <!--
-kubectl run serverweba --image $REGISTRY/serverweb:vA
-kubectl run serverwebb --image $REGISTRY/serverweb:vB
 
-kubectl expose serverwebab --type=NodePort --port 80
+kubectl run serverweba --image $REGISTRY/serverweb:vA --replicas=5
 
-=> edit each service (and their template) to have a common key/value
-=> edit the service to select this key/value.-->
+kubectl expose deployment serverweba --type=NodePort --port 80
 
 
 
+kubectl get deployment serverweba --export -o yaml > dep.yaml
+=> ajouter dans le template:
+      volumes:
+      - name: alpine-volume 
+        persistentVolumeClaim:
+          claimName: alpine-pv-claim
+=> dans le contaienrs
+        volumeMounts:
+        - name: alpine-volume
+          mountPath: /tmp/bonus/
+=> et a la fin:
+.debug[[kube/recapj2_fr.md](https://github.com/RyaxTech/kube.training.git/tree/gh-pages//kube/recapj2_fr.md)]
+---
+apiVersion: v1
+kind: PersistentVolumeClaim
+metadata:
+  name: alpine-pv-claim
+  annotations:
+    volume.beta.kubernetes.io/storage-class: rook-ceph-block
+spec:
+  accessModes:
+    - ReadWriteOnce
+  resources:
+    requests:
+      storage: 1Gi
+
+
+
+kubectl delete deployment serverweba
+
+
+kubectl exec -ti 
+
+-->
+
+
+
+    volumes:
+    - name: alpine-volume
+      persistentVolumeClaim:
+        claimName: alpine-pv-claim
 
 
 
