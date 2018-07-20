@@ -67,33 +67,5 @@ class: pic
   * instead of "ebs" storage class we will make use of our rook storage provisioner, so the manifests need to be adapted appropriately to fit our rook storage class
 
 ]
-<!--
-
-wget https://gist.githubusercontent.com/glesserd/5c8a55ae5844dd1d59b4ed1952bb5caa/raw/018e743ff39ac3ad0fe279c4d24add36cbb24d09/web.yaml
-
-=> regardez le yaml!
-===> headless service (clusterIP: None) => pas de load balancing, une entrée DNS  est créer (comme pour tout les services) et les endpoints sont mis dans ce DNS:
-===> template, comme dans un replicaset (toujours nos selectors!)
-===> volumeClaimTemplates
-
-
-kubectl create -f web.yaml
-
-kubectl run -i -t --rm dnscheck --restart=Never --image=alpine -- nslookup nginx
-=> on retrouve nos 2 replicas!
-
-
-dans un autre terminal, on va regarder ce qui se passe:
-
-kubectl get pods -w -l app=nginx
-
-
-kubectl create -f web.yaml
-
-=> les pods sont créé dans l'ordre!
--->
-
-
-
 
 
