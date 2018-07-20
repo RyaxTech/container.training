@@ -40,6 +40,9 @@ variables ou en tant que fichiers dans un volume.
 
 - Exécutez l'exemple décrit ici: https://kubernetes.io/docs/tutorials/configuration/configure-redis-using-configmap/
 
+Attention ! Votre version de Kubernetes ne supporte pas encore qu'il est une URL dans l'option --from-file !
+
+
 - Pour aller plus loin: https://kubernetes.io/docs/tasks/configure-pod-container/configure-pod-configmap/
 
 ---

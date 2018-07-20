@@ -29,8 +29,6 @@ Kubernetes <br/>Stockage, Configuration, Secrets et Concepts Avancés <br/>
 
 .debug[
 ```
-A  images/CloudNativeLandscape_Serverless_latest.png
-A  images/serverless_apigateway.png
  M intro-fullday.yml.html
  M intro-selfpaced.yml.html
  M kube-fullday.yml.html
@@ -40,9 +38,8 @@ A  images/serverless_apigateway.png
  M kube-jour3.yml
  M kube-jour3.yml.html
  M kube-selfpaced.yml.html
-A  kube/netisolation_fr.md
-A  kube/recapj1_fr.md
-A  kube/serverless_fr.md
+ M kube/advanced_fr.md
+ M kube/configs_fr.md
  M swarm-fullday.yml.html
  M swarm-halfday.yml.html
  M swarm-selfpaced.yml.html
@@ -51,11 +48,12 @@ A  kube/serverless_fr.md
 ?? common/.directory
 ?? intro/.directory
 ?? kube/.directory
+?? kube/monitoring_fr.md
 ?? swarm/.directory
 
 ```
 
-These slides have been built from commit: f13c895
+These slides have been built from commit: cdf7740
 
 
 [common/title_fr.md](https://github.com/RyaxTech/kube.training.git/tree/gh-pages//common/title_fr.md)]
@@ -105,11 +103,19 @@ name: toc-chapter-4
 
 ## Chapter 4
 
+- [Monitoring avec Prometheus et Grafana](#toc-monitoring-avec-prometheus-et-grafana)
+
+.debug[(auto-generated TOC)]
+---
+name: toc-chapter-5
+
+## Chapter 5
+
+- [Autoscaling avec Kubernetes](#toc-autoscaling-avec-kubernetes)
+
 - [Déploiement de Jupiter sur Kubernetes](#toc-dploiement-de-jupiter-sur-kubernetes)
 
 - [Scheduling avancée avec Kubernetes](#toc-scheduling-avance-avec-kubernetes)
-
-- [Autoscaling avec Kubernetes](#toc-autoscaling-avec-kubernetes)
 
 - [Big Data analytics sur Kubernetes](#toc-big-data-analytics-sur-kubernetes)
 
@@ -822,6 +828,9 @@ variables ou en tant que fichiers dans un volume.
 
 - Exécutez l'exemple décrit ici: https://kubernetes.io/docs/tutorials/configuration/configure-redis-using-configmap/
 
+Attention ! Votre version de Kubernetes ne supporte pas encore qu'il est une URL dans l'option --from-file !
+
+
 - Pour aller plus loin: https://kubernetes.io/docs/tasks/configure-pod-container/configure-pod-configmap/
 
 .debug[[kube/configs_fr.md](https://github.com/RyaxTech/kube.training.git/tree/gh-pages//kube/configs_fr.md)]
@@ -843,7 +852,7 @@ Introduction des secrets
 |
 [Retour table des matières](#toc-chapter-3)
 |
-[Section suivante](#toc-dploiement-de-jupiter-sur-kubernetes)
+[Section suivante](#toc-monitoring-avec-prometheus-et-grafana)
 ]
 
 .debug[(automatically generated title slide)]
@@ -899,15 +908,252 @@ class: pic
 
 ---
 
+name: toc-monitoring-avec-prometheus-et-grafana
+class: title
+
+Monitoring avec Prometheus et Grafana
+
+.nav[
+[Section précédente](#toc-introduction-des-secrets)
+|
+[Retour table des matières](#toc-chapter-4)
+|
+[Section suivante](#toc-autoscaling-avec-kubernetes)
+]
+
+.debug[(automatically generated title slide)]
+
+---
+# Monitoring avec Prometheus et Grafana
+
+- Prometheus, pour le monitoring
+
+- Grafana, pour afficher les métriques et jouer avec.
+
+.debug[[kube/monitoring_fr.md](https://github.com/RyaxTech/kube.training.git/tree/gh-pages//kube/monitoring_fr.md)]
+---
+
+## Kube Prometheus
+
+Kube Prometheus est un dépot git qui permet d'installer une stack de monitoring Prometheus+Grafana pour kubernetes.
+Il configure aussi Grafana pour intégrer des graphiques utiles.
+
+.exercise[
+  ```bash
+git clone https://github.com/coreos/prometheus-operator.git
+
+cd prometheus-operator/contrib/kube-prometheus/
+
+kubectl create -f manifests/
+  ```
+]
+
+.debug[[kube/monitoring_fr.md](https://github.com/RyaxTech/kube.training.git/tree/gh-pages//kube/monitoring_fr.md)]
+---
+
+## Grafana
+
+.exercise[
+- Ouvrez le service grafana à l'exterieur, connectez-vous y avec votre navigateur web
+
+- Si vous avez besoin  de vous logguer : admin/admin
+
+- Cliquez sur "Home" tout en haut de l'écran, choisissez le dashboard *Pods*.
+
+- Quel est l'utilisation mémoire du pod registery ?
+
+- Quel est le coût des pods du daemonset de prometheus ?
+
+]
+
+
+
+
+.debug[[kube/monitoring_fr.md](https://github.com/RyaxTech/kube.training.git/tree/gh-pages//kube/monitoring_fr.md)]
+---
+
+class: pic
+
+.interstitial[![Image separating from the next chapter](https://gallant-turing-d0d520.netlify.com/containers/distillery-containers.jpg)]
+
+---
+
+name: toc-autoscaling-avec-kubernetes
+class: title
+
+Autoscaling avec Kubernetes
+
+.nav[
+[Section précédente](#toc-monitoring-avec-prometheus-et-grafana)
+|
+[Retour table des matières](#toc-chapter-5)
+|
+[Section suivante](#toc-dploiement-de-jupiter-sur-kubernetes)
+]
+
+.debug[(automatically generated title slide)]
+
+---
+# Autoscaling avec Kubernetes
+
+Nous allons mettre en place un système d'autoscaling basé sur k8s-prom-hpa. Ce logicil à l'avantage d'être simple, fonctionel et extensible grâce à Prometheus.
+
+.exercise[
+- Récupérez le logiciel:
+
+  ```bash
+git clone https://github.com/stefanprodan/k8s-prom-hpa.git
+cd k8s-prom-hpa/
+  ```
+
+]
+
+.debug[[kube/advanced_fr.md](https://github.com/RyaxTech/kube.training.git/tree/gh-pages//kube/advanced_fr.md)]
+---
+
+## Récupérez les métriques
+
+Déployons le *Metrics Server*, le server qui va récupérez les métriques sur les noeuds et les transmettre en utilisant l'API standard de kubernetes:
+
+.exercise[
+  ```bash
+kubectl create -f ./metrics-server
+  ```
+]
+
+(Avant k8s 1.8, Heapster permettait de faire cela. Ce projet a été fusionner avec Kubernetes pour faire *Metrics Server*.)
+
+.debug[[kube/advanced_fr.md](https://github.com/RyaxTech/kube.training.git/tree/gh-pages//kube/advanced_fr.md)]
+---
+
+## HorizontalPodAutoscaler CRD
+
+.exercise[
+La prochaine commande définit un nouveau type d'objet (un Custorm Resource Definition (CRD)), et lance le controlleur de ce CRD.
+
+On peut donc maintenant intéragir avec le type HorizontalPodAutoscaler comme tout les autres objets de kubernetes:
+
+  ```bash
+kubectl get hpa
+  ```
+
+]
+
+.debug[[kube/advanced_fr.md](https://github.com/RyaxTech/kube.training.git/tree/gh-pages//kube/advanced_fr.md)]
+---
+
+## Déploiement d'une application
+
+.exercise[
+On deploie maintenant une application affichant sur une interface web des informations décrivant son pod:
+
+  ```bash
+kubectl create -f ./podinfo/podinfo-svc.yaml,./podinfo/podinfo-dep.yaml
+  ```
+
+Vous pouvez regarder ce que ces infos sont:
+  ```bash
+curl IP_PUBLIC:PORT_DU_SERVICE
+  ```
+]
+
+.debug[[kube/advanced_fr.md](https://github.com/RyaxTech/kube.training.git/tree/gh-pages//kube/advanced_fr.md)]
+---
+
+## Mise en place des règles d'auto-scaling
+
+.exercise[
+On va maintenant créer les règles HorizontalPodAutoscaler:
+
+  ```bash
+kubectl create -f ./podinfo/podinfo-hpa.yaml
+  ```
+
+Regardez ce yaml pour voir ce que définissent ces règles !
+
+On a donc maintenant une nouvelle hpa:
+  ```bash
+kubectl get hpa
+  ```
+]
+
+.debug[[kube/advanced_fr.md](https://github.com/RyaxTech/kube.training.git/tree/gh-pages//kube/advanced_fr.md)]
+---
+
+## Stress de l'application
+
+.exercise[
+On va maintenant strésser le service pour que le scaling ce lance, dans un nouveau terminal :
+  ```bash
+cd ~/
+mkdir golang
+export GOPATH=~/golang/
+export GOROOT=/usr/lib/go-1.10
+export PATH=$GOPATH/bin:$GOROOT/bin:$PATH
+go get -u github.com/rakyll/hey
+hey -n 10000 -q 10 -c 5 http://IP_PUBLIC:PORT_DU_SERVICE/
+  ```
+
+]
+.debug[[kube/advanced_fr.md](https://github.com/RyaxTech/kube.training.git/tree/gh-pages//kube/advanced_fr.md)]
+---
+
+## Stress de l'application 2
+
+.exercise[
+
+Observez ce qui se passe pour le hpa:
+  ```bash
+kubectl describe hpa
+  ```
+
+]
+
+L'autoscaler ne réagit pas immédiatement au pics d'utilisation.
+Par défaut, les métriques sont synchronisées toutes les 30s.
+De plus, le scaling up/down peut seulement avoir lieu si il n'y pas déjà eu un scaling dans les 5 minutes.
+Cela permet au HPA de prendre des décisions trop rapides et/ou contradictoires.
+
+.debug[[kube/advanced_fr.md](https://github.com/RyaxTech/kube.training.git/tree/gh-pages//kube/advanced_fr.md)]
+---
+
+## En savoir plus
+
+- The procedure is explained in detail and with more examples here: https://www.weave.works/blog/kubernetes-horizontal-pod-autoscaler-and-prometheus
+
+- Pour reset:
+  ```bash
+kubectl delete -f ./podinfo/podinfo-hpa.yaml
+kubectl delete -f ./podinfo/podinfo-svc.yaml,./podinfo/podinfo-dep.yaml
+kubectl delete -f ./metrics-server
+  ```
+
+
+
+
+
+
+
+
+.debug[[kube/advanced_fr.md](https://github.com/RyaxTech/kube.training.git/tree/gh-pages//kube/advanced_fr.md)]
+---
+---
+
+class: pic
+
+.interstitial[![Image separating from the next chapter](https://gallant-turing-d0d520.netlify.com/containers/lots-of-containers.jpg)]
+
+---
+
 name: toc-dploiement-de-jupiter-sur-kubernetes
 class: title
 
 Déploiement de Jupiter sur Kubernetes
 
 .nav[
-[Section précédente](#toc-introduction-des-secrets)
+[Section précédente](#toc-autoscaling-avec-kubernetes)
 |
-[Retour table des matières](#toc-chapter-4)
+[Retour table des matières](#toc-chapter-5)
 |
 [Section suivante](#toc-scheduling-avance-avec-kubernetes)
 ]
@@ -921,6 +1167,7 @@ Déploiement de Jupiter sur Kubernetes
 .exercise[
 - Nous suivrons la procédure fournie ici : 
   https://zonca.github.io/2017/12/scalable-jupyterhub-kubernetes-jetstream.html
+
 ]
 
 .debug[[kube/advanced_fr.md](https://github.com/RyaxTech/kube.training.git/tree/gh-pages//kube/advanced_fr.md)]
@@ -928,7 +1175,7 @@ Déploiement de Jupiter sur Kubernetes
 
 class: pic
 
-.interstitial[![Image separating from the next chapter](https://gallant-turing-d0d520.netlify.com/containers/distillery-containers.jpg)]
+.interstitial[![Image separating from the next chapter](https://gallant-turing-d0d520.netlify.com/containers/plastic-containers.JPG)]
 
 ---
 
@@ -940,9 +1187,9 @@ Scheduling avancée avec Kubernetes
 .nav[
 [Section précédente](#toc-dploiement-de-jupiter-sur-kubernetes)
 |
-[Retour table des matières](#toc-chapter-4)
+[Retour table des matières](#toc-chapter-5)
 |
-[Section suivante](#toc-autoscaling-avec-kubernetes)
+[Section suivante](#toc-big-data-analytics-sur-kubernetes)
 ]
 
 .debug[(automatically generated title slide)]
@@ -956,45 +1203,14 @@ Scheduling avancée avec Kubernetes
 - Nous suivrons la procédure fournie ici : 
    https://github.com/RyaxTech/kube-tutorial#4-activate-an-advanced-scheduling-policy-and-test-its-usage
 ]
+
 .debug[[kube/advanced_fr.md](https://github.com/RyaxTech/kube.training.git/tree/gh-pages//kube/advanced_fr.md)]
 ---
 ---
 
 class: pic
 
-.interstitial[![Image separating from the next chapter](https://gallant-turing-d0d520.netlify.com/containers/lots-of-containers.jpg)]
-
----
-
-name: toc-autoscaling-avec-kubernetes
-class: title
-
-Autoscaling avec Kubernetes
-
-.nav[
-[Section précédente](#toc-scheduling-avance-avec-kubernetes)
-|
-[Retour table des matières](#toc-chapter-4)
-|
-[Section suivante](#toc-big-data-analytics-sur-kubernetes)
-]
-
-.debug[(automatically generated title slide)]
-
----
-# Autoscaling avec Kubernetes
-
-.exercise[
-- Nous suivrons la procédure fournie ici : 
-  https://github.com/RyaxTech/kube-tutorial#6-enable-and-use-pod-autoscaling
-]
-.debug[[kube/advanced_fr.md](https://github.com/RyaxTech/kube.training.git/tree/gh-pages//kube/advanced_fr.md)]
----
----
-
-class: pic
-
-.interstitial[![Image separating from the next chapter](https://gallant-turing-d0d520.netlify.com/containers/plastic-containers.JPG)]
+.interstitial[![Image separating from the next chapter](https://gallant-turing-d0d520.netlify.com/containers/train-of-containers-1.jpg)]
 
 ---
 
@@ -1004,9 +1220,9 @@ class: title
 Big Data analytics sur Kubernetes
 
 .nav[
-[Section précédente](#toc-autoscaling-avec-kubernetes)
+[Section précédente](#toc-scheduling-avance-avec-kubernetes)
 |
-[Retour table des matières](#toc-chapter-4)
+[Retour table des matières](#toc-chapter-5)
 |
 [Section suivante](#toc-)
 ]
@@ -1014,6 +1230,7 @@ Big Data analytics sur Kubernetes
 .debug[(automatically generated title slide)]
 
 ---
+
 # Big Data analytics sur Kubernetes
 
 .exercise[
