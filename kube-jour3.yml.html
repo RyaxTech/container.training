@@ -50,7 +50,7 @@ Kubernetes <br/>Stockage, Configuration, Secrets et Concepts Avancés <br/>
 
 ```
 
-These slides have been built from commit: e25e007
+These slides have been built from commit: 41af34e
 
 
 [common/title_fr.md](https://github.com/RyaxTech/kube.training.git/tree/gh-pages//common/title_fr.md)]
@@ -804,7 +804,7 @@ Recap Jour 2
 
 L'équipe marketing à determiner que la vA du serveurweb était la meilleure.
 
-Vous aller donc lancer un service qui exposera un pod.
+Vous aller donc lancer un service qui exposera un **pod**.
 
 Cependant, ils veulent aussi que vous rajoutiez un dossier `bonus` dans /tmp/ qui contiendra un fichier `bonus.txt`. Ce fichier aura juste le texte "bonus" dedans.
 
@@ -812,60 +812,22 @@ Lors de la réunion vous sentez que ce fichier va surement changer souvent... Vo
 
 - Conseil: ne foncez pas tête baisser. Faites un plan, puis éxecutez le.
 
-- Vous *devez* passer par l'écriture d'un Yaml. Le mieux est d'en recopier un qui existe déjà... Soit qu'on a déjà vu, soit en faisant des commandes en CLI puis d'exporter au format yaml avec l'option --export:
-  ```bash
-kubectl get pod serverweba --export -o yaml
-  ```
+- Conseil 2: la slide suivante contient de l'aide... A vous de voir...
 
-<!--
-
-kubectl run serverweba --image $REGISTRY/serverweb:vA --replicas=5
-
-kubectl expose deployment serverweba --type=NodePort --port 80
-
-
-
-kubectl get deployment serverweba --export -o yaml > dep.yaml
-=> ajouter dans le template:
-      volumes:
-      - name: alpine-volume 
-        persistentVolumeClaim:
-          claimName: alpine-pv-claim
-=> dans le contaienrs
-        volumeMounts:
-        - name: alpine-volume
-          mountPath: /tmp/bonus/
-=> et a la fin:
 .debug[[kube/recapj2_fr.md](https://github.com/RyaxTech/kube.training.git/tree/gh-pages//kube/recapj2_fr.md)]
 ---
-apiVersion: v1
-kind: PersistentVolumeClaim
-metadata:
-  name: alpine-pv-claim
-  annotations:
-    volume.beta.kubernetes.io/storage-class: rook-ceph-block
-spec:
-  accessModes:
-    - ReadWriteOnce
-  resources:
-    requests:
-      storage: 1Gi
 
+## Aide
 
+- Repartez de https://raw.githubusercontent.com/zonca/jupyterhub-deploy-kubernetes-jetstream/master/storage_rook/alpine-rook.yaml
 
-kubectl delete deployment serverweba
+- l'image du serveur A s'appelle `127.0.0.1:32092/serverweb:vA`
 
+- Pour écrire le fichier bonus, connéctez-vous au pod:
+  ```bash
+kubectl exec -ti alpine -- sh
+  ```
 
-kubectl exec -ti 
-
--->
-
-
-
-    volumes:
-    - name: alpine-volume
-      persistentVolumeClaim:
-        claimName: alpine-pv-claim
 
 
 
