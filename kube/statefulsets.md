@@ -51,6 +51,8 @@ class: pic
 ---
 ## Statefulset exercises
 
+- Les schemas ont été repris du livre de Marko Luksa "Kubernetes in Action"
+
 .exercise[
 - We will perform the exercise from the following link:
   https://blog.openshift.com/kubernetes-statefulset-in-action/
