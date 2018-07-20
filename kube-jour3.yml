@@ -22,6 +22,8 @@ chapters:
 - common/toc.md
 - - kube/serverless_fr.md
 - - kube/stockage_fr.md
+- - kube/recapj2_fr.md
 - - kube/configs_fr.md
 - - kube/monitoring_fr.md
-- - kube/advanced_fr.md  
+- - kube/statefulsets.md
+- - kube/advanced_fr.md

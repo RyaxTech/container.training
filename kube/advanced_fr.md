@@ -131,6 +131,19 @@ kubectl delete -f ./metrics-server
 
 
 
+---
+---
+
+# CI/CD with Spinnaker
+
+.exercise[
+- We will perform the exercise from the following link:
+  https://thenewstack.io/getting-started-spinnaker-kubernetes/
+
+ * However, since we already have our own cluster and Helm installed, we will start the tutorial from the "Installing Spinnaker" section
+
+]
+
 
 ---
 ---

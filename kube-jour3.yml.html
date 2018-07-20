@@ -29,33 +29,33 @@ Kubernetes <br/>Stockage, Configuration, Secrets et Concepts Avancés <br/>
 
 .debug[
 ```
-A  images/replicasets.png
-A  images/replicasets_statefulsets.png
-A  images/statefulsetPVC_scaledown.png
-A  images/statefulset_nodefail.png
-A  images/statefulset_scaledown.png
-UD intro-fullday.yml.html
-UD intro-selfpaced.yml.html
-UD kube-fullday.yml.html
-UD kube-halfday.yml.html
+ M intro-fullday.yml.html
+ M intro-selfpaced.yml.html
+ M kube-fullday.yml.html
+ M kube-halfday.yml.html
  M kube-jour1.yml.html
  M kube-jour2.yml.html
+ M kube-jour3.yml
  M kube-jour3.yml.html
-UD kube-selfpaced.yml.html
-A  kube/statefulsets.md
-UD swarm-fullday.yml.html
-UD swarm-halfday.yml.html
-UD swarm-selfpaced.yml.html
-UD swarm-video.yml.html
+ M kube-selfpaced.yml.html
+ M kube/advanced_fr.md
+ M kube/monitoring_fr.md
+ M kube/statefulsets.md
+ M swarm-fullday.yml.html
+ M swarm-halfday.yml.html
+ M swarm-selfpaced.yml.html
+ M swarm-video.yml.html
 ?? .directory
 ?? common/.directory
 ?? intro/.directory
 ?? kube/.directory
+?? kube/.recapj2_fr.md.kate-swp
+?? kube/recapj2_fr.md
 ?? swarm/.directory
 
 ```
 
-These slides have been built from commit: a0548aa
+These slides have been built from commit: cadc5d1
 
 
 [common/title_fr.md](https://github.com/RyaxTech/kube.training.git/tree/gh-pages//common/title_fr.md)]
@@ -95,9 +95,7 @@ name: toc-chapter-3
 
 ## Chapter 3
 
-- [Découplage de configuration avec un ConfigMap](#toc-dcouplage-de-configuration-avec-un-configmap)
-
-- [Introduction des secrets](#toc-introduction-des-secrets)
+- [Recap Jour 2](#toc-recap-jour-)
 
 .debug[(auto-generated TOC)]
 ---
@@ -105,7 +103,9 @@ name: toc-chapter-4
 
 ## Chapter 4
 
-- [Monitoring avec Prometheus et Grafana](#toc-monitoring-avec-prometheus-et-grafana)
+- [Découplage de configuration avec un ConfigMap](#toc-dcouplage-de-configuration-avec-un-configmap)
+
+- [Introduction des secrets](#toc-introduction-des-secrets)
 
 .debug[(auto-generated TOC)]
 ---
@@ -113,7 +113,25 @@ name: toc-chapter-5
 
 ## Chapter 5
 
+- [Monitoring avec Prometheus et Grafana](#toc-monitoring-avec-prometheus-et-grafana)
+
+.debug[(auto-generated TOC)]
+---
+name: toc-chapter-6
+
+## Chapter 6
+
+- [StatefulSets](#toc-statefulsets)
+
+.debug[(auto-generated TOC)]
+---
+name: toc-chapter-7
+
+## Chapter 7
+
 - [Autoscaling avec Kubernetes](#toc-autoscaling-avec-kubernetes)
+
+- [CI/CD with Spinnaker](#toc-cicd-with-spinnaker)
 
 - [Déploiement de Jupiter sur Kubernetes](#toc-dploiement-de-jupiter-sur-kubernetes)
 
@@ -585,7 +603,7 @@ Rook orchestration de stockage distribué
 |
 [Retour table des matières](#toc-chapter-2)
 |
-[Section suivante](#toc-dcouplage-de-configuration-avec-un-configmap)
+[Section suivante](#toc-recap-jour-)
 ]
 
 .debug[(automatically generated title slide)]
@@ -769,15 +787,70 @@ class: pic
 
 ---
 
+name: toc-recap-jour-
+class: title
+
+Recap Jour 2
+
+.nav[
+[Section précédente](#toc-rook-orchestration-de-stockage-distribu)
+|
+[Retour table des matières](#toc-chapter-3)
+|
+[Section suivante](#toc-dcouplage-de-configuration-avec-un-configmap)
+]
+
+.debug[(automatically generated title slide)]
+
+---
+
+# Recap Jour 2
+
+
+L'équipe marketing à determiner que la vA du serveurweb était la meilleure.
+
+Vous aller donc lancer un service qui répartira la charge sur 5 instances du serveur web version A.
+
+Cependant, ils veulent aussi que vous rajoutiez un dossier `bonus` dans /tmp/ qui contiendra un fichier `bonus.txt`. Ce fichier aura juste le texte "bonus" dedans.
+
+Lors de la réunion vous sentez que ce fichier va surement changer souvent... Vous décidez qu'au lieu de changer l'image docker, vous aller monter un volume persitant qui vous permettera de changer rapidement le contenu de ce dossier.
+
+- Conseil: ne foncez pas tête baisser. Faites un plan, puis éxecutez le.
+
+
+
+<!--
+kubectl run serverweba --image $REGISTRY/serverweb:vA
+kubectl run serverwebb --image $REGISTRY/serverweb:vB
+
+kubectl expose serverwebab --type=NodePort --port 80
+
+=> edit each service (and their template) to have a common key/value
+=> edit the service to select this key/value.-->
+
+
+
+
+
+
+.debug[[kube/recapj2_fr.md](https://github.com/RyaxTech/kube.training.git/tree/gh-pages//kube/recapj2_fr.md)]
+---
+
+class: pic
+
+.interstitial[![Image separating from the next chapter](https://gallant-turing-d0d520.netlify.com/containers/container-housing.jpg)]
+
+---
+
 name: toc-dcouplage-de-configuration-avec-un-configmap
 class: title
 
 Découplage de configuration avec un ConfigMap
 
 .nav[
-[Section précédente](#toc-rook-orchestration-de-stockage-distribu)
+[Section précédente](#toc-recap-jour-)
 |
-[Retour table des matières](#toc-chapter-3)
+[Retour table des matières](#toc-chapter-4)
 |
 [Section suivante](#toc-introduction-des-secrets)
 ]
@@ -840,7 +913,7 @@ Attention ! Votre version de Kubernetes ne supporte pas encore qu'il est une URL
 
 class: pic
 
-.interstitial[![Image separating from the next chapter](https://gallant-turing-d0d520.netlify.com/containers/container-housing.jpg)]
+.interstitial[![Image separating from the next chapter](https://gallant-turing-d0d520.netlify.com/containers/containers-by-the-water.jpg)]
 
 ---
 
@@ -852,7 +925,7 @@ Introduction des secrets
 .nav[
 [Section précédente](#toc-dcouplage-de-configuration-avec-un-configmap)
 |
-[Retour table des matières](#toc-chapter-3)
+[Retour table des matières](#toc-chapter-4)
 |
 [Section suivante](#toc-monitoring-avec-prometheus-et-grafana)
 ]
@@ -906,7 +979,7 @@ devrez stocker le fichier dans un secret.
 
 class: pic
 
-.interstitial[![Image separating from the next chapter](https://gallant-turing-d0d520.netlify.com/containers/containers-by-the-water.jpg)]
+.interstitial[![Image separating from the next chapter](https://gallant-turing-d0d520.netlify.com/containers/distillery-containers.jpg)]
 
 ---
 
@@ -918,9 +991,9 @@ Monitoring avec Prometheus et Grafana
 .nav[
 [Section précédente](#toc-introduction-des-secrets)
 |
-[Retour table des matières](#toc-chapter-4)
+[Retour table des matières](#toc-chapter-5)
 |
-[Section suivante](#toc-autoscaling-avec-kubernetes)
+[Section suivante](#toc-statefulsets)
 ]
 
 .debug[(automatically generated title slide)]
@@ -969,6 +1042,14 @@ kubectl create -f manifests/
 ]
 
 
+.debug[[kube/monitoring_fr.md](https://github.com/RyaxTech/kube.training.git/tree/gh-pages//kube/monitoring_fr.md)]
+---
+
+## reset
+
+  ```bash
+kubectl delete -f manifests/
+  ```
 
 
 .debug[[kube/monitoring_fr.md](https://github.com/RyaxTech/kube.training.git/tree/gh-pages//kube/monitoring_fr.md)]
@@ -976,7 +1057,138 @@ kubectl create -f manifests/
 
 class: pic
 
-.interstitial[![Image separating from the next chapter](https://gallant-turing-d0d520.netlify.com/containers/distillery-containers.jpg)]
+.interstitial[![Image separating from the next chapter](https://gallant-turing-d0d520.netlify.com/containers/lots-of-containers.jpg)]
+
+---
+
+name: toc-statefulsets
+class: title
+
+StatefulSets
+
+.nav[
+[Section précédente](#toc-monitoring-avec-prometheus-et-grafana)
+|
+[Retour table des matières](#toc-chapter-6)
+|
+[Section suivante](#toc-autoscaling-avec-kubernetes)
+]
+
+.debug[(automatically generated title slide)]
+
+---
+
+# StatefulSets
+
+- Un StatefulSet permet d'avoir un ensemble de pod qui ont un nom et un état stable.
+
+- Quelle différence avec un ReplicaSet (deployment) ?
+
+  - un ReplicaSet c'est comme gérer un troupeau de vache : on se fiche du nom des vaches, on veut juste savoir combien il y en a. Si une vache est malade, on la remplace.
+
+  - un StatefulSet c'est comme gérer un groupe d'animaux de compagnie : on leur donne des noms et on ne peut pas les remplacer facilement. Si jamais on veut en remplacer un il va falloir en trouver un avec le même nom et le même apparence.
+
+
+.debug[[kube/statefulsets.md](https://github.com/RyaxTech/kube.training.git/tree/gh-pages//kube/statefulsets.md)]
+---
+## Repliquer des pods Stateful
+
+
+![replicasets](images/replicasets.png)
+
+A cause du système de template des ReplicaSet, on ne peut donner qu'un seul et unique nom pour le PersistentVolumeClaim.
+
+Dans un ReplicaSet, tous les replicas utilisent le même PersistentVolumeClaim !
+
+.debug[[kube/statefulsets.md](https://github.com/RyaxTech/kube.training.git/tree/gh-pages//kube/statefulsets.md)]
+---
+
+## Les StatefulSets nous permettent d'avoir des noms uniques
+
+
+![replicasets](images/replicasets_statefulsets.png)
+
+Que se passe-t-il si un noeud meurt ?
+
+.debug[[kube/statefulsets.md](https://github.com/RyaxTech/kube.training.git/tree/gh-pages//kube/statefulsets.md)]
+---
+
+class: pic
+
+![replicasets](images/statefulset_nodefail.png)
+
+.debug[[kube/statefulsets.md](https://github.com/RyaxTech/kube.training.git/tree/gh-pages//kube/statefulsets.md)]
+---
+
+## Statefulset, changement du nombre de replicas
+
+![replicasets](images/statefulset_scaledown.png)
+
+Le pod avec l'ID le plus grand est détruit en premier !
+
+Mais qu'en est il des PVC attachés ?
+
+.debug[[kube/statefulsets.md](https://github.com/RyaxTech/kube.training.git/tree/gh-pages//kube/statefulsets.md)]
+---
+
+class: pic
+
+
+![replicasets](images/statefulsetPVC_scaledown.png)
+
+
+.debug[[kube/statefulsets.md](https://github.com/RyaxTech/kube.training.git/tree/gh-pages//kube/statefulsets.md)]
+---
+## Statefulset exercises
+
+- Les schemas ont été repris du livre de Marko Luksa "Kubernetes in Action"
+
+.exercise[
+- We will perform the exercise from the following link:
+  https://blog.openshift.com/kubernetes-statefulset-in-action/
+
+- with the following differences:
+  * we won't use Openshift but our simple kubernetes cluster
+  * instead of "ebs" storage class we will make use of our rook storage provisioner, so the manifests need to be adapted appropriately to fit our rook storage class
+
+]
+<!--
+
+wget https://gist.githubusercontent.com/glesserd/5c8a55ae5844dd1d59b4ed1952bb5caa/raw/018e743ff39ac3ad0fe279c4d24add36cbb24d09/web.yaml
+
+=> regardez le yaml!
+===> headless service (clusterIP: None) => pas de load balancing, une entrée DNS  est créer (comme pour tout les services) et les endpoints sont mis dans ce DNS:
+===> template, comme dans un replicaset (toujours nos selectors!)
+===> volumeClaimTemplates
+
+
+kubectl create -f web.yaml
+
+kubectl run -i -t --rm dnscheck --restart=Never --image=alpine -- nslookup nginx
+=> on retrouve nos 2 replicas!
+
+
+dans un autre terminal, on va regarder ce qui se passe:
+
+kubectl get pods -w -l app=nginx
+
+
+kubectl create -f web.yaml
+
+=> les pods sont créé dans l'ordre!
+-->
+
+
+
+
+
+
+.debug[[kube/statefulsets.md](https://github.com/RyaxTech/kube.training.git/tree/gh-pages//kube/statefulsets.md)]
+---
+
+class: pic
+
+.interstitial[![Image separating from the next chapter](https://gallant-turing-d0d520.netlify.com/containers/plastic-containers.JPG)]
 
 ---
 
@@ -986,11 +1198,11 @@ class: title
 Autoscaling avec Kubernetes
 
 .nav[
-[Section précédente](#toc-monitoring-avec-prometheus-et-grafana)
+[Section précédente](#toc-statefulsets)
 |
-[Retour table des matières](#toc-chapter-5)
+[Retour table des matières](#toc-chapter-7)
 |
-[Section suivante](#toc-dploiement-de-jupiter-sur-kubernetes)
+[Section suivante](#toc-cicd-with-spinnaker)
 ]
 
 .debug[(automatically generated title slide)]
@@ -1136,6 +1348,43 @@ kubectl delete -f ./metrics-server
 
 
 
+.debug[[kube/advanced_fr.md](https://github.com/RyaxTech/kube.training.git/tree/gh-pages//kube/advanced_fr.md)]
+---
+---
+
+class: pic
+
+.interstitial[![Image separating from the next chapter](https://gallant-turing-d0d520.netlify.com/containers/train-of-containers-1.jpg)]
+
+---
+
+name: toc-cicd-with-spinnaker
+class: title
+
+CI/CD with Spinnaker
+
+.nav[
+[Section précédente](#toc-autoscaling-avec-kubernetes)
+|
+[Retour table des matières](#toc-chapter-7)
+|
+[Section suivante](#toc-dploiement-de-jupiter-sur-kubernetes)
+]
+
+.debug[(automatically generated title slide)]
+
+---
+
+# CI/CD with Spinnaker
+
+.exercise[
+- We will perform the exercise from the following link:
+  https://thenewstack.io/getting-started-spinnaker-kubernetes/
+
+ * However, since we already have our own cluster and Helm installed, we will start the tutorial from the "Installing Spinnaker" section
+
+]
+
 
 .debug[[kube/advanced_fr.md](https://github.com/RyaxTech/kube.training.git/tree/gh-pages//kube/advanced_fr.md)]
 ---
@@ -1143,7 +1392,7 @@ kubectl delete -f ./metrics-server
 
 class: pic
 
-.interstitial[![Image separating from the next chapter](https://gallant-turing-d0d520.netlify.com/containers/lots-of-containers.jpg)]
+.interstitial[![Image separating from the next chapter](https://gallant-turing-d0d520.netlify.com/containers/train-of-containers-2.jpg)]
 
 ---
 
@@ -1153,9 +1402,9 @@ class: title
 Déploiement de Jupiter sur Kubernetes
 
 .nav[
-[Section précédente](#toc-autoscaling-avec-kubernetes)
+[Section précédente](#toc-cicd-with-spinnaker)
 |
-[Retour table des matières](#toc-chapter-5)
+[Retour table des matières](#toc-chapter-7)
 |
 [Section suivante](#toc-scheduling-avance-avec-kubernetes)
 ]
@@ -1177,7 +1426,7 @@ Déploiement de Jupiter sur Kubernetes
 
 class: pic
 
-.interstitial[![Image separating from the next chapter](https://gallant-turing-d0d520.netlify.com/containers/plastic-containers.JPG)]
+.interstitial[![Image separating from the next chapter](https://gallant-turing-d0d520.netlify.com/containers/two-containers-on-a-truck.jpg)]
 
 ---
 
@@ -1189,7 +1438,7 @@ Scheduling avancée avec Kubernetes
 .nav[
 [Section précédente](#toc-dploiement-de-jupiter-sur-kubernetes)
 |
-[Retour table des matières](#toc-chapter-5)
+[Retour table des matières](#toc-chapter-7)
 |
 [Section suivante](#toc-big-data-analytics-sur-kubernetes)
 ]
@@ -1212,7 +1461,7 @@ Scheduling avancée avec Kubernetes
 
 class: pic
 
-.interstitial[![Image separating from the next chapter](https://gallant-turing-d0d520.netlify.com/containers/train-of-containers-1.jpg)]
+.interstitial[![Image separating from the next chapter](https://gallant-turing-d0d520.netlify.com/containers/wall-of-containers.jpeg)]
 
 ---
 
@@ -1224,7 +1473,7 @@ Big Data analytics sur Kubernetes
 .nav[
 [Section précédente](#toc-scheduling-avance-avec-kubernetes)
 |
-[Retour table des matières](#toc-chapter-5)
+[Retour table des matières](#toc-chapter-7)
 |
 [Section suivante](#toc-)
 ]

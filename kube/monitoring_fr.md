@@ -39,4 +39,11 @@ kubectl create -f manifests/
 ]
 
 
+---
+
+## reset
+
+  ```bash
+kubectl delete -f manifests/
+  ```
 
