@@ -1,7 +1,7 @@
 # 3 nodes for k8s 101 workshops
 
 # Number of VMs per cluster
-clustersize: 4
+clustersize: 2
 
 # The hostname of each node will be clusterprefix + a number
 clusterprefix: node
@@ -10,7 +10,7 @@ clusterprefix: node
 cards_template: kube101.html
 
 # Use "Letter" in the US, and "A4" everywhere else
-paper_size: Letter
+paper_size: A4
 
 # Feel free to reduce this if your printer can handle it
 paper_margin: 0.2in
