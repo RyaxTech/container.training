@@ -37,6 +37,8 @@ Kubernetes <br/>Concepts de base, Services et Deploiement <br/>
  M kube-jour2.yml.html
  M kube-jour3.yml.html
  M kube-selfpaced.yml.html
+ M kube/netisolation_fr.md
+ M kube/stockage_fr.md
  M swarm-fullday.yml.html
  M swarm-halfday.yml.html
  M swarm-selfpaced.yml.html
@@ -50,7 +52,7 @@ Kubernetes <br/>Concepts de base, Services et Deploiement <br/>
 
 ```
 
-These slides have been built from commit: 0ae21cf
+These slides have been built from commit: 714e600
 
 
 [common/title_fr.md](https://github.com/RyaxTech/kube.training.git/tree/gh-pages//common/title_fr.md)]
@@ -3164,7 +3166,7 @@ kubectl get svc,pod | grep nginx
   ```bash
 kubectl run -i --tty interactivetest --image=alpine --restart=Never --rm -- sh
   ```
-(ceci va démarrer une session interractive où les entrés clavier et sorties terminal sont redirigées un pod appelé *hackerz*, qui contient un container *alpine*, qui ne sera jamais redémarré, supprimé une fois la commande finie, et qui lance la commande *sh*)
+(ceci va démarrer une session interractive où les entrées clavier et sorties terminal sont redirigées, pour un pod appelé *interactivetest*, qui contient un container *alpine*, qui ne sera jamais redémarré, supprimé une fois la commande finie, et qui lance la commande *sh*)
 
 - On vérifie l'accès à nginx:
   ```bash
@@ -3185,16 +3187,16 @@ wget -qO- nginx
 kind: NetworkPolicy
 apiVersion: networking.k8s.io/v1
 metadata:
-  name: access-nginx
+        name: access-nginx
 spec:
-  podSelector:
-    matchLabels:
-      run: nginx
-  ingress:
-  - from:
-    - podSelector:
-        matchLabels:
-            iamnice: yeah
+        podSelector:
+                matchLabels:
+                        run: nginx
+        ingress:
+        - from:
+            - podSelector:
+                matchLabels:
+                    iamnice: yeah
 ```
 et déployez-le.
 

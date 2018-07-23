@@ -60,7 +60,7 @@ kubectl get svc,pod | grep nginx
   ```bash
 kubectl run -i --tty interactivetest --image=alpine --restart=Never --rm -- sh
   ```
-(ceci va démarrer une session interractive où les entrés clavier et sorties terminal sont redirigées un pod appelé *hackerz*, qui contient un container *alpine*, qui ne sera jamais redémarré, supprimé une fois la commande finie, et qui lance la commande *sh*)
+(ceci va démarrer une session interractive où les entrées clavier et sorties terminal sont redirigées, pour un pod appelé *interactivetest*, qui contient un container *alpine*, qui ne sera jamais redémarré, supprimé une fois la commande finie, et qui lance la commande *sh*)
 
 - On vérifie l'accès à nginx:
   ```bash
@@ -80,16 +80,16 @@ wget -qO- nginx
 kind: NetworkPolicy
 apiVersion: networking.k8s.io/v1
 metadata:
-  name: access-nginx
+        name: access-nginx
 spec:
-  podSelector:
-    matchLabels:
-      run: nginx
-  ingress:
-  - from:
-    - podSelector:
-        matchLabels:
-            iamnice: yeah
+        podSelector:
+                matchLabels:
+                        run: nginx
+        ingress:
+        - from:
+            - podSelector:
+                matchLabels:
+                    iamnice: yeah
 ```
 et déployez-le.
 
