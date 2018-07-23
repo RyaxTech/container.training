@@ -1,5 +1,5 @@
 {# Feel free to customize or override anything in there! #}
-{%- set url = "http://container.training/" -%}
+{%- set url = "https://ryaxtech.github.io/kube.training/" -%}
 {%- set pagesize = 12 -%}
 {%- if clustersize == 1 -%}
     {%- set workshop_name = "Docker workshop" -%}
@@ -96,9 +96,6 @@ img {
                 <tr><td>node{{ loop.index }}:</td><td>{{ node }}</td></tr>
                 {% endfor %}
             </table>
-        </p>
-        <p>You can find the slides at:
-            <center>{{ url }}</center>
         </p>
     </div>
 {% endfor %}

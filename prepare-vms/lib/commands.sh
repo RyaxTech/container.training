@@ -134,7 +134,7 @@ _cmd_kube() {
     sudo tee /etc/apt/sources.list.d/kubernetes.list"
     pssh --timeout 200 "
     sudo apt-get update -q &&
-    sudo apt-get install -qy kubelet kubeadm kubectl
+    sudo apt-get install -qy --allow-downgrades kubelet=1.10.5-00 kubeadm=1.10.5-00 kubectl=1.10.5-00
     kubectl completion bash | sudo tee /etc/bash_completion.d/kubectl"
 
     # Initialize kube master
@@ -165,15 +165,15 @@ _cmd_kube() {
     pssh --timeout 200 "
     if ! grep -q node1 /tmp/node && [ ! -f /etc/kubernetes/kubelet.conf ]; then
         TOKEN=\$(ssh -o StrictHostKeyChecking=no node1 cat /tmp/token)
-        sudo kubeadm join --discovery-token-unsafe-skip-ca-verification --token \$TOKEN node1:6443
+        sudo kubeadm join --discovery-token-unsafe-skip-ca-verification --token \$TOKEN node1:6443 --ignore-preflight-errors=cri
     fi"
 
     # Prepare nodes for prometheus monitoring
     pssh "
     KUBEADM_SYSTEMD_CONF=/etc/systemd/system/kubelet.service.d/10-kubeadm.conf
-    sed -e \"/cadvisor-port=0/d\" -i \$KUBEADM_SYSTEMD_CONF
+    sudo sed -e \"/cadvisor-port=0/d\" -i \$KUBEADM_SYSTEMD_CONF
     if ! grep -q \"authentication-token-webhook=true\" \$KUBEADM_SYSTEMD_CONF; then
-          sed -e \"s/--authorization-mode=Webhook/--authentication-token-webhook=true --authorization-mode=Webhook/\" -i \$KUBEADM_SYSTEMD_CONF
+          sudo sed -e \"s/--authorization-mode=Webhook/--authentication-token-webhook=true --authorization-mode=Webhook/\" -i \$KUBEADM_SYSTEMD_CONF
     fi
     if grep -q node1 /tmp/node; then
         sudo sed -e \"s/- --address=127.0.0.1/- --address=0.0.0.0/\" -i /etc/kubernetes/manifests/kube-controller-manager.yaml
@@ -190,7 +190,7 @@ _cmd_kube() {
         kubectl create serviceaccount spark
         kubectl create clusterrolebinding spark-role --clusterrole=edit --serviceaccount=default:spark --namespace=default
 
-        wget http://apache.crihan.fr/dist/spark/spark-2.3.0/spark-2.3.0-bin-hadoop2.7.tgz       
+        wget https://archive.apache.org/dist/spark/spark-2.3.0/spark-2.3.0-bin-hadoop2.7.tgz       
         tar zxf spark-2.3.0-bin-hadoop2.7.tgz
     fi      
     "
