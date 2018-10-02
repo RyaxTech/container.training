@@ -326,11 +326,11 @@ Vous devriez voir l'application wordpress en cours d'exécution.
 
 - Nous pouvons vérifier que les Volumes Persistants sont créés et associés au pod, vérifiez:
 
-.exercice[
+.exercise[
   ```bash
   kubectl get pv
   kubectl get pvc
-  kubectl get logs alpine
+  kubectl logs alpine
   ```
 - Obtenez un shell dans le pod avec:
   ```bash
@@ -344,7 +344,7 @@ Vous devriez voir l'application wordpress en cours d'exécution.
 <!-----
 ## Lancez un autre exemple de provisionnement dynamique (suite)
 
-.exercice[
+.exercise[
 - Comment aurions-nous pu récupérer les données dans le dernier cas?
 - Changeons alpine-rook.yaml en `kind:deployment`, écrivez quelques fichiers et tuez à nouveau le pod pour voir ce qui se passe.
 ]-->

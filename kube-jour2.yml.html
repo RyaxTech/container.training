@@ -29,20 +29,16 @@ Kubernetes <br/>Concepts de base, Services et Deploiement <br/>
 
 .debug[
 ```
-A  images/CloudNativeLandscape_Serverless_latest.png
-A  images/serverless_apigateway.png
  M intro-fullday.yml.html
  M intro-selfpaced.yml.html
  M kube-fullday.yml.html
  M kube-halfday.yml.html
  M kube-jour1.yml.html
  M kube-jour2.yml.html
- M kube-jour3.yml
  M kube-jour3.yml.html
  M kube-selfpaced.yml.html
-A  kube/netisolation_fr.md
-A  kube/recapj1_fr.md
-A  kube/serverless_fr.md
+ M kube/netisolation_fr.md
+ M kube/stockage_fr.md
  M swarm-fullday.yml.html
  M swarm-halfday.yml.html
  M swarm-selfpaced.yml.html
@@ -51,11 +47,12 @@ A  kube/serverless_fr.md
 ?? common/.directory
 ?? intro/.directory
 ?? kube/.directory
+?? kube/recapj2_fr.md
 ?? swarm/.directory
 
 ```
 
-These slides have been built from commit: f13c895
+These slides have been built from commit: 714e600
 
 
 [common/title_fr.md](https://github.com/RyaxTech/kube.training.git/tree/gh-pages//common/title_fr.md)]
@@ -3169,7 +3166,7 @@ kubectl get svc,pod | grep nginx
   ```bash
 kubectl run -i --tty interactivetest --image=alpine --restart=Never --rm -- sh
   ```
-(ceci va démarrer une session interractive où les entrés clavier et sorties terminal sont redirigées un pod appelé *hackerz*, qui contient un container *alpine*, qui ne sera jamais redémarré, supprimé une fois la commande finie, et qui lance la commande *sh*)
+(ceci va démarrer une session interractive où les entrées clavier et sorties terminal sont redirigées, pour un pod appelé *interactivetest*, qui contient un container *alpine*, qui ne sera jamais redémarré, supprimé une fois la commande finie, et qui lance la commande *sh*)
 
 - On vérifie l'accès à nginx:
   ```bash
@@ -3190,16 +3187,16 @@ wget -qO- nginx
 kind: NetworkPolicy
 apiVersion: networking.k8s.io/v1
 metadata:
-  name: access-nginx
+        name: access-nginx
 spec:
-  podSelector:
-    matchLabels:
-      run: nginx
-  ingress:
-  - from:
-    - podSelector:
-        matchLabels:
-            iamnice: yeah
+        podSelector:
+                matchLabels:
+                        run: nginx
+        ingress:
+        - from:
+            - podSelector:
+                matchLabels:
+                    iamnice: yeah
 ```
 et déployez-le.
 

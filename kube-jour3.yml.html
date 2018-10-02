@@ -29,20 +29,16 @@ Kubernetes <br/>Stockage, Configuration, Secrets et Concepts Avancés <br/>
 
 .debug[
 ```
-A  images/CloudNativeLandscape_Serverless_latest.png
-A  images/serverless_apigateway.png
  M intro-fullday.yml.html
  M intro-selfpaced.yml.html
  M kube-fullday.yml.html
  M kube-halfday.yml.html
  M kube-jour1.yml.html
  M kube-jour2.yml.html
- M kube-jour3.yml
  M kube-jour3.yml.html
  M kube-selfpaced.yml.html
-A  kube/netisolation_fr.md
-A  kube/recapj1_fr.md
-A  kube/serverless_fr.md
+ M kube/netisolation_fr.md
+ M kube/stockage_fr.md
  M swarm-fullday.yml.html
  M swarm-halfday.yml.html
  M swarm-selfpaced.yml.html
@@ -51,11 +47,12 @@ A  kube/serverless_fr.md
 ?? common/.directory
 ?? intro/.directory
 ?? kube/.directory
+?? kube/recapj2_fr.md
 ?? swarm/.directory
 
 ```
 
-These slides have been built from commit: f13c895
+These slides have been built from commit: 714e600
 
 
 [common/title_fr.md](https://github.com/RyaxTech/kube.training.git/tree/gh-pages//common/title_fr.md)]
@@ -95,9 +92,7 @@ name: toc-chapter-3
 
 ## Chapter 3
 
-- [Découplage de configuration avec un ConfigMap](#toc-dcouplage-de-configuration-avec-un-configmap)
-
-- [Introduction des secrets](#toc-introduction-des-secrets)
+- [Recap Jour 2](#toc-recap-jour-)
 
 .debug[(auto-generated TOC)]
 ---
@@ -105,11 +100,39 @@ name: toc-chapter-4
 
 ## Chapter 4
 
+- [Découplage de configuration avec un ConfigMap](#toc-dcouplage-de-configuration-avec-un-configmap)
+
+- [Introduction des secrets](#toc-introduction-des-secrets)
+
+.debug[(auto-generated TOC)]
+---
+name: toc-chapter-5
+
+## Chapter 5
+
+- [Monitoring avec Prometheus et Grafana](#toc-monitoring-avec-prometheus-et-grafana)
+
+.debug[(auto-generated TOC)]
+---
+name: toc-chapter-6
+
+## Chapter 6
+
+- [StatefulSets](#toc-statefulsets)
+
+.debug[(auto-generated TOC)]
+---
+name: toc-chapter-7
+
+## Chapter 7
+
+- [Autoscaling avec Kubernetes](#toc-autoscaling-avec-kubernetes)
+
+- [CI/CD with Spinnaker](#toc-cicd-with-spinnaker)
+
 - [Déploiement de Jupiter sur Kubernetes](#toc-dploiement-de-jupiter-sur-kubernetes)
 
 - [Scheduling avancée avec Kubernetes](#toc-scheduling-avance-avec-kubernetes)
-
-- [Autoscaling avec Kubernetes](#toc-autoscaling-avec-kubernetes)
 
 - [Big Data analytics sur Kubernetes](#toc-big-data-analytics-sur-kubernetes)
 
@@ -577,7 +600,7 @@ Rook orchestration de stockage distribué
 |
 [Retour table des matières](#toc-chapter-2)
 |
-[Section suivante](#toc-dcouplage-de-configuration-avec-un-configmap)
+[Section suivante](#toc-recap-jour-)
 ]
 
 .debug[(automatically generated title slide)]
@@ -727,11 +750,11 @@ Vous devriez voir l'application wordpress en cours d'exécution.
 
 - Nous pouvons vérifier que les Volumes Persistants sont créés et associés au pod, vérifiez:
 
-.exercice[
+.exercise[
   ```bash
   kubectl get pv
   kubectl get pvc
-  kubectl get logs alpine
+  kubectl logs alpine
   ```
 - Obtenez un shell dans le pod avec:
   ```bash
@@ -745,7 +768,7 @@ Vous devriez voir l'application wordpress en cours d'exécution.
 <!-----
 ## Lancez un autre exemple de provisionnement dynamique (suite)
 
-.exercice[
+.exercise[
 - Comment aurions-nous pu récupérer les données dans le dernier cas?
 - Changeons alpine-rook.yaml en `kind:deployment`, écrivez quelques fichiers et tuez à nouveau le pod pour voir ce qui se passe.
 ]-->
@@ -761,15 +784,73 @@ class: pic
 
 ---
 
+name: toc-recap-jour-
+class: title
+
+Recap Jour 2
+
+.nav[
+[Section précédente](#toc-rook-orchestration-de-stockage-distribu)
+|
+[Retour table des matières](#toc-chapter-3)
+|
+[Section suivante](#toc-dcouplage-de-configuration-avec-un-configmap)
+]
+
+.debug[(automatically generated title slide)]
+
+---
+
+# Recap Jour 2
+
+
+L'équipe marketing à determiner que la vA du serveurweb était la meilleure.
+
+Vous aller donc lancer un service qui exposera un **pod**.
+
+Cependant, ils veulent aussi que vous rajoutiez un dossier `bonus` dans /tmp/ qui contiendra un fichier `bonus.txt`. Ce fichier aura juste le texte "bonus" dedans.
+
+Lors de la réunion vous sentez que ce fichier va surement changer souvent... Vous décidez qu'au lieu de changer l'image docker, vous aller monter un volume persitant qui vous permettera de changer rapidement le contenu de ce dossier.
+
+- Conseil: ne foncez pas tête baisser. Faites un plan, puis éxecutez le.
+
+- Conseil 2: la slide suivante contient de l'aide... A vous de voir...
+
+.debug[[kube/recapj2_fr.md](https://github.com/RyaxTech/kube.training.git/tree/gh-pages//kube/recapj2_fr.md)]
+---
+
+## Aide
+
+- Repartez de https://raw.githubusercontent.com/zonca/jupyterhub-deploy-kubernetes-jetstream/master/storage_rook/alpine-rook.yaml
+
+- l'image du serveur A s'appelle `127.0.0.1:32092/serverweb:vA`
+
+- Pour écrire le fichier bonus, connéctez-vous au pod:
+  ```bash
+kubectl exec -ti alpine -- sh
+  ```
+
+
+
+
+.debug[[kube/recapj2_fr.md](https://github.com/RyaxTech/kube.training.git/tree/gh-pages//kube/recapj2_fr.md)]
+---
+
+class: pic
+
+.interstitial[![Image separating from the next chapter](https://gallant-turing-d0d520.netlify.com/containers/container-housing.jpg)]
+
+---
+
 name: toc-dcouplage-de-configuration-avec-un-configmap
 class: title
 
 Découplage de configuration avec un ConfigMap
 
 .nav[
-[Section précédente](#toc-rook-orchestration-de-stockage-distribu)
+[Section précédente](#toc-recap-jour-)
 |
-[Retour table des matières](#toc-chapter-3)
+[Retour table des matières](#toc-chapter-4)
 |
 [Section suivante](#toc-introduction-des-secrets)
 ]
@@ -822,6 +903,9 @@ variables ou en tant que fichiers dans un volume.
 
 - Exécutez l'exemple décrit ici: https://kubernetes.io/docs/tutorials/configuration/configure-redis-using-configmap/
 
+Attention ! Votre version de Kubernetes ne supporte pas encore qu'il est une URL dans l'option --from-file !
+
+
 - Pour aller plus loin: https://kubernetes.io/docs/tasks/configure-pod-container/configure-pod-configmap/
 
 .debug[[kube/configs_fr.md](https://github.com/RyaxTech/kube.training.git/tree/gh-pages//kube/configs_fr.md)]
@@ -829,7 +913,7 @@ variables ou en tant que fichiers dans un volume.
 
 class: pic
 
-.interstitial[![Image separating from the next chapter](https://gallant-turing-d0d520.netlify.com/containers/container-housing.jpg)]
+.interstitial[![Image separating from the next chapter](https://gallant-turing-d0d520.netlify.com/containers/containers-by-the-water.jpg)]
 
 ---
 
@@ -841,9 +925,9 @@ Introduction des secrets
 .nav[
 [Section précédente](#toc-dcouplage-de-configuration-avec-un-configmap)
 |
-[Retour table des matières](#toc-chapter-3)
+[Retour table des matières](#toc-chapter-4)
 |
-[Section suivante](#toc-dploiement-de-jupiter-sur-kubernetes)
+[Section suivante](#toc-monitoring-avec-prometheus-et-grafana)
 ]
 
 .debug[(automatically generated title slide)]
@@ -895,7 +979,478 @@ devrez stocker le fichier dans un secret.
 
 class: pic
 
-.interstitial[![Image separating from the next chapter](https://gallant-turing-d0d520.netlify.com/containers/containers-by-the-water.jpg)]
+.interstitial[![Image separating from the next chapter](https://gallant-turing-d0d520.netlify.com/containers/distillery-containers.jpg)]
+
+---
+
+name: toc-monitoring-avec-prometheus-et-grafana
+class: title
+
+Monitoring avec Prometheus et Grafana
+
+.nav[
+[Section précédente](#toc-introduction-des-secrets)
+|
+[Retour table des matières](#toc-chapter-5)
+|
+[Section suivante](#toc-statefulsets)
+]
+
+.debug[(automatically generated title slide)]
+
+---
+# Monitoring avec Prometheus et Grafana
+
+- Prometheus, pour le monitoring
+
+- Grafana, pour afficher les métriques et jouer avec.
+
+.debug[[kube/monitoring_fr.md](https://github.com/RyaxTech/kube.training.git/tree/gh-pages//kube/monitoring_fr.md)]
+---
+
+## Kube Prometheus
+
+Kube Prometheus est un dépot git qui permet d'installer une stack de monitoring Prometheus+Grafana pour kubernetes.
+Il configure aussi Grafana pour intégrer des graphiques utiles.
+
+.exercise[
+  ```bash
+git clone https://github.com/coreos/prometheus-operator.git
+
+cd prometheus-operator/contrib/kube-prometheus/
+
+kubectl create -f manifests/
+  ```
+]
+
+.debug[[kube/monitoring_fr.md](https://github.com/RyaxTech/kube.training.git/tree/gh-pages//kube/monitoring_fr.md)]
+---
+
+## Grafana
+
+.exercise[
+- Ouvrez le service grafana à l'exterieur, connectez-vous y avec votre navigateur web
+
+- Si vous avez besoin  de vous logguer : admin/admin
+
+- Cliquez sur "Home" tout en haut de l'écran, choisissez le dashboard *Pods*.
+
+- Quel est l'utilisation mémoire du pod registery ?
+
+- Quel est le coût des pods du daemonset de prometheus ?
+
+]
+
+
+.debug[[kube/monitoring_fr.md](https://github.com/RyaxTech/kube.training.git/tree/gh-pages//kube/monitoring_fr.md)]
+---
+
+## reset
+
+  ```bash
+kubectl delete -f manifests/
+  ```
+
+
+.debug[[kube/monitoring_fr.md](https://github.com/RyaxTech/kube.training.git/tree/gh-pages//kube/monitoring_fr.md)]
+---
+
+class: pic
+
+.interstitial[![Image separating from the next chapter](https://gallant-turing-d0d520.netlify.com/containers/lots-of-containers.jpg)]
+
+---
+
+name: toc-statefulsets
+class: title
+
+StatefulSets
+
+.nav[
+[Section précédente](#toc-monitoring-avec-prometheus-et-grafana)
+|
+[Retour table des matières](#toc-chapter-6)
+|
+[Section suivante](#toc-autoscaling-avec-kubernetes)
+]
+
+.debug[(automatically generated title slide)]
+
+---
+
+# StatefulSets
+
+- Un StatefulSet permet d'avoir un ensemble de pod qui ont un nom et un état stable.
+
+- Quelle différence avec un ReplicaSet (deployment) ?
+
+  - un ReplicaSet c'est comme gérer un troupeau de vache : on se fiche du nom des vaches, on veut juste savoir combien il y en a. Si une vache est malade, on la remplace.
+
+  - un StatefulSet c'est comme gérer un groupe d'animaux de compagnie : on leur donne des noms et on ne peut pas les remplacer facilement. Si jamais on veut en remplacer un il va falloir en trouver un avec le même nom et le même apparence.
+
+
+.debug[[kube/statefulsets.md](https://github.com/RyaxTech/kube.training.git/tree/gh-pages//kube/statefulsets.md)]
+---
+## Repliquer des pods Stateful
+
+
+![replicasets](images/replicasets.png)
+
+A cause du système de template des ReplicaSet, on ne peut donner qu'un seul et unique nom pour le PersistentVolumeClaim.
+
+Dans un ReplicaSet, tous les replicas utilisent le même PersistentVolumeClaim !
+
+.debug[[kube/statefulsets.md](https://github.com/RyaxTech/kube.training.git/tree/gh-pages//kube/statefulsets.md)]
+---
+
+## Les StatefulSets nous permettent d'avoir des noms uniques
+
+
+![replicasets](images/replicasets_statefulsets.png)
+
+Que se passe-t-il si un noeud meurt ?
+
+.debug[[kube/statefulsets.md](https://github.com/RyaxTech/kube.training.git/tree/gh-pages//kube/statefulsets.md)]
+---
+
+class: pic
+
+![replicasets](images/statefulset_nodefail.png)
+
+.debug[[kube/statefulsets.md](https://github.com/RyaxTech/kube.training.git/tree/gh-pages//kube/statefulsets.md)]
+---
+
+## Statefulset, changement du nombre de replicas
+
+![replicasets](images/statefulset_scaledown.png)
+
+Le pod avec l'ID le plus grand est détruit en premier !
+
+Mais qu'en est il des PVC attachés ?
+
+.debug[[kube/statefulsets.md](https://github.com/RyaxTech/kube.training.git/tree/gh-pages//kube/statefulsets.md)]
+---
+
+class: pic
+
+
+![replicasets](images/statefulsetPVC_scaledown.png)
+
+
+.debug[[kube/statefulsets.md](https://github.com/RyaxTech/kube.training.git/tree/gh-pages//kube/statefulsets.md)]
+---
+## Statefulset exercises
+
+- Les schemas ont été repris du livre de Marko Luksa "Kubernetes in Action"
+
+.exercise[
+
+- *mehdb* est une base de donnée pas super (*meh* en anglais).
+Elle réplique automatiquement les données entre chaque instance.
+
+  ```bash
+wget https://gist.githubusercontent.com/glesserd/a0db0439e69426d92c632fb5c9bcba1c/raw/56b05fcdf9d4d1bbdf5f5cdca3fc104d7dca7d24/app.yaml
+  ```
+
+- Regardons le yaml ensemble...
+
+]
+
+Attention ! Cette application ne fonctionne pas... En effet les données ne sont pas répliqué. Mais cela n'est pas important pour nos tests avec Kubernetes.
+
+
+.debug[[kube/statefulsets.md](https://github.com/RyaxTech/kube.training.git/tree/gh-pages//kube/statefulsets.md)]
+---
+## Déploiement
+.exercise[
+- Déployez le
+
+  ```bash
+kubectl get statefulset
+kubectl get sts
+  ```
+
+- On scale la bdd
+
+  ```bash
+kubectl scale sts mehdb --replicas=4
+  ```
+
+- Tout s'est bien passé ?
+  ```bash
+kubectl get sts
+kubectl get pvc
+  ```
+
+]
+
+.debug[[kube/statefulsets.md](https://github.com/RyaxTech/kube.training.git/tree/gh-pages//kube/statefulsets.md)]
+---
+## Resistance aux crashs
+
+.exercise[
+- Tuons un pod !
+
+  ```bash
+kubectl delete pod mehdb-1
+  ```
+
+- Quel pod va être recréé ?
+
+  ```bash
+kubectl get pod
+  ```
+
+]
+
+.debug[[kube/statefulsets.md](https://github.com/RyaxTech/kube.training.git/tree/gh-pages//kube/statefulsets.md)]
+---
+## Scale down
+
+.exercise[
+- Maintenant scale down:
+  ```bash
+kubectl scale sts mehdb --replicas=2
+  ```
+
+
+- Tout s'est bien passé ?
+  ```bash
+kubectl get sts
+kubectl get pvc
+  ```
+
+- Les pvc sont toujours la comme attendu !
+
+]
+
+.debug[[kube/statefulsets.md](https://github.com/RyaxTech/kube.training.git/tree/gh-pages//kube/statefulsets.md)]
+---
+## Le reset
+
+.exercise[
+- Reset:
+
+  ```bash
+kubectl delete -f app.yaml
+  ```
+
+* Il ne faut pas oublier de supprimer les pvc !!!*
+
+]
+
+
+
+.debug[[kube/statefulsets.md](https://github.com/RyaxTech/kube.training.git/tree/gh-pages//kube/statefulsets.md)]
+---
+
+class: pic
+
+.interstitial[![Image separating from the next chapter](https://gallant-turing-d0d520.netlify.com/containers/plastic-containers.JPG)]
+
+---
+
+name: toc-autoscaling-avec-kubernetes
+class: title
+
+Autoscaling avec Kubernetes
+
+.nav[
+[Section précédente](#toc-statefulsets)
+|
+[Retour table des matières](#toc-chapter-7)
+|
+[Section suivante](#toc-cicd-with-spinnaker)
+]
+
+.debug[(automatically generated title slide)]
+
+---
+# Autoscaling avec Kubernetes
+
+Nous allons mettre en place un système d'autoscaling basé sur k8s-prom-hpa. Ce logicil à l'avantage d'être simple, fonctionel et extensible grâce à Prometheus.
+
+.exercise[
+- Récupérez le logiciel:
+
+  ```bash
+git clone https://github.com/stefanprodan/k8s-prom-hpa.git
+cd k8s-prom-hpa/
+  ```
+
+]
+
+.debug[[kube/advanced_fr.md](https://github.com/RyaxTech/kube.training.git/tree/gh-pages//kube/advanced_fr.md)]
+---
+
+## Récupérez les métriques
+
+Déployons le *Metrics Server*, le server qui va récupérez les métriques sur les noeuds et les transmettre en utilisant l'API standard de kubernetes:
+
+.exercise[
+  ```bash
+kubectl create -f ./metrics-server
+  ```
+]
+
+(Avant k8s 1.8, Heapster permettait de faire cela. Ce projet a été fusionner avec Kubernetes pour faire *Metrics Server*.)
+
+.debug[[kube/advanced_fr.md](https://github.com/RyaxTech/kube.training.git/tree/gh-pages//kube/advanced_fr.md)]
+---
+
+## HorizontalPodAutoscaler CRD
+
+.exercise[
+La prochaine commande définit un nouveau type d'objet (un Custorm Resource Definition (CRD)), et lance le controlleur de ce CRD.
+
+On peut donc maintenant intéragir avec le type HorizontalPodAutoscaler comme tout les autres objets de kubernetes:
+
+  ```bash
+kubectl get hpa
+  ```
+
+]
+
+.debug[[kube/advanced_fr.md](https://github.com/RyaxTech/kube.training.git/tree/gh-pages//kube/advanced_fr.md)]
+---
+
+## Déploiement d'une application
+
+.exercise[
+On deploie maintenant une application affichant sur une interface web des informations décrivant son pod:
+
+  ```bash
+kubectl create -f ./podinfo/podinfo-svc.yaml,./podinfo/podinfo-dep.yaml
+  ```
+
+Vous pouvez regarder ce que ces infos sont:
+  ```bash
+curl IP_PUBLIC:PORT_DU_SERVICE
+  ```
+]
+
+.debug[[kube/advanced_fr.md](https://github.com/RyaxTech/kube.training.git/tree/gh-pages//kube/advanced_fr.md)]
+---
+
+## Mise en place des règles d'auto-scaling
+
+.exercise[
+On va maintenant créer les règles HorizontalPodAutoscaler:
+
+  ```bash
+kubectl create -f ./podinfo/podinfo-hpa.yaml
+  ```
+
+Regardez ce yaml pour voir ce que définissent ces règles !
+
+On a donc maintenant une nouvelle hpa:
+  ```bash
+kubectl get hpa
+  ```
+]
+
+.debug[[kube/advanced_fr.md](https://github.com/RyaxTech/kube.training.git/tree/gh-pages//kube/advanced_fr.md)]
+---
+
+## Stress de l'application
+
+.exercise[
+On va maintenant strésser le service pour que le scaling ce lance, dans un nouveau terminal :
+  ```bash
+cd ~/
+mkdir golang
+export GOPATH=~/golang/
+export GOROOT=/usr/lib/go-1.10
+export PATH=$GOPATH/bin:$GOROOT/bin:$PATH
+go get -u github.com/rakyll/hey
+hey -n 10000 -q 10 -c 5 http://IP_PUBLIC:PORT_DU_SERVICE/
+  ```
+
+]
+.debug[[kube/advanced_fr.md](https://github.com/RyaxTech/kube.training.git/tree/gh-pages//kube/advanced_fr.md)]
+---
+
+## Stress de l'application 2
+
+.exercise[
+
+Observez ce qui se passe pour le hpa:
+  ```bash
+kubectl describe hpa
+  ```
+
+]
+
+L'autoscaler ne réagit pas immédiatement au pics d'utilisation.
+Par défaut, les métriques sont synchronisées toutes les 30s.
+De plus, le scaling up/down peut seulement avoir lieu si il n'y pas déjà eu un scaling dans les 5 minutes.
+Cela permet au HPA de prendre des décisions trop rapides et/ou contradictoires.
+
+.debug[[kube/advanced_fr.md](https://github.com/RyaxTech/kube.training.git/tree/gh-pages//kube/advanced_fr.md)]
+---
+
+## En savoir plus
+
+- The procedure is explained in detail and with more examples here: https://www.weave.works/blog/kubernetes-horizontal-pod-autoscaler-and-prometheus
+
+- Pour reset:
+  ```bash
+kubectl delete -f ./podinfo/podinfo-hpa.yaml
+kubectl delete -f ./podinfo/podinfo-svc.yaml,./podinfo/podinfo-dep.yaml
+kubectl delete -f ./metrics-server
+  ```
+
+
+
+
+
+
+
+.debug[[kube/advanced_fr.md](https://github.com/RyaxTech/kube.training.git/tree/gh-pages//kube/advanced_fr.md)]
+---
+---
+
+class: pic
+
+.interstitial[![Image separating from the next chapter](https://gallant-turing-d0d520.netlify.com/containers/train-of-containers-1.jpg)]
+
+---
+
+name: toc-cicd-with-spinnaker
+class: title
+
+CI/CD with Spinnaker
+
+.nav[
+[Section précédente](#toc-autoscaling-avec-kubernetes)
+|
+[Retour table des matières](#toc-chapter-7)
+|
+[Section suivante](#toc-dploiement-de-jupiter-sur-kubernetes)
+]
+
+.debug[(automatically generated title slide)]
+
+---
+
+# CI/CD with Spinnaker
+
+.exercise[
+- We will perform the exercise from the following link:
+  https://thenewstack.io/getting-started-spinnaker-kubernetes/
+
+ * However, since we already have our own cluster and Helm installed, we will start the tutorial from the "Installing Spinnaker" section
+
+]
+
+
+.debug[[kube/advanced_fr.md](https://github.com/RyaxTech/kube.training.git/tree/gh-pages//kube/advanced_fr.md)]
+---
+---
+
+class: pic
+
+.interstitial[![Image separating from the next chapter](https://gallant-turing-d0d520.netlify.com/containers/train-of-containers-2.jpg)]
 
 ---
 
@@ -905,9 +1460,9 @@ class: title
 Déploiement de Jupiter sur Kubernetes
 
 .nav[
-[Section précédente](#toc-introduction-des-secrets)
+[Section précédente](#toc-cicd-with-spinnaker)
 |
-[Retour table des matières](#toc-chapter-4)
+[Retour table des matières](#toc-chapter-7)
 |
 [Section suivante](#toc-scheduling-avance-avec-kubernetes)
 ]
@@ -921,6 +1476,7 @@ Déploiement de Jupiter sur Kubernetes
 .exercise[
 - Nous suivrons la procédure fournie ici : 
   https://zonca.github.io/2017/12/scalable-jupyterhub-kubernetes-jetstream.html
+
 ]
 
 .debug[[kube/advanced_fr.md](https://github.com/RyaxTech/kube.training.git/tree/gh-pages//kube/advanced_fr.md)]
@@ -928,7 +1484,7 @@ Déploiement de Jupiter sur Kubernetes
 
 class: pic
 
-.interstitial[![Image separating from the next chapter](https://gallant-turing-d0d520.netlify.com/containers/distillery-containers.jpg)]
+.interstitial[![Image separating from the next chapter](https://gallant-turing-d0d520.netlify.com/containers/two-containers-on-a-truck.jpg)]
 
 ---
 
@@ -940,9 +1496,9 @@ Scheduling avancée avec Kubernetes
 .nav[
 [Section précédente](#toc-dploiement-de-jupiter-sur-kubernetes)
 |
-[Retour table des matières](#toc-chapter-4)
+[Retour table des matières](#toc-chapter-7)
 |
-[Section suivante](#toc-autoscaling-avec-kubernetes)
+[Section suivante](#toc-big-data-analytics-sur-kubernetes)
 ]
 
 .debug[(automatically generated title slide)]
@@ -956,45 +1512,14 @@ Scheduling avancée avec Kubernetes
 - Nous suivrons la procédure fournie ici : 
    https://github.com/RyaxTech/kube-tutorial#4-activate-an-advanced-scheduling-policy-and-test-its-usage
 ]
+
 .debug[[kube/advanced_fr.md](https://github.com/RyaxTech/kube.training.git/tree/gh-pages//kube/advanced_fr.md)]
 ---
 ---
 
 class: pic
 
-.interstitial[![Image separating from the next chapter](https://gallant-turing-d0d520.netlify.com/containers/lots-of-containers.jpg)]
-
----
-
-name: toc-autoscaling-avec-kubernetes
-class: title
-
-Autoscaling avec Kubernetes
-
-.nav[
-[Section précédente](#toc-scheduling-avance-avec-kubernetes)
-|
-[Retour table des matières](#toc-chapter-4)
-|
-[Section suivante](#toc-big-data-analytics-sur-kubernetes)
-]
-
-.debug[(automatically generated title slide)]
-
----
-# Autoscaling avec Kubernetes
-
-.exercise[
-- Nous suivrons la procédure fournie ici : 
-  https://github.com/RyaxTech/kube-tutorial#6-enable-and-use-pod-autoscaling
-]
-.debug[[kube/advanced_fr.md](https://github.com/RyaxTech/kube.training.git/tree/gh-pages//kube/advanced_fr.md)]
----
----
-
-class: pic
-
-.interstitial[![Image separating from the next chapter](https://gallant-turing-d0d520.netlify.com/containers/plastic-containers.JPG)]
+.interstitial[![Image separating from the next chapter](https://gallant-turing-d0d520.netlify.com/containers/wall-of-containers.jpeg)]
 
 ---
 
@@ -1004,9 +1529,9 @@ class: title
 Big Data analytics sur Kubernetes
 
 .nav[
-[Section précédente](#toc-autoscaling-avec-kubernetes)
+[Section précédente](#toc-scheduling-avance-avec-kubernetes)
 |
-[Retour table des matières](#toc-chapter-4)
+[Retour table des matières](#toc-chapter-7)
 |
 [Section suivante](#toc-)
 ]
@@ -1014,6 +1539,7 @@ Big Data analytics sur Kubernetes
 .debug[(automatically generated title slide)]
 
 ---
+
 # Big Data analytics sur Kubernetes
 
 .exercise[
