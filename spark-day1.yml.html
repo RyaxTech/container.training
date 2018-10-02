@@ -29,7 +29,7 @@ Introduction to Apache Spark<br/>
 
 .debug[
 ```
- M index.html
+ M common/about-slides_fr.md
  M intro-fullday.yml.html
  M intro-selfpaced.yml.html
  M kube-fullday.yml.html
@@ -40,12 +40,12 @@ Introduction to Apache Spark<br/>
  M kube-jour3.yml.html
  M kube-selfpaced.yml.html
  M logistics.md
+ M spark-day1.yml.html
  M swarm-fullday.yml.html
  M swarm-halfday.yml.html
  M swarm-selfpaced.yml.html
  M swarm-video.yml.html
 ?? spark-day1.yml
-?? spark-day1.yml.html
 ?? spark-day2.yml
 ?? spark-day2.yml.html
 ?? spark-day3.yml
@@ -55,7 +55,7 @@ Introduction to Apache Spark<br/>
 
 ```
 
-These slides have been built from commit: ad6ce08
+These slides have been built from commit: 8fb8bc6
 
 
 [common/title_fr.md](https://github.com/RyaxTech/kube.training.git/tree/gh-pages//common/title_fr.md)]
@@ -68,54 +68,52 @@ Introduction to Apache Spark<br/><br/></br>
 
 .debug[[common/title_fr.md](https://github.com/RyaxTech/kube.training.git/tree/gh-pages//common/title_fr.md)]
 ---
-## Quelques infos sur le formateur
+## Some infos about the instructor
 
 - Yiannis Georgiou - CTO Ryax Technologies
 
-- PhD Université Grenoble-Alpes - Gestion de ressources et orchestration sur de systèmes de calcul intensif
+- PhD Université Grenoble-Alpes - Resource Management and Scheduling on High Performance Computing
 
-- 11 ans à Bull/Atos Technologies - Ingenieur R&D / Architecte
+- 11 ans à Bull/Atos Technologies - R&D Software Engineer R&D / Architect
 
-.debug[[logistics.md](https://github.com/RyaxTech/kube.training.git/tree/gh-pages//logistics.md)]
+.debug[[spark/logistics_spark.md](https://github.com/RyaxTech/kube.training.git/tree/gh-pages//spark/logistics_spark.md)]
 ---
 
-## Logistique
+## Logistics
 
-- La formation se déroulera de 9h à 17h
+- The training will take place from  9h until 17h30
 
-- Il y aura une pause déjeuner à 12h30 à 13h30
+- There will be a break for lunch from 12h30 to 14h
 
-- N'hésitez pas à interrompre pour des questions à tout moment
+- Feel free to interrupt for questions at any time
 
-- *Surtout quand vous voyez des photos de conteneurs en plein écran!*
+- Especially when you see full screen container pictures!
 
-.debug[[logistics.md](https://github.com/RyaxTech/kube.training.git/tree/gh-pages//logistics.md)]
+.debug[[spark/logistics_spark.md](https://github.com/RyaxTech/kube.training.git/tree/gh-pages//spark/logistics_spark.md)]
 ---
-## Les slides de la formation
+## The slides of the training
 
-Tout le contenu est disponible dans un depot Github:
+- The template is based on the slides done by [Jérôme Petazzoni](https://twitter.com/jpetazzo) to support workshops and tutorials upon Containers and Kubernetes. 
 
-  https://github.com/RyaxTech/kube.training
-
-- Le contenu est basé sur les slides écrites initiallement par [Jérôme Petazzoni](https://twitter.com/jpetazzo) pour supporter de workshops et tutoriels autour des Conteneurs et de Kubernetes. 
-
-- Pour cette formation, les slides ont été traduites en français et adaptées.
-
-- Plusieurs mots et termes liées aux concepts de Kubernetes n'ont pas été traduit pour des raisons de simplicité
-
-* En dehors de la formation: 
-  * ...si vous voulez passer plus de temps pour approfondir sur Kubernetes vous pouvez suivre la [documentation](https://kubernetes.io/docs/) officiel ...
-  * ...si vous avez de questions particuliers vous pouvez aussi voir sur [StackOverflow](http://stackoverflow.com/questions/tagged/kubernetes)
+- The content presented on the training follows the curriculum of the following two books for Apache Spark:
+  - Spark in Action by Petar Zečević and Marko Bonaći from Manning that you can buy [here](https://www.manning.com/books/spark-in-action)
+  - Spark: The Definitive Guide Big Data Processing Made Simple By Matei Zaharia, Bill Chambers from Publisher: O'Reilly Media that you can buy [here](http://shop.oreilly.com/product/0636920034957.do)
+- Some of the images and some of the exercises have also been taken from those books.
 
 
-.debug[[common/about-slides_fr.md](https://github.com/RyaxTech/kube.training.git/tree/gh-pages//common/about-slides_fr.md)]
+* Besides the training: 
+  * If you want to read more about Apache Spark along with the latest updates you can read the [official documentation](https://spark.apache.org/documentation.html) from Apache.
+  * If you have particular questions you can check for answers or ask yourself in [StackOverflow](https://stackoverflow.com/questions/tagged/apache-spark)
+
+
+.debug[[spark/about-slides_spark.md](https://github.com/RyaxTech/kube.training.git/tree/gh-pages//spark/about-slides_spark.md)]
 ---
 
 name: toc-chapter-1
 
 ## Chapter 1
 
-- [Spark 30,000ft overview](#toc-spark-ft-overview)
+- [Spark overview](#toc-spark-overview)
 
 - [History of Spark](#toc-history-of-spark)
 
@@ -174,10 +172,10 @@ class: pic
 
 ---
 
-name: toc-spark-ft-overview
+name: toc-spark-overview
 class: title
 
-Spark 30,000ft overview
+Spark overview
 
 .nav[
 [Section précédente](#toc-)
@@ -190,7 +188,7 @@ Spark 30,000ft overview
 .debug[(automatically generated title slide)]
 
 ---
-# Spark 30,000ft overview
+# Spark overview
 
 * Apache Spark is a **unified computing engine** and a set of **libraries** for parallel data processing on computer clusters. 
 
@@ -249,7 +247,7 @@ class: title
 History of Spark
 
 .nav[
-[Section précédente](#toc-spark-ft-overview)
+[Section précédente](#toc-spark-overview)
 |
 [Retour table des matières](#toc-chapter-1)
 |
