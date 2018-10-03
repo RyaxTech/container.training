@@ -261,19 +261,26 @@ History of Spark
 # History of Spark
 
 * Apache Spark began at AMPLab of UC Berkeley in 2009 as the Spark research project, which was first published the following year in a paper entitled [“Spark: Cluster Computing with Working Sets”](https://www.usenix.org/legacy/event/hotcloud10/tech/full_papers/Zaharia.pdf)
-* That period, Hadoop MapReduce was the most used parallel programming engine for clusters, which enabled data-parallel processing on multiple-nodes clusters.
-* Limitations and performance issues of MapReduce enabled the first versions of Spark as an API for multistep applications and an engine for in-memory data-sharing across computation steps.
-* Initially only batch applications were supported but eventually the interactive system for running queries and SQL on hundreds of machines was developed.
+
+* That period, *Hadoop MapReduce* was the most used parallel programming engine for clusters, which enabled *data-parallel processing* on multiple-nodes clusters.
+
+* Limitations and performance issues of MapReduce enabled the first versions of Spark as an API for *multistep applications* and an *engine for in-memory data-sharing* across computation steps.
+
+* Initially only batch applications were supported but eventually the *interactive system* for running queries and SQL on hundreds of machines was developed.
 
 .debug[[spark/Spark_Overview.md](https://github.com/RyaxTech/kube.training.git/tree/gh-pages//spark/Spark_Overview.md)]
 ---
 
 ## History of Spark
 
-* In 2013 Spark started to become widely known and becoming a defacto standard for large-scale data processing taking Hadoop place.
-* The community made progress in adding the support of new APIs such as Spark SQL and Dataframes along with new libraries such as MLlib, Spark Streaming, etc. 
+* In 2013 Spark started to become widely known and becoming a defacto standard for large-scale data processing taking Hadoop's place.
+
+* The community made progress in adding the support of new APIs such as **Spark SQL** and **Dataframes** along with new libraries such as **MLlib**, **Spark Streaming**, etc. 
+
 * Apache Spark released v1.0 in 2014 and v2.0 in 2016.
+
 * The initial AMPLab team of Spark founded a company called Databricks for professional support and cloud services offerings. They are the main developers of the project.
+
 * Last week the v2.3.2 was released. and we will be using that version in our exercises.
 
 .debug[[spark/Spark_Overview.md](https://github.com/RyaxTech/kube.training.git/tree/gh-pages//spark/Spark_Overview.md)]
@@ -281,9 +288,12 @@ History of Spark
 
 ## Mapreduce's Shortcomings
 
-* Hadoop Mapreduce is the foundation of today’s big data revolution and still actively used and maintained.
+* **Hadoop Mapreduce** is the foundation of today’s big data revolution and still actively used and maintained.
+
 * However, MapReduce is not good for iterative algorithms, job results need to be stored in HDFS before they can be used by another job. 
+
 * Decomposing every problem into a series of two operations Map/Reduce can be difficult.
+
 * Hadoop is rather low-level so plenty of tools have been developed around it and the whole ecosystem became too complex.
 
 .debug[[spark/Spark_Overview.md](https://github.com/RyaxTech/kube.training.git/tree/gh-pages//spark/Spark_Overview.md)]
@@ -291,18 +301,18 @@ History of Spark
 
 ## What Spark brings to the table
 
-- Spark’s core concept is an in-memory execution model that enables caching job data in memory instead of fetching it from disk every time, as MapReduce does. 
+- Spark’s core concept is an **in-memory execution model** that enables caching job data in memory instead of fetching it from disk every time, as MapReduce does. 
 
-- This can speed the execution of jobs up to 100 times, compared to the same jobs in Map-Reduce; it has the biggest effect on iterative algorithms such as machine learning, graph algorithms, and other types of workloads that need to reuse data.
+- This can speed the execution of jobs up to 100 times, compared to the same jobs in Map-Reduce; it has the biggest effect on iterative algorithms such as machine learning, graph algorithms, and other types of workloads that **need to reuse data**.
 
 .debug[[spark/Spark_Overview.md](https://github.com/RyaxTech/kube.training.git/tree/gh-pages//spark/Spark_Overview.md)]
 ---
 
 ## Spark's ease of Use
 
-* The Spark API is much easier to use than the classic MapReduce API. 
+* The **Spark API** is much easier to use than the classic MapReduce API. 
 
-* To implement the classic word-count example as a MapReduce job, you’d need three classes: the main class that sets up the job, a Mapper, and a Reducer , each around 10 lines of code.
+* To implement the classic word-count example as a MapReduce job, you’d need three classes with Hadoop: the main class that sets up the job, a Mapper, and a Reducer , each around 10 lines of code.
 
 * In Spark it can take around 5 lines in total. 
 
@@ -320,11 +330,11 @@ class: pic
 
 ## Spark in production
 
-* Spark technology allows companies solving massive-scale data challenges simpler and more efficiently
+* Spark technology allows companies solving massive-scale data challenges simpler and more efficiently.
 
-* Technology companies like Uber and Netflix using Spark’s streaming and machine learning tools
+* Technology companies like *Uber* and *Netflix* using Spark’s streaming and machine learning tools.
 
-* Institutions like NASA, CERN, and the Broad Institute of MIT and Harvard applyi Spark to scientific data analysis. 
+* Institutions like *NASA*, *CERN*, and the *Broad Institute of MIT* and *Harvard* apply Spark to scientific data analysis. 
 
 .debug[[spark/Spark_Overview.md](https://github.com/RyaxTech/kube.training.git/tree/gh-pages//spark/Spark_Overview.md)]
 ---
@@ -355,11 +365,11 @@ Spark Architecture
 # Spark Architecture
 
 * Single machine VS multiple machines for data processing.
-* Single machines do not have enough power and resources to perform computations on huge amounts of information (or the user probably does not have the time to wait for the computation to finish). 
-* A cluster, or group, of computers, pools the resources of many machines together, giving us the ability to use all the cumulative resources as if they were a single computer. 
-* Now, a group of machines alone is not powerful, you need a framework to coordinate work across them. 
+  * Single machines do not have enough power and resources to perform computations on huge amounts of information (or the user probably does not have the time to wait for the computation to finish). 
+  * A cluster, or group, of computers, pools the resources of many machines together, giving us the ability to use all the cumulative resources as if they were a single computer. 
 
-* Spark does just that, managing and coordinating the execution of tasks on data across a cluster of computers.
+* Now, a group of machines alone is not powerful, you need a framework to coordinate work across them. 
+* Spark does exactly that, **managing and coordinating** the execution of **tasks on data** across a **cluster of computers**.
 
 
 .debug[[spark/Spark_Overview.md](https://github.com/RyaxTech/kube.training.git/tree/gh-pages//spark/Spark_Overview.md)]
@@ -376,9 +386,9 @@ class: pic
 
 ## Spark's cluster management
 
-* The cluster of machines that Spark will use to execute tasks is managed by a cluster manager like Spark’s standalone cluster manager, YARN, or Mesos. 
+* The pool of machines that Spark will use to execute tasks is managed by a cluster manager like Spark’s standalone cluster manager, YARN, Mesos or Kubernetes. 
 
-* We then submit Spark Applications to these cluster managers, which will grant resources to our application so that we can complete our work.
+* We then submit Spark applications to these cluster managers, which will grant resources to our application so that we can complete our work.
 
 .debug[[spark/Spark_Overview.md](https://github.com/RyaxTech/kube.training.git/tree/gh-pages//spark/Spark_Overview.md)]
 ---
@@ -386,18 +396,18 @@ class: pic
 ## Spark applications
 
 * Spark Applications consist of:
-  * a driver process  
-  * and a set of executor processes.
+  * a **driver** process  
+  * and a **set of executor** processes.
 
-* The driver process runs your main() function, sits on a node in the cluster, and is responsible for three things:
-  * maintaining information about the Spark Application;
-  * responding to a user’s program or input;
-  * and analyzing, distributing, and scheduling work across the executors (discussed momentarily).
+* The **driver** process runs your main() function, sits on a node in the cluster, and is responsible for three things:
+  * **maintaining information** about the Spark Application;
+  * responding to a **user’s program** or input;
+  * and **analyzing, distributing, and scheduling** work across the executors.
 
-* The executors are responsible for actually carrying out the work that the driver assigns them. This
+* The **executors** are responsible for actually carrying out the work that the driver assigns them. This
 means that each executor is responsible for only two things: 
-  * executing code assigned to it by the driver, 
-  * and reporting the state of the computation on that executor back to the driver node.
+  * **executing code** assigned to it by the driver, 
+  * and reporting the **state of the computation** on that executor back to the driver node.
 
 .debug[[spark/Spark_Overview.md](https://github.com/RyaxTech/kube.training.git/tree/gh-pages//spark/Spark_Overview.md)]
 ---
@@ -413,30 +423,39 @@ class: pic
 
 ## Spark Applications key takeaways
 
-* Spark employs a cluster manager that keeps track of the resources available.
-* The driver process is responsible for executing the driver program’s commands across the executors to complete a given task.
-* The executors, for the most part, will always be running Spark code. 
-* However, the driver can be “driven” from a number of different languages through Spark’s language APIs.
+* Spark employs a **cluster manager** that keeps track of the available resources.
+
+* The **driver** process is responsible for executing the driver program’s commands across the executors to complete a given task.
+
+* The **executors**, for the most part, will always be running Spark code. 
+
+* However, the driver can be “driven” from a number of different languages through **Spark’s language APIs**.
 
 .debug[[spark/Spark_Overview.md](https://github.com/RyaxTech/kube.training.git/tree/gh-pages//spark/Spark_Overview.md)]
 ---
 
 ## Spark's Language APIs
 
-* Spark’s language APIs make it possible for you to run Spark code using various programming languages. 
-* For the most part, Spark presents some core “concepts” in every language; these concepts are then translated into Spark code that runs on the cluster of machines. 
-* If you use just the Structured APIs, you can expect all languages to have similar performance characteristics. 
+* Spark’s language APIs make it possible for you to **run Spark code** using **various programming languages**. 
+
+* Spark presents some core “concepts” in every language; these concepts are then translated into Spark code that runs on the cluster of machines. 
+
+* If you use just the **Structured APIs**, you can expect all languages to have similar performance characteristics. 
 
 .debug[[spark/Spark_Overview.md](https://github.com/RyaxTech/kube.training.git/tree/gh-pages//spark/Spark_Overview.md)]
 ---
 
 ## Spark's Language APIs
 
-* Scala : Spark is primarily written in Scala, making it Spark’s “default” language. 
-* Java: Even though Spark is written in Scala, Spark’s authors have been careful to ensure that you can write Spark code in Java.
-* Python: It supports nearly all constructs that Scala supports.
-* SQL: Spark supports a subset of the ANSI SQL 2003 standard. This makes it easy for analysts and non-programmers to take advantage of the big data powers of Spark. 
-* R: Spark has two commonly used R libraries: one as a part of Spark core (SparkR) and another as an R community-driven package (sparklyr).
+* **Scala** : Spark is primarily written in Scala, making it Spark’s *“default”* language. 
+
+* **Java**: Even though Spark is written in Scala, Spark’s authors have been careful to ensure that you can write Spark code in Java.
+
+* **Python**: It supports nearly all constructs that Scala supports.
+
+* **SQL**: Spark supports a subset of the ANSI SQL 2003 standard. This makes it easy for analysts and non-programmers to take advantage of the big data powers of Spark. 
+
+* **R**: Spark has two commonly used R libraries: one as a part of Spark core (SparkR) and another as an R community-driven package (sparklyr).
 
 .debug[[spark/Spark_Overview.md](https://github.com/RyaxTech/kube.training.git/tree/gh-pages//spark/Spark_Overview.md)]
 ---
@@ -444,8 +463,10 @@ class: pic
 ## SparkSession and Language APIs
 
 * Each language API maintains the same core concepts. 
-* There is a SparkSession object available to the user, which is the entrance point to running Spark code. 
-* When using Spark from Python or R, you don’t write explicit JVM instructions; instead, you write Python and R code that Spark translates into code that it then can run on the executor JVMs. 
+
+* There is a **SparkSession** object available to the user, which is the entrance point to running Spark code. 
+
+* When using Spark from **Python or R**, you don’t write explicit JVM instructions; instead, you write Python and R code that **Spark translates into code** that it then can run on the executor JVMs. 
 
 .debug[[spark/Spark_Overview.md](https://github.com/RyaxTech/kube.training.git/tree/gh-pages//spark/Spark_Overview.md)]
 ---
@@ -484,13 +505,13 @@ Spark Components
 
 # Spark Components
 
-* Spark has a vast ecosystem of tools and libraries.
+* Spark has a vast **ecosystem of tools and libraries**.
 * It is composed of:
-    * the lower-level APIs
-    * the Structured APIs
-    * and a series of standard libraries for additional functionality.
+    * the **lower-level APIs**
+    * the **Structured APIs**
+    * and a series of **standard libraries** for additional functionality.
 
-* Spark consists of several purpose-built components such as Spark Core, Spark SQL , Spark Streaming, Spark GraphX, and Spark ML lib
+* Spark consists of several purpose-built components such as **Spark Core**, **Spark SQL** , **Spark Streaming**, **Spark GraphX**, and **Spark MLlib**
 * These components make Spark a feature-packed unifying platform: it can be used for many tasks that previously had to be accomplished with several different frameworks. 
 
 .debug[[spark/Spark_Overview.md](https://github.com/RyaxTech/kube.training.git/tree/gh-pages//spark/Spark_Overview.md)]
@@ -507,9 +528,9 @@ class: pic
 
 ## Spark Core
 
-* Spark Core contains basic Spark functionalities required for running jobs and needed by other components. The most important of these is the resilient distributed dataset (RDD), which is the main element of the Spark API. It’s an abstraction of a distributed collection of items with operations and transformations applicable to the dataset. It’s resilient because it’s capable of rebuilding datasets in case of node failures.
+* Spark Core contains **basic Spark functionalities** required for running jobs and needed by other components. The most important of these is the **resilient distributed dataset (RDD)**, which is the main element of the Spark API. It’s an abstraction of a **distributed collection** of items with operations and transformations applicable to the dataset. It’s resilient because it’s capable of **rebuilding datasets** in case of node failures.
 
-* Spark Core contains logic for accessing various filesystems, such as HDFS , Gluster FS , Amazon S3, and so on. It also provides a means of information sharing between computing nodes with broadcast variables and accumulators. Other fundamental functions, such as networking, security, scheduling, and data shuffling, are also part of Spark Core.
+* Spark Core contains logic for accessing **various filesystems**, such as HDFS , Gluster FS , Amazon S3, and so on. It also provides a means of information sharing between computing nodes with broadcast variables and accumulators. Other fundamental functions, such as networking, security, scheduling, and data shuffling, are also part of Spark Core.
 
 .debug[[spark/Spark_Overview.md](https://github.com/RyaxTech/kube.training.git/tree/gh-pages//spark/Spark_Overview.md)]
 ---
@@ -527,28 +548,33 @@ class: pic
 
 ## Spark SQL
 
-* Spark SQL provides functions for manipulating large sets of distributed, structured data using an SQL subset supported by Spark and Hive SQL (Hive QL ). 
-* With DataFrames introduced in Spark 1.3, and DataSets introduced in Spark 1.6, which simplified handling of structured data and enabled radical performance optimizations, Spark SQL became one of the most important Spark components. 
+* **Spark SQL** provides functions for manipulating large sets of distributed, structured data using an SQL subset supported by Spark and Hive SQL (Hive QL ). 
+
+* With **DataFrames** introduced in Spark 1.3, and **DataSets** introduced in Spark 1.6, which simplified handling of structured data and enabled radical performance optimizations, Spark SQL became one of the most important Spark components. 
+
 * Spark SQL can also be used for reading and writing data to and from various structured formats and data sources, such as JavaScript Object Notation ( JSON ) files, Parquet files (an increasingly popular file format that allows for storing a schema along with the data), relational databases, Hive, and others.
-* Operations on DataFrames and DataSets at some point translate to operations on RDDs and execute as ordinary Spark jobs. Spark SQL provides a query optimization framework called Catalyst that can be extended by custom optimization rules. Spark SQL also includes a Thrift server, which can be used by external systems, such as business intelligence tools, to query data through Spark SQL using classic JDBC and ODBC protocols.
+
+* Operations on DataFrames and DataSets at some point **translate to operations on RDDs** and execute as ordinary Spark jobs. Spark SQL provides a query optimization framework called **Catalyst** that can be extended by custom optimization rules. Spark SQL also includes a Thrift server, which can be used by external systems, such as business intelligence tools, to query data through Spark SQL using classic JDBC and ODBC protocols.
 
 .debug[[spark/Spark_Overview.md](https://github.com/RyaxTech/kube.training.git/tree/gh-pages//spark/Spark_Overview.md)]
 ---
 
 ## Spark Streaming
 
-* Spark Streaming is a framework for ingesting real-time streaming data from various sources. The supported streaming sources include HDFS , Kafka, Flume, Twitter, ZeroMQ , and custom ones. 
-* Spark Streaming operations recover from failure automatically, which is important for online data processing. Spark Streaming represents streaming data using discretized streams ( DS treams), which periodically create RDDs containing the data that came in during the last time window.
-* Spark Streaming can be combined with other Spark components in a single program, unifying real-time processing with machine learning, SQL , and graph operations. This is something unique in the Hadoop ecosystem. And since Spark 2.0, the new Structured Streaming API makes Spark streaming programs more similar to Spark batch programs.
+* Spark Streaming is a framework for **ingesting real-time streaming data** from various sources. The supported streaming sources include HDFS , Kafka, Flume, Twitter, ZeroMQ , and custom ones. 
+
+* Spark Streaming operations **recover from failure automatically**, which is important for online data processing. Spark Streaming represents streaming data using discretized streams ( DS treams), which **periodically create RDDs** containing the data that came in during the last time window.
+
+* Spark Streaming can be **combined** with other Spark components in a single program, unifying real-time processing with machine learning, SQL , and graph operations. This is something unique in the Hadoop ecosystem. And since Spark 2.0, the new **Structured Streaming API** makes Spark streaming programs more similar to Spark batch programs.
 
 .debug[[spark/Spark_Overview.md](https://github.com/RyaxTech/kube.training.git/tree/gh-pages//spark/Spark_Overview.md)]
 ---
 
 ## Spark MLlib and GraphX
 
-* Spark MLlib is a library of machine-learning algorithms grown from the ML base project at UC Berkeley. Supported algorithms include logistic regression, naïve Bayes classification, support vector machines ( SVM s), decision trees, random forests, linear regression, and k-means clustering.
+* Spark MLlib is a library of **machine-learning algorithms** grown from the ML base project at UC Berkeley. Supported algorithms include logistic regression, naïve Bayes classification, support vector machines ( SVM s), decision trees, random forests, linear regression, and k-means clustering.
 
-* Graphs are data structures comprising vertices and the edges connecting them. GraphX provides functions for building graphs, represented as graph RDDs: EdgeRDD
+* Graphs are **data structures comprising vertices and the edges** connecting them. GraphX provides functions for building graphs, represented as graph RDDs: EdgeRDD
 and VertexRDD .
 
 
@@ -796,8 +822,10 @@ Spark's interactive consoles
 ## The Spark Session
 
 
-- You control your Spark Application through a driver process called the SparkSession.
-- The SparkSession instance is the way Spark executes user-defined manipulations across the cluster.
+- You control your Spark Application through a driver process called the **SparkSession**.
+
+- The SparkSession instance is the way Spark **executes user-defined manipulations** across the cluster.
+
 - There is a one-to-one correspondence between a SparkSession and a Spark Application.
   
 .debug[[spark/spark_session.md](https://github.com/RyaxTech/kube.training.git/tree/gh-pages//spark/spark_session.md)]
@@ -829,12 +857,13 @@ Spark's interactive consoles
 .exercise[
 - Let’s now perform the simple task of creating a range of numbers. This range of numbers is just like a
 named column in a spreadsheet:
+
   ```bash
   myRange = spark.range(1000).toDF("number")
   ```
-- You just ran your first Spark code! We created a DataFrame with one column containing 1,000 rows
+- You just ran your first Spark code! We created a **DataFrame** with one column containing 1,000 rows
 with values from 0 to 999. 
-- This range of numbers represents a distributed collection. When run on a
+- This range of numbers represents a **distributed collection**. When run on a
 cluster, each part of this range of numbers exists on a different executor. 
 - This is a Spark DataFrame.
 
@@ -868,10 +897,10 @@ Structured APIs: Dataframes, SQL and Datasets
 # Structured APIs: Dataframes, SQL and Datasets
 
 
-- The Structured APIs are the fundamental abstraction that you will use to write the majority of your
+- The **Structured APIs** are the **fundamental abstraction** that you will use to write the majority of your
 data flows.
 
-- They provide the means to manipulate all sorts of data, from unstructured log files to semi-structured CSV files and highly
+- They provide the means to **manipulate all sorts of data**, from unstructured log files to semi-structured CSV files and highly
 structured Parquet files.
 
 - The majority of the Structured APIs apply to both batch and streaming computation.
@@ -904,18 +933,19 @@ Dataframes
 ---
 # Dataframes
 
-- A DataFrame is the most common Structured API and simply represents a table of data with rows and
-columns. The list that defines the columns and the types within those columns is called the schema.
+- A DataFrame is the most common Structured API and simply represents a **table of data** with rows and
+columns. The list that defines the columns and the types within those columns is called the **schema**.
 
-- You can think of a DataFrame as a spreadsheet with named columns. 
+- You can think of a DataFrame as a **spreadsheet with named columns**. 
 
 .debug[[spark/concepts_spark.md](https://github.com/RyaxTech/kube.training.git/tree/gh-pages//spark/concepts_spark.md)]
 ---
 
 ## Spreadsheet vs Dataframes
 
-- a spreadsheet sits on one computer in one specific location, whereas a Spark
-DataFrame can span thousands of computers. 
+- A spreadsheet sits on one computer in one specific location, whereas a Spark
+DataFrame can **span thousands of computers**. 
+
 - The reason for putting the data on more than one
 computer should be intuitive: either the data is too large to fit on one machine or it would simply take
 too long to perform that computation on one machine.
@@ -935,10 +965,10 @@ class: pic
 ## Spark Dataframes
 
 - The DataFrame concept is not unique to Spark. R and Python both have similar concepts. 
-- However, Python/R DataFrames (with some exceptions) exist on one machine rather than multiple machines. This limits what you can do with a given DataFrame to the resources that exist on that specific machine.
+- However, Python/R DataFrames (with some exceptions) **exist on one machine** rather than multiple machines. This limits what you can do with a given DataFrame to the resources that exist on that specific machine.
 
-- Spark has several core abstractions: Datasets, DataFrames, SQL Tables, and Resilient Distributed Datasets (RDDs). These
-different abstractions all represent distributed collections of data. 
+- Spark has several core abstractions: **Datasets, DataFrames, SQL Tables, and Resilient Distributed Datasets (RDDs)**. These
+different abstractions all represent **distributed collections of data**. 
 - The easiest and most efficient are DataFrames, which are available in all languages.
 
 .debug[[spark/concepts_spark.md](https://github.com/RyaxTech/kube.training.git/tree/gh-pages//spark/concepts_spark.md)]
@@ -946,11 +976,11 @@ different abstractions all represent distributed collections of data.
 
 ## Partitions
 
-- To allow every executor to perform work in parallel, Spark breaks up the data into chunks called
+- To allow every executor to **perform work in parallel**, Spark breaks up the data into **chunks** called
 partitions. 
-- A partition is a collection of rows that sit on one physical machine in your cluster. A
-DataFrame’s partitions represent how the data is physically distributed across the cluster of machines
-during execution. 
+
+- A partition is a **collection of rows** that sit on one physical machine in your cluster. A DataFrame’s partitions represent how the data is physically distributed across the cluster of machines during execution. 
+
 - If you have one partition, Spark will have a parallelism of only one, even if you
 have thousands of executors. If you have many partitions but only one executor, Spark will still have a
 parallelism of only one because there is only one computation resource.
@@ -960,13 +990,14 @@ parallelism of only one because there is only one computation resource.
 
 ## Transformations
 
-- Transformations are the core of how you express your business logic using Spark. There are two
+- Transformations are the core of how you **express your business logic** using Spark. There are two
 types of transformations:
-    - those that specify narrow dependencies, which are those for which each input partition will contribute to only one output partition. 
-    - and those that specify wide dependencies (shuffles). where we have input partitions contributing to many output partitions
+    - those that specify **narrow dependencies**, which are those for which each input partition will contribute to only one output partition. 
+    - and those that specify **wide dependencies (shuffles)**, where we have input partitions contributing to many output partitions
 
 - Narrow transformations can be performed in-memory, whereas for shuffles, Spark writes the results to disk. 
-- Lazy evaluation means that Spark will wait until the very last moment to execute the graph of
+- Spark will **not act on transformations** until we **call an action**, that's why we say that they are lazily evaluated.
+- Lazy evaluation means that Spark will **wait until the very last moment** to execute the graph of
 computation instructions.
 
 .debug[[spark/concepts_spark.md](https://github.com/RyaxTech/kube.training.git/tree/gh-pages//spark/concepts_spark.md)]
@@ -974,13 +1005,13 @@ computation instructions.
 
 ## Actions
 
-- Transformations allow us to build up our logical transformation plan. To trigger the computation, we
-run an action. An action instructs Spark to compute a result from a series of transformations.
+- Transformations allow us to build up a logical transformation plan. 
+- To **trigger the computation**, we run an action. An action instructs Spark to compute a result from a **series of transformations**.
 
 - There are three kinds of actions:
-    - Actions to view data in the console
-    - Actions to collect data to native objects in the respective language
-    - Actions to write to output data sources
+    - Actions to **view** data in the console
+    - Actions to **collect** data to native objects in the respective language
+    - Actions to write to **output** data sources
 
 .debug[[spark/concepts_spark.md](https://github.com/RyaxTech/kube.training.git/tree/gh-pages//spark/concepts_spark.md)]
 ---
@@ -1017,10 +1048,10 @@ run an action. An action instructs Spark to compute a result from a series of tr
 .exercise[
 
 - Now, let’s sort our data according to the count column, which is an integer type.
-- Sort does not modify the DataFrame. We use sort as a transformation that returns a new DataFrame by
+- Sort does not modify the DataFrame. We use `sort` as a transformation that returns a new DataFrame by
 transforming the previous DataFrame.
 - Spark is building up a plan for how it will execute this across the cluster by looking at the
-explain plan. We can call explain on any DataFrame object to see the DataFrame’s lineage how Spark will execute this query:
+`explain` plan. We can call explain on any DataFrame object to see the DataFrame’s lineage how Spark will execute this query:
 
 - Execute the following code within the Python console:
   ```bash
@@ -1042,9 +1073,12 @@ explain plan. We can call explain on any DataFrame object to see the DataFrame�
 an overview of the steps:
 
 1. Write DataFrame/Dataset/SQL Code.
-2. If valid code, Spark converts this to a Logical Plan.
-3. Spark transforms this Logical Plan to a Physical Plan, checking for optimizations along the way.
-4. Spark then executes this Physical Plan (RDD manipulations) on the cluster.
+
+2. If valid code, Spark converts this to a **Logical Plan**.
+
+3. Spark transforms this Logical Plan to a **Physical Plan**, checking for **optimizations** along the way.
+
+4. Spark then executes this Physical Plan (**RDD manipulations**) on the cluster.
 
 .debug[[spark/concepts_spark.md](https://github.com/RyaxTech/kube.training.git/tree/gh-pages//spark/concepts_spark.md)]
 ---
@@ -1103,11 +1137,11 @@ Fundamental DataFrame operations
 # Fundamental DataFrame operations
 
 - a DataFrame consists of:
-  - a series of records (like rows in a table), that are of type Row,
-  - and a number of columns (like columns in a spreadsheet) that represent a computation expression that can be performed on each individual record in the Dataset.
+  - a **series of records** (like rows in a table), that are of type Row,
+  - and a **number of columns** (like columns in a spreadsheet) that represent a computation expression that can be performed on each individual record in the Dataset.
 
-- Schemas define the name as well as the type of data in each column.
-- Partitioning of the DataFrame defines the layout of the DataFrame or Dataset’s physical distribution across the cluster. 
+- **Schemas** define the name as well as the type of data in each column.
+- **Partitioning** of the DataFrame defines the layout of the DataFrame or Dataset’s physical distribution across the cluster. 
   - The partitioning scheme defines how that is allocated. You can set this to be based on values in a certain column or nondeterministically.
 
 .exercise[
@@ -1121,7 +1155,7 @@ df = spark.read.format("json").load("/home/ubuntu/data-sets/2015-summary.json")
 
 ## Schemas
 
-- A schema defines the column names and types of a DataFrame. We can either let a data source define the schema or we can define it explicitly ourselves.
+- A schema defines the **column names and types** of a DataFrame. We can either let a data source define the schema or we can define it explicitly ourselves.
 
 .exercise[
 
@@ -1141,7 +1175,7 @@ df.printSchema()
 
 .exercise[
 
-- Let's see now how to create and enforce a specific schema on a DataFrame.
+- Let's see now how to create and **enforce** a specific schema on a DataFrame.
 
 ```bash
 from pyspark.sql.types import StructField, StructType, StringType, LongType
@@ -1160,7 +1194,7 @@ df = spark.read.format("json").schema(myManualSchema)\
 
 ## Columns and Expressions
 
-- Columns in Spark are similar to columns in a spreadsheet, R dataframe, or pandas DataFrame. You can select, manipulate, and remove columns from DataFrames and these operations are represented as expressions.
+- Columns in Spark are similar to columns in a spreadsheet, R dataframe, or pandas DataFrame. You can **select, manipulate, and remove** columns from DataFrames and these operations are represented as **expressions**.
 
 .exercise[
 
@@ -1172,7 +1206,8 @@ df.col("someCoumnName")
 ```
 ]
 
-- An expression is a set of transformations on one or more values in a record in a DataFrame. Think of it like a function that takes as input one or more column names, resolves them, and then potentially applies more expressions to create a single value for each record in the dataset.
+- An expression is a **set of transformations** on one or more values in a record in a DataFrame. 
+  - Think of it like a function that takes as input one or more column names, resolves them, and then potentially applies more expressions to create a single value for each record in the dataset.
 
 .debug[[spark/concepts_spark.md](https://github.com/RyaxTech/kube.training.git/tree/gh-pages//spark/concepts_spark.md)]
 ---
@@ -1288,7 +1323,7 @@ df.where(col("count") < 2).where(col("ORIGIN_COUNTRY_NAME") != "Croatia")\
 
 .exercise[
 
-- For sorting we can use sort and orderBy which function similarly:
+- For sorting we can use `sort` and `orderBy` which function similarly:
 ```bash
 df.sort("count").show(5)
 df.orderBy("count", "DEST_COUNTRY_NAME").show(5)
@@ -1308,13 +1343,13 @@ df.orderBy(col("count").desc(), col("DEST_COUNTRY_NAME").asc()).show(2)
 - A very important optimization opportunity is to partition the data according to some frequently filtered columns, which control the physical layout of data across the cluster including the partitioning scheme and the number of partitions.
 
 .exercise[
-- Use the repartition method as follows:
+- Use the `repartition` method as follows:
 ```bash
 df.rdd.getNumPartitions()
 df.repartition(5)
 ```
 
-- If you’re going to be filtering by a certain column often, it can be worth repartitioning based on that column
+- If you’re going to be filtering by a certain column often, it can be worth **repartitioning based on that column**
 ```bash
 df.repartition(col("DEST_COUNTRY_NAME"))
 ```
@@ -1324,7 +1359,7 @@ df.repartition(col("DEST_COUNTRY_NAME"))
 
 ## Dataframe Transformations - Repartition and Coalesce
 
-- Coalesce, combines partitions.
+- `Coalesce`, combines partitions.
 
 .exercise[
 - Try the following command which uses both repartition and then coalesce
@@ -1333,7 +1368,7 @@ df.repartition(5, col("DEST_COUNTRY_NAME")).coalesce(2)
 ```
 ]
 
-- The repartition algorithm does a full shuffle of the data and creates equal sized partitions of data. coalesce combines existing partitions to avoid a full shuffle.
+- The **repartition** algorithm does a **full shuffle** of the data and creates equal sized partitions of data. **coalesce** **combines** existing partitions to avoid a full shuffle.
 
 .debug[[spark/concepts_spark.md](https://github.com/RyaxTech/kube.training.git/tree/gh-pages//spark/concepts_spark.md)]
 ---
@@ -1354,7 +1389,7 @@ df.repartition(5, col("DEST_COUNTRY_NAME")).coalesce(2)
 ## Dataframe and data types - Booleans
 
 - Booleans are essential when it comes to data analysis because they are the foundation for all filtering.
-- Boolean statements consist of four elements: and, or, true, and false. We use these simple structures to build logical statements that evaluate to either true or false.
+- Boolean statements consist of four elements: *and*, *or*, *true*, and *false*. We use these simple structures to build logical statements that evaluate to either true or false.
 
 .exercise[
 - Let's load the file for the analysis here: 
@@ -1405,12 +1440,12 @@ from pyspark.sql.functions import expr, pow
 fabricatedQuantity = pow(col("Quantity") * col("UnitPrice"), 2) + 5
 df.select(expr("CustomerId"), fabricatedQuantity.alias("realQuantity")).show(2)
 ```
-- The round function rounds up if you’re exactly in between two numbers. You can round down by using the bround
+- The `round` function rounds up if you’re exactly in between two numbers. You can round down by using the `bround` function
 ```bash
 from pyspark.sql.functions import lit, round, bround
 df.select(round(lit("2.5")), bround(lit("2.5"))).show(2)
 ```
-- The describe method can give us summary statistics for a column or set of columns.
+- The `describe` method can give us summary statistics for a column or set of columns.
 ```bash
 df.describe.show()
 ```
@@ -1422,7 +1457,7 @@ df.describe.show()
 ## Dataframe and data types - Strings
 
 .exercise[
-- The *initcap* function will capitalize every word in a given string when that word is separated from another by a space.
+- The `initcap` function will capitalize every word in a given string when that word is separated from another by a space.
 ```bash
 from pyspark.sql.functions import initcap
 df.select(initcap(col("Description"))).show()
@@ -1450,8 +1485,8 @@ regexp_extract(col("Description"), extract_str, 1).alias("color_clean"),
 col("Description")).show(2)
 ```
 - Or simply check for the existance of a value/string:
+- In Python and SQL, we can use the `instr` function:
 ```bash
-In Python and SQL, we can use the instr function:
 from pyspark.sql.functions import instr
 containsBlack = instr(col("Description"), "BLACK") >= 1
 containsWhite = instr(col("Description"), "WHITE") >= 1
@@ -1505,8 +1540,9 @@ to_date(lit("2017-05-22")).alias("end"))\
 
 ## Dataframe and data types - User Defined Functions
 
-- User Defined Functions (UDFs) make it possible for you to write your own custom transformations using Python or Scala and even use external libraries. UDFs can take and return one or more columns as input. Spark UDFs are incredibly powerful because you can write them in several different programming languages registered as temporary functions to be used in that specific SparkSession or Context.
-- Performance issues for Python serialization 
+- User Defined Functions (UDFs) make it possible for you to write your own **custom transformations** using Python or Scala and even use **external libraries**. UDFs can take and return one or more columns as input. Spark UDFs are incredibly powerful because you can write them in several different programming languages registered as temporary functions to be used in that **specific SparkSession or Context**.
+
+- Performance issues for **Python serialization** 
 
 .exercise[
 
@@ -1564,30 +1600,30 @@ Aggregations
 
 # Aggregations
 
-- Aggregating is the act of collecting something together and is a cornerstone of big data analytics. In an aggregation, you will specify a key or grouping and an aggregation function that specifies how you should transform one or more columns.
+- Aggregating is the **act of collecting** something together and is a cornerstone of big data analytics. In an aggregation, you will specify a key or grouping and an aggregation function that specifies how you should transform one or more columns.
 
-- This function must produce one result for each group, given multiple input values. Spark’s aggregation capabilities are sophisticated and mature, with a variety of different use cases and possibilities. In general, you use aggregations to summarize numerical data usually by means of some grouping. This might be a summation, a product, or simple counting.
+- This function must produce one result for each group, given multiple input values. Spark’s aggregation capabilities are sophisticated and mature, with a variety of different use cases and possibilities. In general, you use aggregations to **summarize numerical data** usually by means of some **grouping**. This might be a summation, a product, or simple counting.
 
 .debug[[spark/concepts_spark.md](https://github.com/RyaxTech/kube.training.git/tree/gh-pages//spark/concepts_spark.md)]
 ---
 
 ## Aggregation Functions
 
-- All aggregations are available as functions most aggregation functions in the org.apache.spark.sql.functions package [here](http://spark.apache.org/docs/latest/api/scala/index.html#org.apache.spark.sql.functions$).
-- count function allows us to specify a specific column to count  
+- All aggregations are available as functions, most aggregation functions can be found in the org.apache.spark.sql.functions package [here](http://spark.apache.org/docs/latest/api/scala/index.html#org.apache.spark.sql.functions$).
+- `count` function allows us to specify a specific column to count  
 
 .exercise[
-- Let's run an examples of aggregation with count:
+- Let's run an examples of aggregation with `count`:
 ```bash
 from pyspark.sql.functions import count
 df.select(count("StockCode")).show()
 ```
-- countdistinct function gives us the number of unique groups
+- `countdistinct` function gives us the number of unique groups
 ```bash
 from pyspark.sql.functions import countDistinct
 df.select(countDistinct("StockCode")).show()
 ```
-- sum function to add all the values in a row 
+- `sum` function to add all the values in a row 
 ```bash
 from pyspark.sql.functions import sum
 df.select(sum("Quantity")).show()
@@ -1598,14 +1634,14 @@ df.select(sum("Quantity")).show()
 
 ## Grouping
 
-- A very common task is to perform calculations based on groups in the data. This is typically done on categorical data for which we group our data on one column and perform some calculations on the other columns that end up in that group.
+- A very common task is to perform **calculations based on groups** in the data. This is typically done on categorical data for which we group our data on one column and perform some calculations on the other columns that end up in that group.
 
 .exercise[
 - We will group by each unique invoice number and get the count of items on that invoice
 ```bash
 df.groupBy("InvoiceNo", "CustomerId").count().show()
 ```
-- Grouping with expressions Rather than passing that function as an expression into a select statement, we specify it as within agg. This makes it possible for you to pass-in arbitrary expressions that just need to have some aggregation specified.
+- Grouping with expressions rather than passing that function as an expression into a select statement, we specify it as within `agg`. This makes it possible for you to pass-in arbitrary expressions that just need to have some aggregation specified.
 ```bash
 from pyspark.sql.functions import count, expr
 df.groupBy("InvoiceNo").agg(
@@ -1619,13 +1655,14 @@ expr("count(Quantity)")).show()
 
 ## Joins
 
-- Joins are an essential part of nearly all Spark workloads. Spark’s ability to talk to different data means that you gain the ability to tap into a variety of data sources across your company.
+- Joins are an essential part of nearly all Spark workloads. Spark’s ability to talk to different data means that you gain the ability to tap into a **variety of data sources** across your company.
+
 - Whereas the join expression determines whether two rows should join, the join type determines what
-should be in the result set. There are a variety of different join types available in Spark for you to use such as:
-  - Inner joins (keep rows with keys that exist in the left and right datasets)
-  - Outer joins (keep rows with keys in either the left or right datasets)
-  - Left outer joins (keep rows with keys in the left dataset)
-  - Right outer joins (keep rows with keys in the right dataset)
+should be in the result set. There are a variety of different join types available in Spark for you to use such as (list not-exhaustive):
+  - **Inner joins** (keep rows with keys that exist in the left and right datasets)
+  - **Outer joins** (keep rows with keys in either the left or right datasets)
+  - **Left outer joins** (keep rows with keys in the left dataset)
+  - **Right outer joins** (keep rows with keys in the right dataset)
 
 .debug[[spark/concepts_spark.md](https://github.com/RyaxTech/kube.training.git/tree/gh-pages//spark/concepts_spark.md)]
 ---
@@ -1647,13 +1684,16 @@ sparkStatus = spark.createDataFrame([(500, "Vice President"),(250, "PMC Member")
 ## Inner Joins
 
 .exercise[
+
 - Let's join the graduateProgram DataFrame with the person DataFrame to create a new DataFrame:
 - For this we need to declare on which key the join takes place and then provide the join
+
 ```bash
 joinExpression = person["graduate_program"] == graduateProgram['id']
 person.join(graduateProgram, joinExpression).show()
 ```
-- which is equivalent to the following SQL
+- which is equivalent to the following SQL:
+
 ```bash
 SELECT * FROM person JOIN graduateProgram
 ON person.graduate_program = graduateProgram.id
@@ -1666,6 +1706,7 @@ ON person.graduate_program = graduateProgram.id
 ## Outer Joins
 .exercise[
 - Outer joins evaluate the keys in both of the DataFrames or tables and includes (and joins together) the rows that evaluate to true or false. If there is no equivalent row in either the left or right DataFrame, Spark will insert null:
+
 ```bash
 joinType = "outer"
 person.join(graduateProgram, joinExpression, joinType).show()
@@ -1701,8 +1742,10 @@ Data Sources and Data Sources API
 
 - The ability to read and write from all different kinds of data sources and for the community to create its own contributions is
 arguably one of Spark’s greatest strengths. Following are Spark’s core data sources:
+
   - CSV, JSON, Parquet, ORC, JDBC/ODBC connections, Plain-text files
   - along with numerous community-created ones such as: Cassandra, HBase, MongoDB, AWS Redshift, XML
+
 - The foundation for reading data in Spark is the DataFrameReader from the data sources API. We access this through the SparkSession via the read attribute: `spark.read`
 - After we have a DataFrame reader, we specify several values: such as: format, schema, read mode and a series of options
 - Writing on data sources is based on the DataFrameWriter and follows the same format with the reading
