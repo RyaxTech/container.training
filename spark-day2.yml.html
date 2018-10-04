@@ -1,0 +1,1930 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <title>Spark Fundamentals - Clustering, Storage, Cloud, RDD  </title>
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8"/>
+    <link rel="stylesheet" href="workshop.css">
+  </head>
+  <body>
+    <!--
+    <div style="position: absolute; left: 20%; right: 20%; top: 30%;">
+      <h1 style="font-size: 3em;">Loading ...</h1>
+      The slides should show up here. If they don't, it might be
+      because you are accessing this file directly from your filesystem.
+      It needs to be served from a web server. You can try this:
+      <pre>
+        docker-compose up -d
+        open http://localhost:8888/workshop.html # on MacOS
+        xdg-open http://localhost:8888/workshop.html # on Linux
+      </pre>
+      Once the slides are loaded, this notice disappears when you
+      go full screen (e.g. by hitting "f").
+    </div>
+    -->
+    <textarea id="source">class: title, self-paced
+
+Spark Fundamentals - Clustering, Storage, Cloud, RDD <br/>
+
+.nav[*Self-paced version*]
+
+.debug[
+```
+ M common/about-slides_fr.md
+ M intro-fullday.yml.html
+ M intro-selfpaced.yml.html
+ M kube-fullday.yml.html
+ M kube-halfday.yml.html
+ M kube-jour1.yml.html
+ M kube-jour2.yml.html
+ M kube-jour3.yml
+ M kube-jour3.yml.html
+ M kube-selfpaced.yml.html
+ M logistics.md
+ M spark-day1.yml.html
+ M swarm-fullday.yml.html
+ M swarm-halfday.yml.html
+ M swarm-selfpaced.yml.html
+ M swarm-video.yml.html
+?? spark-day1.yml
+?? spark-day2.yml
+?? spark-day2.yml.html
+?? spark-day3.yml
+?? spark-day3.yml.html
+?? spark-jour1.yml.html
+?? spark/
+
+```
+
+These slides have been built from commit: 8fb8bc6
+
+
+[common/title_fr.md](https://github.com/RyaxTech/kube.training.git/tree/gh-pages//common/title_fr.md)]
+---
+
+class: title, in-person
+
+Spark Fundamentals - Clustering, Storage, Cloud, RDD <br/><br/></br>
+
+
+.debug[[common/title_fr.md](https://github.com/RyaxTech/kube.training.git/tree/gh-pages//common/title_fr.md)]
+---
+
+name: toc-chapter-1
+
+## Chapter 1
+
+- [Overview of Spark's Runtime Architecture ](#toc-overview-of-sparks-runtime-architecture-)
+
+- [Spark Scheduling](#toc-spark-scheduling)
+
+- [Spark Configuration](#toc-spark-configuration)
+
+- [Spark Standalone cluster](#toc-spark-standalone-cluster)
+
+- [Spark YARN cluster](#toc-spark-yarn-cluster)
+
+- [Optimizations and Performance Tuning ](#toc-optimizations-and-performance-tuning-)
+
+.debug[(auto-generated TOC)]
+---
+name: toc-chapter-2
+
+## Chapter 2
+
+- [Spark in the Cloud](#toc-spark-in-the-cloud)
+
+- [Spark on Amazon EMR and S3](#toc-spark-on-amazon-emr-and-s)
+
+- [Spark Kubernetes cluster](#toc-spark-kubernetes-cluster)
+
+.debug[(auto-generated TOC)]
+---
+name: toc-chapter-3
+
+## Chapter 3
+
+- [Resilient Distributed Datasets (RDD)](#toc-resilient-distributed-datasets-rdd)
+
+- [Interoperating Between DataFrames and RDDs](#toc-interoperating-between-dataframes-and-rdds)
+
+- [Manipulating RDDs](#toc-manipulating-rdds)
+
+- [Advanced RDDs](#toc-advanced-rdds)
+
+.debug[(auto-generated TOC)]
+
+
+
+.debug[[common/toc.md](https://github.com/RyaxTech/kube.training.git/tree/gh-pages//common/toc.md)]
+---
+
+class: pic
+
+.interstitial[![Image separating from the next chapter](https://gallant-turing-d0d520.netlify.com/containers/Container-Ship-Freighter-Navigation-Elbe-Romance-1782991.jpg)]
+
+---
+
+name: toc-overview-of-sparks-runtime-architecture-
+class: title
+
+Overview of Spark's Runtime Architecture 
+
+.nav[
+[Section précédente](#toc-)
+|
+[Retour table des matières](#toc-chapter-1)
+|
+[Section suivante](#toc-spark-scheduling)
+]
+
+.debug[(automatically generated title slide)]
+
+---
+# Overview of Spark's Runtime Architecture 
+
+- A Spark cluster is a set of interconnected processes, usually running in a distributed manner on different
+machines. The main cluster types that Spark runs on are **YARN** , **Mesos**, **Kubernetes** and **Spark standalone**.
+
+- Another runtime option is the **local mode** - we have deployed that mode on our windows machine - which is a pseudo-cluster running on a single machine,
+
+- We will start by describing common elements of the Spark runtime architecture that apply to all the Spark cluster types and then we will go to detail to some particular cases
+
+.debug[[spark/Spark_clustering.md](https://github.com/RyaxTech/kube.training.git/tree/gh-pages//spark/Spark_clustering.md)]
+---
+
+## Spark Runtime Components
+
+- The main Spark components running in a cluster are: **client**, **driver**, and **executors**.
+
+- The physical placement of executor and driver processes depends on the cluster type and its configuration. 
+
+- For example, some of these processes could share a single physical machine, or they could all run on different ones.
+
+.debug[[spark/Spark_clustering.md](https://github.com/RyaxTech/kube.training.git/tree/gh-pages//spark/Spark_clustering.md)]
+---
+
+class: pic
+
+## Spark Runtime Components in cluster-deploy mode
+
+![history](spark/images/spark-runtime-components.png)
+
+
+.debug[[spark/Spark_clustering.md](https://github.com/RyaxTech/kube.training.git/tree/gh-pages//spark/Spark_clustering.md)]
+---
+## Client-process component
+
+- The client process starts the driver program. 
+- The client process can be:
+  - a spark-submit script for running applications, 
+  - a spark-shell script, 
+  - or a custom application using Spark API. 
+
+- The client process prepares the classpath and all configuration options for
+the Spark application. It also passes application arguments, if any, to the application
+running in the driver.
+
+.debug[[spark/Spark_clustering.md](https://github.com/RyaxTech/kube.training.git/tree/gh-pages//spark/Spark_clustering.md)]
+---
+
+## Driver component
+
+- The driver orchestrates and monitors execution of a Spark application. There is always
+one driver per Spark application. You can think of the driver as a **wrapper** around the
+application. The driver and its subcomponents (the Spark context and scheduler)
+are responsible for the following:
+  
+  - Requesting memory and CPU resources from cluster managers
+  - Breaking application logic into stages and tasks
+  - Sending tasks to executors
+  - Collecting the results
+.debug[[spark/Spark_clustering.md](https://github.com/RyaxTech/kube.training.git/tree/gh-pages//spark/Spark_clustering.md)]
+---
+
+## Driver component
+
+- There are two basic ways the driver Cluster program can be run:
+
+  - **Cluster-deploy** mode where the driver process runs as a separate JVM process in a cluster, and the
+cluster manages its resources (mostly JVM heap memory).
+  - **Client-deploy** mode where the driver is running in the client’s JVM process and communicates with the executors managed by
+the cluster.
+- The deploy mode you choose affects how you configure Spark and the resource requirements of the client JVM.
+
+.debug[[spark/Spark_clustering.md](https://github.com/RyaxTech/kube.training.git/tree/gh-pages//spark/Spark_clustering.md)]
+---
+
+class: pic
+
+## Spark Runtime Components in client-deploy mode
+
+![history](spark/images/spark-runtime-components-client.png)
+
+.debug[[spark/Spark_clustering.md](https://github.com/RyaxTech/kube.training.git/tree/gh-pages//spark/Spark_clustering.md)]
+---
+## Executors components
+
+- The **executors**, which are JVM processes, accept tasks from the driver, execute those
+tasks, and return the results to the driver. 
+
+- The example drivers in our figures use only two executors, but you can use a much larger number (some companies
+today run Spark clusters with tens of thousands of executors).
+  - Each executor has several task slots for running tasks in parallel. 
+
+  - Although these task slots are often referred to as CPU cores in Spark, they’re implemented as threads and don’t have to correspond to the number of physical CPU cores
+on the machine.
+  - You can set the number of task slots to a value two or three times the number of CPU cores.
+
+.debug[[spark/Spark_clustering.md](https://github.com/RyaxTech/kube.training.git/tree/gh-pages//spark/Spark_clustering.md)]
+---
+## Spark Context
+
+- Once the driver is started, it starts and configures an instance of **SparkContext**.
+
+- When running a Spark shell, the shell is the driver program. Your Spark context is already preconfigured and available as an sc variable. 
+
+- When running a standalone Spark application by submitting a JAR file or by using the Spark API from another program, your Spark application starts
+and configures the Spark context. 
+
+- There can be only one Spark context per JVM.
+
+- A Spark context comes with many useful methods for creating Dataframes, loading data, and so on. It’s the main interface for accessing the
+Spark runtime.
+
+.debug[[spark/Spark_clustering.md](https://github.com/RyaxTech/kube.training.git/tree/gh-pages//spark/Spark_clustering.md)]
+---
+
+## Spark cluster types
+
+- **Spark Standalone**: It is simple and fast but it doesn’t support communication with an HDFS secured with the Kerberos authentication protocol. 
+
+- **Yarn** cluster: YARN is Hadoop’s resource manager and execution system
+
+- **Mesos** cluster: scalable and fault-tolerant distributed systems kernel written in C++.
+
+- **Kubernetes** cluster: flexible orchestrator written in Go (integration with Spark currently still experimental)
+
+- **Spark Local modes**: special cases of standalone running on single machine
+.debug[[spark/Spark_clustering.md](https://github.com/RyaxTech/kube.training.git/tree/gh-pages//spark/Spark_clustering.md)]
+---
+
+class: pic
+
+.interstitial[![Image separating from the next chapter](https://gallant-turing-d0d520.netlify.com/containers/ShippingContainerSFBay.jpg)]
+
+---
+
+name: toc-spark-scheduling
+class: title
+
+Spark Scheduling
+
+.nav[
+[Section précédente](#toc-overview-of-sparks-runtime-architecture-)
+|
+[Retour table des matières](#toc-chapter-1)
+|
+[Section suivante](#toc-spark-configuration)
+]
+
+.debug[(automatically generated title slide)]
+
+---
+
+# Spark Scheduling
+
+- Resources for Spark applications are scheduled as executors ( JVM processes) and CPU
+(task slots) and then memory is allocated to them. 
+
+- The cluster manager of the currently running cluster and the Spark scheduler grant resources for execution of Spark
+jobs.
+
+- The cluster manager starts the executor processes requested by the driver and starts the driver process itself when running in cluster-deploy mode. The cluster manager can also restart and stop the processes it has started and can set the maximum number of CPUs that executor processes can use.
+
+- Once the application’s driver and executors are running, the Spark scheduler communicates with them directly and decides which executors will run which tasks.
+
+.debug[[spark/Spark_clustering.md](https://github.com/RyaxTech/kube.training.git/tree/gh-pages//spark/Spark_clustering.md)]
+---
+
+## Spark Job scheduling and resource allocation
+
+- A set of dedicated executors is allocated for each Spark application running in a
+cluster. If several Spark applications (and, possibly, applications of other types) run in
+a single cluster, they compete for the cluster’s resources.
+Thus, two levels of Spark resource scheduling exist:
+
+  - Cluster resource scheduling for allocating resources for Spark executors of different Spark applications
+  - Spark resource scheduling for scheduling CPU and memory resources within a single application
+
+.debug[[spark/Spark_clustering.md](https://github.com/RyaxTech/kube.training.git/tree/gh-pages//spark/Spark_clustering.md)]
+---
+## Cluster resource scheduling
+
+- Cluster resource scheduling (dividing cluster resources among several applications
+running in a single cluster) is the responsibility of the cluster manager. 
+
+- This works similarly on all cluster types supported by Spark, but with minor differences.
+
+- All supported cluster managers provide requested resources for each application
+and free up the requested resources when the application closes.
+
+- There are mainly two ways to schedule resources across applications (cluster manager level):
+  - **Static partitioning of resources**: Each application is given a maximum amount of resources it can use, and holds onto them for its whole duration. 
+  - **Dynamic Resource Allocation**: Dynamically adjust the resources of an application based on the workload. Particularly useful if multiple applications share resources.
+
+.debug[[spark/Spark_clustering.md](https://github.com/RyaxTech/kube.training.git/tree/gh-pages//spark/Spark_clustering.md)]
+---
+## Spark job scheduling 
+
+- Once the cluster manager allocates CPU and memory resources for the executors, scheduling of jobs occurs within the Spark application. 
+- Job scheduling depends solely on Spark and doesn’t rely on the cluster manager. 
+
+- It’s implemented by a mechanism for deciding how to split jobs into tasks and how to choose which executors will execute them. 
+  - Spark creates jobs, stages, and tasks based on the RDD ’s lineage. The scheduler then distributes these tasks to executors and monitors
+their execution.
+
+- Spark grants CPU resources in one of two ways: **FIFO scheduling** and **fair scheduling**. The Spark parameter `spark.scheduler.mode` sets the scheduler
+mode, and it takes two possible values: FAIR and FIFO.
+
+.debug[[spark/Spark_clustering.md](https://github.com/RyaxTech/kube.training.git/tree/gh-pages//spark/Spark_clustering.md)]
+---
+
+class: pic
+
+## FIFO Scheduling
+
+![history](spark/images/spark-fifo-scheduling.png)
+
+.debug[[spark/Spark_clustering.md](https://github.com/RyaxTech/kube.training.git/tree/gh-pages//spark/Spark_clustering.md)]
+---
+
+class: pic
+
+## FAIR Scheduling
+
+![history](spark/images/spark-fair-scheduling.png)
+
+.debug[[spark/Spark_clustering.md](https://github.com/RyaxTech/kube.training.git/tree/gh-pages//spark/Spark_clustering.md)]
+---
+
+## Data-locality Considerations
+
+- **Data locality** means Spark tries to run tasks as close to the data location as possible.
+- This affects the selection of executors on which to run tasks and is, therefore, related to job scheduling.
+- Spark tries to maintain a list of preferred locations for each partition. A partition’s preferred location is a list of hostnames or executors where the partition’s data resides so that computation can be moved closer to the data. 
+
+- If Spark obtains a list of preferred locations, the Spark scheduler tries to run tasks on the executors where the data is physically present so that no data transfer is
+required. This can have a big impact on performance.
+Here are some levels of data locality:
+  - `PROCESS_LOCAL` —Execute a task on the executor that cached the partition.
+  - `NODE_LOCAL` —Execute a task on the node where the partition is available.
+  - `RACK_LOCAL` —Execute the task on the same rack as the partition if rack information is available in the cluster (currently only on YARN ).
+
+
+.debug[[spark/Spark_clustering.md](https://github.com/RyaxTech/kube.training.git/tree/gh-pages//spark/Spark_clustering.md)]
+---
+
+class: pic
+
+.interstitial[![Image separating from the next chapter](https://gallant-turing-d0d520.netlify.com/containers/aerial-view-of-containers.jpg)]
+
+---
+
+name: toc-spark-configuration
+class: title
+
+Spark Configuration
+
+.nav[
+[Section précédente](#toc-spark-scheduling)
+|
+[Retour table des matières](#toc-chapter-1)
+|
+[Section suivante](#toc-spark-standalone-cluster)
+]
+
+.debug[(automatically generated title slide)]
+
+---
+# Spark Configuration
+
+- You affect how Spark runs by setting configuration parameters. For example, you’ll
+most likely need to adjust the memory for the driver and executors  or the classpath for your Spark application.
+- You can check the official [documentation](http://spark.apache.org/docs/latest/configuration.html) for a list of currently valid configuration parameters.
+
+- You can specify Spark configuration parameters using several methods: on the command line, in Spark configuration files, as system environment variables, and from within
+user programs. The SparkConf object, accessible through SparkContext , contains all currently applied configuration parameters.
+- Parameters specified with the methods described here all end up in the `SparkConf` object.
+- You can get the SparkConf object with its `getConf` method
+
+.debug[[spark/Spark_clustering.md](https://github.com/RyaxTech/kube.training.git/tree/gh-pages//spark/Spark_clustering.md)]
+---
+
+## Spark Configuration file
+
+- You specify default Spark parameters in the `sparkhome/conf/spark-defaults.conf` file. If not otherwise specified, the values from this file are applied to your Spark runtime, no matter what method you use to start Spark.
+
+- You can override the filename from the command line using the parameter `--properties-file` . That way, you can maintain a different set of parameters for specific applications and specify a different configuration file for each one.
+
+.debug[[spark/Spark_clustering.md](https://github.com/RyaxTech/kube.training.git/tree/gh-pages//spark/Spark_clustering.md)]
+---
+
+## Spark Command-line parameters
+
+- You can use command-line parameters as arguments to the spark-shell and spark-submit commands. 
+
+- These parameters are passed to a SparkConf object in the shell (when using the spark-shell command) or in your program (when using the spark-submit command). They take precedence over arguments specified in the Spark configuration file.
+  - Note: Make sure you specify any arguments you want to pass to your application after the JAR filename and any Spark configuration parameters before the JAR filename.
+
+.debug[[spark/Spark_clustering.md](https://github.com/RyaxTech/kube.training.git/tree/gh-pages//spark/Spark_clustering.md)]
+---
+
+## System environment variables
+
+- Some configuration parameters can be specified in the spark-env.sh file in the /sparkhome/conf directory. 
+
+- You can also set their defaults as OS environment variables. Parameters specified using this method have the lowest priority of all configuration methods.
+
+.debug[[spark/Spark_clustering.md](https://github.com/RyaxTech/kube.training.git/tree/gh-pages//spark/Spark_clustering.md)]
+---
+
+## Setting configuration programmatically
+
+- You can set Spark configuration parameters directly in your program by using the `SparkConf` class. For example:
+  ```bash
+  val conf = new org.apache.spark.SparkConf()
+  conf.set("spark.driver.memory", "16g")
+  val sc = new org.apache.spark.SparkContext(conf)
+  ```
+
+- Note that the Spark configuration can’t be changed at runtime using this method, so you need to set up the SparkConf object with all the configuration options you need
+before creating the SparkContext object. Otherwise, SparkContext uses the default Spark configuration, and your options aren’t applied. 
+- Any parameters set this way have precedence over parameters set with the methods mentioned previously (they have the highest priority)
+
+.debug[[spark/Spark_clustering.md](https://github.com/RyaxTech/kube.training.git/tree/gh-pages//spark/Spark_clustering.md)]
+---
+
+## The master parameter
+
+- The master parameter tells Spark which cluster type to use. When running spark-shell and spark-submit commands, you define this parameter like this:  
+  `spark-submit --master <master_connection_url>`  
+
+- When specifying it from your application, you can do it in this way
+  ```bash
+  val conf = org.apache.spark.SparkConf()
+  conf.set("spark.master", "<master_connection_url>")
+  ```
+  - or you can use SparkConf ’s setMaster method:
+  `conf.setMaster("<master_connection_url>")`
+
+- If you’re submitting your application as a JAR file, it’s best not to set the master parameter in the application, because doing so reduces its portability. In that case,
+specify it as a parameter to spark-submit so that you can run the same JAR file on different clusters by only changing the master parameter. Setting it in your application is an option when you’re only embedding Spark as part of other functionalities.
+
+.debug[[spark/Spark_clustering.md](https://github.com/RyaxTech/kube.training.git/tree/gh-pages//spark/Spark_clustering.md)]
+---
+
+## Viewing all configured parameters
+
+.exercise[
+- To see the list of all options explicitly defined and loaded in the current Spark context, call the getConf.getAll method in your program 
+
+- Execute the following on your cluster shell to view your current parameters
+  ```bash
+  from pyspark.conf import SparkConf
+  from pyspark.sql import SparkSession
+  spark.sparkContext._conf.getAll()
+  ```
+
+]
+
+.debug[[spark/Spark_clustering.md](https://github.com/RyaxTech/kube.training.git/tree/gh-pages//spark/Spark_clustering.md)]
+---
+
+class: pic
+
+.interstitial[![Image separating from the next chapter](https://gallant-turing-d0d520.netlify.com/containers/blue-containers.jpg)]
+
+---
+
+name: toc-spark-standalone-cluster
+class: title
+
+Spark Standalone cluster
+
+.nav[
+[Section précédente](#toc-spark-configuration)
+|
+[Retour table des matières](#toc-chapter-1)
+|
+[Section suivante](#toc-spark-yarn-cluster)
+]
+
+.debug[(automatically generated title slide)]
+
+---
+
+# Spark Standalone cluster
+
+- A standalone cluster comes bundled with Spark. It has a simple architecture and is easy to install and configure. Because it was built and optimized specifically for Spark, it has no extra functionalities with unnecessary generalizations, requirements, and configuration options, each with its own bugs. 
+- In short, the Spark standalone cluster is simple and fast.
+
+- The standalone cluster consists of master and worker (also called slave) processes.
+- A master process acts as the cluster manager. It accepts applications to be run and schedules worker resources (available CPU cores) among them. 
+- Worker processes launch application executors (and the driver for application in cluster-deploy mode) for task execution. 
+
+.debug[[spark/Spark_clustering.md](https://github.com/RyaxTech/kube.training.git/tree/gh-pages//spark/Spark_clustering.md)]
+---
+
+## Spark Standalone cluster components
+
+- The following figure shows an example Spark standalone cluster running on two nodes with two workers:
+
+1. A client process submits an application to the master.
+2. The master instructs one of its workers to launch a driver.
+3. The worker spawns a driver JVM .
+4. The master instructs both workers to launch executors for the application.
+5. The workers spawn executor JVMs.
+6. The driver and executors communicate independent of the cluster’s processes.
+
+.debug[[spark/Spark_clustering.md](https://github.com/RyaxTech/kube.training.git/tree/gh-pages//spark/Spark_clustering.md)]
+---
+
+class: pic
+
+## Spark Standalone cluster components 
+
+![history](spark/images/standalone-cluster.png)
+
+.debug[[spark/Spark_clustering.md](https://github.com/RyaxTech/kube.training.git/tree/gh-pages//spark/Spark_clustering.md)]
+---
+
+## Spark Standalone cluster installation steps
+
+- The cluster you have been using has been installed as spark standalone cluster.
+- These are the steps that have been followed for the installation and configuration:
+  1. The following commands have been executed on each node:
+  ```bash
+  sudo apt-get update
+  sudo apt-get install default-jdk
+  wget http://apache.crihan.fr/dist/spark/spark-2.3.2/spark-2.3.2-bin-hadoop2.7.tgz
+  tar zxf spark-2.3.2-bin-hadoop2.7.tgz
+  mv spark-2.3.2-bin-hadoop2.7 spark
+  sudo mv spark /usr/lib/
+  ```
+.debug[[spark/Spark_clustering.md](https://github.com/RyaxTech/kube.training.git/tree/gh-pages//spark/Spark_clustering.md)]
+---
+
+## Spark Standalone cluster installation steps
+
+  2. The file `.bashrc` has been populated with the following environment variables
+  ```bash
+  export JAVA_HOME=/usr/lib/jvm/default-java/jre
+  export SPARK_HOME=/usr/lib/spark/
+  export PATH=$PATH:SPARK_HOME
+  export PYSPARK_PYTHON=python3
+  ```
+  3. Start the service of the master Spark node by executing the following script:
+  ```bash
+  /usr/lib/spark/sbin/start-master.sh
+  ```
+  4. Start the services of the Spark executors by launching the following script:
+  ```bash
+  /usr/lib/spark/sbin/start-slave.sh spark://$NAME-OF-YOUR-1ST-NODE:7077
+  ```
+
+.debug[[spark/Spark_clustering.md](https://github.com/RyaxTech/kube.training.git/tree/gh-pages//spark/Spark_clustering.md)]
+---
+
+## Exercise Spark Standalone cluster - Restart services
+
+.exercise[
+- Stop the service of the executors and then that of the master (in case they are up) by running the following commands on the executors and the master respectively:
+```bash
+/usr/lib/spark/sbin/stop-slave.sh spark://$NAME-OF-YOUR-1ST-NODE:7077
+/usr/lib/spark/sbin/stop-master.sh spark://$NAME-OF-YOUR-1ST-NODE:7077
+```
+
+- Start the services:
+```bash
+/usr/lib/spark/sbin/start-master.sh
+/usr/lib/spark/sbin/start-slave.sh spark://$NAME-OF-YOUR-1ST-NODE:7077
+```
+- Check the deployment on the Spark Web-UI
+  - Open a browser and enter `http://IP-OF-YOUR-1ST-NODE:8080`
+]
+
+.debug[[spark/Spark_clustering.md](https://github.com/RyaxTech/kube.training.git/tree/gh-pages//spark/Spark_clustering.md)]
+---
+
+## Exercise Spark Standalone cluster - Submit app
+
+.exercise[
+- Submit an application using the following command:
+  ```bash
+  spark-submit /usr/lib/spark/examples/src/main/python/pi.py 100
+  ``` 
+
+- Check what happened on the Web-UI. Did the application start? What do you think has happened?
+
+]
+
+.debug[[spark/Spark_clustering.md](https://github.com/RyaxTech/kube.training.git/tree/gh-pages//spark/Spark_clustering.md)]
+---
+
+## Exercise Spark Standalone cluster - Submit app with parameters
+
+.exercise[
+- Open the help of spark-submit and try to think what has happened.
+
+- Execute the following: 
+
+  ```bash
+  spark-submit --master spark://asterix-1:7077 /usr/lib/spark/examples/src/main/python/pi.py 100
+  ```
+- And check what happens on the Web-UI.
+- Have you got it now?!!
+
+]
+
+.debug[[spark/Spark_clustering.md](https://github.com/RyaxTech/kube.training.git/tree/gh-pages//spark/Spark_clustering.md)]
+---
+
+class: pic
+
+.interstitial[![Image separating from the next chapter](https://gallant-turing-d0d520.netlify.com/containers/chinook-helicopter-container.jpg)]
+
+---
+
+name: toc-spark-yarn-cluster
+class: title
+
+Spark YARN cluster
+
+.nav[
+[Section précédente](#toc-spark-standalone-cluster)
+|
+[Retour table des matières](#toc-chapter-1)
+|
+[Section suivante](#toc-optimizations-and-performance-tuning-)
+]
+
+.debug[(automatically generated title slide)]
+
+---
+
+# Spark YARN cluster
+
+- YARN (yet another resource negotiator) is the new generation of Hadoop’s MapReduce execution engine. Unlike the previous MapReduce engine, which could only run MapReduce jobs, YARN can run other types of programs (such as Spark).
+
+- Most Hadoop installations already have YARN configured alongside HDFS , so YARN is the most natural execution engine for many potential and existing Spark users.
+
+- Spark was designed to be agnostic to the underlying cluster manager, and running Spark applications on YARN doesn’t differ much from running them on other cluster managers
+
+- We will first look at the YARN architecture. Then we’ll describe how to submit Spark applications to YARN and see some differences between running Spark applications on YARN compared to a Spark standalone cluster.
+
+.debug[[spark/Spark_clustering.md](https://github.com/RyaxTech/kube.training.git/tree/gh-pages//spark/Spark_clustering.md)]
+---
+
+## YARN architecture
+
+- The basic YARN architecture is similar to Spark’s standalone cluster architecture. Its main components are a resource manager (it could be likened to Spark’s master process) for each cluster and a node manager (similar to Spark’s worker processes) for each node in the cluster. 
+
+- Unlike running on Spark’s standalone cluster, applications on YARN run in containers ( JVM processes to which CPU and memory resources are granted). 
+
+- An application master for each application is a special component. Running in its own container, it’s responsible for requesting application resources from the resource manager. 
+
+- When Spark is running on YARN , the Spark driver process acts as the YARN application master. Node managers track resources used by containers and report to the resource manager.
+
+- The following figure shows a YARN cluster with two nodes and a Spark application running in the cluster. 
+
+.debug[[spark/Spark_clustering.md](https://github.com/RyaxTech/kube.training.git/tree/gh-pages//spark/Spark_clustering.md)]
+---
+
+class: pic
+
+## YARN and Spark interactions
+
+![history](spark/images/yarn-spark-architecture.png)
+
+.debug[[spark/Spark_clustering.md](https://github.com/RyaxTech/kube.training.git/tree/gh-pages//spark/Spark_clustering.md)]
+---
+
+## Yarn installation steps
+
+.exercise[
+- Execute on the first node: 
+
+```bash
+mkdir ~/system_software; cd ~/system_software; mkdir hadoop; cd hadoop
+wget http://apache.crihan.fr/dist/hadoop/common/hadoop-3.1.1/hadoop-3.1.1.tar.gz .
+tar zxf hadoop-3.1.1.tar.gz
+mv hadoop-3.1.1/* .
+rm -rf hadoop-3.1.1
+rm -rf hadoop-3.1.1.tar.gz
+
+```
+- Update the file `~/system_software/hadoop/etc/hadoop/core-site.xml with:`
+```bash
+    <configuration>
+        <property>
+            <name>fs.default.name</name>
+            <value>hdfs://NAME-OF-YOUR-1st-NODE:9000</value>
+        </property>
+    </configuration>
+```
+]
+
+.debug[[spark/Spark_clustering.md](https://github.com/RyaxTech/kube.training.git/tree/gh-pages//spark/Spark_clustering.md)]
+---
+
+## Yarn installation steps - set path for HDFS
+
+.exercise[
+- Update `~/system_software/hadoop/etc/hadoop/hdfs-site.conf` with:
+```bash
+<configuration>
+    <property>
+            <name>dfs.namenode.name.dir</name>
+            <value>/home/ubuntu/system_software/hadoop/data/nameNode</value>
+    </property>
+    <property>
+            <name>dfs.datanode.data.dir</name>
+            <value>/home/ubuntu/system_software/hadoop/data/dataNode</value>
+    </property>
+    <property>
+            <name>dfs.replication</name>
+            <value>2</value>
+    </property>
+</configuration>
+```
+]
+
+.debug[[spark/Spark_clustering.md](https://github.com/RyaxTech/kube.training.git/tree/gh-pages//spark/Spark_clustering.md)]
+---
+
+## Yarn installation steps - set job scheduler
+
+.exercise[
+- Execute the following commands to prepare the hdfs installation:
+```bash
+cd ~/system_software/hadoop/; mkdir data;cd data/;mkdir dataNode;mkdir nameNode
+cd ~/system_software/hadoop/
+mv mapred-site.xml.template mapred-site.xml
+```
+- Edit this file and add the following:
+```bash
+<configuration>
+    <property>
+            <name>mapreduce.framework.name</name>
+            <value>yarn</value>
+    </property>
+</configuration>
+```
+]
+
+.debug[[spark/Spark_clustering.md](https://github.com/RyaxTech/kube.training.git/tree/gh-pages//spark/Spark_clustering.md)]
+---
+
+## Yarn installation
+
+.exercise[
+- Edit the file yarn-site.xml and add the following:
+```bash
+    <property>
+            <name>yarn.acl.enable</name>
+            <value>0</value>
+    </property>
+
+    <property>
+            <name>yarn.resourcemanager.hostname</name>
+            <value>YOUR-1st-NODE</value>
+    </property>
+
+    <property>
+            <name>yarn.nodemanager.aux-services</name>
+            <value>mapreduce_shuffle</value>
+    </property>
+```
+]
+
+.debug[[spark/Spark_clustering.md](https://github.com/RyaxTech/kube.training.git/tree/gh-pages//spark/Spark_clustering.md)]
+---
+
+## Yarn installation - Memory configuration
+
+.exercise[
+
+- Update yarn-site.xml with the following lines:
+  ```bash
+    <property>
+            <name>yarn.nodemanager.resource.memory-mb</name>
+            <value>3072</value>
+    </property>
+    <property>
+            <name>yarn.scheduler.maximum-allocation-mb</name>
+            <value>3072</value>
+    </property>
+    <property>
+            <name>yarn.scheduler.minimum-allocation-mb</name>
+            <value>256</value>
+    </property>
+    <property>
+           <name>yarn.nodemanager.vmem-check-enabled</name>
+           <value>false</value>
+    </property>
+  ```
+
+]
+.debug[[spark/Spark_clustering.md](https://github.com/RyaxTech/kube.training.git/tree/gh-pages//spark/Spark_clustering.md)]
+---
+
+## Yarn installation - Memory configuration
+
+.exercise[
+
+- Update mapred-site.xml with the following lines:
+  ```bash
+    <property>
+           <name>yarn.app.mapreduce.am.resource.mb</name>
+           <value>1024</value>
+    </property>
+
+    <property>
+           <name>mapreduce.map.memory.mb</name>
+           <value>512</value>
+    </property>
+
+    <property>
+           <name>mapreduce.reduce.memory.mb</name>
+           <value>512</value>
+    </property>
+  ```
+]
+.debug[[spark/Spark_clustering.md](https://github.com/RyaxTech/kube.training.git/tree/gh-pages//spark/Spark_clustering.md)]
+---
+
+## Yarn installation - set environment variables
+
+.exercise[
+
+- Open and update your .bashrc file:
+  
+  ```bash
+export PATH=$PATH:$SPARK_HOME/bin:/home/ubuntu/system_software/hadoop/sbin:/home/ubuntu/system_software/hadoop/bin
+export PYSPARK_PYTHON=python3
+export HADOOP_HOME=/home/ubuntu/system_software/hadoop
+export HADOOP_CONF_DIR=$HADOOP_HOME/etc/hadoop
+export HADOOP_MAPRED_HOME=$HADOOP_HOME
+export HADOOP_COMMON_HOME=$HADOOP_HOME
+export HADOOP_HDFS_HOME=$HADOOP_HOME
+export YARN_HOME=$HADOOP_HOME
+export LD_LIBRARY_PATH=/home/ubuntu/system_software/hadoop/lib/native:$LD_LIBRARY_PATH
+
+  ```
+
+]
+
+.debug[[spark/Spark_clustering.md](https://github.com/RyaxTech/kube.training.git/tree/gh-pages//spark/Spark_clustering.md)]
+---
+
+## Yarn installation - copy hadoop with configurations on the other compute nodes
+
+.exercise[
+
+```bash
+for node in NAME-OF-1st-SLAVE NAME-OF-2nd-SLAVE; do
+    scp -r ~/system_software/ $node:/home/ubuntu/;
+done
+```
+
+]
+
+
+.debug[[spark/Spark_clustering.md](https://github.com/RyaxTech/kube.training.git/tree/gh-pages//spark/Spark_clustering.md)]
+---
+
+## Yarn installation - Format HDFS
+
+.exercise[
+- HDFS needs to be formatted like any classical file system. On node-master, run the following command:
+  ```bash
+  hdfs namenode -format
+  ```
+- Your Hadoop installation is now configured and ready to run.
+]
+
+.debug[[spark/Spark_clustering.md](https://github.com/RyaxTech/kube.training.git/tree/gh-pages//spark/Spark_clustering.md)]
+---
+
+## Yarn installation - Run and monitor HDFS
+
+.exercise[
+- Start the HDFS NameNode with the following command on the master-node:
+```bash
+hdfs --daemon start namenode
+```
+- Start a HDFS DataNode with the following command on the workers:
+```bash
+hdfs --daemon start datanode
+```
+- Check that every process is running with the jps command on each node. You should get on node-master (PID will be different):
+- You can get useful information about running your HDFS cluster with the hdfs dfsadmin command. Try for example:
+```bash
+hdfs dfsadmin -report
+```
+]
+
+.debug[[spark/Spark_clustering.md](https://github.com/RyaxTech/kube.training.git/tree/gh-pages//spark/Spark_clustering.md)]
+---
+
+## Yarn installation - Run and monitor Yarn
+
+.exercise[
+- Start the YARN with the following command, run on the designated ResourceManager as yarn:
+```bash
+yarn --daemon start resourcemanager
+```
+- Run the following command to start a NodeManager on the workers:
+```bash
+yarn --daemon start nodemanager
+```
+- The yarn command provides utilities to manage your YARN cluster. You can also print a report of running nodes with the command:
+```bash
+yarn node -list
+```
+- Similarly, you can get a list of running applications with command:
+```bash
+yarn application -list
+```
+
+]
+
+.debug[[spark/Spark_clustering.md](https://github.com/RyaxTech/kube.training.git/tree/gh-pages//spark/Spark_clustering.md)]
+---
+
+## Yarn and Spark interaction
+
+.exercise[
+- Rename the spark default template config file:
+```bash
+mv $SPARK_HOME/conf/spark-defaults.conf.template $SPARK_HOME/conf/spark-defaults.conf
+```
+- Edit `$SPARK_HOME/conf/spark-defaults.conf` and set spark.master to yarn:
+  ```bash
+  spark.master    yarn
+  ```
+- Spark is now ready to interact with your YARN cluster.
+- You can now stop the deamons for the Spark standalone cluster and the next time a spark shell or spark-submit is launched it will take into account the defaults configuration file so pass from yarn
+]
+
+
+.debug[[spark/Spark_clustering.md](https://github.com/RyaxTech/kube.training.git/tree/gh-pages//spark/Spark_clustering.md)]
+---
+
+## Put and Get Data to HDFS
+
+.exercise[
+- Writing and reading to HDFS is done with command `hdfs dfs`. First, manually create your home directory. 
+```bash
+hdfs dfs -mkdir -p /user/hadoop
+```
+- Create a books directory in HDFS. The following command will create it in the home directory, /user/hadoop/books:
+```bash
+hdfs dfs -mkdir /user/hadoop/books
+```
+- Grab a book from the Gutenberg project:
+```bash
+cd /home/hadoop
+wget -O alice.txt https://www.gutenberg.org/files/11/11-0.txt
+```
+- Put the book through HDFS, in the booksdirectory:
+```
+hdfs dfs -put alice.txt /user/hadoop/books
+```
+]
+.debug[[spark/Spark_clustering.md](https://github.com/RyaxTech/kube.training.git/tree/gh-pages//spark/Spark_clustering.md)]
+---
+
+## Put and Get Data to HDFS
+.exercise[
+- List the contents of the book directory:
+```bash
+hdfs dfs -ls books
+```
+- Move one of the books to the local filesystem:
+```bash
+hdfs dfs -get /user/hadoop/books/alice.txt
+```
+- You can also directly see the contents of the books from HDFS:
+```bash
+hdfs dfs -cat /user/hadoop/books/alice.txt
+```
+- There are many commands to manage your HDFS. For a complete list, you can look at the Apache HDFS shell documentation, or print help with:
+```bash
+hdfs dfs -help
+```
+]
+
+.debug[[spark/Spark_clustering.md](https://github.com/RyaxTech/kube.training.git/tree/gh-pages//spark/Spark_clustering.md)]
+---
+
+## Exercise Wordcount with Spark and HDFS
+
+.exercise[
+
+- Now that you have your new cluster Spark on Yarn plus HDFS configured launch a wordcount on the `alice.txt` file that you have just uploaded to HDFS.
+- You can use the python wordcount example under `/usr/lib/spark/examples/src/main/python/`
+- Make sure you specify the location of the file in HDFS using `hdfs:///` 
+
+- Once this has executed succesfully add modify your wordcount application to return the total amount of words of the file. 
+
+]
+
+.debug[[spark/Spark_clustering.md](https://github.com/RyaxTech/kube.training.git/tree/gh-pages//spark/Spark_clustering.md)]
+---
+
+class: pic
+
+.interstitial[![Image separating from the next chapter](https://gallant-turing-d0d520.netlify.com/containers/container-cranes.jpg)]
+
+---
+
+name: toc-optimizations-and-performance-tuning-
+class: title
+
+Optimizations and Performance Tuning 
+
+.nav[
+[Section précédente](#toc-spark-yarn-cluster)
+|
+[Retour table des matières](#toc-chapter-1)
+|
+[Section suivante](#toc-spark-in-the-cloud)
+]
+
+.debug[(automatically generated title slide)]
+
+---
+
+
+# Optimizations and Performance Tuning 
+
+- There are two ways of trying to achieve the execution characteristics that we would like out of Spark jobs. 
+  - **Indirectly** by setting configuration values or changing the runtime environment. These should improve things across Spark Applications or across Spark jobs. 
+  - **Directly** by trying to change execution characteristic or design choices at the individual Spark job, stage, or task level. These kinds of fixes are very specific to that one area of our application and therefore have limited overall impact.
+
+- In order to figure out how to improve performance you can implement good monitoring and job history tracking. Without this information, it can be difficult to know whether
+you’re really improving job performance.
+
+.debug[[spark/Spark_clustering.md](https://github.com/RyaxTech/kube.training.git/tree/gh-pages//spark/Spark_clustering.md)]
+---
+
+## Indirect Performance Enhancements
+
+- **Scala versus Java versus Python versus R**
+  - Spark’s Structured APIs (Dataframes, SQL, Datasets) are consistent across languages in terms of speed and stability. That means that you should code
+with whatever language you are most comfortable using or is best suited for your use case.
+  - However in case of the need of custom transformations that cannot be created in the Structured APIs (Low-level APIs - RDD transformations, etc) the Scala and Java have an advantage simply because of how this is actually executed.
+
+- In general using Python for the majority of the applications, and porting some of it to Scala or writing specific UDFs in Scala as your application evolves, is a powerful technique—it allows for a nice balance between overall usability, maintainability, and performance.
+
+.debug[[spark/Spark_clustering.md](https://github.com/RyaxTech/kube.training.git/tree/gh-pages//spark/Spark_clustering.md)]
+---
+
+## Indirect Performance Enhancements
+
+- **DataFrames versus SQL versus Datasets versus RDDs**
+  - Across all languages, DataFrames, Datasets, and SQL are equivalent in speed. This means that if you’re using DataFrames in any of these languages, performance is equal.   - However, if you’re going to be defining UDFs, you’ll take a performance hit writing those in Python or R, and to some extent a lesser performance hit in Java and Scala.
+ 
+  - Although all DataFrame, SQL, and Dataset code compiles down to RDDs, Spark’s optimization engine will write “better” RDD code than you can manually and certainly do it with orders of magnitude less effort.  
+  - If you want to use RDDs, it is recommended to use Scala or Java. When Python runs RDD code, it’s serializes a lot of data to and from the Python process. This is very expensive to run over very big data and can also decrease stability.
+
+.debug[[spark/Spark_clustering.md](https://github.com/RyaxTech/kube.training.git/tree/gh-pages//spark/Spark_clustering.md)]
+---
+
+## Direct Performance Enhancements
+
+- **Parallelism**
+ - The first thing you should do whenever trying to speed up a specific stage is to increase the degree of
+parallelism. 
+ 
+ - Tasks are executed on worker nodes and partitions also reside on worker node. So whatever the computation is performed by tasks it happens on partition.
+ 
+ - Hence `Number of Tasks on per stage basis = Number of partitions`
+
+.debug[[spark/Spark_clustering.md](https://github.com/RyaxTech/kube.training.git/tree/gh-pages//spark/Spark_clustering.md)]
+---
+
+## Parallelism
+
+- Disadvantages of too few partitions:
+  - Less concurrency – You are not using advantages of parallelism. There could be worker nodes which are sitting idle.
+  - Data skewing and improper resource utilization – Your data might be skewed on one partition and hence your one worker might be doing more than other workers and hence resource issues might come at that worker.
+
+-  Disadvantages of too many partitions
+  - Task scheduling may take more time than actual execution time.
+
+.debug[[spark/Spark_clustering.md](https://github.com/RyaxTech/kube.training.git/tree/gh-pages//spark/Spark_clustering.md)]
+---
+
+## Direct Performance Enhancements
+
+- **Parallelism**
+  - Usually between 100 and 10K partitions depending upon cluster size and data.
+  - Lower bound – 2 X number of cores in cluster available to application. 
+  - Upper bound – task should take 100+ ms time to execute.If it is taking less time then your partitioned data is too small and your application might be spending more time in scheduling the tasks.
+
+  -  You can set this via the `spark.default.parallelism` property as well as tuning the `spark.sql.shuffle.partitions` according to the number of cores in
+your cluster.
+  - You can fine tune your application by experimenting with partitioning properties and monitoring the execution and schedule delay time in Spark Application UI.
+
+.debug[[spark/Spark_clustering.md](https://github.com/RyaxTech/kube.training.git/tree/gh-pages//spark/Spark_clustering.md)]
+---
+
+## Direct Performance Enhancements
+
+- **Repartitioning and Coalescing**
+  - Repartition calls can incur a shuffle. However, doing some can optimize the overall execution of a job by balancing data across the cluster, so they can be worth it. 
+  - In general, you should try to shuffle the least amount of data possible. 
+  - For this reason, if you’re reducing the number of overall partitions in a DataFrame or RDD, first try coalesce method, which will not perform a shuffle but rather merge partitions on the same node into one partition. 
+
+  - Repartition is slower and shuffles data across the network to achieve even load balancing. 
+  - Repartitions can be particularly helpful when performing joins or prior to a cache call. 
+
+.debug[[spark/Spark_clustering.md](https://github.com/RyaxTech/kube.training.git/tree/gh-pages//spark/Spark_clustering.md)]
+---
+
+## Direct Performance Enhancements
+
+- **Temporary Data Storage (Caching)**
+  - In applications that reuse the same datasets over and over, one of the most useful optimizations is caching. 
+  - Caching will place a DataFrame, table, or RDD into temporary storage (either memory or disk) across the executors in your cluster, and make subsequent reads faster. Although caching might sound like something we should do all the time, **it’s not always a good thing to do**. 
+  - That’s because caching data incurs a serialization, deserialization, and storage cost. For example, if you are only going to process a dataset once (in a later transformation), caching it will only slow you down.
+
+.debug[[spark/Spark_clustering.md](https://github.com/RyaxTech/kube.training.git/tree/gh-pages//spark/Spark_clustering.md)]
+---
+
+## Caching
+
+- Caching is a lazy operation, meaning that things will be cached only as they are accessed. 
+  -  In the case of RDD, we cache the actual, physical data (i.e., the bits). When this data is accessed again, Spark returns the proper data. 
+  - However, in the Structured API, caching is done based on the physical plan. This means that we effectively store the physical plan as our key (as opposed to the object reference) and perform a lookup prior to the execution of a Structured job.
+
+.debug[[spark/Spark_clustering.md](https://github.com/RyaxTech/kube.training.git/tree/gh-pages//spark/Spark_clustering.md)]
+---
+
+## Direct Performance Enhancements
+
+- **Temporary Data Storage (Caching)**
+  - Use the `cache` command in Spark to place data in memory by default. That will cache only part of the dataset if the cluster’s total memory is full. 
+  - For more control, use `persist` method that takes a `StorageLevel` object to specify where to cache the data: in memory, on disk, or both.
+
+
+
+.debug[[spark/Spark_clustering.md](https://github.com/RyaxTech/kube.training.git/tree/gh-pages//spark/Spark_clustering.md)]
+---
+
+class: pic
+
+.interstitial[![Image separating from the next chapter](https://gallant-turing-d0d520.netlify.com/containers/container-housing.jpg)]
+
+---
+
+name: toc-spark-in-the-cloud
+class: title
+
+Spark in the Cloud
+
+.nav[
+[Section précédente](#toc-optimizations-and-performance-tuning-)
+|
+[Retour table des matières](#toc-chapter-2)
+|
+[Section suivante](#toc-spark-on-amazon-emr-and-s)
+]
+
+.debug[(automatically generated title slide)]
+
+---
+# Spark in the Cloud
+
+- While early big data systems were designed for on-premises deployment, the cloud is now an increasingly common platform for deploying Spark. The public cloud has several advantages when it comes to big data workloads. 
+  - Resources can be launched and shut down elastically, so you can run large jobs that takes hundreds of machines for a few hours without having to pay for them all the time. 
+  - You can choose a different type of machine and cluster size for each application to optimize its cost performance—for example, launch machines with GPUs just for your deep learning jobs. 
+  - Public clouds include low-cost, georeplicated storage that makes it easier to manage large amounts of data.
+  - Use decoupled compute and storage pay for computing resources only when needed, scale them up dynamically, and mix different hardware types.
+
+- Running Spark in the cloud need not mean migrating an on-premises installation to virtual machines: you can run Spark natively against cloud storage to take full advantage of the cloud’s elasticity, cost-saving benefit, and management tools without having to manage an on-premise computing stack within your cloud environment.
+
+## Amazon EMR and Databricks Cloud
+
+- Several companies provide “cloud-native” Spark-based services, and all installations of Apache Spark can of course connect to cloud storage. 
+
+- Databricks, the company started by the Spark team from UC Berkeley, is one example of a service provider built specifically for Spark in the cloud.
+  - The company provides a number of features for running Spark more efficiently in the cloud, such as auto-scaling, auto-termination of clusters, and optimized connectors to cloud storage, as well as a collaborative environment for working on notebooks and standalone jobs. 
+  - They provide a [free Community Edition](https://databricks.com/try-databricks) for learning Spark 
+
+- [Amazon EMR](https://aws.amazon.com/emr/) allows to easily run and scale Apache Spark on the Cloud and interact with data in other AWS data stores such as Amazon S3 and Amazon DynamoDB.
+
+
+.debug[[spark/spark_cloud.md](https://github.com/RyaxTech/kube.training.git/tree/gh-pages//spark/spark_cloud.md)]
+---
+
+class: pic
+
+.interstitial[![Image separating from the next chapter](https://gallant-turing-d0d520.netlify.com/containers/containers-by-the-water.jpg)]
+
+---
+
+name: toc-spark-on-amazon-emr-and-s
+class: title
+
+Spark on Amazon EMR and S3
+
+.nav[
+[Section précédente](#toc-spark-in-the-cloud)
+|
+[Retour table des matières](#toc-chapter-2)
+|
+[Section suivante](#toc-spark-kubernetes-cluster)
+]
+
+.debug[(automatically generated title slide)]
+
+---
+
+# Spark on Amazon EMR and S3
+
+- Amazon EMR is a managed cluster platform that simplifies running big data frameworks, such as Apache Hadoop and Apache Spark, on AWS to process and analyze vast amounts of data. By using these frameworks and related open-source projects, you can process data for analytics purposes and business intelligence workloads. 
+
+- Amazon S3 is an object storage cloud service built to store and retrieve any amount of data from anywhere – web sites and mobile apps, corporate applications, and data from IoT sensors or devices. 
+
+.debug[[spark/spark_cloud.md](https://github.com/RyaxTech/kube.training.git/tree/gh-pages//spark/spark_cloud.md)]
+---
+
+## Using Spark on Amazon EMR and S3
+
+- Each one of you will get a Spark cluster on Amazon EMR and the access to S3 buckets
+
+- We will start with a demo of deploying a cluster on Amazon EMR with Apache Spark and then each one of you will use his own cluster for the exercises to follow.
+
+
+.debug[[spark/spark_cloud.md](https://github.com/RyaxTech/kube.training.git/tree/gh-pages//spark/spark_cloud.md)]
+---
+
+## Usage of Amazon EMR and S3
+
+- You will connect on your clusters with ssh and you will have the ability to use a spark shell or submit jobs exactly as you did on the previous exercises.
+  - The commands you will be using to control spark are the same as previously
+
+- The main difference is that instead of using HDFS for the storage service we will be using another Amazon service called S3
+
+
+.debug[[spark/spark_cloud.md](https://github.com/RyaxTech/kube.training.git/tree/gh-pages//spark/spark_cloud.md)]
+---
+
+## Usage of Amazon S3
+
+- You can use Amazon S3 from the web interface or through the command line:
+  - You will get a demo of the web interface but you will mainly experiment with the command line
+
+- The command line interface for S3 makes use of the `aws` CLI. Here are some typical commands that you will use:
+  - Listing buckets: `aws s3 ls`
+  - Listing the contents in a bucket: `aws s3 ls s3://bucket-name`
+  - Copy a file from your local file system to a bucket: `aws s3 cp file.txt s3://my-bucket/`
+  - Copy a file from a bucket to your home directory: `aws s3 cp s3://my-bucket/file2.txt ~/`
+  - You can check out the various existing commands with `aws s3 help`
+
+.debug[[spark/spark_cloud.md](https://github.com/RyaxTech/kube.training.git/tree/gh-pages//spark/spark_cloud.md)]
+---
+
+
+## Exercise with wordcount on Amazon EMR and S3
+
+.exercise[
+
+- Similarly with the exercise you did previously execute a python wordcount example which you can find under `/usr/lib/spark/examples/src/main/python/`
+- The file you will use is under s3://spark-training-03102018/input/shakespeare.txt
+ 
+]
+
+.debug[[spark/spark_cloud.md](https://github.com/RyaxTech/kube.training.git/tree/gh-pages//spark/spark_cloud.md)]
+---
+
+## Exercise with github commits on Amazon EMR and S3
+
+
+
+- In this exercise we will execute an application that counts GitHub push events (code commits to GitHub) made by the employees of a company one single day in the past.
+- The input data are 24 JSON files, reflecting Github events one for each hour of the day all stored on S3.
+- We also have the list of the Employees of the company.
+- Finally we have the application to be executed but we need to understand how it is programmed.
+
+.debug[[spark/spark_cloud.md](https://github.com/RyaxTech/kube.training.git/tree/gh-pages//spark/spark_cloud.md)]
+---
+
+## Exercise with github commits on Amazon EMR and S3
+
+.exercise[
+
+- First download one json file from `s3://spark-training-03102018/input/2015-03-01-0.json` to your home directory and open it:
+```bash
+head -n 1 2015-03-01-0.json
+head -n 1 2015-03-01-0.json | jq '.'
+```
+- Then copy the employees file to your home directory from here: `s3://spark-training-03102018/programs/ghEmployees.txt`
+- Then copy the program you will execute from `s3://spark-training-03102018/programs/GitHubDay.py` to your home directory and open it with `cat` or `vim`.
+
+]
+.debug[[spark/spark_cloud.md](https://github.com/RyaxTech/kube.training.git/tree/gh-pages//spark/spark_cloud.md)]
+---
+
+## Exercise with github commits on Amazon EMR and S3
+
+- NOTE: An important thing to observe is the usage of broadcast variable whithin the program which allows to send a variable exactly once to each node in a cluster. The variable is automatically cached in memory on the cluster nodes, ready to be used during the execution of the program. Instead of having the master broadcasting a potentially large variable to all nodes it uses a protocol based on gossip (or virus) transfer which makes communication faster
+
+.exercise[
+- Now that we have understood the different components of the application let's execute it using the following command:
+```bash
+spark-submit --name "test-github" "s3://spark-training-03102018/programs/GitHubDay.py" "s3://spark-training-03102018/input/*.json" ./ghEmployees.txt "s3://spark-training-03102018/OUTPUT-YOURNAME" "json"
+```
+- Check the results by transferring one of the part files from s3 to your home directory.
+
+]
+.debug[[spark/spark_cloud.md](https://github.com/RyaxTech/kube.training.git/tree/gh-pages//spark/spark_cloud.md)]
+---
+
+class: pic
+
+.interstitial[![Image separating from the next chapter](https://gallant-turing-d0d520.netlify.com/containers/distillery-containers.jpg)]
+
+---
+
+name: toc-spark-kubernetes-cluster
+class: title
+
+Spark Kubernetes cluster
+
+.nav[
+[Section précédente](#toc-spark-on-amazon-emr-and-s)
+|
+[Retour table des matières](#toc-chapter-2)
+|
+[Section suivante](#toc-resilient-distributed-datasets-rdd)
+]
+
+.debug[(automatically generated title slide)]
+
+---
+
+
+# Spark Kubernetes cluster
+
+- Spark developers can package into a single container image all of the dependent data store connectors and all of the ML/numerical analysis libraries that are compatible to the version of Spark or Hadoop the application team chooses to use. Developers no longer have to struggle through compatibility issues. Now they can figure out the dependencies once and make the image available to the entire team.
+
+- With Kubernetes, you can choose the container repository to download images at runtime, use configMaps to inject configuration properties for individual services or coarse grained configuration like endpoints for services, or use Helm charts to create, version, share, and publish composite applications (i.e. Several services/components stitched together). Spark applications can also dynamically stage dependencies like their application JARs that use HDFS or HTTP servers when baking dependencies into container images gets to be cumbersome.
+
+
+.debug[[spark/spark_cloud.md](https://github.com/RyaxTech/kube.training.git/tree/gh-pages//spark/spark_cloud.md)]
+---
+
+## Kubernetes Installation using Kubeadm
+
+
+.exercise[
+- NOTE: Before launching Kubernetes you may want to stop Yarn and HDFS in case the memory is not enough.
+- Installation of Docker on each compute node:
+  ```bash
+    sudo su
+    apt-get update
+    apt-get install -y apt-transport-https ca-certificates curl software-properties-common
+    curl -fsSL https://download.docker.com/linux/ubuntu/gpg | sudo apt-key add -
+    add-apt-repository "deb https://download.docker.com/linux/$(. /etc/os-release; echo "$ID") $(lsb_release -cs) stable"
+    apt-get update && apt-get install -y docker-ce docker-compose
+    exit
+    sudo groupadd docker
+    sudo usermod -aG docker $USER
+  ```
+]
+
+.debug[[spark/spark_cloud.md](https://github.com/RyaxTech/kube.training.git/tree/gh-pages//spark/spark_cloud.md)]
+---
+
+## Kubernetes Installation using Kubeadm
+
+
+.exercise[
+
+- Installation of Kubernetes packages on each compute node::
+  ```bash
+    sudo apt-get update && sudo apt-get install -y apt-transport-https curl
+    curl -s https://packages.cloud.google.com/apt/doc/apt-key.gpg | sudo apt-key add -
+    sudo su
+    cat <<EOF >/etc/apt/sources.list.d/kubernetes.list
+    deb http://apt.kubernetes.io/ kubernetes-xenial main
+    EOF
+    exit
+    sudo apt-get update
+    sudo apt-get install -y kubelet kubeadm kubectl
+   ```
+]
+
+.debug[[spark/spark_cloud.md](https://github.com/RyaxTech/kube.training.git/tree/gh-pages//spark/spark_cloud.md)]
+---
+## Kubernetes Installation using Kubeadm
+
+.exercise[
+
+- Configuration of Kubernetes with Kubeadm on the first compute node:
+  ```bash
+    sudo kubeadm init
+    sudo mkdir -p $HOME/.kube /home/docker/.kube
+    sudo cp /etc/kubernetes/admin.conf $HOME/.kube/config
+    sudo cp /etc/kubernetes/admin.conf /home/docker/.kube/config
+    sudo chown -R $(id -u) $HOME/.kube
+    kubever=$(kubectl version | base64 | tr -d '\n')
+    kubectl apply -f https://cloud.weave.works/k8s/net?k8s-version=$kubever
+  ```
+
+- Configuration of Kubernetes on the other compute nodes of the cluster:
+- Apply the command returned when `kubeadm init` was executed on the master on the other compute nodes
+- Test if the nodes are configured well by launching the following command on the master:
+  ```bash
+  kubectl get nodes
+  ```
+]
+
+.debug[[spark/spark_cloud.md](https://github.com/RyaxTech/kube.training.git/tree/gh-pages//spark/spark_cloud.md)]
+---
+
+## Exercise Launch a Spark job on Kubernetes cluster
+
+.exercise[
+- Follow the procedure described [here](https://github.com/RyaxTech/kube-tutorial#3-execute-big-data-job-with-spark-on-the-kubernetes-cluster) to execute a simple Spark job execution with Spark upon Kubernetes
+
+]
+
+.debug[[spark/spark_cloud.md](https://github.com/RyaxTech/kube.training.git/tree/gh-pages//spark/spark_cloud.md)]
+---
+
+
+.debug[[spark/spark_cloud.md](https://github.com/RyaxTech/kube.training.git/tree/gh-pages//spark/spark_cloud.md)]
+---
+
+class: pic
+
+.interstitial[![Image separating from the next chapter](https://gallant-turing-d0d520.netlify.com/containers/lots-of-containers.jpg)]
+
+---
+
+name: toc-resilient-distributed-datasets-rdd
+class: title
+
+Resilient Distributed Datasets (RDD)
+
+.nav[
+[Section précédente](#toc-spark-kubernetes-cluster)
+|
+[Retour table des matières](#toc-chapter-3)
+|
+[Section suivante](#toc-interoperating-between-dataframes-and-rdds)
+]
+
+.debug[(automatically generated title slide)]
+
+---
+# Resilient Distributed Datasets (RDD)
+
+- We have previously seen Spark’s Structured APIs (Dataframes, SQL and Datasets). In general you should favor these APIs in almost all scenarios. However, there are times when higher-level manipulation will not meet the business or engineering problem you are trying to solve. 
+-For those cases, you might need to use Spark’s lower-level APIs, such as the Resilient Distributed Dataset (RDD)
+
+.debug[[spark/Spark_RDD.md](https://github.com/RyaxTech/kube.training.git/tree/gh-pages//spark/Spark_RDD.md)]
+---
+
+## Low-Level APIs
+
+- There are two sets of low-level APIs: there is one for manipulating distributed data (RDDs), and another for distributing and manipulating distributed shared variables (broadcast variables and accumulators).
+
+- You should generally use the lower-level APIs in three situations:
+  - You need some functionality that you cannot find in the higher-level APIs; for example, if you need very tight control over physical data placement across the cluster.
+  - You need to maintain some legacy codebase written using RDDs. 
+  - You need to do some custom shared variable manipulation.
+- When you’re calling a DataFrame transformation, it actually just becomes a set of RDD transformations. This understanding can make your task easier as you begin debugging more and more complex workloads.
+
+.debug[[spark/Spark_RDD.md](https://github.com/RyaxTech/kube.training.git/tree/gh-pages//spark/Spark_RDD.md)]
+---
+
+## About RDDs
+
+- In short, an RDD represents an immutable, partitioned collection of records that can be operated on in parallel. 
+- Unlike DataFrames though, where each record is a structured row containing fields with a known schema, in RDDs the records are just Java, Scala, or Python objects of the programmer’s choosing. 
+
+- RDDs give you complete control because every record in an RDD is a just a Java or Python object. You can store anything you want in these objects, in any format you want. - This gives you great power, but not without potential issues. 
+
+- Every manipulation and interaction between values must be defined by hand, meaning that you must “reinvent the wheel” for whatever task you are trying to carry out.
+- Optimizations like reordering filters and aggregations that occur automatically in Spark SQL need to be implemented by hand with RDDs.
+
+.debug[[spark/Spark_RDD.md](https://github.com/RyaxTech/kube.training.git/tree/gh-pages//spark/Spark_RDD.md)]
+---
+
+## Types and properties of RDDs
+
+- From the user point of view there are basically two usable types of RDDs: the “generic” RDD type or a key-value RDD that provides additional functions, such as aggregating by key.
+
+- Internally, each RDD is characterized by five main properties:
+  - A list of partitions
+  - A function for computing each split
+  - A list of dependencies on other RDDs
+  - Optionally, a Partitioner for key-value RDDs (e.g., to say that the RDD is hashpartitioned)
+  -  Optionally, a list of preferred locations on which to compute each split (e.g., block locations for a Hadoop Distributed File System [HDFS] file)
+
+.debug[[spark/Spark_RDD.md](https://github.com/RyaxTech/kube.training.git/tree/gh-pages//spark/Spark_RDD.md)]
+---
+
+## Internal functions of RDDs
+
+- RDDs follow the exact same Spark programming paradigms with Structured APIs. They provide transformations, which evaluate lazily, and actions, which evaluate eagerly, to manipulate data in a distributed fashion. These work the same way as transformations and actions on DataFrames and Datasets. 
+- However, there is no concept of “rows” in RDDs; individual records are just raw Java/Scala/Python objects, and you manipulate those manually instead of tapping into the repository of functions that you have in the structured APIs.
+- The RDD APIs are available in Python as well as Scala and Java. For Scala and Java, the performance is for the most part the same, the large costs incurred in manipulating the raw objects.
+- Python, however, can lose a substantial amount of performance when using RDDs. Running Python RDDs equates to running Python user-defined functions (UDFs) row by row. 
+  - The data is serialized to the Python process, operate on it in Python, and then serialize it back to the Java Virtual Machine (JVM). 
+  - This causes a high overhead for Python RDD manipulations.
+  - Especially in Python it's better to build on the Structured APIs and only dropping down to RDDs if absolutely necessary.
+
+
+.debug[[spark/Spark_RDD.md](https://github.com/RyaxTech/kube.training.git/tree/gh-pages//spark/Spark_RDD.md)]
+---
+
+class: pic
+
+.interstitial[![Image separating from the next chapter](https://gallant-turing-d0d520.netlify.com/containers/plastic-containers.JPG)]
+
+---
+
+name: toc-interoperating-between-dataframes-and-rdds
+class: title
+
+Interoperating Between DataFrames and RDDs
+
+.nav[
+[Section précédente](#toc-resilient-distributed-datasets-rdd)
+|
+[Retour table des matières](#toc-chapter-3)
+|
+[Section suivante](#toc-manipulating-rdds)
+]
+
+.debug[(automatically generated title slide)]
+
+---
+
+# Interoperating Between DataFrames and RDDs
+
+- One of the easiest ways to get RDDs is from an existing DataFrame or Dataset. Converting these to an RDD is simple: just use the rdd method on any of these data types. 
+```bash
+spark.range(10).rdd
+```
+- To operate on this data, you will need to convert this Row object to the correct data type or extract values out of it, as shown in the example that follows. This is now an RDD of type Row:
+```bash
+spark.range(10).toDF("id").rdd.map(lambda row: row[0])
+```
+- You can use the same methodology to create a DataFrame from an RDD. All you need to do is call the toDF method on the RDD:
+```bash
+spark.range(10).rdd.toDF()
+```
+- This command creates an RDD of type Row. This row is the internal Catalyst format that Spark uses to represent data in the Structured APIs. This functionality makes it possible for you to jump between the Structured and low-level APIs as it suits your use case.
+
+.debug[[spark/Spark_RDD.md](https://github.com/RyaxTech/kube.training.git/tree/gh-pages//spark/Spark_RDD.md)]
+---
+
+## Creating RDDs from a Local Collection
+
+- To create an RDD from a collection, you will need to use the parallelize method on a SparkContext (within a SparkSession). This turns a single node collection into a parallel collection.
+-  When creating this parallel collection, you can also explicitly state the number of partitions into which you would like to distribute this array. In this case, we are creating two partitions:
+.exercise[
+```bash
+myCollection = "Spark The Definitive Guide : Big Data Processing Made Simple"\
+.split(" ")
+words = spark.sparkContext.parallelize(myCollection, 2)
+```
+
+- An additional feature is that you can then name this RDD to show up in the Spark UI according to a given name:
+```bash
+words.setName("myWords")
+words.name() # myWords
+```
+]
+
+.debug[[spark/Spark_RDD.md](https://github.com/RyaxTech/kube.training.git/tree/gh-pages//spark/Spark_RDD.md)]
+---
+
+## Creating RDDs From Data Sources
+
+- Although you can create RDDs from data sources or text files, it’s often preferable to use the Data Source APIs. RDDs do not have a notion of “Data Source APIs” like DataFrames do; they primarily define their dependency structures and lists of partitions. The Data Source API is almost always a better way to read in data but we can read data as RDDs using sparkContext. For example, to read a text file line by line:
+```bash
+spark.sparkContext.textFile("/some/path/withTextFiles")
+```
+- Or where each text file should become a single record with:
+```bash
+spark.sparkContext.wholeTextFiles("/some/path/withTextFiles")
+```
+- In this RDD, the name of the file is the first object and the value of the text file is the second string object.
+
+.debug[[spark/Spark_RDD.md](https://github.com/RyaxTech/kube.training.git/tree/gh-pages//spark/Spark_RDD.md)]
+---
+
+class: pic
+
+.interstitial[![Image separating from the next chapter](https://gallant-turing-d0d520.netlify.com/containers/train-of-containers-1.jpg)]
+
+---
+
+name: toc-manipulating-rdds
+class: title
+
+Manipulating RDDs
+
+.nav[
+[Section précédente](#toc-interoperating-between-dataframes-and-rdds)
+|
+[Retour table des matières](#toc-chapter-3)
+|
+[Section suivante](#toc-advanced-rdds)
+]
+
+.debug[(automatically generated title slide)]
+
+---
+
+
+# Manipulating RDDs
+
+- We manipulate RDDs in much the same way that we manipulate DataFrames. The core difference being that you manipulate raw Java or Scala objects instead of Spark types. There is also a dearth of “helper” methods or functions that you can draw upon to simplify calculations. Rather, you must define each filter, map functions, aggregation, and any other manipulation that you want as a function.
+-  To demonstrate some data manipulation, let’s use the simple RDD (words) we created previously to define some more details.
+
+## Transformations on RDDs - distinct and filter
+
+- Exactly as for Dataframes we specify transformations on one RDD to create another. Hence, we define an RDD as a dependency to another along with some manipulation of the data contained in that RDD.
+.exercise[
+- distint: A distinct method call on an RDD removes duplicates from the RDD:
+```bash 
+words.distinct().count() # The result should be 10
+```
+- filter: Filtering is equivalent to creating a SQL-like where clause. For example filter the RDD to keep only the words that begin with the letter “S”:
+```bash
+def startsWithS(individual):
+return individual.startswith("S")
+words.filter(lambda word: startsWithS(word)).collect() # This should return Spark, Simple
+```
+]
+
+.debug[[spark/Spark_RDD.md](https://github.com/RyaxTech/kube.training.git/tree/gh-pages//spark/Spark_RDD.md)]
+---
+
+## Transformations on RDDs - map
+
+.exercise[
+- map: It's a function that returns the value that you want, given the correct input. It is applied, record by record.
+Let’s perform something similar to what we just did. In this example, we’ll map the current word tothe word, its starting letter, and whether the word begins with “S.”
+Notice in this instance that we define our functions completely inline using the relevant lambda
+syntax:
+```bash
+words2 = words.map(lambda word: (word, word[0], word.startswith("S")))
+```
+- You can subsequently filter on this by selecting the relevant Boolean value in a new function:
+```bash
+words2.filter(lambda record: record[2]).take(5)
+```
+- This returns a tuple of “Spark,” “S,” and “true,” as well as “Simple,” “S,” and “True.”
+]
+
+.debug[[spark/Spark_RDD.md](https://github.com/RyaxTech/kube.training.git/tree/gh-pages//spark/Spark_RDD.md)]
+---
+
+## Transformations on RDDs - flatmap
+
+.exercise[
+- flatMap: It provides a simple extension of the map function. Sometimes, each current row should return multiple rows, instead. For example, you might want to take your set of words and flatMap it into a set of characters. Because each word has multiple characters, you should use flatMap to expand it. flatMap requires that the ouput of the map function be an iterable that can be expanded:
+```bash
+words.flatMap(lambda word: list(word)).take(5)
+```
+- This yields S, p, a, r, k.
+]
+
+.debug[[spark/Spark_RDD.md](https://github.com/RyaxTech/kube.training.git/tree/gh-pages//spark/Spark_RDD.md)]
+---
+## Transofrmations on RDDs - sort
+
+.exercise[
+- sort: To sort an RDD you must use the sortBy method, and just like any other RDD operation, you do this by specifying a function to extract a value from the objects in your RDDs and then sort based on that.
+- For instance, the following example sorts by word length from longest to shortest:
+```bash
+words.sortBy(lambda word: len(word) * -1).take(2)
+```
+]
+
+.debug[[spark/Spark_RDD.md](https://github.com/RyaxTech/kube.training.git/tree/gh-pages//spark/Spark_RDD.md)]
+---
+
+## Actions for RDDs - first, max/min, take
+
+- Just as we do with DataFrames and Datasets, we specify actions to kick off our specified transformations. Actions either collect data to the driver or write to an external data source.
+.exercise[
+
+- first: The first method returns the first value in the dataset:
+```bash
+words.first()
+```
+- max and min: They return the maximum and minimum values, respectively:
+```bash
+spark.sparkContext.parallelize(1 to 20).max()
+spark.sparkContext.parallelize(1 to 20).min()
+```
+- take and its derivative methods (takeOrdered, top, etc) take a number of values from your RDD. This works by first scanning one partition and then using the results from that partition to estimate the number of additional partitions needed to satisfy the limit.
+```bash
+words.take(5)
+words.takeOrdered(5)
+words.top(5)
+```
+
+]
+
+.debug[[spark/Spark_RDD.md](https://github.com/RyaxTech/kube.training.git/tree/gh-pages//spark/Spark_RDD.md)]
+---
+
+## Actions for RDDs - reduce
+
+.exercise[
+- You can use the reduce method to specify a function to “reduce” an RDD of any kind of value to one value. For instance, given a set of numbers, you can reduce this to its sum by specifying a function that takes as input two values and reduces them into one. 
+```bash
+spark.sparkContext.parallelize(range(1, 21)).reduce(lambda x, y: x + y) # 210
+```
+- You can also use this to get something like the longest word in our set of words. The key is just to define the correct function:
+```bash
+def wordLengthReducer(leftWord, rightWord):
+if len(leftWord) > len(rightWord):
+return leftWord
+else:
+return rightWord
+words.reduce(wordLengthReducer)
+```
+- This reducer is a good example because you can get one of two outputs. Because the reduce operation on the partitions is not deterministic, you can have either “definitive” or “processing” (both of length 10) as the “left” word. This means that sometimes you can end up with one, whereas other times you end up with the other.
+]
+
+.debug[[spark/Spark_RDD.md](https://github.com/RyaxTech/kube.training.git/tree/gh-pages//spark/Spark_RDD.md)]
+---
+
+
+
+## Saving Files from RDDs
+
+- Saving files means writing to plain-text files. With RDDs, you cannot actually “save” to a data source in the conventional sense. You must iterate over the partitions in order to save the contents of each partition to some external database. This is a low-level approach that reveals the underlying operation that is being performed in the higher-level APIs. Spark will take each partition, and write that out to the destination.
+- saveAsTextFile: To save to a text file, you just specify a path and optionally a compression codec
+```bash
+words.saveAsTextFile("file:/tmp/bookTitle")
+```
+- saveAsObjectFile method can explicitly write key–value pairs on sequenceFile 
+```bash
+words.saveAsObjectFile("/tmp/my/sequenceFilePath")
+```
+.debug[[spark/Spark_RDD.md](https://github.com/RyaxTech/kube.training.git/tree/gh-pages//spark/Spark_RDD.md)]
+---
+
+## Caching and Checkpointing
+
+- Caching for RDDs works similarly as with Dataframes. It is possible to either cache or persist an RDD. By default, cache and persist only handle data in memory. For example:
+```bash
+words.cache()
+```
+- One feature not available in the DataFrame API is the concept of checkpointing. Checkpointing is the act of saving an RDD to disk so that future references to this RDD point to those intermediate partitions on disk rather than recomputing the RDD from its original source. This is similar to caching except that it’s not stored in memory, only disk. This can be helpful when performing iterative computation, similar to the use cases for caching:
+  ```bash
+  spark.sparkContext.setCheckpointDir("/some/path/for/checkpointing")
+  words.checkpoint()
+  ```
+- Now, when we reference this RDD, it will derive from the checkpoint instead of the source data. This can be a helpful optimization.
+
+.debug[[spark/Spark_RDD.md](https://github.com/RyaxTech/kube.training.git/tree/gh-pages//spark/Spark_RDD.md)]
+---
+
+## Pipe RDDs to System Commands
+ 
+- The pipe method is probably one of Spark’s more interesting methods. With pipe, you can return an RDD created by piping elements to a forked external process. The resulting RDD is computed by executing the given process once per partition. All elements of each input partition are written to a process’s stdin as lines of input separated by a newline. The resulting partition consists of the process’s stdout output, with each line of stdout resulting in one element of the output partition. 
+- We can use a simple example and pipe each partition to the command wc. Each row will be passed in as a new line, so if we perform a line count, we will get the number of lines, one per partition:
+```bash
+words.pipe("wc -l").collect()
+```
+
+.debug[[spark/Spark_RDD.md](https://github.com/RyaxTech/kube.training.git/tree/gh-pages//spark/Spark_RDD.md)]
+---
+
+## mapPartitions, foreachPartition and glom
+
+- Physically on the cluster we operate on each partition individually (and not a specific row). A simple example creates the value “1” for every partition in our data, and the sum of the following expression will count the number of partitions we have:
+```bash
+words.mapPartitions(lambda part: [1]).sum() # 2
+```
+- foreachPartition simply iterates over all the partitions of the data. The difference is that the function has no return value.
+- glom is an interesting function that takes every partition in your dataset and converts them to arrays.
+```bash
+spark.sparkContext.parallelize(["Hello", "World"], 2).glom().collect()
+```
+.debug[[spark/Spark_RDD.md](https://github.com/RyaxTech/kube.training.git/tree/gh-pages//spark/Spark_RDD.md)]
+---
+
+class: pic
+
+.interstitial[![Image separating from the next chapter](https://gallant-turing-d0d520.netlify.com/containers/train-of-containers-2.jpg)]
+
+---
+
+name: toc-advanced-rdds
+class: title
+
+Advanced RDDs
+
+.nav[
+[Section précédente](#toc-manipulating-rdds)
+|
+[Retour table des matières](#toc-chapter-3)
+|
+[Section suivante](#toc-)
+]
+
+.debug[(automatically generated title slide)]
+
+---
+
+# Advanced RDDs
+
+- We will discuss about the advanced RDD operations and focuses on key–value RDDs, a powerful abstraction for manipulating data. 
+- We also touch on some custom partitioning function, which allows us to control exactly how data is laid out on the cluster and manipulate that individual partition accordingly. 
+- We also talk about RDD joins
+- For the exercises we will use the same dataset as previously 
+```bash
+myCollection = "Spark The Definitive Guide : Big Data Processing Made Simple"\
+.split(" ")
+words = spark.sparkContext.parallelize(myCollection, 2)
+```
+
+.debug[[spark/Spark_RDD.md](https://github.com/RyaxTech/kube.training.git/tree/gh-pages//spark/Spark_RDD.md)]
+---
+
+## Key-Value RDDs
+
+- There are many methods on RDDs that require you to put your data in a key–value format. A hint that this is required is that the method will include <some-operation>ByKey
+- Whenever you see ByKey in a method name, it means that you can perform this only on a PairRDD type. The easiest way is to just map over your current RDD to a basic key–value structure. This means having two values in each record of your RDD:
+
+```bash
+words.map(lambda word: (word.lower(), 1))
+```
+- you can also use the keyBy function to achieve the same result by specifying a function that creates the key from your current value. 
+- In this case, you are keying by the first letter in the word. Spark then keeps the record as the value for the keyed RDD:
+```bash
+keyword = words.keyBy(lambda word: word.lower()[0])
+```
+.debug[[spark/Spark_RDD.md](https://github.com/RyaxTech/kube.training.git/tree/gh-pages//spark/Spark_RDD.md)]
+---
+
+## Key-Value RDDs Mapping over Values
+
+- After you have a set of key–value pairs, you can begin manipulating them as such. If we have a tuple, Spark will assume that the first element is the key, and the second is the value. When in this format, you can explicitly choose to map-over the values (and ignore the individual keys). 
+```bash
+keyword.mapValues(lambda word: word.upper()).collect()
+```
+- We can also use flatmap
+```bash
+keyword.flatMapValues(lambda word: word.upper()).collect()
+```
+## Extracting Keys and Values
+- When we are in the key–value pair format, we can also extract the specific keys or values by using the following methods:
+```bash
+keyword.keys().collect()
+keyword.values().collect()
+```
+
+
+
+
+.debug[[spark/Spark_RDD.md](https://github.com/RyaxTech/kube.training.git/tree/gh-pages//spark/Spark_RDD.md)]</textarea>
+    <script src="remark.min.js" type="text/javascript">
+    </script>
+    <script type="text/javascript">
+      var slideshow = remark.create({
+        ratio: '16:9',
+        highlightSpans: true,
+        excludedClasses: ["self-paced"]
+      });
+    </script>
+    
+    <!-- 
+    These two scripts will be available only when loading the
+    content using the pub/sub server. Otherwise, they'll just
+    404 and that's OK.
+    -->
+    <script src="/socket.io/socket.io.js">
+    </script>
+    <script src="/remote.js">
+    </script>
+
+  </body>
+</html>
