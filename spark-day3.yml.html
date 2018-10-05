@@ -1,0 +1,1346 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <title>Spark Advanced - RDD, Streaming, Machine Learning </title>
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8"/>
+    <link rel="stylesheet" href="workshop.css">
+  </head>
+  <body>
+    <!--
+    <div style="position: absolute; left: 20%; right: 20%; top: 30%;">
+      <h1 style="font-size: 3em;">Loading ...</h1>
+      The slides should show up here. If they don't, it might be
+      because you are accessing this file directly from your filesystem.
+      It needs to be served from a web server. You can try this:
+      <pre>
+        docker-compose up -d
+        open http://localhost:8888/workshop.html # on MacOS
+        xdg-open http://localhost:8888/workshop.html # on Linux
+      </pre>
+      Once the slides are loaded, this notice disappears when you
+      go full screen (e.g. by hitting "f").
+    </div>
+    -->
+    <textarea id="source">class: title, self-paced
+
+Spark Advanced - RDD, Streaming, Machine Learning<br/>
+
+.nav[*Self-paced version*]
+
+.debug[
+```
+ M common/about-slides_fr.md
+ M intro-fullday.yml.html
+ M intro-selfpaced.yml.html
+ M kube-fullday.yml.html
+ M kube-halfday.yml.html
+ M kube-jour1.yml.html
+ M kube-jour2.yml.html
+ M kube-jour3.yml
+ M kube-jour3.yml.html
+ M kube-selfpaced.yml.html
+ M logistics.md
+ M spark-day1.yml.html
+ M swarm-fullday.yml.html
+ M swarm-halfday.yml.html
+ M swarm-selfpaced.yml.html
+ M swarm-video.yml.html
+?? spark-day1.yml
+?? spark-day2.yml
+?? spark-day2.yml.html
+?? spark-day3.yml
+?? spark-day3.yml.html
+?? spark-jour1.yml.html
+?? spark/
+
+```
+
+These slides have been built from commit: 8fb8bc6
+
+
+[common/title_fr.md](https://github.com/RyaxTech/kube.training.git/tree/gh-pages//common/title_fr.md)]
+---
+
+class: title, in-person
+
+Spark Advanced - RDD, Streaming, Machine Learning<br/><br/></br>
+
+
+.debug[[common/title_fr.md](https://github.com/RyaxTech/kube.training.git/tree/gh-pages//common/title_fr.md)]
+---
+
+name: toc-chapter-1
+
+## Chapter 1
+
+- [Resilient Distributed Datasets (RDD)](#toc-resilient-distributed-datasets-rdd)
+
+- [Interoperating Between DataFrames and RDDs](#toc-interoperating-between-dataframes-and-rdds)
+
+- [Manipulating RDDs](#toc-manipulating-rdds)
+
+- [Advanced RDDs](#toc-advanced-rdds)
+
+.debug[(auto-generated TOC)]
+---
+name: toc-chapter-2
+
+## Chapter 2
+
+- [Spark Streaming](#toc-spark-streaming)
+
+- [Writing Spark Streaming Applications](#toc-writing-spark-streaming-applications)
+
+- [Spark Streaming - Saving the computation state over time](#toc-spark-streaming---saving-the-computation-state-over-time)
+
+- [Spark Streaming - Using window operations for time-limited calculations](#toc-spark-streaming---using-window-operations-for-time-limited-calculations)
+
+.debug[(auto-generated TOC)]
+---
+name: toc-chapter-3
+
+## Chapter 3
+
+- [Advanced Analytics and Machine Learning Overview](#toc-advanced-analytics-and-machine-learning-overview)
+
+.debug[(auto-generated TOC)]
+
+
+
+.debug[[common/toc.md](https://github.com/RyaxTech/kube.training.git/tree/gh-pages//common/toc.md)]
+---
+
+class: pic
+
+.interstitial[![Image separating from the next chapter](https://gallant-turing-d0d520.netlify.com/containers/Container-Ship-Freighter-Navigation-Elbe-Romance-1782991.jpg)]
+
+---
+
+name: toc-resilient-distributed-datasets-rdd
+class: title
+
+Resilient Distributed Datasets (RDD)
+
+.nav[
+[Section précédente](#toc-)
+|
+[Retour table des matières](#toc-chapter-1)
+|
+[Section suivante](#toc-interoperating-between-dataframes-and-rdds)
+]
+
+.debug[(automatically generated title slide)]
+
+---
+# Resilient Distributed Datasets (RDD)
+
+- We have previously seen Spark’s Structured APIs (Dataframes, SQL and Datasets). In general you should favor these APIs in almost all scenarios. However, there are times when higher-level manipulation will not meet the business or engineering problem you are trying to solve. 
+-For those cases, you might need to use Spark’s lower-level APIs, such as the Resilient Distributed Dataset (RDD)
+
+.debug[[spark/Spark_RDD.md](https://github.com/RyaxTech/kube.training.git/tree/gh-pages//spark/Spark_RDD.md)]
+---
+
+## Low-Level APIs
+
+- There are two sets of low-level APIs: there is one for manipulating distributed data (RDDs), and another for distributing and manipulating distributed shared variables (broadcast variables and accumulators).
+
+- You should generally use the lower-level APIs in three situations:
+  - You need some functionality that you cannot find in the higher-level APIs; for example, if you need very tight control over physical data placement across the cluster.
+  - You need to maintain some legacy codebase written using RDDs. 
+  - You need to do some custom shared variable manipulation.
+- When you’re calling a DataFrame transformation, it actually just becomes a set of RDD transformations. This understanding can make your task easier as you begin debugging more and more complex workloads.
+
+.debug[[spark/Spark_RDD.md](https://github.com/RyaxTech/kube.training.git/tree/gh-pages//spark/Spark_RDD.md)]
+---
+
+## About RDDs
+
+- In short, an RDD represents an immutable, partitioned collection of records that can be operated on in parallel. 
+- Unlike DataFrames though, where each record is a structured row containing fields with a known schema, in RDDs the records are just Java, Scala, or Python objects of the programmer’s choosing. 
+
+- RDDs give you complete control because every record in an RDD is a just a Java or Python object. You can store anything you want in these objects, in any format you want. - This gives you great power, but not without potential issues. 
+
+- Every manipulation and interaction between values must be defined by hand, meaning that you must “reinvent the wheel” for whatever task you are trying to carry out.
+- Optimizations like reordering filters and aggregations that occur automatically in Spark SQL need to be implemented by hand with RDDs.
+
+.debug[[spark/Spark_RDD.md](https://github.com/RyaxTech/kube.training.git/tree/gh-pages//spark/Spark_RDD.md)]
+---
+
+## Types and properties of RDDs
+
+- From the user point of view there are basically two usable types of RDDs: the “generic” RDD type or a key-value RDD that provides additional functions, such as aggregating by key.
+
+- Internally, each RDD is characterized by five main properties:
+  - A list of partitions
+  - A function for computing each split
+  - A list of dependencies on other RDDs
+  - Optionally, a Partitioner for key-value RDDs (e.g., to say that the RDD is hashpartitioned)
+  -  Optionally, a list of preferred locations on which to compute each split (e.g., block locations for a Hadoop Distributed File System [HDFS] file)
+
+.debug[[spark/Spark_RDD.md](https://github.com/RyaxTech/kube.training.git/tree/gh-pages//spark/Spark_RDD.md)]
+---
+
+## Internal functions of RDDs
+
+- RDDs follow the exact same Spark programming paradigms with Structured APIs. They provide transformations, which evaluate lazily, and actions, which evaluate eagerly, to manipulate data in a distributed fashion. These work the same way as transformations and actions on DataFrames and Datasets. 
+
+- However, there is no concept of “rows” in RDDs; individual records are just raw Java/Scala/Python objects, and you manipulate those manually instead of tapping into the repository of functions that you have in the structured APIs.
+
+.debug[[spark/Spark_RDD.md](https://github.com/RyaxTech/kube.training.git/tree/gh-pages//spark/Spark_RDD.md)]
+---
+
+## Internal functions of RDDs
+
+- The RDD APIs are available in Python as well as Scala and Java. For Scala and Java, the performance is for the most part the same, the large costs incurred in manipulating the raw objects.
+
+- Python, however, can lose a substantial amount of performance when using RDDs. Running Python RDDs equates to running Python user-defined functions (UDFs) row by row. 
+  - The data is serialized to the Python process, operate on it in Python, and then serialize it back to the Java Virtual Machine (JVM). 
+  - This causes a high overhead for Python RDD manipulations.
+  - Especially in Python it's better to build on the Structured APIs and only dropping down to RDDs if absolutely necessary.
+
+
+.debug[[spark/Spark_RDD.md](https://github.com/RyaxTech/kube.training.git/tree/gh-pages//spark/Spark_RDD.md)]
+---
+
+class: pic
+
+.interstitial[![Image separating from the next chapter](https://gallant-turing-d0d520.netlify.com/containers/ShippingContainerSFBay.jpg)]
+
+---
+
+name: toc-interoperating-between-dataframes-and-rdds
+class: title
+
+Interoperating Between DataFrames and RDDs
+
+.nav[
+[Section précédente](#toc-resilient-distributed-datasets-rdd)
+|
+[Retour table des matières](#toc-chapter-1)
+|
+[Section suivante](#toc-manipulating-rdds)
+]
+
+.debug[(automatically generated title slide)]
+
+---
+
+# Interoperating Between DataFrames and RDDs
+
+- One of the easiest ways to get RDDs is from an existing DataFrame or Dataset. Converting these to an RDD is simple: just use the rdd method on any of these data types. 
+```bash
+spark.range(10).rdd
+```
+- To operate on this data, you will need to convert this Row object to the correct data type or extract values out of it, as shown in the example that follows. This is now an RDD of type Row:
+```bash
+spark.range(10).toDF("id").rdd.map(lambda row: row[0])
+```
+.debug[[spark/Spark_RDD.md](https://github.com/RyaxTech/kube.training.git/tree/gh-pages//spark/Spark_RDD.md)]
+---
+## Interoperating Between DataFrames and RDDs
+
+- You can use the same methodology to create a DataFrame from an RDD. All you need to do is call the toDF method on the RDD:
+```bash
+spark.range(10).rdd.toDF()
+```
+- This command creates an RDD of type Row. This row is the internal Catalyst format that Spark uses to represent data in the Structured APIs. This functionality makes it possible for you to jump between the Structured and low-level APIs as it suits your use case.
+
+.debug[[spark/Spark_RDD.md](https://github.com/RyaxTech/kube.training.git/tree/gh-pages//spark/Spark_RDD.md)]
+---
+
+## Creating RDDs From Local Collection
+
+- To create an RDD from a collection, you will need to use the `parallelize` method on a `SparkContext` (within a SparkSession). This turns a single node collection into a parallel collection. When creating this parallel collection, you can also explicitly state the number of partitions into which you would like to distribute this array. In this case, we are creating two partitions:
+```bash
+myCollection = "Apache Spark is a unified computing engine for Data Processing".split(" ")
+words = spark.sparkContext.parallelize(myCollection, 2)
+```
+- An additional feature is that you can then name this RDD to show up in the Spark UI according to a given name:
+```bash
+words.setName("myWords")
+words.name() # myWords
+```
+.debug[[spark/Spark_RDD.md](https://github.com/RyaxTech/kube.training.git/tree/gh-pages//spark/Spark_RDD.md)]
+---
+
+class: pic
+
+.interstitial[![Image separating from the next chapter](https://gallant-turing-d0d520.netlify.com/containers/aerial-view-of-containers.jpg)]
+
+---
+
+name: toc-manipulating-rdds
+class: title
+
+Manipulating RDDs
+
+.nav[
+[Section précédente](#toc-interoperating-between-dataframes-and-rdds)
+|
+[Retour table des matières](#toc-chapter-1)
+|
+[Section suivante](#toc-advanced-rdds)
+]
+
+.debug[(automatically generated title slide)]
+
+---
+
+# Manipulating RDDs
+
+- We manipulate RDDs in much the same way that we manipulate DataFrames. The core difference being that you manipulate raw Java or Scala objects instead of Spark types. There is also a dearth of “helper” methods or functions that you can draw upon to simplify calculations. Rather, you must define each filter, map functions, aggregation, and any other manipulation that you want as a function.
+
+- To demonstrate some data manipulation, let’s use the simple RDD (words) we created previously to define some more details.
+
+.debug[[spark/Spark_RDD.md](https://github.com/RyaxTech/kube.training.git/tree/gh-pages//spark/Spark_RDD.md)]
+---
+## Transformations on RDDs - distinct and filter
+
+
+- Exactly as for Dataframes we specify transformations on one RDD to create another. Hence, we define an RDD as a dependency to another along with some manipulation of the data contained in that RDD.
+
+.exercise[
+- distint: A distinct method call on an RDD removes duplicates from the RDD:
+```bash 
+words.distinct().count() # The result should be 10
+```
+
+- filter: Filtering is equivalent to creating a SQL-like where clause. For example filter the RDD to keep only the words that begin with the letter “S”:
+
+```bash
+def startsWithS(individual):
+  return individual.startswith("S")
+
+words.filter(lambda word: startsWithS(word)).collect() # This should return Spark
+```
+]
+
+.debug[[spark/Spark_RDD.md](https://github.com/RyaxTech/kube.training.git/tree/gh-pages//spark/Spark_RDD.md)]
+---
+
+## Transformations on RDDs - map
+
+.exercise[
+- map: 
+Filtering is a simple transformation, but sometimes you need to map one value to another value. It is applied, record by record.
+Let’s perform something similar to what we just did. In this example, we’ll map the current word tothe word, its starting letter, and whether the word begins with “S.”
+Notice in this instance that we define our functions completely inline using the relevant lambda syntax:
+
+```bash
+words2 = words.map(lambda word: (word, word[0], word.startswith("S")))
+```
+- You can subsequently filter on this by selecting the relevant Boolean value in a new function:
+```bash
+words2.filter(lambda record: record[2]).take(5)
+```
+- This returns a tuple of “Spark,” “S,” and “true” 
+]
+
+.debug[[spark/Spark_RDD.md](https://github.com/RyaxTech/kube.training.git/tree/gh-pages//spark/Spark_RDD.md)]
+---
+
+## Transformations on RDDs - flatmap
+
+.exercise[
+- flatMap: It provides a simple extension of the map function. Sometimes, each current row should return multiple rows, instead. For example, you might want to take your set of words and flatMap it into a set of characters. Because each word has multiple characters, you should use flatMap to expand it. flatMap requires that the ouput of the map function be an iterable that can be expanded:
+```bash
+words.flatMap(lambda word: list(word)).take(5)
+```
+- This yields S, p, a, r, k.
+]
+
+.debug[[spark/Spark_RDD.md](https://github.com/RyaxTech/kube.training.git/tree/gh-pages//spark/Spark_RDD.md)]
+---
+## Transofrmations on RDDs - sort
+
+.exercise[
+- sort: To sort an RDD you must use the `sortBy` method, and just like any other RDD operation, you do this by specifying a function to extract a value from the objects in your RDDs and then sort based on that.
+- For instance, the following example sorts by word length from longest to shortest:
+```bash
+words.sortBy(lambda word: len(word) * -1).take(2)
+```
+]
+
+.debug[[spark/Spark_RDD.md](https://github.com/RyaxTech/kube.training.git/tree/gh-pages//spark/Spark_RDD.md)]
+---
+
+## Actions for RDDs - first, max/min, take
+
+- Just as we do with DataFrames and Datasets, we specify actions to kick off our specified transformations. Actions either collect data to the driver or write to an external data source.
+.exercise[
+
+- first: The first method returns the first value in the dataset:
+```bash
+words.first()
+```
+- max and min: They return the maximum and minimum values, respectively:
+```bash
+spark.sparkContext.parallelize(1 to 20).max()
+spark.sparkContext.parallelize(1 to 20).min()
+```
+- take and its derivative methods (takeOrdered, top, etc) take a number of values from your RDD. This works by first scanning one partition and then using the results from that partition to estimate the number of additional partitions needed to satisfy the limit.
+```bash
+words.take(5)
+words.takeOrdered(5)
+words.top(5)
+```
+
+]
+
+.debug[[spark/Spark_RDD.md](https://github.com/RyaxTech/kube.training.git/tree/gh-pages//spark/Spark_RDD.md)]
+---
+
+## Actions for RDDs - reduce
+
+.exercise[
+- You can use the reduce method to specify a function to “reduce” an RDD of any kind of value to one value. For instance, given a set of numbers, you can reduce this to its sum by specifying a function that takes as input two values and reduces them into one. 
+```bash
+spark.sparkContext.parallelize(range(1, 21)).reduce(lambda x, y: x + y) # 210
+```
+.debug[[spark/Spark_RDD.md](https://github.com/RyaxTech/kube.training.git/tree/gh-pages//spark/Spark_RDD.md)]
+---
+
+
+
+## Saving Files from RDDs
+
+- Saving files means writing to plain-text files. With RDDs, you cannot actually “save” to a data source in the conventional sense. You must iterate over the partitions in order to save the contents of each partition to some external database. This is a low-level approach that reveals the underlying operation that is being performed in the higher-level APIs. Spark will take each partition, and write that out to the destination.
+- saveAsTextFile: To save to a text file, you just specify a path and optionally a compression codec
+```bash
+words.saveAsTextFile("file:/tmp/bookTitle")
+```
+- saveAsObjectFile method can explicitly write key–value pairs on sequenceFile 
+```bash
+words.saveAsObjectFile("/tmp/my/sequenceFilePath")
+```
+.debug[[spark/Spark_RDD.md](https://github.com/RyaxTech/kube.training.git/tree/gh-pages//spark/Spark_RDD.md)]
+---
+
+## Caching and Checkpointing
+
+- Caching for RDDs works similarly as with Dataframes. It is possible to either cache or persist an RDD. By default, cache and persist only handle data in memory. For example:
+```bash
+words.cache()
+```
+- One feature not available in the DataFrame API is the concept of checkpointing. Checkpointing is the act of saving an RDD to disk so that future references to this RDD point to those intermediate partitions on disk rather than recomputing the RDD from its original source. This is similar to caching except that it’s not stored in memory, only disk. This can be helpful when performing iterative computation, similar to the use cases for caching:
+  ```bash
+  spark.sparkContext.setCheckpointDir("/some/path/for/checkpointing")
+  words.checkpoint()
+  ```
+- Now, when we reference this RDD, it will derive from the checkpoint instead of the source data. This can be a helpful optimization.
+
+.debug[[spark/Spark_RDD.md](https://github.com/RyaxTech/kube.training.git/tree/gh-pages//spark/Spark_RDD.md)]
+---
+
+## Pipe RDDs to System Commands
+ 
+- The pipe method is probably one of Spark’s more interesting methods. With pipe, you can return an RDD created by piping elements to a forked external process. The resulting RDD is computed by executing the given process once per partition. All elements of each input partition are written to a process’s stdin as lines of input separated by a newline. The resulting partition consists of the process’s stdout output, with each line of stdout resulting in one element of the output partition. 
+- We can use a simple example and pipe each partition to the command wc. Each row will be passed in as a new line, so if we perform a line count, we will get the number of lines, one per partition:
+```bash
+words.pipe("wc -l").collect()
+```
+
+.debug[[spark/Spark_RDD.md](https://github.com/RyaxTech/kube.training.git/tree/gh-pages//spark/Spark_RDD.md)]
+---
+
+## mapPartitions, foreachPartition and glom
+
+- Physically on the cluster we operate on each partition individually (and not a specific row). A simple example creates the value “1” for every partition in our data, and the sum of the following expression will count the number of partitions we have:
+```bash
+words.mapPartitions(lambda part: [1]).sum() # 2
+```
+- foreachPartition simply iterates over all the partitions of the data. The difference is that the function has no return value.
+- glom is an interesting function that takes every partition in your dataset and converts them to arrays.
+```bash
+spark.sparkContext.parallelize(["Hello", "World"], 2).glom().collect()
+```
+.debug[[spark/Spark_RDD.md](https://github.com/RyaxTech/kube.training.git/tree/gh-pages//spark/Spark_RDD.md)]
+---
+
+class: pic
+
+.interstitial[![Image separating from the next chapter](https://gallant-turing-d0d520.netlify.com/containers/blue-containers.jpg)]
+
+---
+
+name: toc-advanced-rdds
+class: title
+
+Advanced RDDs
+
+.nav[
+[Section précédente](#toc-manipulating-rdds)
+|
+[Retour table des matières](#toc-chapter-1)
+|
+[Section suivante](#toc-spark-streaming)
+]
+
+.debug[(automatically generated title slide)]
+
+---
+
+# Advanced RDDs
+
+- We will discuss about the advanced RDD operations and focuses on key–value RDDs, a powerful abstraction for manipulating data. 
+- We also touch on some custom partitioning function, which allows us to control exactly how data is laid out on the cluster and manipulate that individual partition accordingly. 
+- We also talk about RDD joins
+- For the exercises we will use the same dataset as previously 
+```bash
+myCollection = "Spark The Definitive Guide : Big Data Processing Made Simple"\
+.split(" ")
+words = spark.sparkContext.parallelize(myCollection, 2)
+```
+
+.debug[[spark/Spark_RDD.md](https://github.com/RyaxTech/kube.training.git/tree/gh-pages//spark/Spark_RDD.md)]
+---
+
+## Key-Value RDDs
+
+- There are many methods on RDDs that require you to put your data in a key–value format. A hint that this is required is that the method will include <some-operation>ByKey
+- Whenever you see ByKey in a method name, it means that you can perform this only on a PairRDD type. The easiest way is to just map over your current RDD to a basic key–value structure. This means having two values in each record of your RDD:
+
+```bash
+words.map(lambda word: (word.lower(), 1))
+```
+- you can also use the keyBy function to achieve the same result by specifying a function that creates the key from your current value. 
+- In this case, you are keying by the first letter in the word. Spark then keeps the record as the value for the keyed RDD:
+```bash
+keyword = words.keyBy(lambda word: word.lower()[0])
+```
+.debug[[spark/Spark_RDD.md](https://github.com/RyaxTech/kube.training.git/tree/gh-pages//spark/Spark_RDD.md)]
+---
+
+## Key-Value RDDs Mapping over Values
+
+- After you have a set of key–value pairs, you can begin manipulating them as such. If we have a tuple, Spark will assume that the first element is the key, and the second is the value. When in this format, you can explicitly choose to map-over the values (and ignore the individual keys). 
+```bash
+keyword.mapValues(lambda word: word.upper()).collect()
+```
+- We can also use flatmap
+```bash
+keyword.flatMapValues(lambda word: word.upper()).collect()
+```
+## Extracting Keys and Values
+- When we are in the key–value pair format, we can also extract the specific keys or values by using the following methods:
+```bash
+keyword.keys().collect()
+keyword.values().collect()
+```
+
+
+
+
+.debug[[spark/Spark_RDD.md](https://github.com/RyaxTech/kube.training.git/tree/gh-pages//spark/Spark_RDD.md)]
+---
+
+class: pic
+
+.interstitial[![Image separating from the next chapter](https://gallant-turing-d0d520.netlify.com/containers/chinook-helicopter-container.jpg)]
+
+---
+
+name: toc-spark-streaming
+class: title
+
+Spark Streaming
+
+.nav[
+[Section précédente](#toc-advanced-rdds)
+|
+[Retour table des matières](#toc-chapter-2)
+|
+[Section suivante](#toc-writing-spark-streaming-applications)
+]
+
+.debug[(automatically generated title slide)]
+
+---
+# Spark Streaming
+
+- Stream processing is a key requirement in many big data applications. As soon as an application computes something of value—say, a report about customer activity, or a new machine learning model —an organization will want to compute this result continuously in a production setting. 
+- As a result, organizations of all sizes are starting to incorporate stream processing, often even in the first version of a new application.
+
+- Apache Spark has a long history of high-level support for streaming. In 2012, the project incorporated Spark Streaming and its DStreams API, one of the first APIs to enable stream processing using high-level functional operators like map and reduce.
+- Hundreds of organizations now use DStreams in production for large real-time applications, often processing terabytes of data per hour.
+
+.debug[[spark/Spark_streaming.md](https://github.com/RyaxTech/kube.training.git/tree/gh-pages//spark/Spark_streaming.md)]
+---
+
+## Spark Streaming
+
+- The DStreams API is based on relatively low-level operations on Java/Python objects that limit opportunities for higher-level optimization.
+- The Structured Streaming is a new streaming API in Spark built directly on DataFrames that supports both rich optimizations and significantly simpler integration with other DataFrame and Dataset code. 
+
+- Structured Streaming was officially realesed in production a year ago (July 2017) so in this training we focus on the DStreams API which is more mature even if eventually we should use Structured Streaming API
+
+.debug[[spark/Spark_streaming.md](https://github.com/RyaxTech/kube.training.git/tree/gh-pages//spark/Spark_streaming.md)]
+---
+
+## Stream Processing Fundamentals 
+
+- Stream processing is the act of continuously incorporating new data to compute a result. In stream processing, the input data is unbounded and has no predetermined beginning or end. It simply forms a series of events that arrive at the stream processing system (e.g., credit card transactions, clicks on a website, or sensor readings from Internet of Things [IoT] devices). 
+- User applications can thencompute various queries over this stream of events (e.g., tracking a running count of each type of event or aggregating them into hourly windows). The application will output multiple versions of the result as it runs, or perhaps keep it up to date in an external “sink” system such as a key-value store.
+
+.debug[[spark/Spark_streaming.md](https://github.com/RyaxTech/kube.training.git/tree/gh-pages//spark/Spark_streaming.md)]
+---
+## Stream Processing Fundamentals
+
+- Naturally, we can compare streaming to batch processing, in which the computation runs on a fixed-input dataset. Oftentimes, this might be a large-scale dataset in a data warehouse that contains all the historical events from an application (e.g., all website visits or sensor readings for the past month).
+
+- Batch processing also takes a query to compute, similar to stream processing, but only computes the result once.
+
+- Streaming and batch processing often need to work together. 
+  - For example, streaming applications often need to join input data against a dataset written periodically by a batch job, and the output of streaming jobs is often files or tables that are queried in batch jobs.
+
+.debug[[spark/Spark_streaming.md](https://github.com/RyaxTech/kube.training.git/tree/gh-pages//spark/Spark_streaming.md)]
+---
+
+## Stream Processing Use Cases
+
+- Before we get into advantages and disadvantages of streaming, let’s explain why you might want to use streaming. Here are some use cases:
+  - **Notifications and alerting** Given some series of events, a notification or alert should be triggered if some sort of event or series of events occurs. Such as alert to an employee to get a certain item in the warehouse and ship it to a customer.
+  - **Real-time reporting** Many organizations use streaming systems to run real-time dashboards that any employee can look at.
+  - **Incremental ETL** Spark batch jobs are often used for Extract, Transform, and Load (ETL) workloads that turn raw data into a structured format like Parquet to enable efficient queries. With Streaming these jobs can incorporate new data within seconds, enabling users to query it faster downstream.
+
+.debug[[spark/Spark_streaming.md](https://github.com/RyaxTech/kube.training.git/tree/gh-pages//spark/Spark_streaming.md)]
+---
+
+## Stream Processing Use Cases
+
+  - **Update data to serve in real time** Streaming systems are frequently used to compute data that gets served interactively by another application. For example, a web analytics product such as Google Analytics might continuously track the number of visits to each page, and use a streaming system to keep these counts up to date.
+  - **Real-time decision making** Real-time decision making on a streaming system involves analyzing new inputs and responding to them automatically using business logic. An example use case would be a bank that wants to automatically verify whether a new transaction on a customer’s credit card represents fraud based on their recent history, and deny the transaction if the charge is determined fradulent.
+  - **Online machine learning** An example could be to train a model on a combination of streaming and historical data from multiple users.
+
+.debug[[spark/Spark_streaming.md](https://github.com/RyaxTech/kube.training.git/tree/gh-pages//spark/Spark_streaming.md)]
+---
+
+## Batch and Stream processing differences
+
+- Batch is much simpler to understand, troubleshoot, and write applications in for the majority of use cases. 
+- The ability to process data in batch allows for vastly higher data processing throughput than many streaming systems. 
+
+- On the other side, stream processing is essential in two cases:
+  
+  - It enables lower latency: when your application needs to respond quickly (on a timescale of minutes, seconds, or milliseconds), you will need a streaming system that can keep state in memory to get acceptable performance. 
+  
+  - It can be more efficient in updating a result than repeated batch jobs, because it automatically incrementalizes the computation. For example, if we want to compute web traffic statistics over the past 24 hours, a naively implemented batch job might scan all the data each time it runs, always processing 24 hours’ worth of data. In contrast, a streaming system can remember state from the previous computation and only count the new data. 
+
+
+.debug[[spark/Spark_streaming.md](https://github.com/RyaxTech/kube.training.git/tree/gh-pages//spark/Spark_streaming.md)]
+---
+
+## Challenges of Stream Processing
+
+- Let’s imagine that our application receives input messages from a sensor (e.g., inside a car) that report its value at different times. We then want to search within this stream for certain values, or certain patterns of values. 
+  
+  - One specific challenge is that the input records might arrive to our application out-of-order: due to delays and retransmissions, for example, we might receive the following sequence of updates in order, where the time field shows the time when the value was actually measured:
+  ```bash
+  {value: 1, time: "2017-04-07T00:00:00"}
+  {value: 2, time: "2017-04-07T01:00:00"}
+  {value: 5, time: "2017-04-07T02:00:00"}
+  {value: 10, time: "2017-04-07T01:30:00"}
+  {value: 7, time: "2017-04-07T03:00:00"}
+  ```
+.debug[[spark/Spark_streaming.md](https://github.com/RyaxTech/kube.training.git/tree/gh-pages//spark/Spark_streaming.md)]
+---
+
+## Challenges of Stream Processing
+
+- In any data processing system, we can construct logic to perform some action based on receiving the single value of “5.” In a streaming system, we can also respond to this individual event quickly.
+
+- However, things become more complicated if you want only to trigger some action based on a specific sequence of values received, say, 2 then 10 then 5. In the case of batch processing, this is not particularly difficult because we can simply sort all the events we have by time field to see that 10 did come between 2 and 5. However, this is harder for stream processing systems. 
+
+- The reason is that the streaming system is going to receive each event individually, and will need to track some state across events to remember the 2 and 5 events and realize that the 10 event was between them.
+
+.debug[[spark/Spark_streaming.md](https://github.com/RyaxTech/kube.training.git/tree/gh-pages//spark/Spark_streaming.md)]
+---
+
+## Challenges of Stream Processing
+
+- Here is a list of challenges when operating with streams:
+  - Processing out-of-order data based on application timestamps (also called event time)
+  - Maintaining large amounts of state
+  - Supporting high-data throughput
+  - Processing each event exactly once despite machine failures
+  - Handling load imbalance and stragglers
+  - Responding to events at low latency
+  - Joining with external data in other storage systems
+  - Determining how to update output sinks as new events arrive
+  - Writing data transactionally to output systems
+  - Updating your application’s business logic at runtime
+
+.debug[[spark/Spark_streaming.md](https://github.com/RyaxTech/kube.training.git/tree/gh-pages//spark/Spark_streaming.md)]
+---
+
+class: pic
+
+.interstitial[![Image separating from the next chapter](https://gallant-turing-d0d520.netlify.com/containers/container-cranes.jpg)]
+
+---
+
+name: toc-writing-spark-streaming-applications
+class: title
+
+Writing Spark Streaming Applications
+
+.nav[
+[Section précédente](#toc-spark-streaming)
+|
+[Retour table des matières](#toc-chapter-2)
+|
+[Section suivante](#toc-spark-streaming---saving-the-computation-state-over-time)
+]
+
+.debug[(automatically generated title slide)]
+
+---
+
+# Writing Spark Streaming Applications
+
+- How are Spark’s batch-processing features applied to real-time data: Spark uses **mini-batches**. 
+  - This means Spark Streaming takes blocks of data, which come in specific time periods, and packages them as RDDs. The following figure illustrates this concept.
+
+- Data can come into a Spark Streaming job from various external systems.
+- Receivers know how to connect to the source, read the data, and forward it further into Spark Streaming. 
+
+.debug[[spark/Spark_streaming.md](https://github.com/RyaxTech/kube.training.git/tree/gh-pages//spark/Spark_streaming.md)]
+---
+
+## Writing Spark Streaming Applications
+
+- Spark Streaming then splits the incoming data into mini-batch RDDs, one mini-batch RDD for one time period, and then the Spark application processes it according to the logic built into the application. 
+
+- During mini-batch processing, you’re free to use other parts of the Spark API, such as machine learning and SQL. 
+
+- The results of computations can be written to filesystems, relational databases, or to other distributed systems.
+
+.debug[[spark/Spark_streaming.md](https://github.com/RyaxTech/kube.training.git/tree/gh-pages//spark/Spark_streaming.md)]
+---
+
+class: pic
+
+## Processing Streaming Data in Spark
+
+![history](spark/images/stream-processing-spark.png)
+
+.debug[[spark/Spark_streaming.md](https://github.com/RyaxTech/kube.training.git/tree/gh-pages//spark/Spark_streaming.md)]
+---
+
+## Spark Stream Processing Exercise
+
+- Imagine you need to build a dashboard application for a brokerage firm. Clients of the firm use their internet application to place market orders (for buying or selling financial assets such as bonds, stocks, etc), and brokers need to carry out the orders in the market. The dashboard application you need to build will calculate the number of selling and buying orders per second, the top five clients as measured by the total amounts bought or sold, and the top five assets bought or sold during the last hour.
+
+- We will read the data from an HDFS file and write the results back to HDFS. 
+
+- The implementation of the first version will only count the number of selling and buying orders per second. Later, you’ll add calculations for the top five clients and top five assets.
+
+- We will use the pyspark shell but you can easily build an application and submit it as you have learned.
+
+.debug[[spark/Spark_streaming.md](https://github.com/RyaxTech/kube.training.git/tree/gh-pages//spark/Spark_streaming.md)]
+---
+## Exercise Spark Streaming - Preparing the input data
+
+- Our data is a file containing 500,000 lines representing buy and sell orders. The data was randomly generated.
+- Because it’s unrealistic that all 500,000 events will arrive to your system all at once, we also prepared a Linux shell script named `splitAndSend.sh` , which splits the file (orders.txt) into 50 files, each containing 10,000 lines. It then periodically moves the splits to an HDFS directory (supplied as an argument), waiting for three seconds after copying each split. This is similar to what would happen in a real environment.
+.exercise[
+- Check the data file in `/home/ubuntu/orders.txt` and the script in `/home/ubuntu/splitAndSend.sh`
+- Create the directories in HDFS
+```bash
+hdfs dfs -mkdir /user/hadoop/orders/
+hdfs dfs -mkdir /user/hadoop/orders/output/
+```
+]
+
+.debug[[spark/Spark_streaming.md](https://github.com/RyaxTech/kube.training.git/tree/gh-pages//spark/Spark_streaming.md)]
+---
+
+## Exercise Spark Streaming - Creating Context and Dstream
+
+.exercise[
+
+- Open a terminal and launch pyspark on your cluster
+- Once your shell is up, the first thing you need to do is to create an instance of StreamingContext. From your Spark shell, you instantiate it using the SparkContext object (available as variable sc ) and a Duration object, which specifies time intervals at which Spark Streaming should split the input stream data and create mini-batch RDDs. We will use an interval of five seconds
+```bash
+from __future__ import print_function
+from pyspark.streaming import StreamingContext
+ssc = StreamingContext(sc, 5)
+```
+]
+.debug[[spark/Spark_streaming.md](https://github.com/RyaxTech/kube.training.git/tree/gh-pages//spark/Spark_streaming.md)]
+---
+
+## Exercise Spark Streaming - Creating Context and Dstream
+
+.exercise[
+
+- Now let's create the Dstream object by specifying the folder in HDFS where the splits will be copied to and from where your streaming application will read them as an argument to the `textFileStream` method
+
+```bash
+filestream = ssc.textFileStream("hdfs://user/hadoop/orders")
+```
+
+- The resulting filestream is an instance of class DStream. DStream (which stands for “discretized stream”) is the basic abstraction in Spark Streaming, representing a sequence of RDDs, periodically created from the input stream. DStreams are lazily evaluated, just like RDDs. So when you create a DStream object, nothing happens yet. The RDDs will start coming in only after you start the streaming context.
+
+]
+
+.debug[[spark/Spark_streaming.md](https://github.com/RyaxTech/kube.training.git/tree/gh-pages//spark/Spark_streaming.md)]
+---
+
+## Exercise Spark Streaming - Using Dstreams
+
+.exercise[
+
+- Now that you have your DStream object, you need to use it to calculate the number of selling and buying orders per second. 
+- Similarly to RDDs, DStreams have methods that transform them to other DStreams. You can use those methods to filter, map, and reduce data in a DStream’s RDDs and even combine and join different DStreams.
+  - transform each line into something more manageable
+  - parse the lines from the filestream DStream and thus obtain a new DStream containing Order objects
+]
+
+.debug[[spark/Spark_streaming.md](https://github.com/RyaxTech/kube.training.git/tree/gh-pages//spark/Spark_streaming.md)]
+---
+
+## Exercise Spark Streaming - Using Dstreams
+
+.exercise[
+
+  ```bash
+  from datetime import datetime
+  def parseOrder(line):
+    s = line.split(",")
+    try:
+        if s[6] != "B" and s[6] != "S":
+          raise Exception('Wrong format')
+        return [{"time": datetime.strptime(s[0], "%Y-%m-%d %H:%M:%S"), "orderId": int(s[1]), "clientId": int(s[2]), "symbol": s[3],
+        "amount": int(s[4]), "price": float(s[5]), "buy": s[6] == "B"}]
+    except Exception as err:
+        print("Wrong line format (%s): " % line)
+        return []
+
+  orders = filestream.flatMap(parseOrder)
+  ```
+]
+
+.debug[[spark/Spark_streaming.md](https://github.com/RyaxTech/kube.training.git/tree/gh-pages//spark/Spark_streaming.md)]
+---
+
+## Exercise Spark Streaming - Counting orders, Saving Results
+
+.exercise[
+
+- The task is to count the number of buy and sell orders per second. For this, you’ll use the PairDStreamFunctions object. DStreams containing two-element tuples get automatically converted to PairDStreamFunctions objects. In that way, functions such as combineByKey , reduceByKey , flatMapValues , various joins, and other functions become available on DStream objects.
+```bash
+from operator import add
+numPerType = orders.map(lambda o: (o['buy'], 1)).reduceByKey(add)
+```
+]
+.debug[[spark/Spark_streaming.md](https://github.com/RyaxTech/kube.training.git/tree/gh-pages//spark/Spark_streaming.md)]
+---
+
+## Exercise Spark Streaming - Counting orders, Saving Results
+
+.exercise[
+
+
+- To save the results of your computation to a file, you can use DStream’s saveAsTextFiles method. It takes a String prefix and an optional String suffix and uses them to construct the path at which the data should be periodically saved. Each mini-batch RDD is saved to a folder.To create only one part-xxxxx file per RDD folder, you’ll repartition the DStream to only one partition before saving it to a file. 
+```bash
+numPerType.repartition(1).saveAsTextFiles("hdfs://user/hadoop/orders/output/output", "txt")
+```
+
+]
+
+.debug[[spark/Spark_streaming.md](https://github.com/RyaxTech/kube.training.git/tree/gh-pages//spark/Spark_streaming.md)]
+---
+
+## Exercise Spark Streaming - Start the application and the stream
+
+.exercise[
+- Start the streaming computation by issuing the following command within the shell:
+  ```bash
+  ssc.start()
+  ```
+- This starts the streaming context, which evaluates the DStreams it was used to create, starts their receivers, and starts running the programs the DStreams represent. In the pyspark shell, this is all you need to do to run the streaming computation of your application. Receivers are started in separate threads, and you can still use the shell to enter and run other lines of code in parallel with the streaming computation.
+
+]
+
+.debug[[spark/Spark_streaming.md](https://github.com/RyaxTech/kube.training.git/tree/gh-pages//spark/Spark_streaming.md)]
+---
+
+## Exercise Spark Streaming - Start the application and the stream
+
+.exercise[
+
+
+- NOTE: if you were to start a streaming context like this in a standalone application, although the receiver threads would be started, the main thread of your driver would exit, unless you added the following line: `ssc.awaitTermination()` This line tells Spark to wait for the Spark Streaming computation to stop.
+
+- Now your Spark Streaming application is running, but it doesn’t have any data to process. So let’s give it some data using the `splitAndSend.sh` script that we mentioned previously. On another terminal launch the following command:
+  ```bash
+  ./splitAndSend.sh /user/hadoop/orders/ /home/ubuntu/
+  ```
+- In case you want to stop the running streaming context right from your shell use this method:`ssc.stop(False)`
+
+]
+
+.debug[[spark/Spark_streaming.md](https://github.com/RyaxTech/kube.training.git/tree/gh-pages//spark/Spark_streaming.md)]
+---
+
+
+## Exercise Spark Streaming - Check the results
+
+.exercise[
+- As we said earlier, `saveAsTextFiles` creates one folder per mini-batch. If you look at your output folders, you’ll find two files in each of them, named part-00000 and _ SUCCESS . _ SUCCESS means writing has finished successfully, and part-00000 contains the counts that were calculated. The contents of the part-00000 file might look something like this:
+```bash
+(false,9969)
+(true,10031)
+```
+]
+
+.debug[[spark/Spark_streaming.md](https://github.com/RyaxTech/kube.training.git/tree/gh-pages//spark/Spark_streaming.md)]
+---
+
+## Exercise Spark Streaming - Check the results
+
+.exercise[
+
+- Reading data from all these folders might seem difficult, but it’s simple using the Spark API. You can read several text files in one go using asterisks (*) when specifying paths for SparkContext’s textFile method. To read all the files you just generated into a single RDD, you can use the following expression:
+```bash
+allCounts = sc.textFile("hdfs:///user/hadoop/new_orders/output/output*.txt")
+```
+- And now read the data from the RDD using the different functions you learned such as:
+```bash
+allCounts.take(10)
+allCounts.count()
+```
+]
+
+.debug[[spark/Spark_streaming.md](https://github.com/RyaxTech/kube.training.git/tree/gh-pages//spark/Spark_streaming.md)]
+---
+
+class: pic
+
+.interstitial[![Image separating from the next chapter](https://gallant-turing-d0d520.netlify.com/containers/container-housing.jpg)]
+
+---
+
+name: toc-spark-streaming---saving-the-computation-state-over-time
+class: title
+
+Spark Streaming - Saving the computation state over time
+
+.nav[
+[Section précédente](#toc-writing-spark-streaming-applications)
+|
+[Retour table des matières](#toc-chapter-2)
+|
+[Section suivante](#toc-spark-streaming---using-window-operations-for-time-limited-calculations)
+]
+
+.debug[(automatically generated title slide)]
+
+---
+
+# Spark Streaming - Saving the computation state over time
+
+- The previous calculations only needed the data from the current mini-batch, but these new numbers have to be obtained by also taking into account the data from previous mini-batches. To calculate the top five clients, you have to keep track of the total dollar amount bought or sold by each client. In other words, you have to keep track of a state that persists over time and over different mini-batches.
+- This principle is shown in following figure. New data periodically arrives over time in mini-batches. Each DStream is a program that processes the data and produces results. By using Spark Streaming methods to update state, DStreams can combine the persisted data from the state with the new data from the current mini-batch. The results are much more powerful streaming programs.
+
+.debug[[spark/Spark_streaming.md](https://github.com/RyaxTech/kube.training.git/tree/gh-pages//spark/Spark_streaming.md)]
+---
+
+class: pic
+
+## Exercise Spark Streaming - Saving the computation state over time
+
+![history](spark/images/Dstream-state.png)
+
+.debug[[spark/Spark_streaming.md](https://github.com/RyaxTech/kube.training.git/tree/gh-pages//spark/Spark_streaming.md)]
+---
+
+## Exercise Spark Streaming - Using updateStateByKey
+
+.exercise[
+- Spark provides two main methods for performing calculations while taking into account the previous state of the computation: `updateStateByKey` and `mapWithState`. We will use the first one here.
+- Let’s first create a DStream that contains client IDs as keys and order dollar amounts as values (number of stocks bought or sold multiplied by their price):
+  ```bash
+  amountPerClient = orders.map(lambda o: (o['clientId'], o['amount']*o['price']))
+  ```
+]
+
+.debug[[spark/Spark_streaming.md](https://github.com/RyaxTech/kube.training.git/tree/gh-pages//spark/Spark_streaming.md)]
+---
+
+## Exercise Spark Streaming - Using updateStateByKey
+
+.exercise[
+
+- Now you can use the updateStateByKey method. It lets you work with a DStream’s values. It returns a new state DStream, which contains a state value for each key. At minimum, it takes as an argument a function with this signature: (Seq[V], Option[S]) => Option[S] The first argument of this function is a Seq object with new values of a key that came in the current mini-batch. The second argument is the state value of the key, or None if the state for that key hasn’t been calculated yet. If the state for the key has been calculated, but no new values for the key were received in the current mini-batch, the first argument will be an empty Seq . The function should return the new value for the key’s state. 
+- To apply this to the example and create a state DStream from the amountPerClient DStream , you can use the following snippet:
+  ```bash
+  amountState = amountPerClient.updateStateByKey(lambda vals, totalOpt: sum(vals)+totalOpt if totalOpt != None else sum(vals))
+  ```
+]
+
+.debug[[spark/Spark_streaming.md](https://github.com/RyaxTech/kube.training.git/tree/gh-pages//spark/Spark_streaming.md)]
+---
+
+## Exercise Spark Streaming - Saving the computation state over time
+
+.exercise[
+- Now, to find the top five clients by amounts of their orders, you need to sort each RDD in the amountState DStream and leave in each RDD only the first five elements. To leave only the top elements in an RDD , the following will do the job: add an index to each RDD’s element using zipWithIndex, filter out only the elements with the first five indices, and remove the indices using map. The whole snippet looks like this:
+```bash
+top5clients = amountState.transform(lambda rdd: rdd.sortBy(lambda x: x[1], False).map(lambda x: x[0]).zipWithIndex().filter(lambda x: x[1] < 5))
+```
+
+]
+
+.debug[[spark/Spark_streaming.md](https://github.com/RyaxTech/kube.training.git/tree/gh-pages//spark/Spark_streaming.md)]
+---
+
+## Exercise Spark Streaming - Combining two Dstreams using Union
+
+.exercise[
+
+- In order to write both calculated results (the top five clients and numbers of buy and sell orders you calculated previously) only once per batch interval, you first have to combine them in a single DStream . Two DStreams can be combined by key using various join methods or the cogroup method, or they can be merged using union . We’ll do the latter.
+- To merge 2 DStreams, their elements have to be of the same type. You’ll transform the top5clients and numPerType DStreams’ elements to tuples whose first elements are keys describing the metric ( "BUYS" for the number of buy orders, "SELLS" for the number of sell orders, and "TOP5CLIENTS" for the list of top five clients) and whose second elements are lists of strings. 
+]
+.debug[[spark/Spark_streaming.md](https://github.com/RyaxTech/kube.training.git/tree/gh-pages//spark/Spark_streaming.md)]
+---
+
+## Exercise Spark Streaming - Combining two Dstreams using Union
+
+.exercise[
+
+- They need to be lists because the top-five-clients metric is a list. You’ll convert all values to strings in order to be able to add a list of top stocks (their symbols) later. Converting numPerType to the new format isn’t difficult. If the key is true , the value represents the number of buy orders, and the number of sell orders otherwise:
+```bash
+buySellList = numPerType.map(lambda t: ("BUYS", [str(t[1])]) if t[0] else ("SELLS", [str(t[1])]) )
+```
+]
+
+.debug[[spark/Spark_streaming.md](https://github.com/RyaxTech/kube.training.git/tree/gh-pages//spark/Spark_streaming.md)]
+---
+
+## Exercise Spark Streaming - Combining two Dstreams using Union
+
+.exercise[
+
+- To convert the top5clients DStream , you’ll first make sure that all five clients are in the same partition by calling repartition(1) . Then you remove the amounts and leave just the client IDs (converted to strings, as we said) and call glom to group all the client IDs in the partition in a single array. Finally, you map that array to a tuple with a key equal to the metric name:
+```bash
+top5clList = top5clients.repartition(1).map(lambda x: str(x[0])).glom().map(lambda arr: ("TOP5CLIENTS", arr))
+```
+- Now you can union the two DStreams together:
+```bash
+finalStream = buySellList.union(top5clList)
+```
+- You save the combined DStream same as previously:
+```bash
+finalStream.repartition(1).saveAsTextFiles("hdfs:///user/hadoop/output/output", "txt")
+```
+]
+
+.debug[[spark/Spark_streaming.md](https://github.com/RyaxTech/kube.training.git/tree/gh-pages//spark/Spark_streaming.md)]
+---
+
+## Exercise Spark Streaming - Specifying the Checkpoint Directory
+
+.exercise[
+
+- You need to do one more thing before starting the streaming context, which is to specify a checkpointing directory:
+```bash
+sc.setCheckpointDir("/tmp/checkpoint/")
+```
+- Checkpointing saves an RDD’s data and its complete DAG (an RDD ’s calculation plan), so that if an executor fails, the RDD doesn’t have to be recomputed from scratch. It can be read from disk. This is necessary for DStreams resulting from the updateStateByKey method, because updateStateByKey expands RDD’s DAG in each mini-batch, and that can quickly lead to stack overflow exceptions. By periodically checkpointing RDDs, their calculation plan’s dependence on previous mini-batches is broken.
+
+]
+.debug[[spark/Spark_streaming.md](https://github.com/RyaxTech/kube.training.git/tree/gh-pages//spark/Spark_streaming.md)]
+---
+
+## Exercise Spark Streaming - Specifying the Checkpoint Directory
+
+.exercise[
+
+
+- Start the streaming context with:
+```bash
+ssc.start()
+```
+- Start the splitAndSend.sh script as you did previously. After a couple of seconds, a part-00000 file in one of your output folders may look like this:
+```bash
+(SELLS,List(4926))
+(BUYS,List(5074))
+(TOP5CLIENTS,List(34, 69, 92, 36, 64))
+```
+]
+
+.debug[[spark/Spark_streaming.md](https://github.com/RyaxTech/kube.training.git/tree/gh-pages//spark/Spark_streaming.md)]
+---
+
+class: pic
+
+.interstitial[![Image separating from the next chapter](https://gallant-turing-d0d520.netlify.com/containers/containers-by-the-water.jpg)]
+
+---
+
+name: toc-spark-streaming---using-window-operations-for-time-limited-calculations
+class: title
+
+Spark Streaming - Using window operations for time-limited calculations
+
+.nav[
+[Section précédente](#toc-spark-streaming---saving-the-computation-state-over-time)
+|
+[Retour table des matières](#toc-chapter-2)
+|
+[Section suivante](#toc-advanced-analytics-and-machine-learning-overview)
+]
+
+.debug[(automatically generated title slide)]
+
+---
+
+# Spark Streaming - Using window operations for time-limited calculations
+
+- There is one last task left to do: find the top five most-traded assets during the last hour. This is different than the previous task because it’s time-limited. In Spark Streaming, this type of calculation is accomplished using window operations.
+- The main principle is shown in following figure. Window operations operate on a sliding window of mini-batches. Each windowed DStream is determined by window duration and the slide of the window (how often the window data is recomputed), both multiples of the mini-batch duration.
+
+.debug[[spark/Spark_streaming.md](https://github.com/RyaxTech/kube.training.git/tree/gh-pages//spark/Spark_streaming.md)]
+---
+
+class: pic
+
+## Exercise Spark Streaming - Using window operations for time-limited calculations
+
+![history](spark/images/Dstream-windows.png)
+
+
+.debug[[spark/Spark_streaming.md](https://github.com/RyaxTech/kube.training.git/tree/gh-pages//spark/Spark_streaming.md)]
+---
+
+## Exercise Spark Streaming - Using window operations for time-limited calculations
+
+- In our example, the window duration is one hour (you need the top five most-traded assets during the last hour). But the slide duration is the same as the mini-batch duration (five seconds), because you want to report the top five most-traded assets in every mini-batch, together with other metrics.
+- To create a windowed DStream , you can use one of the window methods. For this task, we will use the `reduceByKeyAndWindow` method. You need to specify the reduce function and the window duration (you can also specify the slide duration if it’s different than the mini-batch duration), and it will create a windowed DStream and reduce it using your reduce function
+
+.debug[[spark/Spark_streaming.md](https://github.com/RyaxTech/kube.training.git/tree/gh-pages//spark/Spark_streaming.md)]
+---
+
+## Exercise Spark Streaming - Windowed Dstream
+
+.exercise[
+
+- So, to calculate the amounts traded per stock and per window, you can use this snippet (put this before the finalStream variable initialization):
+```bash
+stocksWindow = orders.map(lambda x: (x['symbol'], x['amount'])).window(60*60)
+stocksPerWindow = stocksWindow.reduceByKey(add)
+```
+- The rest is the same as what you did for top clients:
+```bash
+topStocks = stocksPerWindow.transform(lambda rdd: rdd.sortBy(lambda x: x[1], False).map(lambda x: x[0]).\
+zipWithIndex().filter(lambda x: x[1] < 5)).repartition(1).\
+map(lambda x: str(x[0])).glom().\
+map(lambda arr: ("TOP5STOCKS", arr))
+```
+- And you need to add this result to the final DStream :
+```bash
+finalStream = buySellList.union(top5clList).union(topStocks)
+```
+]
+
+.debug[[spark/Spark_streaming.md](https://github.com/RyaxTech/kube.training.git/tree/gh-pages//spark/Spark_streaming.md)]
+---
+
+## Exercise Spark Streaming - Windowed Dstream
+
+.exercise[
+
+- The rest is the same as before:
+```bash
+finalStream = buySellList.union(top5clList).union(topStocks)
+finalStream.repartition(1).saveAsTextFiles("hdfs:///user/hadoop/output/output", "txt")
+sc.setCheckpointDir("/tmp/checkpoint/")
+ssc.start()
+```
+- Now, when you start your streaming application, the resulting part-00000 files may contain results like these:
+```bash
+(SELLS,List(9969))
+(BUYS,List(10031))
+(TOP5CLIENTS,List(15, 64, 55, 69, 19))
+(TOP5STOCKS,List(AMD, INTC, BP, EGO, NEM))
+```
+]
+
+
+
+.debug[[spark/Spark_streaming.md](https://github.com/RyaxTech/kube.training.git/tree/gh-pages//spark/Spark_streaming.md)]
+---
+
+
+
+.debug[[spark/Spark_streaming.md](https://github.com/RyaxTech/kube.training.git/tree/gh-pages//spark/Spark_streaming.md)]
+---
+
+class: pic
+
+.interstitial[![Image separating from the next chapter](https://gallant-turing-d0d520.netlify.com/containers/distillery-containers.jpg)]
+
+---
+
+name: toc-advanced-analytics-and-machine-learning-overview
+class: title
+
+Advanced Analytics and Machine Learning Overview
+
+.nav[
+[Section précédente](#toc-spark-streaming---using-window-operations-for-time-limited-calculations)
+|
+[Retour table des matières](#toc-chapter-3)
+|
+[Section suivante](#toc-)
+]
+
+.debug[(automatically generated title slide)]
+
+---
+# Advanced Analytics and Machine Learning Overview
+
+- Spark also provides support for more advanced analytics such as machine learning and graph analytics.
+- Advanced analytics refers to a variety of techniques aimed at solving the core problem of deriving insights and making predictions or recommendations based on data. The best ontology for machine learning is structured based on the task that you’d like to perform. 
+- The most common tasks include:
+  - Supervised learning, including classification and regression, where the goal is to predict a label for each data point based on various features.
+  - Recommendation engines to suggest products to users based on behavior.
+  - Unsupervised learning, including clustering, anomaly detection, and topic modeling, where the goal is to discover structure in the data.
+  - Graph analytics tasks such as searching for patterns in a social network.
+
+.debug[[spark/Spark_ML.md](https://github.com/RyaxTech/kube.training.git/tree/gh-pages//spark/Spark_ML.md)]
+---
+
+## Supervised Learning
+
+- using historical data that already has labels (dependent variables), train a model to predict the values of those labels based on various features of the data points. 
+  - One example would be to predict a person’s income (the dependent variable) based on age (a feature).
+  - train on historical data, ensure that it generalizes to data we didn’t train on, and then make predictions on new data.
+  - the training process usually proceeds through an iterative optimization algorithm
+
+.debug[[spark/Spark_ML.md](https://github.com/RyaxTech/kube.training.git/tree/gh-pages//spark/Spark_ML.md)]
+---
+
+## Types of supervised Learning
+
+- **Classification** is the act of training an algorithm to predict a dependent variable that is categorical (belonging to a discrete, finite set ofvalues).Use cases:
+  - predicting disease for a particular patient based on his symptoms and taking into account historical data
+  - Classifying images
+- **Regression** allows the prediction of a continuous variable (a real number). Rather than predicting a category, we want to predict a value on a number line.
+  - Predicting sales
+  - Predicting the viewers number for a show
+- **Recommendation** by studying people’s explicit preferences (through ratings) or implicit ones (through observed behavior) for various products or items, an algorithm can make recommendations on what a user may like by drawing similarities between the users or items
+  - Movie recommendations
+  - Product recommendations
+
+.debug[[spark/Spark_ML.md](https://github.com/RyaxTech/kube.training.git/tree/gh-pages//spark/Spark_ML.md)]
+---
+
+## Unsupervised Learning
+
+- Unsupervised learning is the act of trying to find patterns or discover the underlying structure in a given set of data with no dependent variable to predict
+
+- Some use cases are:
+  - Anomaly detection
+  - User Segmentation
+
+.debug[[spark/Spark_ML.md](https://github.com/RyaxTech/kube.training.git/tree/gh-pages//spark/Spark_ML.md)]
+---
+
+## Graph Analytics 
+
+- Graph analytics is the study of structures in which we specify vertices (which are objects) and edges (which represent the relationships between those objects).
+- Some examples include:
+  - Fraud prediction: For instance, any user accounts within two hops of a fraudulent phone number might be considered suspicious.
+  - Anomaly detection
+  - Classification
+  - Recommendation
+
+.debug[[spark/Spark_ML.md](https://github.com/RyaxTech/kube.training.git/tree/gh-pages//spark/Spark_ML.md)]
+---
+
+## Advanced Analytics Steps
+
+The overall process involves, the following steps (with some variation):
+1. Gathering and collecting the relevant data for your task.
+2. Cleaning and inspecting the data to better understand it.
+3. Performing feature engineering to allow the algorithm to leverage the data in a suitable form (e.g., converting the data to numerical vectors).
+4. Using a portion of this data as a training set to train one or more algorithms to generate some candidate models.
+5. Evaluating and comparing models against your success criteria by objectively measuring results on a subset of the same data that was not used for training. This allows you to better understand how your model may perform in the wild.
+6. Leveraging the insights from the above process and/or using the model to make predictions, detect anomalies, or solve more general business challenges.
+
+These steps won’t be exactly the same for every advanced analytics task but gives the general idea.
+
+.debug[[spark/Spark_ML.md](https://github.com/RyaxTech/kube.training.git/tree/gh-pages//spark/Spark_ML.md)]
+---
+
+class: pic
+
+## Advanced Analytics Workflow
+
+![history](spark/images/spark-MLworkflow.png)
+
+.debug[[spark/Spark_ML.md](https://github.com/RyaxTech/kube.training.git/tree/gh-pages//spark/Spark_ML.md)]
+---
+
+## Spark Advanced Analytics Toolkit and MLlib
+
+- Spark includes several core packages and many external packages for performing advanced analytics. The primary package is MLlib, which provides an interface for building machine learning pipelines.
+- MLlib is a package, built on and included in Spark, that provides interfaces for gathering and cleaning data, feature engineering and feature selection, training and tuning large-scale supervised and unsupervised machine learning models, and using those models in production.
+- Usage of MLlib instead of scikit-learn or tensorflow. Spark can function on multiple machines whereas the others mainly function on one single machine
+  - Spark makes distributed machine learning very simple.
+
+.debug[[spark/Spark_ML.md](https://github.com/RyaxTech/kube.training.git/tree/gh-pages//spark/Spark_ML.md)]
+---
+
+## High-Level MLlib Concepts
+
+- In MLlib there are several fundamental “structural” types: transformers, estimators, evaluators, and pipelines.
+  - Transformers are functions that convert raw data in some way. They are are primarily used in preprocessing and feature engineering.
+  - Transformers take a DataFrame as input and produce a new DataFrame as output
+
+  - Estimators can be a kind of transformer initialized with data or algorithms that allow users to train models
+
+  - An evaluator allows us to see how a given model performs according to criteria we specify
+  - After we use the evaluator to select the best model from the ones we tested, we can then use that model to make predictions
+
+.debug[[spark/Spark_ML.md](https://github.com/RyaxTech/kube.training.git/tree/gh-pages//spark/Spark_ML.md)]
+---
+
+
+class: pic
+
+## Spark Machine Learning Workflow 
+
+![history](spark/images/spark-MLworkflow.png)
+
+
+
+
+
+
+.debug[[spark/Spark_ML.md](https://github.com/RyaxTech/kube.training.git/tree/gh-pages//spark/Spark_ML.md)]</textarea>
+    <script src="remark.min.js" type="text/javascript">
+    </script>
+    <script type="text/javascript">
+      var slideshow = remark.create({
+        ratio: '16:9',
+        highlightSpans: true,
+        excludedClasses: ["self-paced"]
+      });
+    </script>
+    
+    <!-- 
+    These two scripts will be available only when loading the
+    content using the pub/sub server. Otherwise, they'll just
+    404 and that's OK.
+    -->
+    <script src="/socket.io/socket.io.js">
+    </script>
+    <script src="/remote.js">
+    </script>
+
+  </body>
+</html>
