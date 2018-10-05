@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html>
   <head>
-    <title>Spark Fundamentals - Clustering, Storage, Cloud, RDD  </title>
+    <title>Spark Fundamentals - Clustering, Storage, Cloud  </title>
     <meta http-equiv="Content-Type" content="text/html; charset=UTF-8"/>
     <link rel="stylesheet" href="workshop.css">
   </head>
@@ -23,7 +23,7 @@
     -->
     <textarea id="source">class: title, self-paced
 
-Spark Fundamentals - Clustering, Storage, Cloud, RDD <br/>
+Spark Fundamentals - Clustering, Storage, Cloud <br/>
 
 .nav[*Self-paced version*]
 
@@ -63,7 +63,7 @@ These slides have been built from commit: 8fb8bc6
 
 class: title, in-person
 
-Spark Fundamentals - Clustering, Storage, Cloud, RDD <br/><br/></br>
+Spark Fundamentals - Clustering, Storage, Cloud <br/><br/></br>
 
 
 .debug[[common/title_fr.md](https://github.com/RyaxTech/kube.training.git/tree/gh-pages//common/title_fr.md)]
@@ -95,7 +95,17 @@ name: toc-chapter-2
 
 - [Spark on Amazon EMR and S3](#toc-spark-on-amazon-emr-and-s)
 
+.debug[(auto-generated TOC)]
+---
+name: toc-chapter-3
+
+## Chapter 3
+
 - [Spark Kubernetes cluster](#toc-spark-kubernetes-cluster)
+
+- [Kubernetes concepts](#toc-kubernetes-concepts)
+
+- [Exercise Launch a Spark job on Kubernetes cluster](#toc-exercise-launch-a-spark-job-on-kubernetes-cluster)
 
 .debug[(auto-generated TOC)]
 
@@ -1340,6 +1350,9 @@ spark-submit --name "test-github" "s3://spark-training-03102018/programs/GitHubD
 .debug[[spark/spark_cloud.md](https://github.com/RyaxTech/kube.training.git/tree/gh-pages//spark/spark_cloud.md)]
 ---
 
+.debug[[spark/spark_cloud.md](https://github.com/RyaxTech/kube.training.git/tree/gh-pages//spark/spark_cloud.md)]
+---
+
 class: pic
 
 .interstitial[![Image separating from the next chapter](https://gallant-turing-d0d520.netlify.com/containers/distillery-containers.jpg)]
@@ -1354,15 +1367,14 @@ Spark Kubernetes cluster
 .nav[
 [Section précédente](#toc-spark-on-amazon-emr-and-s)
 |
-[Retour table des matières](#toc-chapter-2)
+[Retour table des matières](#toc-chapter-3)
 |
-[Section suivante](#toc-)
+[Section suivante](#toc-kubernetes-concepts)
 ]
 
 .debug[(automatically generated title slide)]
 
 ---
-
 
 # Spark Kubernetes cluster
 
@@ -1370,8 +1382,617 @@ Spark Kubernetes cluster
 
 - With Kubernetes, you can choose the container repository to download images at runtime, use configMaps to inject configuration properties for individual services or coarse grained configuration like endpoints for services, or use Helm charts to create, version, share, and publish composite applications (i.e. Several services/components stitched together). Spark applications can also dynamically stage dependencies like their application JARs that use HDFS or HTTP servers when baking dependencies into container images gets to be cumbersome.
 
+- Kubernetes uses Docker (and other) containers to deploy applications and its own services. But what are containers 
 
-.debug[[spark/spark_cloud.md](https://github.com/RyaxTech/kube.training.git/tree/gh-pages//spark/spark_cloud.md)]
+.debug[[spark/spark_kubernetes.md](https://github.com/RyaxTech/kube.training.git/tree/gh-pages//spark/spark_kubernetes.md)]
+---
+
+class: pic
+
+## Containers vs VMs
+
+![lightcont](images/containers-as-lightweight-vms.png)
+
+.debug[[spark/spark_kubernetes.md](https://github.com/RyaxTech/kube.training.git/tree/gh-pages//spark/spark_kubernetes.md)]
+---
+
+## History of containers
+
+* The software industry has changed
+
+* Before:
+  * monolithic applications
+  * long development cycles
+  * single environment
+  * slowly scaling up
+
+* Now:
+  * decoupled services
+  * fast, iterative improvements
+  * multiple environments
+  * quickly scaling out
+
+.debug[[spark/spark_kubernetes.md](https://github.com/RyaxTech/kube.training.git/tree/gh-pages//spark/spark_kubernetes.md)]
+---
+
+## Deployment becomes very complex
+
+* Many different stacks:
+  * languages
+  * frameworks
+  * databases
+
+* Many different targets:
+  * individual development environments
+  * pre-production, QA, staging...
+  * production: on prem, cloud, hybrid
+
+.debug[[spark/spark_kubernetes.md](https://github.com/RyaxTech/kube.training.git/tree/gh-pages//spark/spark_kubernetes.md)]
+---
+
+class: pic
+
+## The deployment problem
+
+![problem](images/shipping-software-problem.png)
+
+.debug[[spark/spark_kubernetes.md](https://github.com/RyaxTech/kube.training.git/tree/gh-pages//spark/spark_kubernetes.md)]
+---
+
+class: pic
+
+## The matrix from hell
+
+![matrix](images/shipping-matrix-from-hell.png)
+
+.debug[[spark/spark_kubernetes.md](https://github.com/RyaxTech/kube.training.git/tree/gh-pages//spark/spark_kubernetes.md)]
+---
+
+class: pic
+
+## The parallel with the shipping industry
+
+![history](images/shipping-industry-problem.png)
+
+.debug[[spark/spark_kubernetes.md](https://github.com/RyaxTech/kube.training.git/tree/gh-pages//spark/spark_kubernetes.md)]
+---
+
+class: pic
+
+## Intermodal shipping containers
+
+![shipping](images/shipping-industry-solution.png)
+
+.debug[[spark/spark_kubernetes.md](https://github.com/RyaxTech/kube.training.git/tree/gh-pages//spark/spark_kubernetes.md)]
+---
+
+class: pic
+
+## A new shipping ecosystem
+
+![shipeco](images/shipping-indsutry-results.png)
+
+.debug[[spark/spark_kubernetes.md](https://github.com/RyaxTech/kube.training.git/tree/gh-pages//spark/spark_kubernetes.md)]
+---
+
+class: pic
+
+## A shipping container system for applications
+
+![shipapp](images/shipping-software-solution.png)
+
+.debug[[spark/spark_kubernetes.md](https://github.com/RyaxTech/kube.training.git/tree/gh-pages//spark/spark_kubernetes.md)]
+---
+
+class: pic
+
+## Eliminate the matrix from hell
+
+![elimatrix](images/shipping-matrix-solved.png)
+
+.debug[[spark/spark_kubernetes.md](https://github.com/RyaxTech/kube.training.git/tree/gh-pages//spark/spark_kubernetes.md)]
+---
+
+## Results
+
+* [Dev-to-prod reduced from 9 months to 15 minutes (ING)](
+  https://www.docker.com/sites/default/files/CS_ING_01.25.2015_1.pdf)
+
+* [Continuous integration job time reduced by more than 60% (BBC)](
+  https://www.docker.com/sites/default/files/CS_BBCNews_01.25.2015_1.pdf)
+
+* [Deploy 100 times a day instead of once a week (GILT)](
+  https://www.docker.com/sites/default/files/CS_Gilt%20Groupe_03.18.2015_0.pdf)
+
+* [70% infrastructure consolidation (MetLife)](
+  https://www.docker.com/customers/metlife-transforms-customer-experience-legacy-and-microservices-mashup)
+
+* [60% infrastructure consolidation (Intesa Sanpaolo)](
+  https://blog.docker.com/2017/11/intesa-sanpaolo-builds-resilient-foundation-banking-docker-enterprise-edition/)
+
+* [14x application density; 60% of legacy datacenter migrated in 4 months (GE Appliances)](
+  https://www.docker.com/customers/ge-uses-docker-enable-self-service-their-developers)
+
+* etc.
+
+.debug[[spark/spark_kubernetes.md](https://github.com/RyaxTech/kube.training.git/tree/gh-pages//spark/spark_kubernetes.md)]
+---
+
+## Escape dependency hell
+
+1. Write installation instructions into an `INSTALL.txt` file
+
+2. Using this file, write an `install.sh` script that works *for you*
+
+3. Turn this file into a `Dockerfile`, test it on your machine
+
+4. If the Dockerfile builds on your machine, it will build *anywhere*
+
+5. Rejoice as you escape dependency hell and "works on my machine"
+
+Never again "worked in dev - ops problem now!"
+
+.debug[[spark/spark_kubernetes.md](https://github.com/RyaxTech/kube.training.git/tree/gh-pages//spark/spark_kubernetes.md)]
+---
+
+## On-board developers and contributors rapidly
+
+1. Write Dockerfiles for your application components
+
+2. Use pre-made images from the Docker Hub (mysql, redis...)
+
+3. Describe your stack with a Compose file
+
+4. On-board somebody with two commands:
+
+```bash
+git clone ...
+docker-compose up
+```
+
+With this, you can create development, integration, QA environments in minutes!
+
+.debug[[spark/spark_kubernetes.md](https://github.com/RyaxTech/kube.training.git/tree/gh-pages//spark/spark_kubernetes.md)]
+---
+
+class: extra-details
+
+## Implement reliable CI easily
+
+1. Build test environment with a Dockerfile or Compose file
+
+2. For each test run, stage up a new container or stack
+
+3. Each run is now in a clean environment
+
+4. No pollution from previous tests
+
+Way faster and cheaper than creating VMs each time!
+
+.debug[[spark/spark_kubernetes.md](https://github.com/RyaxTech/kube.training.git/tree/gh-pages//spark/spark_kubernetes.md)]
+---
+
+class: extra-details
+
+## Use container images as build artefacts
+
+1. Build your app from Dockerfiles
+
+2. Store the resulting images in a registry
+
+3. Keep them forever (or as long as necessary)
+
+4. Test those images in QA, CI, integration...
+
+5. Run the same images in production
+
+6. Something goes wrong? Rollback to previous image
+
+7. Investigating old regression? Old image has your back!
+
+Images contain all the libraries, dependencies, etc. needed to run the app.
+
+.debug[[spark/spark_kubernetes.md](https://github.com/RyaxTech/kube.training.git/tree/gh-pages//spark/spark_kubernetes.md)]
+---
+
+class: extra-details
+
+## Decouple "plumbing" from application logic
+
+1. Write your code to connect to named services ("db", "api"...)
+
+2. Use Compose to start your stack
+
+3. Docker will setup per-container DNS resolver for those names
+
+4. You can now scale, add load balancers, replication ... without changing your code
+
+Note: this is not covered in this intro level workshop!
+
+.debug[[spark/spark_kubernetes.md](https://github.com/RyaxTech/kube.training.git/tree/gh-pages//spark/spark_kubernetes.md)]
+---
+
+class: extra-details
+
+## What did Docker bring to the table?
+
+### Docker before/after
+
+.debug[[spark/spark_kubernetes.md](https://github.com/RyaxTech/kube.training.git/tree/gh-pages//spark/spark_kubernetes.md)]
+---
+
+class: extra-details
+
+## Formats and APIs, before Docker
+
+* No standardized exchange format.
+  <br/>(No, a rootfs tarball is *not* a format!)
+
+* Containers are hard to use for developers.
+  <br/>(Where's the equivalent of `docker run debian`?)
+
+* As a result, they are *hidden* from the end users.
+
+* No re-usable components, APIs, tools.
+  <br/>(At best: VM abstractions, e.g. libvirt.)
+
+Analogy: 
+
+* Shipping containers are not just steel boxes.
+* They are steel boxes that are a standard size, with the same hooks and holes.
+
+.debug[[spark/spark_kubernetes.md](https://github.com/RyaxTech/kube.training.git/tree/gh-pages//spark/spark_kubernetes.md)]
+---
+
+class: extra-details
+
+## Formats and APIs, after Docker
+
+* Standardize the container format, because containers were not portable.
+
+* Make containers easy to use for developers.
+
+* Emphasis on re-usable components, APIs, ecosystem of standard tools.
+
+* Improvement over ad-hoc, in-house, specific tools.
+
+.debug[[spark/spark_kubernetes.md](https://github.com/RyaxTech/kube.training.git/tree/gh-pages//spark/spark_kubernetes.md)]
+---
+
+class: extra-details
+
+## Shipping, before Docker
+
+* Ship packages: deb, rpm, gem, jar, homebrew...
+
+* Dependency hell.
+
+* "Works on my machine."
+
+* Base deployment often done from scratch (debootstrap...) and unreliable.
+
+.debug[[spark/spark_kubernetes.md](https://github.com/RyaxTech/kube.training.git/tree/gh-pages//spark/spark_kubernetes.md)]
+---
+
+class: extra-details
+
+## Shipping, after Docker
+
+* Ship container images with all their dependencies.
+
+* Images are bigger, but they are broken down into layers.
+
+* Only ship layers that have changed.
+
+* Save disk, network, memory usage.
+
+.debug[[spark/spark_kubernetes.md](https://github.com/RyaxTech/kube.training.git/tree/gh-pages//spark/spark_kubernetes.md)]
+---
+
+class: extra-details
+
+## Example
+
+Layers:
+
+* CentOS
+* JRE
+* Tomcat
+* Dependencies
+* Application JAR
+* Configuration
+
+.debug[[spark/spark_kubernetes.md](https://github.com/RyaxTech/kube.training.git/tree/gh-pages//spark/spark_kubernetes.md)]
+---
+
+class: extra-details
+
+## Devs vs Ops, before Docker
+
+* Drop a tarball (or a commit hash) with instructions.
+
+* Dev environment very different from production.
+
+* Ops don't always have a dev environment themselves ...
+
+* ... and when they do, it can differ from the devs'.
+
+* Ops have to sort out differences and make it work ...
+
+* ... or bounce it back to devs.
+
+* Shipping code causes frictions and delays.
+
+.debug[[spark/spark_kubernetes.md](https://github.com/RyaxTech/kube.training.git/tree/gh-pages//spark/spark_kubernetes.md)]
+---
+
+class: extra-details
+
+## Devs vs Ops, after Docker
+
+* Drop a container image or a Compose file.
+
+* Ops can always run that container image.
+
+* Ops can always run that Compose file.
+
+* Ops still have to adapt to prod environment,
+  but at least they have a reference point.
+
+* Ops have tools allowing to use the same image
+  in dev and prod.
+
+* Devs can be empowered to make releases themselves
+  more easily.
+
+.debug[[spark/spark_kubernetes.md](https://github.com/RyaxTech/kube.training.git/tree/gh-pages//spark/spark_kubernetes.md)]
+---
+
+class: pic
+
+.interstitial[![Image separating from the next chapter](https://gallant-turing-d0d520.netlify.com/containers/lots-of-containers.jpg)]
+
+---
+
+name: toc-kubernetes-concepts
+class: title
+
+Kubernetes concepts
+
+.nav[
+[Section précédente](#toc-spark-kubernetes-cluster)
+|
+[Retour table des matières](#toc-chapter-3)
+|
+[Section suivante](#toc-exercise-launch-a-spark-job-on-kubernetes-cluster)
+]
+
+.debug[(automatically generated title slide)]
+
+---
+
+# Kubernetes concepts
+
+- Kubernetes is a container management system
+
+- It runs and manages containerized applications on a cluster
+
+--
+
+- What does that really mean?
+
+.debug[[spark/spark_kubernetes.md](https://github.com/RyaxTech/kube.training.git/tree/gh-pages//spark/spark_kubernetes.md)]
+---
+
+## Basic things we can ask Kubernetes to do
+
+
+- Start 5 containers using image `atseashop/api:v1.3`
+
+- Start 10 containers using image `atseashop/webfront:v1.3`
+
+- Place a load balancer in front of these containers
+
+- It's Christmas, traffic spikes, grow our cluster and add containers
+
+- New release! Replace my containers with the new image `atseashop/webfront:v1.4`
+
+- Keep processing requests during the upgrade; update my containers one at a time
+
+.debug[[spark/spark_kubernetes.md](https://github.com/RyaxTech/kube.training.git/tree/gh-pages//spark/spark_kubernetes.md)]
+---
+
+## Other things that Kubernetes can do for us
+
+- Basic autoscaling
+
+- Blue/green deployment, canary deployment
+
+- Long running services, but also batch (one-off) jobs
+
+- Overcommit our cluster and *evict* low-priority jobs
+
+- Run services with *stateful* data (databases etc.)
+
+- Fine-grained access control defining *what* can be done by *whom* on *which* resources
+
+- Integrating third party services (*service catalog*)
+
+- Automating complex tasks (*operators*)
+
+.debug[[spark/spark_kubernetes.md](https://github.com/RyaxTech/kube.training.git/tree/gh-pages//spark/spark_kubernetes.md)]
+---
+
+## Kubernetes Architecture
+
+![Celui-là ressemble plus à la réalité](images/kube_archi_simple.png)
+
+.debug[[spark/spark_kubernetes.md](https://github.com/RyaxTech/kube.training.git/tree/gh-pages//spark/spark_kubernetes.md)]
+---
+
+## Kubernetes Architecture
+
+![that one is more like the real thing](images/k8s-arch2.png)
+
+.debug[[spark/spark_kubernetes.md](https://github.com/RyaxTech/kube.training.git/tree/gh-pages//spark/spark_kubernetes.md)]
+---
+
+## Kubernetes architecture: the nodes
+
+- The nodes executing our containers run a collection of services:
+
+  - a container Engine (typically Docker)
+
+  - kubelet (the "node agent")
+
+  - kube-proxy (a necessary but not sufficient network component)
+
+- Nodes were formerly called "minions"
+
+  (You might see that word in older articles or documentation)
+
+.debug[[spark/spark_kubernetes.md](https://github.com/RyaxTech/kube.training.git/tree/gh-pages//spark/spark_kubernetes.md)]
+---
+
+## Kubernetes architecture: the control plane
+
+- The Kubernetes logic (its "brains") is a collection of services:
+
+  - the API server (our point of entry to everything!)
+
+  - core services like the scheduler and controller manager
+
+  - `etcd` (a highly available key/value store; the "database" of Kubernetes)
+
+- Together, these services form the control plane of our cluster
+
+- The control plane is also called the "master"
+
+.debug[[spark/spark_kubernetes.md](https://github.com/RyaxTech/kube.training.git/tree/gh-pages//spark/spark_kubernetes.md)]
+---
+
+## Running the control plane on special nodes
+
+- It is common to reserve a dedicated node for the control plane
+
+  (Except for single-node development clusters, like when using minikube)
+
+- This node is then called a "master"
+
+  (Yes, this is ambiguous: is the "master" a node, or the whole control plane?)
+
+- Normal applications are restricted from running on this node
+
+  (By using a mechanism called ["taints"](https://kubernetes.io/docs/concepts/configuration/taint-and-toleration/))
+
+- When high availability is required, each service of the control plane must be resilient
+
+- The control plane is then replicated on multiple nodes
+
+  (This is sometimes called a "multi-master" setup)
+
+.debug[[spark/spark_kubernetes.md](https://github.com/RyaxTech/kube.training.git/tree/gh-pages//spark/spark_kubernetes.md)]
+---
+
+## Running the control plane outside containers
+
+- The services of the control plane can run in or out of containers
+
+- For instance: since `etcd` is a critical service, some people
+  deploy it directly on a dedicated cluster (without containers)
+
+  (This is illustrated on the first "super complicated" schema)
+
+- In some hosted Kubernetes offerings (e.g. GKE), the control plane is invisible
+
+  (We only "see" a Kubernetes API endpoint)
+
+- In that case, there is no "master node"
+
+*For this reason, it is more accurate to say "control plane" rather than "master".*
+
+.debug[[spark/spark_kubernetes.md](https://github.com/RyaxTech/kube.training.git/tree/gh-pages//spark/spark_kubernetes.md)]
+---
+
+## Do we need to run Docker at all?
+
+- By default, Kubernetes uses the Docker Engine to run containers
+
+- We could also use `rkt` ("Rocket") from CoreOS
+
+- Or leverage other pluggable runtimes through the *Container Runtime Interface*
+
+  (like CRI-O, or containerd)
+
+- Docker is still the most stable container engine today
+  <br/>
+  (but other options are maturing very quickly)
+
+
+.debug[[spark/spark_kubernetes.md](https://github.com/RyaxTech/kube.training.git/tree/gh-pages//spark/spark_kubernetes.md)]
+---
+
+## Kubernetes resources
+
+- The Kubernetes API defines a lot of objects called *resources*
+
+- These resources are organized by type, or `Kind` (in the API)
+
+- A few common resource types are:
+
+  - node (a machine — physical or virtual — in our cluster)
+  - pod (group of containers running together on a node)
+  - service (stable network endpoint to connect to one or multiple containers)
+  - namespace (more-or-less isolated group of things)
+  - secret (bundle of sensitive data to be passed to a container)
+ 
+  And much more! (We can see the full list by running `kubectl get`)
+
+.debug[[spark/spark_kubernetes.md](https://github.com/RyaxTech/kube.training.git/tree/gh-pages//spark/spark_kubernetes.md)]
+---
+
+class: pic
+
+![Node, pod, container](images/k8s-arch3-thanks-weave.png)
+
+.debug[[spark/spark_kubernetes.md](https://github.com/RyaxTech/kube.training.git/tree/gh-pages//spark/spark_kubernetes.md)]
+---
+
+class: pic
+
+![One of the best Kubernetes architecture diagrams available](images/k8s-arch4-thanks-luxas.png)
+
+.debug[[spark/spark_kubernetes.md](https://github.com/RyaxTech/kube.training.git/tree/gh-pages//spark/spark_kubernetes.md)]
+---
+
+## Kubernetes and Spark integration
+
+- Apache Spark workloads can make direct use of Kubernetes clusters for multi-tenancy and sharing. Best of all, it requires no changes or new installations on your Kubernetes cluster; simply create a container image for your Spark Application and you’re all set.
+
+- A native Spark Application in Kubernetes acts as a custom controller, which creates Kubernetes resources in response to requests made by the Spark scheduler. 
+- The native approach offers fine-grained management of Spark Applications, improved elasticity, and seamless integration with logging and monitoring solutions. 
+- The community is also exploring advanced use cases such as managing streaming workloads and leveraging service meshes.
+
+.debug[[spark/spark_kubernetes.md](https://github.com/RyaxTech/kube.training.git/tree/gh-pages//spark/spark_kubernetes.md)]
+---
+
+class: pic
+
+## Kubernetes and Spark integration
+
+![Node, pod, container](spark/images/k8s-cluster-mode.png)
+
+.debug[[spark/spark_kubernetes.md](https://github.com/RyaxTech/kube.training.git/tree/gh-pages//spark/spark_kubernetes.md)]
+---
+
+class: pic
+
+## Kubernetes and Spark integration
+
+![Node, pod, container](spark/images/kube-spark.png)
+
+
+.debug[[spark/spark_kubernetes.md](https://github.com/RyaxTech/kube.training.git/tree/gh-pages//spark/spark_kubernetes.md)]
 ---
 
 ## Kubernetes Installation using Kubeadm
@@ -1393,7 +2014,7 @@ Spark Kubernetes cluster
   ```
 ]
 
-.debug[[spark/spark_cloud.md](https://github.com/RyaxTech/kube.training.git/tree/gh-pages//spark/spark_cloud.md)]
+.debug[[spark/spark_kubernetes.md](https://github.com/RyaxTech/kube.training.git/tree/gh-pages//spark/spark_kubernetes.md)]
 ---
 
 ## Kubernetes Installation using Kubeadm
@@ -1415,7 +2036,7 @@ Spark Kubernetes cluster
    ```
 ]
 
-.debug[[spark/spark_cloud.md](https://github.com/RyaxTech/kube.training.git/tree/gh-pages//spark/spark_cloud.md)]
+.debug[[spark/spark_kubernetes.md](https://github.com/RyaxTech/kube.training.git/tree/gh-pages//spark/spark_kubernetes.md)]
 ---
 ## Kubernetes Installation using Kubeadm
 
@@ -1440,21 +2061,44 @@ Spark Kubernetes cluster
   ```
 ]
 
-.debug[[spark/spark_cloud.md](https://github.com/RyaxTech/kube.training.git/tree/gh-pages//spark/spark_cloud.md)]
+.debug[[spark/spark_kubernetes.md](https://github.com/RyaxTech/kube.training.git/tree/gh-pages//spark/spark_kubernetes.md)]
 ---
 
-## Exercise Launch a Spark job on Kubernetes cluster
+class: pic
+
+.interstitial[![Image separating from the next chapter](https://gallant-turing-d0d520.netlify.com/containers/plastic-containers.JPG)]
+
+---
+
+name: toc-exercise-launch-a-spark-job-on-kubernetes-cluster
+class: title
+
+Exercise Launch a Spark job on Kubernetes cluster
+
+.nav[
+[Section précédente](#toc-kubernetes-concepts)
+|
+[Retour table des matières](#toc-chapter-3)
+|
+[Section suivante](#toc-)
+]
+
+.debug[(automatically generated title slide)]
+
+---
+
+# Exercise Launch a Spark job on Kubernetes cluster
 
 .exercise[
 - Follow the procedure described [here](https://github.com/RyaxTech/kube-tutorial#3-execute-big-data-job-with-spark-on-the-kubernetes-cluster) to execute a simple Spark job execution with Spark upon Kubernetes
 
 ]
 
-.debug[[spark/spark_cloud.md](https://github.com/RyaxTech/kube.training.git/tree/gh-pages//spark/spark_cloud.md)]
+.debug[[spark/spark_kubernetes.md](https://github.com/RyaxTech/kube.training.git/tree/gh-pages//spark/spark_kubernetes.md)]
 ---
 
 
-.debug[[spark/spark_cloud.md](https://github.com/RyaxTech/kube.training.git/tree/gh-pages//spark/spark_cloud.md)]</textarea>
+.debug[[spark/spark_kubernetes.md](https://github.com/RyaxTech/kube.training.git/tree/gh-pages//spark/spark_kubernetes.md)]</textarea>
     <script src="remark.min.js" type="text/javascript">
     </script>
     <script type="text/javascript">
