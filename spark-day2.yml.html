@@ -2090,6 +2090,14 @@ Exercise Launch a Spark job on Kubernetes cluster
 # Exercise Launch a Spark job on Kubernetes cluster
 
 .exercise[
+
+- On the first node execute the following commands to prepare the execution of spark on the cluster:
+
+```bash
+kubectl create serviceaccount spark
+kubectl create clusterrolebinding spark-role --clusterrole=edit --serviceaccount=default:spark --namespace=default
+```
+
 - Follow the procedure described [here](https://github.com/RyaxTech/kube-tutorial#3-execute-big-data-job-with-spark-on-the-kubernetes-cluster) to execute a simple Spark job execution with Spark upon Kubernetes
 
 ]
