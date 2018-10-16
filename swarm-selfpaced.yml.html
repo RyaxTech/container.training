@@ -4,6 +4,7 @@
     <title>Container Orchestration with Docker and Swarm </title>
     <meta http-equiv="Content-Type" content="text/html; charset=UTF-8"/>
     <link rel="stylesheet" href="workshop.css">
+    <link rel="stylesheet" href="override.css">
   </head>
   <body>
     <!--
@@ -29,30 +30,69 @@ Container Orchestration<br/>with Docker and Swarm<br/>
 
 .debug[
 ```
+ M common/composedown.md
+ M common/sampleapp.md
+ M index.html
  M intro-fullday.yml.html
  M intro-selfpaced.yml.html
  M kube-fullday.yml.html
  M kube-halfday.yml.html
  M kube-jour1.yml.html
  M kube-jour2.yml.html
+ M kube-jour3.yml
  M kube-jour3.yml.html
  M kube-selfpaced.yml.html
- M kube/netisolation_fr.md
- M kube/stockage_fr.md
+ M kube/advanced.md
+ M kube/concepts-k8s.md
+ M kube/daemonset.md
+ M kube/dashboard.md
+ M kube/helm.md
+ M kube/kubectlexpose.md
+ M kube/kubectlget.md
+ M kube/kubectlrun.md
+ M kube/logs-centralized.md
+ M kube/namespaces.md
+ M kube/ourapponkube.md
+ M kube/rollout.md
+ M kube/setup-k8s.md
+ M kube/statefulsets.md
+ M kube/stockage.md
+ M logistics.md
  M swarm-fullday.yml.html
  M swarm-halfday.yml.html
  M swarm-selfpaced.yml.html
  M swarm-video.yml.html
-?? .directory
-?? common/.directory
-?? intro/.directory
-?? kube/.directory
-?? kube/recapj2_fr.md
-?? swarm/.directory
+ M swarm/links.md
+ M workshop.html
+?? common/cncf.md
+?? containers/
+?? dock-kube-day1.yml
+?? dock-kube-day1.yml.html
+?? dock-kube-day2.yml
+?? dock-kube-day2.yml.html
+?? dock-kube-day3.yml
+?? dock-kube-day3.yml.html
+?? dock-kube-day4.yml
+?? dock-kube-day4.yml.html
+?? images/container-layers.jpg
+?? images/containers_VMs_CPUs.png
+?? images/containers_vs_VMS.png
+?? images/logo-plb.jpg
+?? images/plb.jpeg
+?? images/sharing-layers.jpg
+?? kube-day1.yml
+?? kube-day1.yml.html
+?? kube/kubeobjects.md
+?? kube/monitoring.md
+?? kube/netisolation.md
+?? kube/serverless.md
+?? kube/statefulsets_fr.md
+?? override.css
+?? shared/
 
 ```
 
-These slides have been built from commit: 714e600
+These slides have been built from commit: 3e7271f
 
 
 [common/title.md](https://github.com/RyaxTech/kube.training.git/tree/gh-pages//common/title.md)]
@@ -748,17 +788,9 @@ Our sample application
 
 .exercise[
 
-<!--
-```bash
-if [ -d container.training ]; then
-  mv container.training container.training.$$
-fi
-```
--->
-
 - Clone the repository on `node1`:
   ```bash
-  git clone git://github.com/jpetazzo/container.training
+  git clone https://github.com/RyaxTech/kube.training
   ```
 
 ]
@@ -776,17 +808,13 @@ Let's start this before we look around, as downloading will take a little time..
 
 - Go to the `dockercoins` directory, in the cloned repo:
   ```bash
-  cd ~/container.training/dockercoins
+  cd ~/kube.training/dockercoins
   ```
 
 - Use Compose to build and run all containers:
   ```bash
   docker-compose up
   ```
-
-<!--
-```longwait units of work done```
--->
 
 ]
 
@@ -800,16 +828,16 @@ and displays aggregated logs.
 ## More detail on our sample application
 
 - Visit the GitHub repository with all the materials of this workshop:
-  <br/>https://github.com/jpetazzo/container.training
+  <br/> https://github.com/RyaxTech/kube.training
 
 - The application is in the [dockercoins](
-  https://github.com/jpetazzo/container.training/tree/master/dockercoins)
+  https://github.com/RyaxTech/kube.training/tree/master/dockercoins)
   subdirectory
 
 - Let's look at the general layout of the source code:
 
   there is a Compose file [docker-compose.yml](
-  https://github.com/jpetazzo/container.training/blob/master/dockercoins/docker-compose.yml) ...
+  https://github.com/RyaxTech/kube.training/blob/master/dockercoins/docker-compose.yml) ...
 
   ... and 4 other services, each in its own directory:
 
@@ -871,7 +899,7 @@ def hash_bytes(data):
 ```
 
 (Full source code available [here](
-https://github.com/jpetazzo/container.training/blob/8279a3bce9398f7c1a53bdd95187c53eda4e6435/dockercoins/worker/worker.py#L17
+https://github.com/RyaxTech/kube.training/blob/8279a3bce9398f7c1a53bdd95187c53eda4e6435/dockercoins/worker/worker.py#L17
 ))
 
 .debug[[common/sampleapp.md](https://github.com/RyaxTech/kube.training.git/tree/gh-pages//common/sampleapp.md)]
@@ -1326,6 +1354,16 @@ Note: this is a fiction! We have enough entropy. But we need a pretext to scale 
   ```
 
 ]
+
+.debug[[common/composedown.md](https://github.com/RyaxTech/kube.training.git/tree/gh-pages//common/composedown.md)]
+---
+
+## To go even further with Docker Compose
+
+- Read the [overview](https://docs.docker.com/compose/overview/) of the official documentation.
+
+- The examples are also interesting such as: [Quickstart: Compose and WordPress](https://docs.docker.com/compose/wordpress/).
+
 
 .debug[[common/composedown.md](https://github.com/RyaxTech/kube.training.git/tree/gh-pages//common/composedown.md)]
 ---
@@ -9022,7 +9060,6 @@ Links and resources
 - [Docker on Twitter](http://twitter.com/docker)
 - [Play With Docker Hands-On Labs](http://training.play-with-docker.com/)
 
-.footnote[These slides (and future updates) are on → http://container.training/]
 
 .debug[[swarm/links.md](https://github.com/RyaxTech/kube.training.git/tree/gh-pages//swarm/links.md)]</textarea>
     <script src="remark.min.js" type="text/javascript">

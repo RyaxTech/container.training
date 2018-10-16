@@ -1,0 +1,1404 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <title>Kubernetes  Storage, Configuration, Secrets and Advanced Concepts  </title>
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8"/>
+    <link rel="stylesheet" href="workshop.css">
+    <link rel="stylesheet" href="override.css">
+  </head>
+  <body>
+    <!--
+    <div style="position: absolute; left: 20%; right: 20%; top: 30%;">
+      <h1 style="font-size: 3em;">Loading ...</h1>
+      The slides should show up here. If they don't, it might be
+      because you are accessing this file directly from your filesystem.
+      It needs to be served from a web server. You can try this:
+      <pre>
+        docker-compose up -d
+        open http://localhost:8888/workshop.html # on MacOS
+        xdg-open http://localhost:8888/workshop.html # on Linux
+      </pre>
+      Once the slides are loaded, this notice disappears when you
+      go full screen (e.g. by hitting "f").
+    </div>
+    -->
+    <textarea id="source">class: title, self-paced
+
+Kubernetes <br/>Storage, Configuration, Secrets and Advanced Concepts <br/>
+
+.nav[*Self-paced version*]
+
+.debug[
+```
+ M common/composedown.md
+ M common/sampleapp.md
+ M index.html
+ M intro-fullday.yml.html
+ M intro-selfpaced.yml.html
+ M kube-fullday.yml.html
+ M kube-halfday.yml.html
+ M kube-jour1.yml.html
+ M kube-jour2.yml.html
+ M kube-jour3.yml
+ M kube-jour3.yml.html
+ M kube-selfpaced.yml.html
+ M kube/advanced.md
+ M kube/concepts-k8s.md
+ M kube/daemonset.md
+ M kube/dashboard.md
+ M kube/helm.md
+ M kube/kubectlexpose.md
+ M kube/kubectlget.md
+ M kube/kubectlrun.md
+ M kube/logs-centralized.md
+ M kube/namespaces.md
+ M kube/ourapponkube.md
+ M kube/rollout.md
+ M kube/setup-k8s.md
+ M kube/statefulsets.md
+ M kube/stockage.md
+ M logistics.md
+ M swarm-fullday.yml.html
+ M swarm-halfday.yml.html
+ M swarm-selfpaced.yml.html
+ M swarm-video.yml.html
+ M swarm/links.md
+ M workshop.html
+?? common/cncf.md
+?? containers/
+?? dock-kube-day1.yml
+?? dock-kube-day1.yml.html
+?? dock-kube-day2.yml
+?? dock-kube-day2.yml.html
+?? dock-kube-day3.yml
+?? dock-kube-day3.yml.html
+?? dock-kube-day4.yml
+?? dock-kube-day4.yml.html
+?? images/container-layers.jpg
+?? images/containers_VMs_CPUs.png
+?? images/containers_vs_VMS.png
+?? images/logo-plb.jpg
+?? images/plb.jpeg
+?? images/sharing-layers.jpg
+?? kube-day1.yml
+?? kube-day1.yml.html
+?? kube/kubeobjects.md
+?? kube/monitoring.md
+?? kube/netisolation.md
+?? kube/serverless.md
+?? kube/statefulsets_fr.md
+?? override.css
+?? shared/
+
+```
+
+These slides have been built from commit: 3e7271f
+
+
+[shared/title.md](https://github.com/RyaxTech/kube.training.git/tree/gh-pages//shared/title.md)]
+---
+
+class: title, in-person
+
+Kubernetes <br/>Storage, Configuration, Secrets and Advanced Concepts <br/><br/></br>
+
+
+.debug[[shared/title.md](https://github.com/RyaxTech/kube.training.git/tree/gh-pages//shared/title.md)]
+---
+
+name: toc-chapter-1
+
+## Chapter 1
+
+- [Serverless](#toc-serverless)
+
+.debug[(auto-generated TOC)]
+---
+name: toc-chapter-2
+
+## Chapter 2
+
+- [Introducing Volumes](#toc-introducing-volumes)
+
+- [Introducing PersistentVolumes and PersistentVolumeClaims](#toc-introducing-persistentvolumes-and-persistentvolumeclaims)
+
+- [Dynamic Provisioning of PersistentVolumes](#toc-dynamic-provisioning-of-persistentvolumes)
+
+- [Rook: orchestration of distributed storage](#toc-rook-orchestration-of-distributed-storage)
+
+.debug[(auto-generated TOC)]
+---
+name: toc-chapter-3
+
+## Chapter 3
+
+- [Decoupling configuration with a ConfigMap](#toc-decoupling-configuration-with-a-configmap)
+
+- [Introducing Secrets](#toc-introducing-secrets)
+
+.debug[(auto-generated TOC)]
+---
+name: toc-chapter-4
+
+## Chapter 4
+
+- [Monitoring with Prometheus and Grafana](#toc-monitoring-with-prometheus-and-grafana)
+
+.debug[(auto-generated TOC)]
+---
+name: toc-chapter-5
+
+## Chapter 5
+
+- [StatefulSets](#toc-statefulsets)
+
+.debug[(auto-generated TOC)]
+---
+name: toc-chapter-6
+
+## Chapter 6
+
+- [Deploy Jupiter on Kubernetes](#toc-deploy-jupiter-on-kubernetes)
+
+- [Advanced scheduling with Kubernetes](#toc-advanced-scheduling-with-kubernetes)
+
+- [Autoscaling with Kubernetes](#toc-autoscaling-with-kubernetes)
+
+- [Big Data analytics on Kubernetes](#toc-big-data-analytics-on-kubernetes)
+
+.debug[(auto-generated TOC)]
+
+
+
+.debug[[common/toc.md](https://github.com/RyaxTech/kube.training.git/tree/gh-pages//common/toc.md)]
+---
+
+class: pic
+
+.interstitial[![Image separating from the next chapter](https://gallant-turing-d0d520.netlify.com/containers/Container-Ship-Freighter-Navigation-Elbe-Romance-1782991.jpg)]
+
+---
+
+name: toc-serverless
+class: title
+
+Serverless
+
+.nav[
+[Section précédente](#toc-)
+|
+[Retour table des matières](#toc-chapter-1)
+|
+[Section suivante](#toc-introducing-volumes)
+]
+
+.debug[(automatically generated title slide)]
+
+---
+
+# Serverless
+
+.debug[[kube/serverless.md](https://github.com/RyaxTech/kube.training.git/tree/gh-pages//kube/serverless.md)]
+---
+class: pic
+
+![apigateway](images/serverless_apigateway.png)
+
+.debug[[kube/serverless.md](https://github.com/RyaxTech/kube.training.git/tree/gh-pages//kube/serverless.md)]
+---
+
+## Exemple of a serverless function
+```python
+import json, logging, os, time, uuid
+import boto3
+dynamodb = boto3.resource('dynamodb')
+
+def create(event, context):
+    data = json.loads(event['body'])
+    table = dynamodb.Table(os.environ['DYNAMODB_TABLE'])
+
+    item = {
+        'id': str(uuid.uuid1()),
+        'text': data['text'],
+        'createdAt': int(time.time() * 1000),
+    }
+
+    table.put_item(Item=item)
+    return {
+        "statusCode": 200,
+        "body": json.dumps(item)
+    }
+```
+.debug[[kube/serverless.md](https://github.com/RyaxTech/kube.training.git/tree/gh-pages//kube/serverless.md)]
+---
+
+## What can we do with that ?
+
+1) Upload it in a on a serverless platform
+
+2) Configure the API Gateway of that platorm so that the function is called when a particular event occurs.
+
+
+.debug[[kube/serverless.md](https://github.com/RyaxTech/kube.training.git/tree/gh-pages//kube/serverless.md)]
+---
+
+## The advantages of serverless
+
+- No administration (for the user)
+
+- Auto-scaling
+
+- Pay-per-use
+
+- Deploy more often and faster
+
+- Multi-language applications
+
+- The developer should not bother for the scalability of his code
+
+.debug[[kube/serverless.md](https://github.com/RyaxTech/kube.training.git/tree/gh-pages//kube/serverless.md)]
+---
+
+## The disadvantages of serverless
+
+- The developer should not bother for the scalability of his code
+    - the parallelization is situated within the underlying database (ex: dynamoDB)
+
+- More independent elements to manage
+
+- An error can be propagated through multiple functions before causing a problem
+
+- Program *"pure"* functions can be difficult
+
+- The sysadmins change the code (by upgrading python for example), without knowing the code that is using it => possibility for bugs!
+
+
+.debug[[kube/serverless.md](https://github.com/RyaxTech/kube.training.git/tree/gh-pages//kube/serverless.md)]
+---
+
+## Possible Use Cases
+
+- Gestion de contenu (ex: genérer des aperçus d'images)
+- Treat events coming from SaaS (ex: when a message "pizza" is recieved on slack, order pizza)
+- Auto-scaling of websites and APIs
+- Hybrid-cloud Applications
+- Data Pipeline such as Extract-Transform-Load
+- Notifications
+- Real time update
+- Client access : a function to validate a token
+- Live data migration
+- CI/CD
+
+
+.debug[[kube/serverless.md](https://github.com/RyaxTech/kube.training.git/tree/gh-pages//kube/serverless.md)]
+---
+
+## Example of a use case
+
+
+- Example of a website for monthly delivery of chocolate boxes:
+
+    - the frontend is managed by a wordpress service
+    - the forms are managed by an external service (ex: formstack)
+    - the payment is managed by an external service (ex: stripe, paypal)
+    - the client Data Base is managed by an external service (ex: google sheet, firebase)
+    - tha stock management is provided by an external service (ex: Odoo, SAP)
+    - when a new user is subscribed, her information are added to the client DB
+    - when a new user is entered in the DB, the command is added in the stock management
+    - when a new mail appears in tha client DB, new marketing emails are automatically sent (to buy new "enhanced" boxes with more chocolates)
+    - ...
+
+.debug[[kube/serverless.md](https://github.com/RyaxTech/kube.training.git/tree/gh-pages//kube/serverless.md)]
+---
+
+## Serverless allows decoupling
+
+- Application coded using serverless architecture allows to decouple services, data, intelligence, etc
+
+- The developer just needs to connect the right services amongst them.
+
+- The "API economy" is another tangible example.
+
+
+
+.debug[[kube/serverless.md](https://github.com/RyaxTech/kube.training.git/tree/gh-pages//kube/serverless.md)]
+---
+
+class: pic
+![Landscape](images/CloudNativeLandscape_Serverless_latest.png)
+
+.debug[[kube/serverless.md](https://github.com/RyaxTech/kube.training.git/tree/gh-pages//kube/serverless.md)]
+---
+
+class: pic
+
+.interstitial[![Image separating from the next chapter](https://gallant-turing-d0d520.netlify.com/containers/ShippingContainerSFBay.jpg)]
+
+---
+
+name: toc-introducing-volumes
+class: title
+
+Introducing Volumes
+
+.nav[
+[Section précédente](#toc-serverless)
+|
+[Retour table des matières](#toc-chapter-2)
+|
+[Section suivante](#toc-introducing-persistentvolumes-and-persistentvolumeclaims)
+]
+
+.debug[(automatically generated title slide)]
+
+---
+# Introducing Volumes
+
+- Kubernetes volumes are a component of a pod and are thus defined in the pod’s specification—much like containers. 
+
+- They aren’t a standalone Kubernetes object and cannot be created or deleted on their own. 
+
+- A volume is available to all containers in the pod, but it must be mounted in each container that needs to access it. 
+
+- In each container, you can mount the volume in any location of its filesystem.
+
+.debug[[kube/stockage.md](https://github.com/RyaxTech/kube.training.git/tree/gh-pages//kube/stockage.md)]
+---
+
+## Explaining volumes in an example 
+
+- Containers no common storage
+
+- Containers sharing 2 volumes mounted in different mount paths
+
+.debug[[kube/stockage.md](https://github.com/RyaxTech/kube.training.git/tree/gh-pages//kube/stockage.md)]
+---
+
+class: pic
+
+![haha seulement blague](images/volumes1.png)
+
+.debug[[kube/stockage.md](https://github.com/RyaxTech/kube.training.git/tree/gh-pages//kube/stockage.md)]
+---
+
+class: pic
+
+![haha seulement blague](images/volume2.png)
+
+.debug[[kube/stockage.md](https://github.com/RyaxTech/kube.training.git/tree/gh-pages//kube/stockage.md)]
+---
+
+
+## Note
+
+- The volume /var/logs is not mounted in the ContentAgent container. 
+
+- The container cannot access its files, even though the container and the volume are part of the same pod. 
+
+- It’s not enough to define a volume in the pod; you need to define a VolumeMount inside the container’s spec also, if you want the container to be able to access it.
+
+.debug[[kube/stockage.md](https://github.com/RyaxTech/kube.training.git/tree/gh-pages//kube/stockage.md)]
+---
+
+## Volume Types
+
+- A wide variety of volume types is available. Several are generic, while others are specific to the actual storage technologies used underneath. 
+
+* `emptyDir`: A simple empty directory used for storing transient data.
+* `hostPath`: Used for mounting directories from the worker node’s filesystem into the pod.
+* `gitRepo`: A volume initialized by checking out the contents of a Git repository.
+* `nfs`: An NFS share mounted into the pod.
+* `gcePersistentDisk`, `awsElasticBlockStore`, `azureDisk`: Used for mounting cloud provider-specific storage.
+* `cinder`, `cephfs`, ...: Used for mounting other types of network storage.
+* `configMap`, `secret`, `downwardAPI`: Special types of volumes used to expose certain Kubernetes resources and cluster information to the pod.
+* `persistentVolumeClaim`: A way to use a pre- or dynamically provisioned persistent storage. 
+
+.debug[[kube/stockage.md](https://github.com/RyaxTech/kube.training.git/tree/gh-pages//kube/stockage.md)]
+---
+
+## Note
+
+- A single pod can use multiple volumes of different types at the same time
+
+- Each of the pod’s containers can either have the volume mounted or not.
+
+.debug[[kube/stockage.md](https://github.com/RyaxTech/kube.training.git/tree/gh-pages//kube/stockage.md)]
+---
+
+## Example a pod using gitrepo volume
+
+.debug[[kube/stockage.md](https://github.com/RyaxTech/kube.training.git/tree/gh-pages//kube/stockage.md)]
+---
+
+.exercise[
+  ```bash
+apiVersion: v1
+kind: Pod
+metadata:
+  name: gitrepo-volume-pod
+spec:
+  containers:
+  - image: nginx:alpine
+    name: web-server
+    volumeMounts:
+    - name: html
+      mountPath: /usr/share/nginx/html
+      readOnly: true
+    ports:
+    - containerPort: 80
+      protocol: TCP
+  volumes:
+  - name: html
+    gitRepo:
+      repository: https://github.com/luksa/kubia-website-example.git
+      revision: master
+      directory: .   
+  ```
+]
+
+.debug[[kube/stockage.md](https://github.com/RyaxTech/kube.training.git/tree/gh-pages//kube/stockage.md)]
+---
+
+## Decoupling pods from the underlying storage technology
+
+- Above case is  against the basic idea of Kubernetes, which aims to hide the actual infrastructure from both the application and its developer.
+
+- When a developer needs a certain amount of persistent storage for their application, they should request it from Kubernetes. 
+
+- The same way they request CPU, memory, and other resources when creating a pod. 
+
+- The system administrator can configure the cluster so it can give the apps what they request.
+
+.debug[[kube/stockage.md](https://github.com/RyaxTech/kube.training.git/tree/gh-pages//kube/stockage.md)]
+---
+
+class: pic
+
+.interstitial[![Image separating from the next chapter](https://gallant-turing-d0d520.netlify.com/containers/aerial-view-of-containers.jpg)]
+
+---
+
+name: toc-introducing-persistentvolumes-and-persistentvolumeclaims
+class: title
+
+Introducing PersistentVolumes and PersistentVolumeClaims
+
+.nav[
+[Section précédente](#toc-introducing-volumes)
+|
+[Retour table des matières](#toc-chapter-2)
+|
+[Section suivante](#toc-dynamic-provisioning-of-persistentvolumes)
+]
+
+.debug[(automatically generated title slide)]
+
+---
+
+# Introducing PersistentVolumes and PersistentVolumeClaims
+
+- Instead of the developer adding a technology-specific volume to their pod, it’s the cluster administrator who sets up the underlying storage and then registers it in
+Kubernetes by creating a PersistentVolume resource through the Kubernetes API server. 
+
+- When creating the PersistentVolume, the admin specifies its size and the access
+modes it supports.
+
+.debug[[kube/stockage.md](https://github.com/RyaxTech/kube.training.git/tree/gh-pages//kube/stockage.md)]
+---
+
+## Introducing PersistentVolumes and PersistentVolumeClaims
+
+- When a cluster user needs to use persistent storage in one of their pods, they first create a PersistentVolumeClaim manifest, specifying the minimum size and the access
+mode they require. 
+
+- The user then submits the PersistentVolumeClaim manifest to the Kubernetes API server, and Kubernetes finds the appropriate PersistentVolume and binds the volume to the claim.
+
+- The PersistentVolumeClaim can then be used as one of the volumes inside a pod. Other users cannot use the same PersistentVolume until it has been released by deleting
+the bound PersistentVolumeClaim.
+
+.debug[[kube/stockage.md](https://github.com/RyaxTech/kube.training.git/tree/gh-pages//kube/stockage.md)]
+---
+
+## Example of PersistentVolumes and PersistentVolumeClaims
+
+.debug[[kube/stockage.md](https://github.com/RyaxTech/kube.training.git/tree/gh-pages//kube/stockage.md)]
+---
+
+class: pic
+
+![haha seulement blague](images/volumes3.png)
+
+.debug[[kube/stockage.md](https://github.com/RyaxTech/kube.training.git/tree/gh-pages//kube/stockage.md)]
+---
+
+## PersistentVolumes and Namespaces
+
+.debug[[kube/stockage.md](https://github.com/RyaxTech/kube.training.git/tree/gh-pages//kube/stockage.md)]
+---
+
+class: pic
+
+![haha seulement blague](images/Volume4.png)
+
+.debug[[kube/stockage.md](https://github.com/RyaxTech/kube.training.git/tree/gh-pages//kube/stockage.md)]
+---
+
+##  Lifespan of PersistentVolume and PersistentVolumeClaims
+
+.debug[[kube/stockage.md](https://github.com/RyaxTech/kube.training.git/tree/gh-pages//kube/stockage.md)]
+---
+
+class: pic
+
+![haha seulement blague](images/Volume5.png)
+
+.debug[[kube/stockage.md](https://github.com/RyaxTech/kube.training.git/tree/gh-pages//kube/stockage.md)]
+---
+
+class: pic
+
+.interstitial[![Image separating from the next chapter](https://gallant-turing-d0d520.netlify.com/containers/blue-containers.jpg)]
+
+---
+
+name: toc-dynamic-provisioning-of-persistentvolumes
+class: title
+
+Dynamic Provisioning of PersistentVolumes
+
+.nav[
+[Section précédente](#toc-introducing-persistentvolumes-and-persistentvolumeclaims)
+|
+[Retour table des matières](#toc-chapter-2)
+|
+[Section suivante](#toc-rook-orchestration-of-distributed-storage)
+]
+
+.debug[(automatically generated title slide)]
+
+---
+# Dynamic Provisioning of PersistentVolumes
+
+- We have seen how using PersistentVolumes and PersistentVolumeClaims makes it easy to obtain persistent storage without the developer having to deal with the actual storage
+technology used underneath. 
+
+- But this still requires a cluster administrator to provision the actual storage up front. 
+
+.debug[[kube/stockage.md](https://github.com/RyaxTech/kube.training.git/tree/gh-pages//kube/stockage.md)]
+---
+
+## Dynamic Provisioning of PersistentVolumes
+
+- Luckily, Kubernetes can also perform this job automatically through dynamic provisioning of PersistentVolumes.
+
+- The cluster admin, instead of creating PersistentVolumes, can deploy a PersistentVolume provisioner and define one or more StorageClass objects to let users choose what type of PersistentVolume they want. 
+
+- The users can refer to the StorageClass in their PersistentVolumeClaims and the provisioner will take that into account when provisioning the persistent storage. 
+
+.debug[[kube/stockage.md](https://github.com/RyaxTech/kube.training.git/tree/gh-pages//kube/stockage.md)]
+---
+
+class: pic
+
+![haha seulement blague](images/volume6.png)
+
+.debug[[kube/stockage.md](https://github.com/RyaxTech/kube.training.git/tree/gh-pages//kube/stockage.md)]
+---
+
+class: pic
+
+.interstitial[![Image separating from the next chapter](https://gallant-turing-d0d520.netlify.com/containers/chinook-helicopter-container.jpg)]
+
+---
+
+name: toc-rook-orchestration-of-distributed-storage
+class: title
+
+Rook: orchestration of distributed storage
+
+.nav[
+[Section précédente](#toc-dynamic-provisioning-of-persistentvolumes)
+|
+[Retour table des matières](#toc-chapter-2)
+|
+[Section suivante](#toc-decoupling-configuration-with-a-configmap)
+]
+
+.debug[(automatically generated title slide)]
+
+---
+
+# Rook: orchestration of distributed storage
+
+- Rook is an open source orchestrator for distributed storage systems.
+
+- Rook turns distributed storage software into a self-managing, self-scaling, and self-healing storage services. 
+
+- It does this by automating deployment, bootstrapping, configuration, provisioning, scaling, upgrading, migration, disaster recovery, monitoring, and resource management. 
+
+.debug[[kube/stockage.md](https://github.com/RyaxTech/kube.training.git/tree/gh-pages//kube/stockage.md)]
+---
+## Rook: orchestration of distributed storage
+- Rook is focused initially on orchestrating Ceph on-top of Kubernetes. Ceph is a distributed storage system that provides file, block and object storage and is deployed in large scale production clusters. 
+
+- Rook is hosted by the Cloud Native Computing Foundation (CNCF) as an inception level project.
+
+.debug[[kube/stockage.md](https://github.com/RyaxTech/kube.training.git/tree/gh-pages//kube/stockage.md)]
+---
+
+## Example of dynamic provisioning of PersistentVolumes using Rook
+
+.exercise[
+  ```bash
+   git clone https://github.com/rook/rook.git
+   cd rook/cluster/examples/kubernetes/ceph
+   kubectl create -f operator.yaml
+   kubect create -f cluster.yaml
+  ```
+- check to see everything is running as expected
+ ```bash
+   kubectl get pods -n rook-ceph
+  ```
+
+]
+
+.debug[[kube/stockage.md](https://github.com/RyaxTech/kube.training.git/tree/gh-pages//kube/stockage.md)]
+---
+
+## Example of dynamic provisioning of PersistentVolumes using Rook
+
+- Block storage allows you to mount storage to a single pod. 
+
+- Let's see how to build a simple, multi-tier web application on Kubernetes using persistent volumes enabled by Rook.
+
+--
+
+- Before Rook can start provisioning storage, a StorageClass and its storage pool need to be created. 
+
+- This is needed for Kubernetes to interoperate with Rook for provisioning persistent volumes.
+
+.debug[[kube/stockage.md](https://github.com/RyaxTech/kube.training.git/tree/gh-pages//kube/stockage.md)]
+---
+
+## Example of dynamic provisioning of PersistentVolumes using Rook
+
+.exercise[
+- Save this storage class definition part as pool.yaml:
+   ```bash
+   apiVersion: ceph.rook.io/v1alpha1
+   kind: Pool
+   metadata:
+     name: replicapool
+     namespace: rook-ceph
+   spec:
+     replicated:
+       size: 3
+   ```
+]
+
+.debug[[kube/stockage.md](https://github.com/RyaxTech/kube.training.git/tree/gh-pages//kube/stockage.md)]
+---
+
+
+## Example of dynamic provisioning of PersistentVolumes using Rook
+
+.exercise[
+- Save this storage class definition part as storageclass.yaml:
+   ```bash
+   apiVersion: storage.k8s.io/v1
+   kind: StorageClass
+   metadata:
+     name: rook-ceph-block
+   provisioner: ceph.rook.io/block
+   parameters:
+      pool: replicapool
+      #The value of "clusterNamespace" MUST be the same as the one in which your rook cluster exist
+      clusterNamespace: rook-ceph
+   ```
+]
+
+.debug[[kube/stockage.md](https://github.com/RyaxTech/kube.training.git/tree/gh-pages//kube/stockage.md)]
+---
+
+## Example of dynamic provisioning of PersistentVolumes using Rook
+
+.exercise[
+- Create the pool and storage class:
+  ```bash
+  kubectl create -f pool.yaml
+  kubectl create -f storageclass.yaml
+  ```
+]
+- Consume the storage with wordpress sample
+- We create a sample app to consume the block storage provisioned by Rook with the classic wordpress and mysql apps. 
+- Both of these apps will make use of block volumes provisioned by Rook.
+
+.debug[[kube/stockage.md](https://github.com/RyaxTech/kube.training.git/tree/gh-pages//kube/stockage.md)]
+---
+
+## Example of dynamic provisioning of PersistentVolumes using Rook
+
+
+.exercise[
+- Start mysql and wordpress from the cluster/examples/kubernetes folder:
+  ```bash
+kubectl create -f mysql.yaml
+kubectl create -f wordpress.yaml
+```
+- Both of these apps create a block volume and mount it to their respective pod. You can see the Kubernetes volume claims by running the following:
+
+ ```bash
+kubectl get pvc
+```
+- You should see something like this:
+```bash
+NAME             STATUS    VOLUME                                     CAPACITY   ACCESSMODES   AGE
+mysql-pv-claim   Bound     pvc-95402dbc-efc0-11e6-bc9a-0cc47a3459ee   20Gi       RWO           1m
+wp-pv-claim      Bound     pvc-39e43169-efc1-11e6-bc9a-0cc47a3459ee   20Gi       RWO           1m
+```
+]
+.debug[[kube/stockage.md](https://github.com/RyaxTech/kube.training.git/tree/gh-pages//kube/stockage.md)]
+---
+
+## Example of dynamic provisioning of PersistentVolumes using Rook
+
+.exercise[
+- Once the wordpress and mysql pods are in the Running state, get the cluster IP of the wordpress app and enter it in your browser along with the port:
+
+```bash
+kubectl get svc wordpress
+```
+]
+You should see the wordpress app running.
+
+.debug[[kube/stockage.md](https://github.com/RyaxTech/kube.training.git/tree/gh-pages//kube/stockage.md)]
+---
+
+## Launch another example of dynamic provisioning
+
+.exercise[
+
+- Copy the file from here : https://github.com/zonca/jupyterhub-deploy-kubernetes-jetstream/blob/master/storage_rook/alpine-rook.yaml
+
+- Modify it so that it fits the specification you have at your cluster and run it using:
+  ```bash
+  kubectl create -f alpine-rook.yaml
+  ```
+
+]
+
+.debug[[kube/stockage.md](https://github.com/RyaxTech/kube.training.git/tree/gh-pages//kube/stockage.md)]
+---
+
+## Launch another example of dynamic provisioning
+
+- It is a very small pod with Alpine Linux that creates a 2 GB volume from Rook and mounts it on /data.
+
+- This creates a Pod with Alpine Linux that requests a Persistent Volume Claim to be mounted under /data. 
+
+- The Persistent Volume Claim specified the type of storage and its size. 
+
+- Once the Pod is created, it asks the Persistent Volume Claim to actually request Rook to prepare a Persistent Volume that is then mounted into the Pod.
+
+.debug[[kube/stockage.md](https://github.com/RyaxTech/kube.training.git/tree/gh-pages//kube/stockage.md)]
+---
+
+## Launch another example of dynamic provisioning
+
+- We can verify the Persistent Volumes are created and associated with the pod, check:
+
+.exercise[
+  ```bash
+  kubectl get pv
+  kubectl get pvc
+  kubectl get logs alpine
+  ```
+- Get a shell in the pod with:
+  ```bash
+  kubectl exec -it alpine  -- /bin/sh
+  ```
+- Access /data/ and write some files.
+- Exit the shell 
+- Now delete the pod and see if you can retrieve the data you wrote.
+]
+
+.debug[[kube/stockage.md](https://github.com/RyaxTech/kube.training.git/tree/gh-pages//kube/stockage.md)]
+---
+## Launch another example of dynamic provisioning
+
+.exercise[
+- How could have we retrieved the data in the last case?
+- Let's change the alpine-rook.yaml to `kind:deployment` write some files and kill again the pod to see what happens.
+]
+
+
+
+
+
+.debug[[kube/stockage.md](https://github.com/RyaxTech/kube.training.git/tree/gh-pages//kube/stockage.md)]
+---
+
+class: pic
+
+.interstitial[![Image separating from the next chapter](https://gallant-turing-d0d520.netlify.com/containers/container-cranes.jpg)]
+
+---
+
+name: toc-decoupling-configuration-with-a-configmap
+class: title
+
+Decoupling configuration with a ConfigMap
+
+.nav[
+[Section précédente](#toc-rook-orchestration-of-distributed-storage)
+|
+[Retour table des matières](#toc-chapter-3)
+|
+[Section suivante](#toc-introducing-secrets)
+]
+
+.debug[(automatically generated title slide)]
+
+---
+# Decoupling configuration with a ConfigMap
+
+- The whole point of an app’s configuration is to keep the config options that vary between environments, or change frequently, separate from the application’s source
+code. 
+
+- If you think of a pod descriptor as source code for your app (it defines how to compose the individual components into a functioning system), it’s clear you should move the configuration out of the pod description.
+
+.debug[[kube/configs.md](https://github.com/RyaxTech/kube.training.git/tree/gh-pages//kube/configs.md)]
+---
+
+## Introducing ConfigMap
+
+- Kubernetes allows separating configuration options into a separate object called a ConfigMap, which is a map containing key/value pairs with the values ranging from
+short literals to full config files.
+
+- An application doesn’t need to read the ConfigMap directly or even know that it exists. The contents of the map are instead passed to containers as either environment
+variables or as files in a volume. 
+
+.debug[[kube/configs.md](https://github.com/RyaxTech/kube.training.git/tree/gh-pages//kube/configs.md)]
+---
+
+## Introducing ConfigMap
+
+- You can define the map’s entries by passing literals to the kubectl command or you can create the ConfigMap from files stored on your disk. 
+
+- Use a simple literal first:
+
+.exercise[
+  ```bash
+  kubectl create configmap fortune-config --from-literal=sleep-interval=25
+  ```
+
+- NOTE ConfigMap keys must be a valid DNS subdomain (they may only contain alphanumeric characters, dashes, underscores, and dots). They may optionally include a leading dot.
+]
+
+.debug[[kube/configs.md](https://github.com/RyaxTech/kube.training.git/tree/gh-pages//kube/configs.md)]
+---
+
+## Explaining Configmaps in an example
+
+- Execute the example described here: https://kubernetes.io/docs/tutorials/configuration/configure-redis-using-configmap/
+
+
+.debug[[kube/configs.md](https://github.com/RyaxTech/kube.training.git/tree/gh-pages//kube/configs.md)]
+---
+
+class: pic
+
+.interstitial[![Image separating from the next chapter](https://gallant-turing-d0d520.netlify.com/containers/container-housing.jpg)]
+
+---
+
+name: toc-introducing-secrets
+class: title
+
+Introducing Secrets
+
+.nav[
+[Section précédente](#toc-decoupling-configuration-with-a-configmap)
+|
+[Retour table des matières](#toc-chapter-3)
+|
+[Section suivante](#toc-monitoring-with-prometheus-and-grafana)
+]
+
+.debug[(automatically generated title slide)]
+
+---
+
+# Introducing Secrets
+
+- Kubernetes provides a separate object called Secret. Secrets are much like ConfigMaps 
+
+- They’re also maps that hold key-value pairs. They can be used the same way as a ConfigMap. 
+
+- You can Pass Secret entries to the container as environment variables
+
+- Expose Secret entries as files in a volume
+
+.debug[[kube/configs.md](https://github.com/RyaxTech/kube.training.git/tree/gh-pages//kube/configs.md)]
+---
+
+## Introducing Secrets
+
+- Kubernetes helps keep your Secrets safe by making sure each Secret is only distributed
+to the nodes that run the pods that need access to the Secret. 
+
+- Also, on the nodes themselves, Secrets are always stored in memory and never written to physical storage,
+which would require wiping the disks after deleting the Secrets from them.
+
+.debug[[kube/configs.md](https://github.com/RyaxTech/kube.training.git/tree/gh-pages//kube/configs.md)]
+---
+## Introducing Secrets
+
+- On the master node itself etcd stores Secrets in encrypted form, making the system much more secure. Because of this, it’s imperative you properly
+choose when to use a Secret or a ConfigMap. Choosing between them is simple:
+
+ * Use a ConfigMap to store non-sensitive, plain configuration data.
+--
+
+ * Use a Secret to store any data that is sensitive in nature and needs to be kept under key. If a config file includes both sensitive and not-sensitive data, you
+should store the file in a Secret.
+
+.debug[[kube/configs.md](https://github.com/RyaxTech/kube.training.git/tree/gh-pages//kube/configs.md)]
+---
+
+## Exercises using Secrets
+
+- Some initial exercises using Secrets can be found here: https://kubernetes.io/docs/concepts/configuration/secret/
+
+.debug[[kube/configs.md](https://github.com/RyaxTech/kube.training.git/tree/gh-pages//kube/configs.md)]
+---
+
+
+
+
+
+
+
+
+
+.debug[[kube/configs.md](https://github.com/RyaxTech/kube.training.git/tree/gh-pages//kube/configs.md)]
+---
+
+class: pic
+
+.interstitial[![Image separating from the next chapter](https://gallant-turing-d0d520.netlify.com/containers/containers-by-the-water.jpg)]
+
+---
+
+name: toc-monitoring-with-prometheus-and-grafana
+class: title
+
+Monitoring with Prometheus and Grafana
+
+.nav[
+[Section précédente](#toc-introducing-secrets)
+|
+[Retour table des matières](#toc-chapter-4)
+|
+[Section suivante](#toc-statefulsets)
+]
+
+.debug[(automatically generated title slide)]
+
+---
+# Monitoring with Prometheus and Grafana
+
+- Prometheus, for monitoring
+
+- Grafana, for displaying the metrics and play with them.
+
+.debug[[kube/monitoring.md](https://github.com/RyaxTech/kube.training.git/tree/gh-pages//kube/monitoring.md)]
+---
+
+## Kube Prometheus
+
+Kube Prometheus is a repository git that allows to install a monitoring stack Prometheus+Grafana for kubernetes.
+It can configure also Grafana to integrate useful graphs.
+
+.exercise[
+  ```bash
+git clone https://github.com/coreos/prometheus-operator.git
+
+cd prometheus-operator/contrib/kube-prometheus/
+
+kubectl create -f manifests/
+  ```
+]
+
+.debug[[kube/monitoring.md](https://github.com/RyaxTech/kube.training.git/tree/gh-pages//kube/monitoring.md)]
+---
+
+## Grafana
+
+.exercise[
+- Open the grafana service externally, connect on it with your web browser
+
+- To login you can use : admin/admin
+
+- Click on "Home" at the top of the screen and choose the *"Pods"* dashboard.
+
+- What is the memory usage of the registery pod ?
+
+- What is the cost of prometheus daemonset pods ?
+
+]
+
+
+.debug[[kube/monitoring.md](https://github.com/RyaxTech/kube.training.git/tree/gh-pages//kube/monitoring.md)]
+---
+
+## Reset
+
+  ```bash
+kubectl delete -f manifests/
+  ```
+
+
+.debug[[kube/monitoring.md](https://github.com/RyaxTech/kube.training.git/tree/gh-pages//kube/monitoring.md)]
+---
+
+class: pic
+
+.interstitial[![Image separating from the next chapter](https://gallant-turing-d0d520.netlify.com/containers/distillery-containers.jpg)]
+
+---
+
+name: toc-statefulsets
+class: title
+
+StatefulSets
+
+.nav[
+[Section précédente](#toc-monitoring-with-prometheus-and-grafana)
+|
+[Retour table des matières](#toc-chapter-5)
+|
+[Section suivante](#toc-deploy-jupiter-on-kubernetes)
+]
+
+.debug[(automatically generated title slide)]
+
+---
+
+# StatefulSets
+
+- A StatefulSet allows to have a group of pods that have a stable name and state.
+
+- What is the difference with ReplicaSet (deployment) ?
+
+  - A ReplicaSet is like managing a cattle of cows : we do not care about the names of cows, we just want to know how many we have. If a cow is ill we replace her.
+
+  - A StatefulSet is like managing a group of domestic animals : we give them names and we cannot replace them easily. If we have to replace one we need to find one with the same name and the same appearance.
+
+
+.debug[[kube/statefulsets.md](https://github.com/RyaxTech/kube.training.git/tree/gh-pages//kube/statefulsets.md)]
+---
+## Replicate Stateful pods
+
+
+![replicasets](images/replicasets.png)
+
+Because of the ReplicaSet template system, we can only give one and only name for the PersistentVolumeClaim.
+
+For a ReplicaSet, all replicas use the same PersistentVolumeClaim !
+
+.debug[[kube/statefulsets.md](https://github.com/RyaxTech/kube.training.git/tree/gh-pages//kube/statefulsets.md)]
+---
+
+## The StatefulSets allow us to have unique names 
+
+
+![replicasets](images/replicasets_statefulsets.png)
+
+What happens if a node dies ?
+
+.debug[[kube/statefulsets.md](https://github.com/RyaxTech/kube.training.git/tree/gh-pages//kube/statefulsets.md)]
+---
+
+class: pic
+
+![replicasets](images/statefulset_nodefail.png)
+
+.debug[[kube/statefulsets.md](https://github.com/RyaxTech/kube.training.git/tree/gh-pages//kube/statefulsets.md)]
+---
+
+## Statefulset, change of the replicas number
+
+![replicasets](images/statefulset_scaledown.png)
+
+The pod with the higher ID is destroyed first!
+
+What happens with the attached PVC?
+
+.debug[[kube/statefulsets.md](https://github.com/RyaxTech/kube.training.git/tree/gh-pages//kube/statefulsets.md)]
+---
+
+class: pic
+
+
+![replicasets](images/statefulsetPVC_scaledown.png)
+
+
+.debug[[kube/statefulsets.md](https://github.com/RyaxTech/kube.training.git/tree/gh-pages//kube/statefulsets.md)]
+---
+## Statefulset exercises
+
+- The schemas have been taken from the book of Marko Luksa "Kubernetes in Action"
+
+.exercise[
+
+- *mehdb* is database (*meh* in anglais).
+It replicates automatically the data between each instance.
+
+  ```bash
+wget https://gist.githubusercontent.com/glesserd/a0db0439e69426d92c632fb5c9bcba1c/raw/56b05fcdf9d4d1bbdf5f5cdca3fc104d7dca7d24/app.yaml
+  ```
+
+- Let's check the YAML...
+
+]
+
+Attention ! This application does not work... Indeed the data are not replicated. But it is not important for our tests with Kubernetes.
+
+
+.debug[[kube/statefulsets.md](https://github.com/RyaxTech/kube.training.git/tree/gh-pages//kube/statefulsets.md)]
+---
+## Deployment
+.exercise[
+- Deploy it
+
+  ```bash
+kubectl get statefulset
+kubectl get sts
+  ```
+
+- We scale the bdd
+
+  ```bash
+kubectl scale sts mehdb --replicas=4
+  ```
+
+- How did everything go ?
+  ```bash
+kubectl get sts
+kubectl get pvc
+  ```
+
+]
+
+.debug[[kube/statefulsets.md](https://github.com/RyaxTech/kube.training.git/tree/gh-pages//kube/statefulsets.md)]
+---
+## Resistance to crashes
+
+.exercise[
+- Let's kill a pod!
+
+  ```bash
+kubectl delete pod mehdb-1
+  ```
+
+- Which pod is going to be re-created ?
+
+  ```bash
+kubectl get pod
+  ```
+
+]
+
+.debug[[kube/statefulsets.md](https://github.com/RyaxTech/kube.training.git/tree/gh-pages//kube/statefulsets.md)]
+---
+## Scale down
+
+.exercise[
+- Let's scale down:
+  ```bash
+kubectl scale sts mehdb --replicas=2
+  ```
+
+
+- Did everything go well ?
+  ```bash
+kubectl get sts
+kubectl get pvc
+  ```
+
+- The PVC are still there as expected !
+
+]
+
+.debug[[kube/statefulsets.md](https://github.com/RyaxTech/kube.training.git/tree/gh-pages//kube/statefulsets.md)]
+---
+## Reset
+
+.exercise[
+- Reset:
+
+  ```bash
+kubectl delete -f app.yaml
+  ```
+
+* Do not forget to delete the PVC !!!*
+
+]
+
+
+
+.debug[[kube/statefulsets.md](https://github.com/RyaxTech/kube.training.git/tree/gh-pages//kube/statefulsets.md)]
+---
+
+class: pic
+
+.interstitial[![Image separating from the next chapter](https://gallant-turing-d0d520.netlify.com/containers/lots-of-containers.jpg)]
+
+---
+
+name: toc-deploy-jupiter-on-kubernetes
+class: title
+
+Deploy Jupiter on Kubernetes
+
+.nav[
+[Section précédente](#toc-statefulsets)
+|
+[Retour table des matières](#toc-chapter-6)
+|
+[Section suivante](#toc-advanced-scheduling-with-kubernetes)
+]
+
+.debug[(automatically generated title slide)]
+
+---
+# Deploy Jupiter on Kubernetes
+
+.exercise[
+- We will follow the procedure provided here: 
+  https://zonca.github.io/2017/12/scalable-jupyterhub-kubernetes-jetstream.html
+]
+
+.debug[[kube/advanced.md](https://github.com/RyaxTech/kube.training.git/tree/gh-pages//kube/advanced.md)]
+---
+
+class: pic
+
+.interstitial[![Image separating from the next chapter](https://gallant-turing-d0d520.netlify.com/containers/plastic-containers.JPG)]
+
+---
+
+name: toc-advanced-scheduling-with-kubernetes
+class: title
+
+Advanced scheduling with Kubernetes
+
+.nav[
+[Section précédente](#toc-deploy-jupiter-on-kubernetes)
+|
+[Retour table des matières](#toc-chapter-6)
+|
+[Section suivante](#toc-autoscaling-with-kubernetes)
+]
+
+.debug[(automatically generated title slide)]
+
+---
+--- 
+
+# Advanced scheduling with Kubernetes
+
+.exercise[
+- We will follow the procedure provided here: 
+   https://github.com/RyaxTech/kube-tutorial#4-activate-an-advanced-scheduling-policy-and-test-its-usage
+]
+.debug[[kube/advanced.md](https://github.com/RyaxTech/kube.training.git/tree/gh-pages//kube/advanced.md)]
+---
+---
+
+class: pic
+
+.interstitial[![Image separating from the next chapter](https://gallant-turing-d0d520.netlify.com/containers/train-of-containers-1.jpg)]
+
+---
+
+name: toc-autoscaling-with-kubernetes
+class: title
+
+Autoscaling with Kubernetes
+
+.nav[
+[Section précédente](#toc-advanced-scheduling-with-kubernetes)
+|
+[Retour table des matières](#toc-chapter-6)
+|
+[Section suivante](#toc-big-data-analytics-on-kubernetes)
+]
+
+.debug[(automatically generated title slide)]
+
+---
+# Autoscaling with Kubernetes
+
+.exercise[
+- We will follow the procedure provided here: 
+  https://github.com/RyaxTech/kube-tutorial#6-enable-and-use-pod-autoscaling
+]
+.debug[[kube/advanced.md](https://github.com/RyaxTech/kube.training.git/tree/gh-pages//kube/advanced.md)]
+---
+---
+
+class: pic
+
+.interstitial[![Image separating from the next chapter](https://gallant-turing-d0d520.netlify.com/containers/train-of-containers-2.jpg)]
+
+---
+
+name: toc-big-data-analytics-on-kubernetes
+class: title
+
+Big Data analytics on Kubernetes
+
+.nav[
+[Section précédente](#toc-autoscaling-with-kubernetes)
+|
+[Retour table des matières](#toc-chapter-6)
+|
+[Section suivante](#toc-)
+]
+
+.debug[(automatically generated title slide)]
+
+---
+# Big Data analytics on Kubernetes
+
+.exercise[
+- We will follow the procedure provided here:
+https://github.com/RyaxTech/kube-tutorial#3-execute-big-data-job-with-spark-on-the-kubernetes-cluster
+]
+
+
+.debug[[kube/advanced.md](https://github.com/RyaxTech/kube.training.git/tree/gh-pages//kube/advanced.md)]</textarea>
+    <script src="remark.min.js" type="text/javascript">
+    </script>
+    <script type="text/javascript">
+      var slideshow = remark.create({
+        ratio: '16:9',
+        highlightSpans: true,
+        excludedClasses: ["self-paced"]
+      });
+    </script>
+    
+    <!-- 
+    These two scripts will be available only when loading the
+    content using the pub/sub server. Otherwise, they'll just
+    404 and that's OK.
+    -->
+    <script src="/socket.io/socket.io.js">
+    </script>
+    <script src="/remote.js">
+    </script>
+
+  </body>
+</html>

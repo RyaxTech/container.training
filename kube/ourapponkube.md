@@ -380,3 +380,12 @@ We should now see the `worker`, well, working happily.
 --
 
 *Alright, we're back to where we started, when we were running on a single node!*
+
+## To go even further
+
+- Use a private or public [registry](https://kubernetes.io/docs/concepts/containers/images/).
+
+- [Connect services](https://kubernetes.io/docs/concepts/services-networking/connect-applications-service/).
+
+
+

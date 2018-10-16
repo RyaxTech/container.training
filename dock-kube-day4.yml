@@ -1,0 +1,29 @@
+title: |
+    Kubernetes 
+    Storage, Configuration, Secrets and Advanced Concepts 
+
+#chat: "[Slack](https://dockercommunity.slack.com/messages/C7GKACWDV)"
+#chat: "[Gitter](https://gitter.im/jpetazzo/workshop-yyyymmdd-city)"
+chat: "In person!"
+
+exclude:
+- self-paced
+
+chapters:
+- shared/title.md
+  #- logistics.md
+  #- common/prereqs.md
+  #- common/sampleapp.md
+  #- common/composescale.md
+  #- common/composedown.md
+  #- kube/versions-k8s.md
+  #- kube/intro.md
+  #- common/about-slides.md
+- common/toc.md
+- - kube/serverless.md
+- - kube/stockage.md
+  #- - kube/recapj1_fr.md
+- - kube/configs.md
+- - kube/monitoring.md
+- - kube/statefulsets.md
+- - kube/advanced.md

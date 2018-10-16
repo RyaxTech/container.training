@@ -4,6 +4,7 @@
     <title>Kubernetes  Stockage, Configuration, Secrets et Concepts Avancés  </title>
     <meta http-equiv="Content-Type" content="text/html; charset=UTF-8"/>
     <link rel="stylesheet" href="workshop.css">
+    <link rel="stylesheet" href="override.css">
   </head>
   <body>
     <!--
@@ -29,30 +30,69 @@ Kubernetes <br/>Stockage, Configuration, Secrets et Concepts Avancés <br/>
 
 .debug[
 ```
+ M common/composedown.md
+ M common/sampleapp.md
+ M index.html
  M intro-fullday.yml.html
  M intro-selfpaced.yml.html
  M kube-fullday.yml.html
  M kube-halfday.yml.html
  M kube-jour1.yml.html
  M kube-jour2.yml.html
+ M kube-jour3.yml
  M kube-jour3.yml.html
  M kube-selfpaced.yml.html
- M kube/netisolation_fr.md
- M kube/stockage_fr.md
+ M kube/advanced.md
+ M kube/concepts-k8s.md
+ M kube/daemonset.md
+ M kube/dashboard.md
+ M kube/helm.md
+ M kube/kubectlexpose.md
+ M kube/kubectlget.md
+ M kube/kubectlrun.md
+ M kube/logs-centralized.md
+ M kube/namespaces.md
+ M kube/ourapponkube.md
+ M kube/rollout.md
+ M kube/setup-k8s.md
+ M kube/statefulsets.md
+ M kube/stockage.md
+ M logistics.md
  M swarm-fullday.yml.html
  M swarm-halfday.yml.html
  M swarm-selfpaced.yml.html
  M swarm-video.yml.html
-?? .directory
-?? common/.directory
-?? intro/.directory
-?? kube/.directory
-?? kube/recapj2_fr.md
-?? swarm/.directory
+ M swarm/links.md
+ M workshop.html
+?? common/cncf.md
+?? containers/
+?? dock-kube-day1.yml
+?? dock-kube-day1.yml.html
+?? dock-kube-day2.yml
+?? dock-kube-day2.yml.html
+?? dock-kube-day3.yml
+?? dock-kube-day3.yml.html
+?? dock-kube-day4.yml
+?? dock-kube-day4.yml.html
+?? images/container-layers.jpg
+?? images/containers_VMs_CPUs.png
+?? images/containers_vs_VMS.png
+?? images/logo-plb.jpg
+?? images/plb.jpeg
+?? images/sharing-layers.jpg
+?? kube-day1.yml
+?? kube-day1.yml.html
+?? kube/kubeobjects.md
+?? kube/monitoring.md
+?? kube/netisolation.md
+?? kube/serverless.md
+?? kube/statefulsets_fr.md
+?? override.css
+?? shared/
 
 ```
 
-These slides have been built from commit: 714e600
+These slides have been built from commit: 3e7271f
 
 
 [common/title_fr.md](https://github.com/RyaxTech/kube.training.git/tree/gh-pages//common/title_fr.md)]
@@ -92,7 +132,7 @@ name: toc-chapter-3
 
 ## Chapter 3
 
-- [Recap Jour 2](#toc-recap-jour-)
+- [Recap Jour 1](#toc-recap-jour-)
 
 .debug[(auto-generated TOC)]
 ---
@@ -787,7 +827,7 @@ class: pic
 name: toc-recap-jour-
 class: title
 
-Recap Jour 2
+Recap Jour 1
 
 .nav[
 [Section précédente](#toc-rook-orchestration-de-stockage-distribu)
@@ -801,39 +841,95 @@ Recap Jour 2
 
 ---
 
-# Recap Jour 2
+# Recap Jour 1
 
+Obectif: déployer un service faisant du A/B Testing.
 
-L'équipe marketing à determiner que la vA du serveurweb était la meilleure.
+*Le test A/B (ou A/B testing) est une technique de marketing qui consiste à proposer plusieurs variantes d'un même objet qui diffèrent selon un seul critère (par exemple, la couleur d'un emballage) afin de déterminer la version qui donne les meilleurs résultats auprès des consommateurs.*
 
-Vous aller donc lancer un service qui exposera un **pod**.
+- Mise en place...
 
-Cependant, ils veulent aussi que vous rajoutiez un dossier `bonus` dans /tmp/ qui contiendra un fichier `bonus.txt`. Ce fichier aura juste le texte "bonus" dedans.
+.debug[[kube/recapj1_fr.md](https://github.com/RyaxTech/kube.training.git/tree/gh-pages//kube/recapj1_fr.md)]
+---
 
-Lors de la réunion vous sentez que ce fichier va surement changer souvent... Vous décidez qu'au lieu de changer l'image docker, vous aller monter un volume persitant qui vous permettera de changer rapidement le contenu de ce dossier.
+## Construction des containers
+
+.exercise[
+
+- Dans un nouveau dossier vide, créer:
+
+`Dockerfile_A`:
+  ```
+FROM alpine
+RUN apk add python2
+RUN echo "A" > /tmp/whoami.txt
+CMD cd /tmp ; python -m SimpleHTTPServer 80
+  ```
+
+`Dockerfile_B`:
+  ```
+FROM alpine
+RUN apk add python2
+RUN echo "B" > /tmp/whoami.txt
+CMD cd /tmp ; python -m SimpleHTTPServer 80
+  ```
+
+]
+
+.debug[[kube/recapj1_fr.md](https://github.com/RyaxTech/kube.training.git/tree/gh-pages//kube/recapj1_fr.md)]
+---
+
+## Mise en place des containers
+
+.exercise[
+
+- On récupère l'URL de notre registery docker:
+  ```bash
+  NODEPORT=$(kubectl get svc/registry -o json | jq .spec.ports[0].nodePort)
+  REGISTRY=127.0.0.1:$NODEPORT
+  ```
+- Build et push les images:
+  ```bash
+docker build -t $REGISTRY/serverweb:vA -f Dockerfile_A .
+docker build -t $REGISTRY/serverweb:vB -f Dockerfile_B .
+docker tag $REGISTRY/serverweb:vA $REGISTRY/serverweb:vA
+docker tag $REGISTRY/serverweb:vB $REGISTRY/serverweb:vB
+docker push $REGISTRY/serverweb:vA
+docker push $REGISTRY/serverweb:vB
+  ```
+
+]
+
+.debug[[kube/recapj1_fr.md](https://github.com/RyaxTech/kube.training.git/tree/gh-pages//kube/recapj1_fr.md)]
+---
+
+## C'est parti!
+
+.exercise[
+
+- Maintenant créez un service qui va servir soit A, soit B
 
 - Conseil: ne foncez pas tête baisser. Faites un plan, puis éxecutez le.
 
-- Conseil 2: la slide suivante contient de l'aide... A vous de voir...
+- Bonus: faites ça en un seul fichier yaml.
 
-.debug[[kube/recapj2_fr.md](https://github.com/RyaxTech/kube.training.git/tree/gh-pages//kube/recapj2_fr.md)]
----
+]
 
-## Aide
+<!--
+kubectl run serverweba --image $REGISTRY/serverweb:vA
+kubectl run serverwebb --image $REGISTRY/serverweb:vB
 
-- Repartez de https://raw.githubusercontent.com/zonca/jupyterhub-deploy-kubernetes-jetstream/master/storage_rook/alpine-rook.yaml
+kubectl expose serverwebab --type=NodePort --port 80
 
-- l'image du serveur A s'appelle `127.0.0.1:32092/serverweb:vA`
-
-- Pour écrire le fichier bonus, connéctez-vous au pod:
-  ```bash
-kubectl exec -ti alpine -- sh
-  ```
+=> edit each service (and their template) to have a common key/value
+=> edit the service to select this key/value.-->
 
 
 
 
-.debug[[kube/recapj2_fr.md](https://github.com/RyaxTech/kube.training.git/tree/gh-pages//kube/recapj2_fr.md)]
+
+
+.debug[[kube/recapj1_fr.md](https://github.com/RyaxTech/kube.training.git/tree/gh-pages//kube/recapj1_fr.md)]
 ---
 
 class: pic
@@ -1080,35 +1176,35 @@ StatefulSets
 
 # StatefulSets
 
-- Un StatefulSet permet d'avoir un ensemble de pod qui ont un nom et un état stable.
+- A StatefulSet allows to have a group of pods that have a stable name and state.
 
-- Quelle différence avec un ReplicaSet (deployment) ?
+- What is the difference with ReplicaSet (deployment) ?
 
-  - un ReplicaSet c'est comme gérer un troupeau de vache : on se fiche du nom des vaches, on veut juste savoir combien il y en a. Si une vache est malade, on la remplace.
+  - A ReplicaSet is like managing a cattle of cows : we do not care about the names of cows, we just want to know how many we have. If a cow is ill we replace her.
 
-  - un StatefulSet c'est comme gérer un groupe d'animaux de compagnie : on leur donne des noms et on ne peut pas les remplacer facilement. Si jamais on veut en remplacer un il va falloir en trouver un avec le même nom et le même apparence.
+  - A StatefulSet is like managing a group of domestic animals : we give them names and we cannot replace them easily. If we have to replace one we need to find one with the same name and the same appearance.
 
 
 .debug[[kube/statefulsets.md](https://github.com/RyaxTech/kube.training.git/tree/gh-pages//kube/statefulsets.md)]
 ---
-## Repliquer des pods Stateful
+## Replicate Stateful pods
 
 
 ![replicasets](images/replicasets.png)
 
-A cause du système de template des ReplicaSet, on ne peut donner qu'un seul et unique nom pour le PersistentVolumeClaim.
+Because of the ReplicaSet template system, we can only give one and only name for the PersistentVolumeClaim.
 
-Dans un ReplicaSet, tous les replicas utilisent le même PersistentVolumeClaim !
+For a ReplicaSet, all replicas use the same PersistentVolumeClaim !
 
 .debug[[kube/statefulsets.md](https://github.com/RyaxTech/kube.training.git/tree/gh-pages//kube/statefulsets.md)]
 ---
 
-## Les StatefulSets nous permettent d'avoir des noms uniques
+## The StatefulSets allow us to have unique names 
 
 
 ![replicasets](images/replicasets_statefulsets.png)
 
-Que se passe-t-il si un noeud meurt ?
+What happens if a node dies ?
 
 .debug[[kube/statefulsets.md](https://github.com/RyaxTech/kube.training.git/tree/gh-pages//kube/statefulsets.md)]
 ---
@@ -1120,13 +1216,13 @@ class: pic
 .debug[[kube/statefulsets.md](https://github.com/RyaxTech/kube.training.git/tree/gh-pages//kube/statefulsets.md)]
 ---
 
-## Statefulset, changement du nombre de replicas
+## Statefulset, change of the replicas number
 
 ![replicasets](images/statefulset_scaledown.png)
 
-Le pod avec l'ID le plus grand est détruit en premier !
+The pod with the higher ID is destroyed first!
 
-Mais qu'en est il des PVC attachés ?
+What happens with the attached PVC?
 
 .debug[[kube/statefulsets.md](https://github.com/RyaxTech/kube.training.git/tree/gh-pages//kube/statefulsets.md)]
 ---
@@ -1141,42 +1237,42 @@ class: pic
 ---
 ## Statefulset exercises
 
-- Les schemas ont été repris du livre de Marko Luksa "Kubernetes in Action"
+- The schemas have been taken from the book of Marko Luksa "Kubernetes in Action"
 
 .exercise[
 
-- *mehdb* est une base de donnée pas super (*meh* en anglais).
-Elle réplique automatiquement les données entre chaque instance.
+- *mehdb* is database (*meh* in anglais).
+It replicates automatically the data between each instance.
 
   ```bash
 wget https://gist.githubusercontent.com/glesserd/a0db0439e69426d92c632fb5c9bcba1c/raw/56b05fcdf9d4d1bbdf5f5cdca3fc104d7dca7d24/app.yaml
   ```
 
-- Regardons le yaml ensemble...
+- Let's check the YAML...
 
 ]
 
-Attention ! Cette application ne fonctionne pas... En effet les données ne sont pas répliqué. Mais cela n'est pas important pour nos tests avec Kubernetes.
+Attention ! This application does not work... Indeed the data are not replicated. But it is not important for our tests with Kubernetes.
 
 
 .debug[[kube/statefulsets.md](https://github.com/RyaxTech/kube.training.git/tree/gh-pages//kube/statefulsets.md)]
 ---
-## Déploiement
+## Deployment
 .exercise[
-- Déployez le
+- Deploy it
 
   ```bash
 kubectl get statefulset
 kubectl get sts
   ```
 
-- On scale la bdd
+- We scale the bdd
 
   ```bash
 kubectl scale sts mehdb --replicas=4
   ```
 
-- Tout s'est bien passé ?
+- How did everything go ?
   ```bash
 kubectl get sts
 kubectl get pvc
@@ -1186,16 +1282,16 @@ kubectl get pvc
 
 .debug[[kube/statefulsets.md](https://github.com/RyaxTech/kube.training.git/tree/gh-pages//kube/statefulsets.md)]
 ---
-## Resistance aux crashs
+## Resistance to crashes
 
 .exercise[
-- Tuons un pod !
+- Let's kill a pod!
 
   ```bash
 kubectl delete pod mehdb-1
   ```
 
-- Quel pod va être recréé ?
+- Which pod is going to be re-created ?
 
   ```bash
 kubectl get pod
@@ -1208,25 +1304,25 @@ kubectl get pod
 ## Scale down
 
 .exercise[
-- Maintenant scale down:
+- Let's scale down:
   ```bash
 kubectl scale sts mehdb --replicas=2
   ```
 
 
-- Tout s'est bien passé ?
+- Did everything go well ?
   ```bash
 kubectl get sts
 kubectl get pvc
   ```
 
-- Les pvc sont toujours la comme attendu !
+- The PVC are still there as expected !
 
 ]
 
 .debug[[kube/statefulsets.md](https://github.com/RyaxTech/kube.training.git/tree/gh-pages//kube/statefulsets.md)]
 ---
-## Le reset
+## Reset
 
 .exercise[
 - Reset:
@@ -1235,7 +1331,7 @@ kubectl get pvc
 kubectl delete -f app.yaml
   ```
 
-* Il ne faut pas oublier de supprimer les pvc !!!*
+* Do not forget to delete the PVC !!!*
 
 ]
 

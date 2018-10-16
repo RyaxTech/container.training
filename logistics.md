@@ -1,19 +1,19 @@
-## Quelques infos sur le formateur
+## Some infos about the instructor
 
-- David Glesser - CPO Ryax Technologies
+- Yiannis Georgiou - CTO Ryax Technologies
 
-- PhD Université Grenoble-Alpes - Gestion de ressources et orchestration sur de systèmes de calcul intensif
+- PhD Université Grenoble-Alpes - Resource Management and Scheduling on High Performance Computing
 
-- 5 ans à Bull/Atos Technologies - Ingenieur R&D
+- 11 ans at Bull/Atos Technologies - R&D Architect / Software Engineer 
 
 ---
 
-## Logistique
+## Logistics
 
-- La formation se déroulera de 9h à 17h
+- The training will take place from  9h until 17h30
 
-- Il y aura une pause déjeuner à 12h30 à 13h30
+- There will be a break for lunch from 12h30 to 14h
 
-- N'hésitez pas à interrompre pour des questions à tout moment
+- Feel free to interrupt for questions at any time
 
-- *Surtout quand vous voyez des photos de conteneurs en plein écran!*
+- Especially when you see full screen container pictures!

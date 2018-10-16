@@ -277,3 +277,11 @@ spec:
   ] 
 
 ]
+
+## To go even further
+
+- Rollout of a [deployment](https://kubernetes.io/docs/concepts/workloads/controllers/deployment/)
+
+- Rolling updates with deployments in [kubernetes](https://www.linux.com/learn/rolling-updates-and-rollbacks-using-kubernetes-deployments)
+
+

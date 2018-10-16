@@ -142,3 +142,14 @@ But this is outside of the scope of this chapter.
 The YAML file that we used creates all the resources in the
 `default` namespace, for simplicity. In a real scenario, you will
 create the resources in the `kube-system` namespace or in a dedicated namespace.
+
+---
+
+## To go even further
+
+- Architecure of [fluentd](https://www.fluentd.org/architecture)
+
+- The [quickstart](https://docs.fluentd.org/v1.0/articles/quickstart) of fluentd
+
+
+

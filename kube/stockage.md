@@ -336,7 +336,7 @@ You should see the wordpress app running.
 
 ---
 
-## Launch another example of dynamic provisioning (suite)
+## Launch another example of dynamic provisioning
 
 - It is a very small pod with Alpine Linux that creates a 2 GB volume from Rook and mounts it on /data.
 
@@ -348,7 +348,7 @@ You should see the wordpress app running.
 
 ---
 
-## Launch another example of dynamic provisioning (suite)
+## Launch another example of dynamic provisioning
 
 - We can verify the Persistent Volumes are created and associated with the pod, check:
 
@@ -368,7 +368,7 @@ You should see the wordpress app running.
 ]
 
 ---
-## Launch another example of dynamic provisioning (suite)
+## Launch another example of dynamic provisioning
 
 .exercise[
 - How could have we retrieved the data in the last case?

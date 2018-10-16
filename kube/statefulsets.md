@@ -1,33 +1,33 @@
 
 # StatefulSets
 
-- Un StatefulSet permet d'avoir un ensemble de pod qui ont un nom et un état stable.
+- A StatefulSet allows to have a group of pods that have a stable name and state.
 
-- Quelle différence avec un ReplicaSet (deployment) ?
+- What is the difference with ReplicaSet (deployment) ?
 
-  - un ReplicaSet c'est comme gérer un troupeau de vache : on se fiche du nom des vaches, on veut juste savoir combien il y en a. Si une vache est malade, on la remplace.
+  - A ReplicaSet is like managing a cattle of cows : we do not care about the names of cows, we just want to know how many we have. If a cow is ill we replace her.
 
-  - un StatefulSet c'est comme gérer un groupe d'animaux de compagnie : on leur donne des noms et on ne peut pas les remplacer facilement. Si jamais on veut en remplacer un il va falloir en trouver un avec le même nom et le même apparence.
+  - A StatefulSet is like managing a group of domestic animals : we give them names and we cannot replace them easily. If we have to replace one we need to find one with the same name and the same appearance.
 
 
 ---
-## Repliquer des pods Stateful
+## Replicate Stateful pods
 
 
 ![replicasets](images/replicasets.png)
 
-A cause du système de template des ReplicaSet, on ne peut donner qu'un seul et unique nom pour le PersistentVolumeClaim.
+Because of the ReplicaSet template system, we can only give one and only name for the PersistentVolumeClaim.
 
-Dans un ReplicaSet, tous les replicas utilisent le même PersistentVolumeClaim !
+For a ReplicaSet, all replicas use the same PersistentVolumeClaim !
 
 ---
 
-## Les StatefulSets nous permettent d'avoir des noms uniques
+## The StatefulSets allow us to have unique names 
 
 
 ![replicasets](images/replicasets_statefulsets.png)
 
-Que se passe-t-il si un noeud meurt ?
+What happens if a node dies ?
 
 ---
 
@@ -37,13 +37,13 @@ class: pic
 
 ---
 
-## Statefulset, changement du nombre de replicas
+## Statefulset, change of the replicas number
 
 ![replicasets](images/statefulset_scaledown.png)
 
-Le pod avec l'ID le plus grand est détruit en premier !
+The pod with the higher ID is destroyed first!
 
-Mais qu'en est il des PVC attachés ?
+What happens with the attached PVC?
 
 ---
 
@@ -56,41 +56,41 @@ class: pic
 ---
 ## Statefulset exercises
 
-- Les schemas ont été repris du livre de Marko Luksa "Kubernetes in Action"
+- The schemas have been taken from the book of Marko Luksa "Kubernetes in Action"
 
 .exercise[
 
-- *mehdb* est une base de donnée pas super (*meh* en anglais).
-Elle réplique automatiquement les données entre chaque instance.
+- *mehdb* is database (*meh* in anglais).
+It replicates automatically the data between each instance.
 
   ```bash
 wget https://gist.githubusercontent.com/glesserd/a0db0439e69426d92c632fb5c9bcba1c/raw/56b05fcdf9d4d1bbdf5f5cdca3fc104d7dca7d24/app.yaml
   ```
 
-- Regardons le yaml ensemble...
+- Let's check the YAML...
 
 ]
 
-Attention ! Cette application ne fonctionne pas... En effet les données ne sont pas répliqué. Mais cela n'est pas important pour nos tests avec Kubernetes.
+Attention ! This application does not work... Indeed the data are not replicated. But it is not important for our tests with Kubernetes.
 
 
 ---
-## Déploiement
+## Deployment
 .exercise[
-- Déployez le
+- Deploy it
 
   ```bash
 kubectl get statefulset
 kubectl get sts
   ```
 
-- On scale la bdd
+- We scale the bdd
 
   ```bash
 kubectl scale sts mehdb --replicas=4
   ```
 
-- Tout s'est bien passé ?
+- How did everything go ?
   ```bash
 kubectl get sts
 kubectl get pvc
@@ -99,16 +99,16 @@ kubectl get pvc
 ]
 
 ---
-## Resistance aux crashs
+## Resistance to crashes
 
 .exercise[
-- Tuons un pod !
+- Let's kill a pod!
 
   ```bash
 kubectl delete pod mehdb-1
   ```
 
-- Quel pod va être recréé ?
+- Which pod is going to be re-created ?
 
   ```bash
 kubectl get pod
@@ -120,24 +120,24 @@ kubectl get pod
 ## Scale down
 
 .exercise[
-- Maintenant scale down:
+- Let's scale down:
   ```bash
 kubectl scale sts mehdb --replicas=2
   ```
 
 
-- Tout s'est bien passé ?
+- Did everything go well ?
   ```bash
 kubectl get sts
 kubectl get pvc
   ```
 
-- Les pvc sont toujours la comme attendu !
+- The PVC are still there as expected !
 
 ]
 
 ---
-## Le reset
+## Reset
 
 .exercise[
 - Reset:
@@ -146,7 +146,7 @@ kubectl get pvc
 kubectl delete -f app.yaml
   ```
 
-* Il ne faut pas oublier de supprimer les pvc !!!*
+* Do not forget to delete the PVC !!!*
 
 ]
 

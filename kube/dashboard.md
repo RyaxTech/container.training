@@ -262,3 +262,25 @@ The dashboard will then ask you which authentication you want to use.
 
 - It introduces new failure modes (like if you try to apply yaml from a link that's no longer valid)
 
+---
+
+## To go further
+
+
+.exercise[
+- Relaunch the previous example:
+  ```bash
+  kubectl run pingpong --image alpine ping 1.1.1.1
+  ```
+- Observe the deployment of the pod. Can you find the logs of the pod?
+
+- Stop the deployment.
+
+]
+
+You can stop the dashboard or leave it. Since the dashboard is not secure we propose you to stop it.
+```bash
+  kubectl delete -f https://goo.gl/CHsLTA
+  ```
+
+

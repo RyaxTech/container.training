@@ -1,0 +1,33 @@
+title: |
+    Kubernetes
+    Introduction, Architecture and Installation
+
+#chat: "[Slack](https://dockercommunity.slack.com/messages/C7GKACWDV)"
+#chat: "[Gitter](https://gitter.im/jpetazzo/workshop-yyyymmdd-city)"
+chat: "In person!"
+
+exclude:
+- self-paced
+
+chapters:
+- shared/title.md
+  #- logistics.md
+  #- common/about-slides_fr.md
+  #- common/sampleapp.md
+  #- common/composescale.md
+  #- common/composedown.md
+  #- kube/versions-k8s.md
+  #- kube/intro.md
+  #- common/about-slides.md
+- common/toc.md
+- - common/sampleapp.md
+  - common/composescale.md
+  - common/composedown.md  
+- - kube/concepts-k8s.md
+  - common/declarative.md
+  - kube/declarative.md
+  - kube/kubenet.md
+  - kube/kubectlget.md
+  - kube/kubectlrun.md
+- - kube/setup-k8s.md
+  - kube/dashboard.md

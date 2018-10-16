@@ -10,6 +10,44 @@
 
 ---
 
+## Kubernetes Introduction
+
+--
+
+- It is a software to deploy and manage containerized applications while offering an optimal usage of the compute platform.
+
+--
+
+- It abstracts the underlying infrastructure by simplifying the development of applications and the management of resources.
+
+---
+
+## Kubernetes Benefits
+
+--
+
+- Simplify Application Deployment.
+
+--
+
+- Achieving better utilization of hardware.
+
+--
+
+- Automatic Scaling.
+
+--
+
+- Simplifying applications development
+
+--
+
+- High Availability, heath check and self-healing
+
+---
+
+
+
 ## Basic things we can ask Kubernetes to do
 
 --
@@ -30,7 +68,7 @@
 
 --
 
-- It's Black Friday (or Christmas), traffic spikes, grow our cluster and add containers
+- It's Christmas, traffic spikes, grow our cluster and add containers
 
 --
 
@@ -82,6 +120,12 @@ class: pic
 
 class: pic
 
+![Celui-là ressemble plus à la réalité](images/kube_archi_simple.png)
+
+---
+
+class: pic
+
 ![that one is more like the real thing](images/k8s-arch2.png)
 
 ---
@@ -92,9 +136,23 @@ class: pic
 
   (Courtesy of [Yongbok Kim](https://www.yongbok.net/blog/))
 
-- The second one is a simplified representation of a Kubernetes cluster
+- The second has been taken from the book of Marko Luksa "Kubernetes in Action"
+
+- The third one is a simplified representation of a Kubernetes cluster
 
   (Courtesy of [Imesh Gunaratne](https://medium.com/containermind/a-reference-architecture-for-deploying-wso2-middleware-on-kubernetes-d4dee7601e8e))
+
+---
+
+## Kubernetes name
+
+- How do we pronounce kubernetes?
+    - The word comes from the greek work κυβερνήτης, pronounced "kivernitis" meaning the captain of a ship or plane
+    - In english we say : "coubernetis"
+    - In french : "cubernetesse" ou "cubernette"
+
+- It is quite common to write Kubernetes as k8s
+
 
 ---
 

@@ -258,3 +258,28 @@ Unfortunately, `--follow` cannot (yet) be used to stream the logs from multiple 
 
 - It's very unlikely that our concerted pings manage to produce
   even a modest blip at Cloudflare's NOC!
+
+## To stop everything
+
+.exercise[
+
+- Stop the deployment:
+  ```bash
+  kubectl delete deploy/pingpong
+  ```
+- What is the state of the application ?
+  ```bash
+  kubectl get all
+  ```
+
+]
+
+- To go even further:
+
+  - [Launch a deployment from a YAML file](https://kubernetes.io/docs/tasks/run-application/run-stateless-application-deployment/)
+
+  - [Launch a *cronjob*](https://kubernetes.io/docs/tasks/job/automated-tasks-with-cron-jobs/)
+
+
+
+

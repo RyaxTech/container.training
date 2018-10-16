@@ -1,0 +1,3331 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <title>Kubernetes Introduction, Architecture and Installation </title>
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8"/>
+    <link rel="stylesheet" href="workshop.css">
+    <link rel="stylesheet" href="override.css">
+  </head>
+  <body>
+    <!--
+    <div style="position: absolute; left: 20%; right: 20%; top: 30%;">
+      <h1 style="font-size: 3em;">Loading ...</h1>
+      The slides should show up here. If they don't, it might be
+      because you are accessing this file directly from your filesystem.
+      It needs to be served from a web server. You can try this:
+      <pre>
+        docker-compose up -d
+        open http://localhost:8888/workshop.html # on MacOS
+        xdg-open http://localhost:8888/workshop.html # on Linux
+      </pre>
+      Once the slides are loaded, this notice disappears when you
+      go full screen (e.g. by hitting "f").
+    </div>
+    -->
+    <textarea id="source">class: title, self-paced
+
+Kubernetes<br/>Introduction, Architecture and Installation<br/>
+
+.nav[*Self-paced version*]
+
+.debug[
+```
+ M common/composedown.md
+ M common/sampleapp.md
+ M index.html
+ M intro-fullday.yml.html
+ M intro-selfpaced.yml.html
+ M kube-fullday.yml.html
+ M kube-halfday.yml.html
+ M kube-jour1.yml.html
+ M kube-jour2.yml.html
+ M kube-jour3.yml
+ M kube-jour3.yml.html
+ M kube-selfpaced.yml.html
+ M kube/advanced.md
+ M kube/concepts-k8s.md
+ M kube/daemonset.md
+ M kube/dashboard.md
+ M kube/helm.md
+ M kube/kubectlexpose.md
+ M kube/kubectlget.md
+ M kube/kubectlrun.md
+ M kube/logs-centralized.md
+ M kube/namespaces.md
+ M kube/ourapponkube.md
+ M kube/rollout.md
+ M kube/setup-k8s.md
+ M kube/statefulsets.md
+ M kube/stockage.md
+ M logistics.md
+ M swarm-fullday.yml.html
+ M swarm-halfday.yml.html
+ M swarm-selfpaced.yml.html
+ M swarm-video.yml.html
+ M swarm/links.md
+ M workshop.html
+?? common/cncf.md
+?? containers/
+?? dock-kube-day1.yml
+?? dock-kube-day1.yml.html
+?? dock-kube-day2.yml
+?? dock-kube-day2.yml.html
+?? dock-kube-day3.yml
+?? dock-kube-day3.yml.html
+?? dock-kube-day4.yml
+?? dock-kube-day4.yml.html
+?? images/container-layers.jpg
+?? images/containers_VMs_CPUs.png
+?? images/containers_vs_VMS.png
+?? images/logo-plb.jpg
+?? images/plb.jpeg
+?? images/sharing-layers.jpg
+?? kube-day1.yml
+?? kube-day1.yml.html
+?? kube/kubeobjects.md
+?? kube/monitoring.md
+?? kube/netisolation.md
+?? kube/serverless.md
+?? kube/statefulsets_fr.md
+?? override.css
+?? shared/
+
+```
+
+These slides have been built from commit: 3e7271f
+
+
+[common/title_fr.md](https://github.com/RyaxTech/kube.training.git/tree/gh-pages//common/title_fr.md)]
+---
+
+class: title, in-person
+
+Kubernetes<br/>Introduction, Architecture and Installation<br/><br/></br>
+
+
+.debug[[common/title_fr.md](https://github.com/RyaxTech/kube.training.git/tree/gh-pages//common/title_fr.md)]
+---
+## Some infos about the instructor
+
+- Yiannis Georgiou - CTO Ryax Technologies
+
+- PhD Université Grenoble-Alpes - Resource Management and Scheduling on High Performance Computing
+
+- 11 ans at Bull/Atos Technologies - R&D Architect / Software Engineer 
+
+.debug[[logistics.md](https://github.com/RyaxTech/kube.training.git/tree/gh-pages//logistics.md)]
+---
+
+## Logistics
+
+- The training will take place from  9h until 17h30
+
+- There will be a break for lunch from 12h30 to 14h
+
+- Feel free to interrupt for questions at any time
+
+- Especially when you see full screen container pictures!
+
+.debug[[logistics.md](https://github.com/RyaxTech/kube.training.git/tree/gh-pages//logistics.md)]
+---
+## Les slides de la formation
+
+Tout le contenu est disponible dans un depot Github:
+
+  https://github.com/RyaxTech/kube.training
+
+- Le contenu est basé sur les slides écrites initiallement par [Jérôme Petazzoni](https://twitter.com/jpetazzo) pour supporter de workshops et tutoriels autour des Conteneurs et de Kubernetes. 
+
+- Pour cette formation, les slides ont été traduites en français et adaptées.
+
+- Plusieurs mots et termes liées aux concepts de Kubernetes n'ont pas été traduit pour des raisons de simplicité
+
+* En dehors de la formation: 
+  * ...si vous voulez passer plus de temps pour approfondir sur Kubernetes vous pouvez suivre la [documentation](https://kubernetes.io/docs/) officiel ...
+  * ...si vous avez de questions particuliers vous pouvez aussi voir sur [StackOverflow](http://stackoverflow.com/questions/tagged/kubernetes)
+
+
+.debug[[common/about-slides_fr.md](https://github.com/RyaxTech/kube.training.git/tree/gh-pages//common/about-slides_fr.md)]
+---
+
+name: toc-chapter-1
+
+## Chapter 1
+
+- [Vue d'ensemble de Docker](#toc-vue-densemble-de-docker)
+
+- [Histoire des conteneurs ... et Docker](#toc-histoire-des-conteneurs--et-docker)
+
+- [Pré-requis](#toc-pr-requis)
+
+- [Notre application sample](#toc-notre-application-sample)
+
+- [Identifier les goulots d'étranglement](#toc-identifier-les-goulots-dtranglement)
+
+.debug[(auto-generated TOC)]
+---
+name: toc-chapter-2
+
+## Chapter 2
+
+- [Introduction de Kubernetes](#toc-introduction-de-kubernetes)
+
+- [Déclaratif vs impératif](#toc-dclaratif-vs-impratif)
+
+- [Modèle de réseau de Kubernetes](#toc-modle-de-rseau-de-kubernetes)
+
+- [Premier contact avec `kubectl`](#toc-premier-contact-avec-kubectl)
+
+- [Gérer nos premiers conteneurs sur Kubernetes](#toc-grer-nos-premiers-conteneurs-sur-kubernetes)
+
+.debug[(auto-generated TOC)]
+---
+name: toc-chapter-3
+
+## Chapter 3
+
+- [Installation de Kubernetes](#toc-installation-de-kubernetes)
+
+- [Le dashboard de Kubernetes](#toc-le-dashboard-de-kubernetes)
+
+- [Les implications de sécurité de `kubectl apply`](#toc-les-implications-de-scurit-de-kubectl-apply)
+
+.debug[(auto-generated TOC)]
+
+
+
+.debug[[common/toc.md](https://github.com/RyaxTech/kube.training.git/tree/gh-pages//common/toc.md)]
+---
+
+class: pic
+
+.interstitial[![Image separating from the next chapter](https://gallant-turing-d0d520.netlify.com/containers/Container-Ship-Freighter-Navigation-Elbe-Romance-1782991.jpg)]
+
+---
+
+name: toc-vue-densemble-de-docker
+class: title
+
+Vue d'ensemble de Docker
+
+.nav[
+[Section précédente](#toc-)
+|
+[Retour table des matières](#toc-chapter-1)
+|
+[Section suivante](#toc-histoire-des-conteneurs--et-docker)
+]
+
+.debug[(automatically generated title slide)]
+
+---
+# Vue d'ensemble de Docker
+
+Dans cette partie, nous allons apprendre:
+
+* Pourquoi les conteneurs ('elevator pitch' non-technique)
+
+* Pourquoi les conteneurs ('elevator pitch' technique)
+
+* Comment Docker nous aide à construire, expédier et exécuter
+
+* L'histoire des conteneurs
+
+Nous n'utiliserons pas Docker ni les conteneurs dans ce chapitre (pour l'instant!).
+
+Ne vous inquiétez pas, nous y arriverons assez vite!
+
+.debug[[intro/Docker_Overview_fr.md](https://github.com/RyaxTech/kube.training.git/tree/gh-pages//intro/Docker_Overview_fr.md)]
+---
+
+## Elevator pitch
+
+### (pour votre manager, votre patron ...)
+
+.debug[[intro/Docker_Overview_fr.md](https://github.com/RyaxTech/kube.training.git/tree/gh-pages//intro/Docker_Overview_fr.md)]
+---
+
+## OK ... Pourquoi le buzz autour des conteneurs?
+
+* L'industrie du logiciel a changé
+
+* Avant:
+  * applications monolithiques
+  * longs cycles de développement
+  * environnement unique
+  * passage à l'echelle lente
+
+* À présent:
+  * services découplés
+  * améliorations rapides et itératives
+  * plusieurs environnements
+  * passage à l'echelle rapide
+
+.debug[[intro/Docker_Overview_fr.md](https://github.com/RyaxTech/kube.training.git/tree/gh-pages//intro/Docker_Overview_fr.md)]
+---
+
+class: pic
+
+## Monolithic VS Microservices
+
+![problem](images/microservices1.png)
+
+
+
+.debug[[intro/Docker_Overview_fr.md](https://github.com/RyaxTech/kube.training.git/tree/gh-pages//intro/Docker_Overview_fr.md)]
+---
+
+class: pic
+
+## Passage à l'echelle de microservices
+
+![problem](images/microservice2.png)
+
+.debug[[intro/Docker_Overview_fr.md](https://github.com/RyaxTech/kube.training.git/tree/gh-pages//intro/Docker_Overview_fr.md)]
+---
+
+## Le déploiement devient très complexe
+
+* Beaucoup de stacks différentes:
+  * langages
+  * frameworks
+  * des bases de données
+
+* Beaucoup de cibles différentes:
+  * environnements de développement individuels
+  * pré-production, QA, stagin ...
+  * production: on-prem, cloud, hybride
+
+.debug[[intro/Docker_Overview_fr.md](https://github.com/RyaxTech/kube.training.git/tree/gh-pages//intro/Docker_Overview_fr.md)]
+---
+
+class: pic
+
+## Le problème de déploiement
+
+![problem](images/shipping-software-problem.png)
+
+.debug[[intro/Docker_Overview_fr.md](https://github.com/RyaxTech/kube.training.git/tree/gh-pages//intro/Docker_Overview_fr.md)]
+---
+
+class: pic
+
+## La matrice de l'enfer
+
+![matrix](images/shipping-matrix-from-hell.png)
+
+.debug[[intro/Docker_Overview_fr.md](https://github.com/RyaxTech/kube.training.git/tree/gh-pages//intro/Docker_Overview_fr.md)]
+---
+
+class: pic
+
+## Le parallèle avec l'industrie de transport
+
+![history](images/shipping-industry-problem.png)
+
+.debug[[intro/Docker_Overview_fr.md](https://github.com/RyaxTech/kube.training.git/tree/gh-pages//intro/Docker_Overview_fr.md)]
+---
+
+class: pic
+
+## Conteneurs d'expédition intermodaux
+
+![shipping](images/shipping-industry-solution.png)
+
+.debug[[intro/Docker_Overview_fr.md](https://github.com/RyaxTech/kube.training.git/tree/gh-pages//intro/Docker_Overview_fr.md)]
+---
+
+class: pic
+
+## Un nouvel écosystème d'expédition
+
+![shipeco](images/shipping-indsutry-results.png)
+
+.debug[[intro/Docker_Overview_fr.md](https://github.com/RyaxTech/kube.training.git/tree/gh-pages//intro/Docker_Overview_fr.md)]
+---
+
+class: pic
+
+## Un système de conteneur d'expédition pour les applications
+
+![shipapp](images/shipping-software-solution.png)
+
+.debug[[intro/Docker_Overview_fr.md](https://github.com/RyaxTech/kube.training.git/tree/gh-pages//intro/Docker_Overview_fr.md)]
+---
+
+class: pic
+
+## Éliminer la matrice de l'enfer
+
+![elimatrix](images/shipping-matrix-solved.png)
+
+.debug[[intro/Docker_Overview_fr.md](https://github.com/RyaxTech/kube.training.git/tree/gh-pages//intro/Docker_Overview_fr.md)]
+---
+
+## Résultats
+
+* [Dev-to-prod réduit de 9 mois à 15 minutes (ING)](
+  https://www.docker.com/sites/default/files/CS_ING_01.25.2015_1.pdf)
+
+* [Temps d'intégration continue réduit de plus de 60% (BBC)](
+  https://www.docker.com/sites/default/files/CS_BBCNews_01.25.2015_1.pdf)
+
+* [Déployer 100 fois par jour au lieu d'une fois par semaine (GILT)](
+  https://www.docker.com/sites/default/files/CS_Gilt%20Groupe_03.18.2015_0.pdf)
+
+* [Consolidation de l'infrastructure de 70% (MetLife)](
+  https://www.docker.com/customers/metlife-transforms-customer-experience-legacy-and-microservices-mashup)
+
+* [Consolidation de l'infrastructure de 60% (Intesa Sanpaolo)](
+  https://blog.docker.com/2017/11/intesa-sanpaolo-builds-resilient-foundation-banking-docker-enterprise-edition/)
+
+* [14x densité d'application; 60% du centre de données existant migré en 4 mois (GE Appliances)](
+  https://www.docker.com/customers/ge-uses-docker-enable-self-service-their-developers)
+
+* etc.
+
+.debug[[intro/Docker_Overview_fr.md](https://github.com/RyaxTech/kube.training.git/tree/gh-pages//intro/Docker_Overview_fr.md)]
+---
+
+## Elevator pitch
+
+###(pour vos collègues devs et ops)
+
+.debug[[intro/Docker_Overview_fr.md](https://github.com/RyaxTech/kube.training.git/tree/gh-pages//intro/Docker_Overview_fr.md)]
+---
+
+## Échapper à la dépendance d'enfer
+
+1. Écrire les instructions d'installation dans un fichier `INSTALL.txt`
+
+2. En utilisant ce fichier, écrivez un script `install.sh` qui *vous convient*
+
+3. Transformez ce fichier dans un `Dockerfile`, testez-le sur votre machine
+
+4. Si le Dockerfile se construit sur votre machine, il se construira *n'importe où*
+
+5. Nous sommes tranquille en évitant l'enfer de la dépendance et "ca marche sur ma machine"
+
+.debug[[intro/Docker_Overview_fr.md](https://github.com/RyaxTech/kube.training.git/tree/gh-pages//intro/Docker_Overview_fr.md)]
+---
+
+## Développeurs et contributeurs embarqués rapidement
+
+1. Écrire des fichiers Docker pour vos composants d'application
+
+2. Utilisez des images pré-faites depuis le Docker Hub (mysql, redis ...)
+
+3. Décrivez votre stack avec un fichier Compose
+
+4. Embarquez quelqu'un avec deux commandes:
+
+```bash
+git clone ...
+docker-compose up
+```
+
+Avec cela, vous pouvez créer des environnements de développement, d'intégration et d'assurance qualité en quelques minutes!
+
+.debug[[intro/Docker_Overview_fr.md](https://github.com/RyaxTech/kube.training.git/tree/gh-pages//intro/Docker_Overview_fr.md)]
+---
+
+class: extra-details
+
+## Mise en œuvre un CI fiable facilement
+
+1. Construction d'un environnement de test avec un fichier Dockerfile ou Compose
+
+2. Pour chaque série de tests, placez un nouveau conteneur ou une nouvelle stack
+
+3. Chaque run est maintenant dans un environnement propre
+
+4. Aucune pollution des tests précédents
+
+Beaucoup plus rapide et moins cher que de créer des machines virtuelles à chaque fois!
+
+.debug[[intro/Docker_Overview_fr.md](https://github.com/RyaxTech/kube.training.git/tree/gh-pages//intro/Docker_Overview_fr.md)]
+---
+
+class: extra-details
+
+## Utilisation des images de conteneur comme composants de construction
+
+1. Construisez votre application depuis Dockerfiles
+
+2. Stocker les images résultantes dans un registre
+
+3. Garde-les pour toujours (ou aussi longtemps que nécessaire)
+
+4. Testez ces images dans QA, CI, intégration ...
+
+5. Exécutez les mêmes images en production
+
+6. Quelque chose ne va pas? Retour à l'image précédente
+
+7. Inquetude sur l'ancienne régression? L'ancienne image vous couvre!
+
+Les images contiennent toutes les bibliothèques, dépendances, etc. nécessaires pour exécuter l'application.
+
+.debug[[intro/Docker_Overview_fr.md](https://github.com/RyaxTech/kube.training.git/tree/gh-pages//intro/Docker_Overview_fr.md)]
+---
+
+class: extra-details
+
+## Découplage de la "plomberie" de la logique de l'application
+
+1. Ecrivez votre code pour vous connecter aux services nommés ("db", "api" ...)
+
+2. Utilisez Compose pour commencer votre stack
+
+3. Docker va configurer le résolveur DNS par conteneur pour ces noms
+
+4. Vous pouvez maintenant redimensionner, ajouter des équilibreurs de charge, réplication ... sans changer votre code
+
+Note: ceci n'est pas couvert dans cet atelier de niveau intro!
+
+.debug[[intro/Docker_Overview_fr.md](https://github.com/RyaxTech/kube.training.git/tree/gh-pages//intro/Docker_Overview_fr.md)]
+---
+
+class: extra-details
+
+## Qu'est-ce que Docker a apporté à la table?
+
+### Docker avant / après
+
+.debug[[intro/Docker_Overview_fr.md](https://github.com/RyaxTech/kube.training.git/tree/gh-pages//intro/Docker_Overview_fr.md)]
+---
+
+class: extra-details
+
+## Formats et API, avant Docker
+
+* Pas de format d'échange standardisé.
+  <br/>(Non, une archive tar de rootfs *n'est pas* un format!)
+
+* Les conteneurs sont difficiles à utiliser pour les développeurs.
+  <br/>(Où est l'équivalent de `docker run debian`?)
+
+* En conséquence, ils sont cachés aux utilisateurs finaux.
+
+* Aucun composant, API ou outil réutilisable.
+  <br/>(Au mieux: abstractions de VM, par exemple libvirt.)
+
+
+Analogie:
+
+* Les conteneurs d'expédition ne sont pas seulement des boîtes en acier.
+* Ce sont des boîtes en acier de taille standard, avec les mêmes crochets et trous.
+
+.debug[[intro/Docker_Overview_fr.md](https://github.com/RyaxTech/kube.training.git/tree/gh-pages//intro/Docker_Overview_fr.md)]
+---
+
+class: extra-details
+
+## Formats et API, après Docker
+
+* Normaliser le format du conteneur, car les conteneurs n'étaient pas portables.
+
+* Rendre les conteneurs faciles à utiliser pour les développeurs.
+
+* Accent sur les composants réutilisables, API, écosystème d'outils standards.
+
+* Amélioration des outils spécifiques ad-hoc, internes.
+
+.debug[[intro/Docker_Overview_fr.md](https://github.com/RyaxTech/kube.training.git/tree/gh-pages//intro/Docker_Overview_fr.md)]
+---
+
+class: extra-details
+
+## Expédition, avant Docker
+
+* Expédier les paquets: deb, rpm, gem, pot, homebrew ...
+
+* Dépendance de l'enfer.
+
+* "Fonctionne sur ma machine."
+
+* Déploiement de base souvent fait à partir de zéro (debootstrap ...) et peu fiable.
+
+.debug[[intro/Docker_Overview_fr.md](https://github.com/RyaxTech/kube.training.git/tree/gh-pages//intro/Docker_Overview_fr.md)]
+---
+
+class: extra-details
+
+## Expédition, après Docker
+
+* Expédier des images de conteneur avec toutes leurs dépendances.
+
+* Les images sont plus grandes, mais elles sont divisées en couches.
+
+* Envoyez uniquement les couches qui ont changé.
+
+* Enregistrer l'utilisation du disque, du réseau, de la mémoire.
+
+.debug[[intro/Docker_Overview_fr.md](https://github.com/RyaxTech/kube.training.git/tree/gh-pages//intro/Docker_Overview_fr.md)]
+---
+
+class: extra-details
+
+## Exemple
+
+Couches:
+
+* CentOS
+* JRE
+* Matou
+* Dépendances
+* Application JAR
+* Configuration
+
+.debug[[intro/Docker_Overview_fr.md](https://github.com/RyaxTech/kube.training.git/tree/gh-pages//intro/Docker_Overview_fr.md)]
+---
+
+class: extra-details
+
+## Devs vs Ops, avant Docker
+
+* Déposez une archive tar (ou un hash de commit) avec des instructions.
+
+* Environnement de développement très différent de la production.
+
+* Les Ops n'ont pas toujours un environnement de dev eux-mêmes ...
+
+* ... et quand ils le font, cela peut différer de ceux des développeurs.
+
+* Les opérations doivent trier les différences et le faire fonctionner ...
+
+* ... ou rebondir vers les développeurs.
+
+* Le code de livraison provoque des frictions et des retards.
+
+.debug[[intro/Docker_Overview_fr.md](https://github.com/RyaxTech/kube.training.git/tree/gh-pages//intro/Docker_Overview_fr.md)]
+---
+
+class: extra-details
+
+## Devs vs Ops, après Docker
+
+* Déposer une image de conteneur ou un fichier de composition.
+
+* Les opérations peuvent toujours exécuter cette image de conteneur.
+
+* Les opérations peuvent toujours exécuter ce fichier de composition.
+
+* Les opérations doivent encore s'adapter à l'environnement de prod,
+   mais au moins ils ont un point de référence.
+
+* Les opérations ont des outils permettant d'utiliser la même image
+   en dev et prod.
+
+* Les développeurs peuvent être autorisés à faire eux-mêmes des publications
+   plus facilement.
+
+.debug[[intro/Docker_Overview_fr.md](https://github.com/RyaxTech/kube.training.git/tree/gh-pages//intro/Docker_Overview_fr.md)]
+---
+
+class: pic
+
+.interstitial[![Image separating from the next chapter](https://gallant-turing-d0d520.netlify.com/containers/ShippingContainerSFBay.jpg)]
+
+---
+
+name: toc-histoire-des-conteneurs--et-docker
+class: title
+
+Histoire des conteneurs ... et Docker
+
+.nav[
+[Section précédente](#toc-vue-densemble-de-docker)
+|
+[Retour table des matières](#toc-chapter-1)
+|
+[Section suivante](#toc-pr-requis)
+]
+
+.debug[(automatically generated title slide)]
+
+---
+# Histoire des conteneurs ... et Docker
+
+.debug[[intro/Docker_History_fr.md](https://github.com/RyaxTech/kube.training.git/tree/gh-pages//intro/Docker_History_fr.md)]
+---
+
+## Premières expérimentations
+
+* [IBM VM/370 (1972)](https://en.wikipedia.org/wiki/VM_%28operating_system%29)
+
+* [Linux VServers (2001)](http://www.solucorp.qc.ca/changes.hc?projet=vserver)
+
+* [Solaris Containers (2004)](https://en.wikipedia.org/wiki/Solaris_Containers)
+
+* [FreeBSD jails (1999)](https://www.freebsd.org/cgi/man.cgi?query=jail&sektion=8&manpath=FreeBSD+4.0-RELEASE)
+
+Les conteneurs existent depuis *très longtemps* en effet.
+
+.debug[[intro/Docker_History_fr.md](https://github.com/RyaxTech/kube.training.git/tree/gh-pages//intro/Docker_History_fr.md)]
+---
+
+class: pic
+
+## L'âge du VPS (jusqu'en 2007-2008)
+
+![lightcont](images/containers-as-lightweight-vms.png)
+
+.debug[[intro/Docker_History_fr.md](https://github.com/RyaxTech/kube.training.git/tree/gh-pages//intro/Docker_History_fr.md)]
+---
+
+## Containers = moins cher que les VM
+
+* Utilisateurs: fournisseurs d'hébergement.
+
+* Audience hautement spécialisée avec une forte culture d'opérations.
+
+.debug[[intro/Docker_History_fr.md](https://github.com/RyaxTech/kube.training.git/tree/gh-pages//intro/Docker_History_fr.md)]
+---
+
+class: pic
+
+## La période PAAS (2008-2013)
+
+![heroku 2007](images/heroku-first-homepage.png)
+
+.debug[[intro/Docker_History_fr.md](https://github.com/RyaxTech/kube.training.git/tree/gh-pages//intro/Docker_History_fr.md)]
+---
+
+## Containers = plus facile que les VM
+
+* Je ne peux pas parler pour Heroku, mais les conteneurs étaient (l'une des) arme secrète de dotCloud
+
+* dotCloud utilisait un PaaS, en utilisant un moteur de conteneur personnalisé.
+
+* Ce moteur était basé sur OpenVZ (et plus tard, LXC) et AUFS.
+
+* Il a commencé (vers 2008) comme un seul script Python.
+
+* En 2012, le moteur avait plusieurs (10) composants Python.
+  <br/> (et ~ 100 autres micro-services!)
+
+* Fin 2012, dotCloud refactorise ce moteur de conteneur.
+
+* Le nom de code de ce projet est "Docker".
+
+.debug[[intro/Docker_History_fr.md](https://github.com/RyaxTech/kube.training.git/tree/gh-pages//intro/Docker_History_fr.md)]
+---
+
+## Première version publique de Docker
+
+* Mars 2013, PyCon, Santa Clara:
+  <br/> "Docker" est présenté au public pour la première fois.
+
+* Il est publié avec une licence open source.
+
+* Réactions et retours très positifs!
+
+* L'équipe dotCloud passe progressivement au développement de Docker.
+
+* La même année, dotCloud change de nom pour Docker.
+
+* En 2014, l'activité PaaS est vendue.
+
+.debug[[intro/Docker_History_fr.md](https://github.com/RyaxTech/kube.training.git/tree/gh-pages//intro/Docker_History_fr.md)]
+---
+
+## Docker premiers jours (2013-2014)
+
+.debug[[intro/Docker_History_fr.md](https://github.com/RyaxTech/kube.training.git/tree/gh-pages//intro/Docker_History_fr.md)]
+---
+
+## Premiers utilisateurs de Docker
+
+* Constructeurs PAAS (Flynn, Dokku, Tsuru, Deis ...)
+
+* Utilisateurs de PAAS (ceux qui sont assez grands pour justifier la construction de leurs propres)
+
+* Plates-formes CI
+
+* développeurs, développeurs, développeurs, développeurs
+
+.debug[[intro/Docker_History_fr.md](https://github.com/RyaxTech/kube.training.git/tree/gh-pages//intro/Docker_History_fr.md)]
+---
+
+## Boucle de rétroaction positive
+
+* En 2013, la technologie sous conteneurs (cgroups, namespaces, stockage copy-on-write ...)
+  avait beaucoup de taches aveugles.
+
+* La popularité croissante de Docker et des conteneurs a révélé de nombreux bugs.
+
+* En conséquence, ces bugs ont été corrigés, ce qui a permis d'améliorer la stabilité des conteneurs.
+
+* Tout hébergeur / fournisseur de cloud décent peut exécuter des conteneurs aujourd'hui.
+
+* Les conteneurs deviennent un excellent outil pour déployer / déplacer des charges de travail de / sur le site / cloud.
+
+.debug[[intro/Docker_History_fr.md](https://github.com/RyaxTech/kube.training.git/tree/gh-pages//intro/Docker_History_fr.md)]
+---
+
+## Maturité (2015-2016)
+
+.debug[[intro/Docker_History_fr.md](https://github.com/RyaxTech/kube.training.git/tree/gh-pages//intro/Docker_History_fr.md)]
+---
+
+## Docker devient un standard de l'industrie
+
+* Docker atteint le jalon symbolique 1.0.
+
+* Les systèmes existants tels que Mesos et Cloud Foundry ajoutent un support Docker.
+
+* Normalisation autour de l'OCI (Open Containers Initiative).
+
+* D'autres moteurs de conteneurs sont développés.
+
+* Création de la CNCF (Cloud Native Computing Foundation).
+
+.debug[[intro/Docker_History_fr.md](https://github.com/RyaxTech/kube.training.git/tree/gh-pages//intro/Docker_History_fr.md)]
+---
+
+## Docker devient une plateforme
+
+* Le moteur de conteneur initial est maintenant connu sous le nom de "Moteur Docker".
+
+* D'autres outils sont ajoutés:
+  * Docker Compose (anciennement "Fig")
+  * Machine Docker
+  * Docker Swarm
+  * Kitematic
+  * Docker Cloud (anciennement "Tutum")
+  * Datacenter Docker
+  * etc.
+
+* Docker Inc. lance des offres commerciales.
+
+.debug[[intro/Docker_History_fr.md](https://github.com/RyaxTech/kube.training.git/tree/gh-pages//intro/Docker_History_fr.md)]
+---
+
+class: pic
+
+.interstitial[![Image separating from the next chapter](https://gallant-turing-d0d520.netlify.com/containers/aerial-view-of-containers.jpg)]
+
+---
+
+name: toc-pr-requis
+class: title
+
+Pré-requis
+
+.nav[
+[Section précédente](#toc-histoire-des-conteneurs--et-docker)
+|
+[Retour table des matières](#toc-chapter-1)
+|
+[Section suivante](#toc-notre-application-sample)
+]
+
+.debug[(automatically generated title slide)]
+
+---
+# Pré-requis
+
+- Soyez à l'aise avec la ligne de commande UNIX
+
+  - naviguer dans les répertoires
+
+  - éditer des fichiers
+
+  - un peu de bash (variables d'environnement, boucles)
+
+- Quelques connaissances de Docker
+
+  - `docker run`,` docker ps`, `docker build`
+
+  - idéalement, vous savez écrire un Dockerfile et le construire
+    <br/>
+    (même si c'est une ligne `FROM` et quelques commandes` RUN`)
+
+- C'est tout à fait OK si vous n'êtes pas un expert Docker!
+
+.debug[[common/prereqs_fr.md](https://github.com/RyaxTech/kube.training.git/tree/gh-pages//common/prereqs_fr.md)]
+---
+
+class: title
+
+*Dites-moi et j'oublie.*
+<br/>
+*Apprends-moi et je me souviens.*
+<br/>
+*Implique-moi et j'apprends.*
+
+Misattribué à Benjamin Franklin
+
+[(Probablement inspiré par le philosophe confucéen chinois Xunzi)](https://www.barrypopik.com/index.php/new_york_city/entry/tell_me_and_i_forget_teach_me_and_i_may_remember_involve_me_and_i_will_lear/)
+
+.debug[[common/prereqs_fr.md](https://github.com/RyaxTech/kube.training.git/tree/gh-pages//common/prereqs_fr.md)]
+---
+
+## Sections pratiques
+
+- Tout l'atelier est pratique
+
+- Nous allons construire, expédier et faire fonctionner des conteneurs!
+
+- Nous allons reproduire toutes les démos
+
+- Toutes les sections pratiques sont clairement identifiées, comme le rectangle gris ci-dessous
+
+.exercise[
+
+- C'est ce que tu es censé faire!
+
+- Allez dans [kube.training] (https://goo.gl/dekbTb) pour voir ces diapositives
+
+]
+
+.debug[[common/prereqs_fr.md](https://github.com/RyaxTech/kube.training.git/tree/gh-pages//common/prereqs_fr.md)]
+---
+
+class: in person
+
+## Où allons-nous faire fonctionner nos conteneurs?
+
+.debug[[common/prereqs_fr.md](https://github.com/RyaxTech/kube.training.git/tree/gh-pages//common/prereqs_fr.md)]
+---
+
+class: in person, pic
+
+![Vous obtenez un cluster](images/you-get-a-cluster.jpg)
+
+.debug[[common/prereqs_fr.md](https://github.com/RyaxTech/kube.training.git/tree/gh-pages//common/prereqs_fr.md)]
+---
+
+class: in person
+
+## Vous obtenez un cluster de machines virtuelles cloud
+
+- Chaque personne reçoit un cluster privé de machines virtuelles cloud (non partagées avec d'autres utilisateurs)
+
+- Ils resteront la pendant la durée de la formation
+
+- Vous pouvez automatiquement SSH d'une VM à l'autre
+
+- Les nœuds ont des alias: `node1`, `node2`...
+
+.debug[[common/prereqs_fr.md](https://github.com/RyaxTech/kube.training.git/tree/gh-pages//common/prereqs_fr.md)]
+---
+
+class: in person
+
+## Pourquoi ne faisons-nous pas des conteneurs localement?
+
+- L'installation de ce truc peut être difficile sur certaines machines
+
+  (32 bits CPU ou OS ... Ordinateurs portables sans accès administrateur ... etc.)
+
+- Tout ce dont vous avez besoin est un ordinateur (ou même un téléphone ou une tablette!), Avec:
+
+  - une connexion internet
+
+  - un navigateur Web
+
+  - un client SSH
+
+.debug[[common/prereqs_fr.md](https://github.com/RyaxTech/kube.training.git/tree/gh-pages//common/prereqs_fr.md)]
+---
+
+class: in person
+
+## Connexion à l'environnement d'exercices
+
+.exercise[
+
+- Connectez-vous à la première machine virtuelle (`node1`) avec votre client SSH
+
+- Vérifiez que vous pouvez SSH (sans mot de passe) à `node2`:
+  ```bash
+  ssh node2
+  ```
+- Tapez `exit` ou` ^ D` pour revenir à `asterix-1`
+
+]
+
+Si quelque chose ne va pas, demandez de l'aide!
+
+.debug[[common/prereqs_fr.md](https://github.com/RyaxTech/kube.training.git/tree/gh-pages//common/prereqs_fr.md)]
+---
+
+## Faire ou refaire des exercises seul?
+
+- Utilisez quelque chose comme
+  [Play-With-Docker](http://play-with-docker.com/) ou
+  [Play-With-Kubernetes](https://medium.com/@marcosnils/introducing-pwk-play-with-k8s-159fcfeb787b)
+
+  Zéro effort d'installation; mais l'environnement est de courte durée et
+  pourrait avoir des ressources limitées
+
+- Créez votre propre cluster (VM locales ou cloud)
+
+  Petit effort d'installation; petit coût; environnements flexibles
+
+- Créer un tas de clusters pour vous et vos amis
+    ([instructions](https://github.com/RyaxTech/kube.training/tree/master/prepare-vms))
+
+  Effort de configuration plus important; idéal pour la formation de groupe
+
+.debug[[common/prereqs_fr.md](https://github.com/RyaxTech/kube.training.git/tree/gh-pages//common/prereqs_fr.md)]
+---
+
+## Nous allons (surtout) interagir avec node1 seulement
+
+*Ces remarques ne s'appliquent que lorsque vous utilisez plusieurs nœuds, bien sûr.*
+
+- Sauf instructions, **toutes les commandes doivent être exécutées à partir de la première VM, `node1`**
+
+- Nous allons seulement vérifier / copier le code sur `node1`
+
+- Pendant les opérations normales, nous n'avons pas besoin d'accéder aux autres nœuds
+
+- Si nous devions résoudre les problèmes, nous utiliserions une combinaison de:
+
+  - SSH (pour accéder aux logs du système, état du démon ...)
+  
+  - API Docker (pour vérifier l'état des conteneurs en cours d'exécution et du moteur de conteneur)
+
+
+.debug[[common/prereqs_fr.md](https://github.com/RyaxTech/kube.training.git/tree/gh-pages//common/prereqs_fr.md)]
+---
+---
+
+class: pic
+
+.interstitial[![Image separating from the next chapter](https://gallant-turing-d0d520.netlify.com/containers/blue-containers.jpg)]
+
+---
+
+name: toc-notre-application-sample
+class: title
+
+Notre application sample
+
+.nav[
+[Section précédente](#toc-pr-requis)
+|
+[Retour table des matières](#toc-chapter-1)
+|
+[Section suivante](#toc-identifier-les-goulots-dtranglement)
+]
+
+.debug[(automatically generated title slide)]
+
+---
+
+# Notre application sample
+
+- Nous allons cloner le dépôt GitHub sur notre 1er noeud
+
+- Le référentiel contient également des scripts et des outils que nous utiliserons à travers l'atelier
+
+.exercise[
+
+- Cloner le dépôt sur `node1`:
+  ```bash
+  git clone https://github.com/RyaxTech/kube.training 
+  ```
+
+]
+
+(Vous pouvez également faire un fork du dépôt sur GitHub et cloner votre fork si vous préférez cela.)
+
+.debug[[common/sampleapp_fr.md](https://github.com/RyaxTech/kube.training.git/tree/gh-pages//common/sampleapp_fr.md)]
+---
+
+## Téléchargement et exécution de l'application
+
+Commençons la procedure, car le téléchargement prendra un peu de temps ...
+
+.exercise[
+
+- Allez dans le répertoire `dockercoins`, dans le repo clone:
+  ```bash
+  cd ~/kube.training/dockercoins
+  ```
+
+- Utilisez Compose pour générer et exécuter tous les conteneurs:
+  ```bash
+  docker-compose up
+  ``` 
+]
+
+Compose dit à Docker de construire toutes les images du conteneur (en tirant
+les images de base correspondantes), puis démarre tous les conteneurs,
+et affiche les logs agrégés.
+
+.debug[[common/sampleapp_fr.md](https://github.com/RyaxTech/kube.training.git/tree/gh-pages//common/sampleapp_fr.md)]
+---
+
+## Plus de détails sur notre exemple d'application
+
+- Visitez le lien GitHub avec tous les matériaux de cet atelier:
+  <br/> https://github.com/RyaxTech/kube.training
+
+- L'application est dans le sous-répertoire [dockercoins](https://github.com/RyaxTech/kube.training/tree/master/dockercoins)
+
+- Regardons la disposition générale du code source:
+
+  il y a un fichier Compose [docker-compose.yml](https://github.com/RyaxTech/kube.training/blob/master/dockercoins/docker-compose.yml) ...
+
+  ... et 4 autres services, chacun dans son propre répertoire:
+
+  - `rng` = service web générant des octets aléatoires
+  - `hasher` = hachage informatique du service Web des données POSTed
+  - `worker` = processus de fond utilisant `rng` et `hasher`
+  - `webui` = interface web pour suivre les progrès
+
+.debug[[common/sampleapp_fr.md](https://github.com/RyaxTech/kube.training.git/tree/gh-pages//common/sampleapp_fr.md)]
+---
+
+## Découverte de service dans le terrain de conteneurs
+
+- Nous ne codons pas les adresses IP dans le code
+
+- Nous ne codons pas le nom de domaine complet dans le code, soit
+
+- Nous nous connectons simplement à un nom de service, et la magie des conteneurs fait le reste
+
+  (Et par magie des conteneurs, nous entendons "un serveur DNS dynamique et embarqué")
+
+.debug[[common/sampleapp_fr.md](https://github.com/RyaxTech/kube.training.git/tree/gh-pages//common/sampleapp_fr.md)]
+---
+
+## Exemple dans `worker/worker.py`
+
+```python
+redis = Redis("`redis`")
+
+
+def get_random_bytes():
+    r = requests.get ("http://`rng`/32")
+    return r.content
+
+
+def hash_bytes(data):
+    r = requests.post("http://`hasher`/",
+                      data = data,
+                      headers = {"Content-Type": "application/octet-stream"})
+```
+
+(Code source complet disponible [ici](
+https://github.com/RyaxTech/kube.training/blob/8279a3bce9398f7c1a53bdd95187c53eda4e6435/dockercoins/worker/worker.py#L17
+))
+
+.debug[[common/sampleapp_fr.md](https://github.com/RyaxTech/kube.training.git/tree/gh-pages//common/sampleapp_fr.md)]
+---
+
+class: extra-details
+
+## Liens, dénomination et découverte de service
+
+- Les conteneurs peuvent avoir des alias réseau (résolvables via DNS)
+
+- Compose le fichier version 2+ rend chaque conteneur accessible via son nom de service
+
+- Compose la version 1 du fichier a nécessité des sections "liens"
+
+- Les alias réseau sont automatiquement "namespaced"
+
+  - vous pouvez avoir plusieurs applications déclarant et utilisant un service nommé `database`
+
+  - les conteneurs dans l'application bleue vont résoudre `database` à l'adresse IP de la base de données bleue
+
+  - les conteneurs dans l'application verte vont résoudre `base de données` à l'adresse IP de la base de données verte
+
+.debug[[common/sampleapp_fr.md](https://github.com/RyaxTech/kube.training.git/tree/gh-pages//common/sampleapp_fr.md)]
+---
+
+## Qu'est-ce qu'elle fait cette application?
+
+--
+
+- C'est un mineur de DockerCoin! .emoji[💰🐳📦🚢]
+
+--
+
+- Non, vous ne pouvez pas acheter de café avec DockerCoins
+
+--
+
+- Comment fonctionne DockerCoins:
+
+  - `worker` demande à `rng` de générer quelques octets aléatoires
+
+  - `worker` nourrit ces octets en `hasher`
+
+  - et répète pour toujours!
+
+  - chaque seconde, `worker` met à jour `redis` pour indiquer combien de boucles ont été faites
+
+  - `webui` interroge `redis`, et calcule et expose la "vitesse de hachage" dans votre navigateur
+
+.debug[[common/sampleapp_fr.md](https://github.com/RyaxTech/kube.training.git/tree/gh-pages//common/sampleapp_fr.md)]
+---
+
+## Notre application au travail
+
+- Sur le côté gauche, la "rainbow strip" montre les noms des conteneurs
+
+- Sur le côté droit, nous voyons la sortie de nos conteneurs
+
+- Nous pouvons voir le service `worker` faire des requêtes à `rng` et `hasher`
+
+- Pour `rng` et `hasher`, nous voyons les logs d'accès HTTP
+
+.debug[[common/sampleapp_fr.md](https://github.com/RyaxTech/kube.training.git/tree/gh-pages//common/sampleapp_fr.md)]
+---
+
+## Connexion à l'interface Web
+
+- Le conteneur `webui` expose un dashboard Web; Voyons voir
+
+.exercise[
+
+- Avec un navigateur Web, connectez-vous à `node1` sur le port 8080
+
+- Rappel: les alias `nodeX` ne sont valables que sur les nœuds eux-mêmes
+
+- Dans votre navigateur, vous devez entrer l'adresse IP de votre noeud
+
+]
+
+Une zone de dessin devrait apparaître, et après quelques secondes, un graphique bleu apparaîtra.
+
+.debug[[common/sampleapp_fr.md](https://github.com/RyaxTech/kube.training.git/tree/gh-pages//common/sampleapp_fr.md)]
+---
+
+class: extra-details
+
+## Pourquoi la vitesse semble-t-elle irrégulière?
+
+- On *dirait que* la vitesse est d'environ 4 hashes/seconde
+
+- Ou plus précisément: 4 hashes/seconde, avec des creux réguliers jusqu'à zéro
+
+- Pourquoi?
+
+--
+
+class: extra-details
+
+- L'application a en fait une vitesse constante et constante: 3,33 hachages / seconde
+  <br/>
+  (ce qui correspond à 1 hash toutes les 0.3 secondes)
+
+- Oui et?
+
+.debug[[common/sampleapp_fr.md](https://github.com/RyaxTech/kube.training.git/tree/gh-pages//common/sampleapp_fr.md)]
+---
+
+class: extra-details
+
+## La raison pour laquelle ce graphique n'est *pas génial*
+
+- Le "worker" ne met pas à jour le compteur après chaque boucle, mais jusqu'à une fois par seconde
+
+- La vitesse est calculée par le navigateur, vérifiant le compteur environ une fois par seconde
+
+- Entre deux mises à jour consécutives, le compteur augmentera de 4 ou de 0
+
+- La vitesse perçue sera donc 4 - 4 - 4 - 0 - 4 - 4 - 0 etc.
+
+.debug[[common/sampleapp_fr.md](https://github.com/RyaxTech/kube.training.git/tree/gh-pages//common/sampleapp_fr.md)]
+---
+
+## Arrêt de l'application
+
+- Si nous interrompons Compose (avec `^C`), il demandera poliment au Docker Engine d'arrêter l'application
+
+- Le moteur Docker enverra un signal `TERM` aux conteneurs
+
+- Si les conteneurs ne sortent pas en temps voulu, le moteur envoie un signal "KILL"
+
+.exercise[
+
+- Arrêtez l'application en tapant `^C`
+
+]
+
+-
+
+Certains conteneurs sortent immédiatement, d'autres prennent plus de temps.
+
+Les conteneurs qui ne gèrent pas `SIGTERM` finissent par être détruits après un délai de 10s. Si nous sommes très impatients, nous pouvons frapper `^C` une seconde fois!
+
+.debug[[common/sampleapp_fr.md](https://github.com/RyaxTech/kube.training.git/tree/gh-pages//common/sampleapp_fr.md)]
+---
+## Redémarrage en arrière-plan
+
+- De nombreux flags et commandes de Compose sont modélisés après ceux de `docker`
+
+.exercise[
+
+- Démarrez l'application en arrière-plan avec l'option `-d`:
+  ```bash
+  docker-compose up -d
+  ```
+
+- Vérifiez que notre application fonctionne avec la commande `ps`:
+  ```bash
+  docker-compose ps
+  ```
+
+]
+
+`docker-composer ps` montre également les ports exposés par l'application.
+
+.debug[[common/composescale_fr.md](https://github.com/RyaxTech/kube.training.git/tree/gh-pages//common/composescale_fr.md)]
+---
+
+class: extra-details
+
+## Affichage des logs
+
+- La commande `docker-compose logs` fonctionne comme les `docker logs`
+
+.exercise[
+
+- Voir tous les logs depuis la création du conteneur et quitter lorsque vous avez terminé:
+  ```bash
+  docker-compose logs
+  ```
+
+- Diffuser les logs de conteneur, en commençant par les 10 dernières lignes pour chaque conteneur:
+  ```bash
+  docker-compose logs --tail 10 --follow
+  ```
+
+]
+
+Astuce: utilisez `^ S` et` ^ Q` pour mettre en pause / reprendre la sortie du log.
+
+.debug[[common/composescale_fr.md](https://github.com/RyaxTech/kube.training.git/tree/gh-pages//common/composescale_fr.md)]
+---
+
+## Passage à l'échelle de l'application
+
+- Notre objectif est de faire monter ce graphique de performance (sans changer de ligne de code!)
+
+-
+
+- Avant d'essayer de faire évoluer l'application, nous déterminerons si nous avons besoin de plus de ressources
+
+  (CPU, RAM ...)
+
+- Pour cela, nous utiliserons de bons vieux outils UNIX sur notre noeud Docker
+
+.debug[[common/composescale_fr.md](https://github.com/RyaxTech/kube.training.git/tree/gh-pages//common/composescale_fr.md)]
+---
+
+## Regard sur l'utilisation des ressources
+
+- Regardons le CPU, la mémoire et l'utilisation des I/O
+
+.exercise[
+
+- Exécutez `top` pour voir l'utilisation du processeur et de la mémoire (vous devriez voir les cycles d'inactivité)
+
+
+- Exécutez `vmstat 1` pour voir l'utilisation des I/O (si/so/bi/bo)
+  <br/>(les 4 nombres devraient être presque zéro, sauf `bo` pour l'enregistrement)
+
+]
+
+Nous avons des ressources disponibles.
+
+- Pourquoi?
+- Comment pouvons-nous les utiliser?
+
+.debug[[common/composescale_fr.md](https://github.com/RyaxTech/kube.training.git/tree/gh-pages//common/composescale_fr.md)]
+---
+
+## Passage à l'échelle des workers sur un seul noeud
+
+- Docker Compose prend en charge le passage à l'échelle
+- Nous allons scaler  `worker` et voir ce qui se passe!
+
+.exercise[
+
+- Démarrer un autre conteneur `worker`:
+  ```bash
+  docker-compose scale worker=2
+  ```
+
+- Regardez le graphique de performance (il devrait montrer une amélioration de x2)
+
+- Regardez les logs agrégés de nos conteneurs (`worker_2` devrait apparaître)
+
+- Regardez l'impact sur la charge du processeur avec, par exemple, haut (il devrait être négligeable)
+
+]
+
+.debug[[common/composescale_fr.md](https://github.com/RyaxTech/kube.training.git/tree/gh-pages//common/composescale_fr.md)]
+---
+
+## Ajouter plus de workers
+
+- Super, ajoutons plus de workers, alors!
+
+.exercise[
+
+- Commencez huit autres conteneurs «worker»:
+  ```bash
+  docker-compose scale worker=10
+  ```
+
+- Regardez le graphique des performances: montre-t-il une amélioration x10?
+
+- Regardez les logs agrégés de nos conteneurs
+
+- Regardez l'impact sur la charge du processeur et l'utilisation de la mémoire
+
+]
+
+.debug[[common/composescale_fr.md](https://github.com/RyaxTech/kube.training.git/tree/gh-pages//common/composescale_fr.md)]
+---
+
+class: pic
+
+.interstitial[![Image separating from the next chapter](https://gallant-turing-d0d520.netlify.com/containers/chinook-helicopter-container.jpg)]
+
+---
+
+name: toc-identifier-les-goulots-dtranglement
+class: title
+
+Identifier les goulots d'étranglement
+
+.nav[
+[Section précédente](#toc-notre-application-sample)
+|
+[Retour table des matières](#toc-chapter-1)
+|
+[Section suivante](#toc-introduction-de-kubernetes)
+]
+
+.debug[(automatically generated title slide)]
+
+---
+
+# Identifier les goulots d'étranglement
+
+- Vous devriez avoir vu une amelioration de vitesse 3x (pas 10x)
+
+- L'ajout de workers n'a pas entraîné d'amélioration linéaire
+
+- *Quelque chose d'autre* nous ralentit
+
+-
+
+- ... Mais quoi?
+
+-
+
+- Le code n'a pas d'instrumentation
+
+- Utilisons l'analyse de performance HTTP de pointe!
+  <br/> (c'est-à-dire de bons vieux outils comme `ab`,` https` ...)
+
+.debug[[common/composescale_fr.md](https://github.com/RyaxTech/kube.training.git/tree/gh-pages//common/composescale_fr.md)]
+---
+
+## Accès aux services internes
+
+- `rng` et` hasher` sont exposés sur les ports 8001 et 8002
+
+- Ceci est déclaré dans le fichier Compose:
+
+  ```yaml
+    ...
+    rng:
+      build: rng
+      ports:
+      - "8001:80"
+
+    hasher:
+      build: hasher
+      ports:
+      - "8002:80"
+    ...
+  ```
+
+.debug[[common/composescale_fr.md](https://github.com/RyaxTech/kube.training.git/tree/gh-pages//common/composescale_fr.md)]
+---
+
+## Mesure de la latence en charge
+
+Nous allons utiliser `httping`.
+
+.exercise[
+
+- Vérifiez la latence de `rng`:
+  ```bash
+  httping -c 3 localhost:8001
+  ```
+
+- Vérifiez la latence de `hasher`:
+  ```bash
+  httping -c 3 localhost:8002
+  ```
+
+]
+
+`rng` a une latence beaucoup plus élevée que` hasher`.
+
+.debug[[common/composescale_fr.md](https://github.com/RyaxTech/kube.training.git/tree/gh-pages//common/composescale_fr.md)]
+---
+
+## Tirons des conclusions simplistes
+
+- Le goulot d'étranglement semble être `rng`
+
+- *Que se passe-t-il si* nous n'avons pas assez d'entropie et que nous ne pouvons pas générer suffisamment de nombres aléatoires?
+
+- Nous devons étendre le service `rng` sur plusieurs machines!
+
+Note: ceci est une fiction! Nous avons assez d'entropie. Mais nous avons besoin d'un prétexte pour l'étendre.
+
+(En fait, le code de `rng` utilise `/dev/urandom`, qui ne manque jamais d'entropie ...
+<br/>
+... et est [aussi bon que `/dev/random`](http://www.slideshare.net/PacSecJP/filippo-plain-simple-reality-of-entropy).)
+
+.debug[[common/composescale_fr.md](https://github.com/RyaxTech/kube.training.git/tree/gh-pages//common/composescale_fr.md)]
+---
+## Nettoyage
+
+- Avant de continuer, enlevons ces conteneurs
+
+.exercise[
+
+- Dites à Compose de tout enlever:
+  ```bash
+  docker-compose down
+  ```
+
+]
+
+.debug[[common/composedown_fr.md](https://github.com/RyaxTech/kube.training.git/tree/gh-pages//common/composedown_fr.md)]
+---
+
+## Pour aller plus loin avec Docker Compose
+
+- Lisez l'[overview](https://docs.docker.com/compose/overview/) de la documentation officielle.
+
+- Les exemples sont aussi intéréssant, comme le [Quickstart: Compose and WordPress](https://docs.docker.com/compose/wordpress/).
+.debug[[common/composedown_fr.md](https://github.com/RyaxTech/kube.training.git/tree/gh-pages//common/composedown_fr.md)]
+---
+
+class: pic
+
+.interstitial[![Image separating from the next chapter](https://gallant-turing-d0d520.netlify.com/containers/container-cranes.jpg)]
+
+---
+
+name: toc-introduction-de-kubernetes
+class: title
+
+Introduction de Kubernetes
+
+.nav[
+[Section précédente](#toc-identifier-les-goulots-dtranglement)
+|
+[Retour table des matières](#toc-chapter-2)
+|
+[Section suivante](#toc-dclaratif-vs-impratif)
+]
+
+.debug[(automatically generated title slide)]
+
+---
+# Introduction de Kubernetes
+
+- Kubernetes est un système de gestion de conteneur
+
+- Il exécute et gère les applications conteneurisées sur un cluster
+
+--
+
+- Qu'est-ce que cela signifie vraiment?
+
+.debug[[kube/concepts-k8s_fr.md](https://github.com/RyaxTech/kube.training.git/tree/gh-pages//kube/concepts-k8s_fr.md)]
+---
+
+## Introduction de Kubernetes
+
+--
+
+- C'est un logiciel pour *déployer et gérer* des applications conteneurisées tout en offrant la *meilleure utilisation possible* de la plate-forme de calcul.
+
+--
+
+- Il fait *l'abstraction* de l'infrastructure sous-jacente en *simplifiant le développement* d'applications et la *gestion du matériel*.
+
+.debug[[kube/concepts-k8s_fr.md](https://github.com/RyaxTech/kube.training.git/tree/gh-pages//kube/concepts-k8s_fr.md)]
+---
+
+## Benefices de Kubernetes
+
+--
+
+- Simplification du *déploiement* d'applications.
+
+--
+
+- Amélioration de *l'utilisation* du système matériel.
+
+--
+
+- *Passage à l'échelle* automatique de l'application.
+
+--
+
+- *Simplification du développement* d'applications
+
+--
+
+- *Tolérance aux pannes*, *haute disponibilité* et *auto-guérison*
+
+.debug[[kube/concepts-k8s_fr.md](https://github.com/RyaxTech/kube.training.git/tree/gh-pages//kube/concepts-k8s_fr.md)]
+---
+
+## Choses de base que nous pouvons demander à Kubernetes
+
+--
+
+- Démarrer 5 conteneurs en utilisant l'image `atseashop/api:v1.3`
+
+--
+
+- Placer un 'load balancer' interne devant ces conteneurs
+
+--
+
+- Démarrer 10 conteneurs en utilisant l'image `atseashop/webfront:v1.3`
+
+--
+
+- Placez un 'load balancer' public devant ces conteneurs
+
+--
+
+- C'est Noël, beaucoup de trafic, augmenter notre cluster et ajouter des conteneurs
+
+--
+
+- Nouvelle version! Remplacer mes conteneurs avec la nouvelle image `atseashop/webfront:v1.4`
+
+--
+
+- Continuez à traiter les demandes pendant la mise à niveau; mettre à jour mes conteneurs un à la fois
+
+.debug[[kube/concepts-k8s_fr.md](https://github.com/RyaxTech/kube.training.git/tree/gh-pages//kube/concepts-k8s_fr.md)]
+---
+
+## D'autres choses que Kubernetes peut faire pour nous
+
+- Autoscaling de base
+
+- Déploiement bleu / vert, déploiement canari
+
+- Les services à long terme, mais aussi les travaux par batch (ponctuels)
+
+- Overcommit notre cluster et *expulser* les jobs de basse priorité
+
+- Exécuter des services avec des données * stateful * (bases de données, etc.)
+
+- Contrôle d'accès à grain fin définissant * ce qui * peut être fait par * qui * sur * quelles * ressources
+
+- Intégration de services tiers (* catalogue de services *)
+
+- Automatiser des tâches complexes (* opérateurs *)
+
+.debug[[kube/concepts-k8s_fr.md](https://github.com/RyaxTech/kube.training.git/tree/gh-pages//kube/concepts-k8s_fr.md)]
+---
+
+## Kubernetes architecture
+
+.debug[[kube/concepts-k8s_fr.md](https://github.com/RyaxTech/kube.training.git/tree/gh-pages//kube/concepts-k8s_fr.md)]
+---
+
+class: pic
+
+![haha seulement blague](images/k8s-arch1.png)
+
+.debug[[kube/concepts-k8s_fr.md](https://github.com/RyaxTech/kube.training.git/tree/gh-pages//kube/concepts-k8s_fr.md)]
+---
+
+## Kubernetes architecture
+
+- Ha ha ha ha
+
+- OK, j'essayais de vous faire peur, c'est beaucoup plus simple que ça ❤️
+
+.debug[[kube/concepts-k8s_fr.md](https://github.com/RyaxTech/kube.training.git/tree/gh-pages//kube/concepts-k8s_fr.md)]
+---
+
+class: pic
+
+![Celui-là ressemble plus à la réalité](images/kube_archi_simple.png)
+
+.debug[[kube/concepts-k8s_fr.md](https://github.com/RyaxTech/kube.training.git/tree/gh-pages//kube/concepts-k8s_fr.md)]
+---
+
+class: pic
+
+![Celui-là ressemble plus à la réalité](images/k8s-arch2.png)
+
+.debug[[kube/concepts-k8s_fr.md](https://github.com/RyaxTech/kube.training.git/tree/gh-pages//kube/concepts-k8s_fr.md)]
+---
+
+## Crédits
+
+- Le premier schéma est un cluster Kubernetes avec stockage soutenu par iSCSI "multi-path"
+
+  (Source: [Yongbok Kim](https://www.yongbok.net/blog/))
+
+- Le second est repris par le livre de Marko Luksa "Kubernetes in Action"
+
+- Le troisieme est une représentation simplifiée d'un cluster Kubernetes
+
+  (Source: [Imesh Gunaratne](https://medium.com/containermind/a-reference-architecture-for-deploying-wso2-middleware-on-kubernetes-d4dee7601e8e))
+
+.debug[[kube/concepts-k8s_fr.md](https://github.com/RyaxTech/kube.training.git/tree/gh-pages//kube/concepts-k8s_fr.md)]
+---
+
+## A savoir...
+
+- Comment prononce-t-on kubernetes?
+    - Mot venant du grecque κυβερνήτης, prononcé "kivernitis"
+    - En anglais : "coubernetis"
+    - En français : "cubernetesse" ou "cubernette"
+
+- On peut abbréger Kubernetes en k8s
+
+- Kubernetes viens avec de l'autocomplétion à intégrer dans votre bash :
+
+`source <(kubectl completion bash)`
+
+Ça complète les commandes mais aussi les noms des objets!
+
+Commande déjà éfféctuée dans vos VMs.
+
+
+.debug[[kube/concepts-k8s_fr.md](https://github.com/RyaxTech/kube.training.git/tree/gh-pages//kube/concepts-k8s_fr.md)]
+---
+
+## Architecture de Kubernetes: les noeuds
+
+- Les nœuds exécutant nos conteneurs exécutent une collection de services:
+
+  - **Container Runtime** (typiquement Docker pour le deploiment de conteneurs)
+
+  - **Kubelet** (l'agent de noeud, gere les conteneurs, communique avec l'API)
+
+  - **Kube-proxy** (un composant réseau qui fait du "load-balancing")
+
+- Les nœuds étaient autrefois appelés "minions"
+
+  (Vous pourriez voir ce mot dans les anciens articles ou dans la documentation)
+
+.debug[[kube/concepts-k8s_fr.md](https://github.com/RyaxTech/kube.training.git/tree/gh-pages//kube/concepts-k8s_fr.md)]
+---
+
+## Architecture de Kubernetes: le "Control Plane"
+
+- La logique de Kubernetes (ses "cerveaux") est une collection de services:
+
+  - **API server**: notre point d'entrée pour tout!
+
+  - **Scheduler**: affecte des nœuds aux composants
+  
+  - **Controller Manager**: fonctions de niveau de cluster
+  
+  - **Etcd**: un key/value store fiable, la "base de données" de Kubernetes
+
+- Ensemble, ces services forment le "Control Plane" de notre cluster
+
+- Le "Control Plane" est aussi appelé le "master"
+
+.debug[[kube/concepts-k8s_fr.md](https://github.com/RyaxTech/kube.training.git/tree/gh-pages//kube/concepts-k8s_fr.md)]
+---
+
+## Exécution du "Control Plane" sur des noeuds spéciaux
+
+- Il est courant de réserver un noeud dédié au plan de contrôle
+
+  (Sauf pour les clusters de développement à noeud unique, comme lorsque vous utilisez minikube)
+
+- Ce noeud s'appelle alors un "master"
+
+  (Oui, c'est ambigu: le "master" est-il un nœud, ou tout le plan de contrôle?)
+
+- Les applications normales sont limitées à l'exécution sur ce noeud
+
+  (En utilisant un mécanisme appelé ["taints"](https://kubernetes.io/docs/concepts/configuration/taint-and-toleration/))
+
+- Lorsque la haute disponibilité est requise, chaque service du plan de contrôle doit être résilient
+
+- Le plan de contrôle est ensuite répliqué sur plusieurs nœuds
+
+  (Ceci est parfois appelé une configuration "multi-master")
+
+.debug[[kube/concepts-k8s_fr.md](https://github.com/RyaxTech/kube.training.git/tree/gh-pages//kube/concepts-k8s_fr.md)]
+---
+
+## Exécution du "Control Plane" en dehors des conteneurs
+
+- Les services du "Control Plane" peuvent fonctionner dans ou hors des conteneurs
+
+- Par exemple: puisque `etcd` est un service critique, certaines personnes
+  déployer directement sur un cluster dédié (sans conteneurs)
+
+  (Ceci est illustré sur le premier schéma "super compliqué")
+
+- Dans certaines offres Kubernetes hébergées (par exemple, GKE), le plan de contrôle est invisible
+
+  (Nous ne "voyons" qu'un point de terminaison API Kubernetes)
+
+- Dans ce cas, il n'y a pas de "noeud master"
+
+* Pour cette raison, il est plus juste de dire "Control Plane" plutôt que "master". *
+
+.debug[[kube/concepts-k8s_fr.md](https://github.com/RyaxTech/kube.training.git/tree/gh-pages//kube/concepts-k8s_fr.md)]
+---
+
+## Doit-on lancer Docker du tout?
+
+Non!
+
+--
+
+- Par défaut, Kubernetes utilise Docker Engine pour exécuter les conteneurs
+
+- Nous pourrions aussi utiliser `rkt` ("Rocket") de CoreOS/Redhat
+
+- Ou tirer parti d'autres runtimes connectables via l'interface *Container Runtime*
+
+  (comme CRI-O, ou containerd)
+
+.debug[[kube/concepts-k8s_fr.md](https://github.com/RyaxTech/kube.training.git/tree/gh-pages//kube/concepts-k8s_fr.md)]
+---
+
+## Doit-on lancer Docker du tout?
+
+Oui!
+
+--
+
+- Dans cette formation, nous exécutons notre application sur un seul noeud en premier
+
+- Nous aurons besoin de construire des images et de les expédier
+
+- Nous pouvons faire ces choses sans Docker mais
+
+- Docker est toujours le moteur de conteneur le plus stable aujourd'hui
+  <br/>
+  (mais d'autres options mûrissent très rapidement)
+
+.debug[[kube/concepts-k8s_fr.md](https://github.com/RyaxTech/kube.training.git/tree/gh-pages//kube/concepts-k8s_fr.md)]
+---
+
+## Doit-on lancer Docker du tout?
+
+- Sur nos environnements de développement, les pipelines CI ...:
+
+  *Oui, presque certainement*
+
+- Sur nos serveurs de production:
+
+  *Oui (aujourd'hui)*
+
+  *Probablement pas (dans le futur)*
+
+.footnote[Plus d'informations sur CRI [sur le blog Kubernetes](https://kubernetes.io/blog/2016/12/container-runtime-interface-cri-in-kubernetes)]
+
+.debug[[kube/concepts-k8s_fr.md](https://github.com/RyaxTech/kube.training.git/tree/gh-pages//kube/concepts-k8s_fr.md)]
+---
+
+## Ressources de Kubernetes
+
+- L'API Kubernetes définit beaucoup d'objets appelés *ressources*
+
+- Ces ressources sont organisées par type, ou `Kind` (dans l'API)
+
+- Quelques types de ressources communs sont:
+
+  - noeud (une machine - physique ou virtuelle - dans notre cluster)
+  - pod (groupe de conteneurs fonctionnant ensemble sur un noeud)
+  - service (point de terminaison réseau stable pour se connecter à un ou plusieurs conteneurs)
+  - namespace (groupe de choses plus ou moins isolé)
+  - secret (paquet de données sensibles à transmettre à un conteneur)
+ 
+  Et beaucoup plus! (Nous pouvons voir la liste complète en exécutant `kubectl get`)
+
+.debug[[kube/concepts-k8s_fr.md](https://github.com/RyaxTech/kube.training.git/tree/gh-pages//kube/concepts-k8s_fr.md)]
+---
+
+class: pic
+
+![Nœud, pod, conteneur](images/k8s-arch3-thanks-weave.png)
+
+.debug[[kube/concepts-k8s_fr.md](https://github.com/RyaxTech/kube.training.git/tree/gh-pages//kube/concepts-k8s_fr.md)]
+---
+
+class: pic
+
+![Un des meilleurs diagrammes d'architecture Kubernetes disponibles](images/k8s-arch4-thanks-luxas.png)
+
+.debug[[kube/concepts-k8s_fr.md](https://github.com/RyaxTech/kube.training.git/tree/gh-pages//kube/concepts-k8s_fr.md)]
+---
+
+## Crédits
+
+- Le premier diagramme est une gracieuseté de Weave Works
+
+  - un *pod* peut avoir plusieurs conteneurs travaillant ensemble
+
+  - Les adresses IP sont associées à *pods*, pas avec des conteneurs individuels
+
+- Le deuxième diagramme est une gracieuseté de Lucas Käldström, dans [cette présentation](https://speakerdeck.com/luxas/kubeadm-cluster-creation-internals-from-self-hosting-to-upgradability-and-ha)
+
+  - c'est l'un des meilleurs diagrammes d'architecture Kubernetes disponibles!
+
+
+.debug[[kube/concepts-k8s_fr.md](https://github.com/RyaxTech/kube.training.git/tree/gh-pages//kube/concepts-k8s_fr.md)]
+---
+
+class: pic
+
+.interstitial[![Image separating from the next chapter](https://gallant-turing-d0d520.netlify.com/containers/container-housing.jpg)]
+
+---
+
+name: toc-dclaratif-vs-impratif
+class: title
+
+Déclaratif vs impératif
+
+.nav[
+[Section précédente](#toc-introduction-de-kubernetes)
+|
+[Retour table des matières](#toc-chapter-2)
+|
+[Section suivante](#toc-modle-de-rseau-de-kubernetes)
+]
+
+.debug[(automatically generated title slide)]
+
+---
+# Déclaratif vs impératif
+
+- Notre orchestrateur de conteneurs met un accent très fort sur être *déclaratif*
+
+- Déclaratif:
+
+  *Je voudrais une tasse de thé.*
+
+- Impératif:
+
+  *Faire bouillir de l'eau. Versez-le dans une théière. Ajouter les feuilles de thé. Raide pendant un moment. Servir dans une tasse. *
+
+--
+
+- Déclaratif semble plus simple au premier abord ...
+
+--
+
+- ... Tant qu'on sait comment faire du thé
+
+.debug[[common/declarative_fr.md](https://github.com/RyaxTech/kube.training.git/tree/gh-pages//common/declarative_fr.md)]
+---
+
+## Déclaratif vs impératif
+
+- Quel déclaratif serait vraiment:
+
+  *Je veux une tasse de thé, obtenue en versant une infusion¹ de feuilles de thé dans une tasse.*
+
+--
+
+  *¹Une perfusion est obtenue en laissant l'objet tremper quelques minutes dans de l'eau chaude².*
+
+--
+
+  *²Le liquide chaud est obtenu en le versant dans un conteneur approprié³ et en le plaçant sur une cuisinière.*
+
+--
+
+  *³Ah, enfin, les conteneurs! Quelque chose que nous connaissons. Mettons-nous au travail, allons-nous?*
+
+--
+
+.footnote[Saviez-vous qu'il y avait une [norme ISO](https://en.wikipedia.org/wiki/ISO_3103) précisant comment brasser le thé?]
+
+.debug[[common/declarative_fr.md](https://github.com/RyaxTech/kube.training.git/tree/gh-pages//common/declarative_fr.md)]
+---
+
+## Déclaratif vs impératif
+
+- Systèmes impératifs:
+
+  - plus simple
+
+  - Si une tâche est interrompue, nous devons recommencer à zéro
+
+- Systèmes déclaratifs:
+
+  - si une tâche est interrompue (ou si nous nous montrons à mi-chemin),
+    nous pouvons comprendre ce qui manque et ne faisons que ce qui est nécessaire
+
+  - nous devons pouvoir *observer* le système
+
+  - ... et calcule un "diff" entre *ce que nous avons* et *ce que nous voulons*
+
+.debug[[common/declarative_fr.md](https://github.com/RyaxTech/kube.training.git/tree/gh-pages//common/declarative_fr.md)]
+---
+## Déclaratif vs impératif dans Kubernetes
+
+- Pratiquement tout ce que nous créons dans Kubernetes est créé à partir d'un *spec*
+
+- Surveillez les champs `spec` dans les fichiers YAML plus tard!
+
+- Le *spec* décrit *comment nous voulons que la chose soit*
+
+- Kubernetes va *réconcilier* l'état actuel avec les spécifications
+  <br/> (techniquement, cela est fait par un certain nombre de *contrôleurs*)
+
+- Quand on veut changer de ressource, on met à jour la *spec*
+
+- Kubernetes va ensuite *converger* cette ressource
+
+.debug[[kube/declarative_fr.md](https://github.com/RyaxTech/kube.training.git/tree/gh-pages//kube/declarative_fr.md)]
+---
+
+class: pic
+
+.interstitial[![Image separating from the next chapter](https://gallant-turing-d0d520.netlify.com/containers/containers-by-the-water.jpg)]
+
+---
+
+name: toc-modle-de-rseau-de-kubernetes
+class: title
+
+Modèle de réseau de Kubernetes
+
+.nav[
+[Section précédente](#toc-dclaratif-vs-impratif)
+|
+[Retour table des matières](#toc-chapter-2)
+|
+[Section suivante](#toc-premier-contact-avec-kubectl)
+]
+
+.debug[(automatically generated title slide)]
+
+---
+# Modèle de réseau de Kubernetes
+
+- TL,DR:
+
+  *Notre cluster (nœuds et pods) est un grand réseau IP plat.*
+
+--
+
+- En détail:
+
+ - tous les nœuds doivent pouvoir se rejoindre, sans NAT
+
+ - Tous les pods doivent pouvoir se rejoindre, sans NAT
+
+ - Les pods et les nœuds doivent pouvoir se rejoindre, sans NAT
+
+ - chaque pod est au courant de son adresse IP (pas de NAT)
+
+- Kubernetes n'impose aucune implémentation particulière
+
+.debug[[kube/kubenet_fr.md](https://github.com/RyaxTech/kube.training.git/tree/gh-pages//kube/kubenet_fr.md)]
+---
+
+## Modèle de réseau de Kubernetes: le bon
+
+- Tout peut atteindre tout
+
+- Pas de traduction d'adresse
+
+- Pas de traduction de port
+
+- Pas de nouveau protocole
+
+- Les pods ne peuvent pas se déplacer d'un noeud à l'autre et conserver leur adresse IP
+
+- Les adresses IP ne doivent pas être "portables" d'un nœud à l'autre
+
+  (Nous pouvons utiliser par exemple un sous-réseau par nœud et utiliser une topologie routée simple)
+
+- La spécification est assez simple pour permettre de nombreuses implémentations différentes
+
+.debug[[kube/kubenet_fr.md](https://github.com/RyaxTech/kube.training.git/tree/gh-pages//kube/kubenet_fr.md)]
+---
+
+## Modèle de réseau Kubernetes: le moins bon
+
+- Tout peut atteindre tout
+
+  - Si vous voulez de la sécurité, vous devez ajouter des règles de réseau
+
+  - l'implémentation réseau dont vous avez besoin doit les prendre en charge
+
+- Il y a littéralement des dizaines d'implémentations là-bas
+
+  (15 sont répertoriés dans la documentation de Kubernetes)
+
+- Les pods ont une connectivité de niveau 3 (IP), mais les *services* sont de niveau 4
+
+  (Services mappent vers un seul port UDP ou TCP, aucune plage de ports ou paquets IP arbitraires)
+
+- `kube-proxy` est sur le chemin de données lors de la connexion à un pod ou un conteneur,
+  <br/> et ce n'est pas particulièrement rapide (repose sur un proxy utilisateur ou sur iptables)
+
+.debug[[kube/kubenet_fr.md](https://github.com/RyaxTech/kube.training.git/tree/gh-pages//kube/kubenet_fr.md)]
+---
+
+## Modèle de réseau Kubernetes: en pratique
+
+- Les nœuds que nous utilisons ont été configurés pour utiliser [Weave](https://github.com/weaveworks/weave)
+
+- Nous n'approuvons pas Weave d'une manière particulière, ça marche juste pour nous
+
+- Ne vous inquiétez pas de l'avertissement concernant les performances de `kube-proxy`
+
+- À moins que vous:
+
+  - saturer régulièrement les interfaces réseau 10G
+  - compte les taux de paquets en millions par seconde
+  - lancer des plateformes VOIP ou de jeu à fort trafic
+  - faire des choses bizarres qui impliquent des millions de connexions simultanées
+    <br/> (auquel cas vous connaissez déjà le réglage du noyau)
+
+- Si nécessaire, il existe des alternatives à `kube-proxy`, par exemple [kube-router](https://www.kube-router.io)
+
+.debug[[kube/kubenet_fr.md](https://github.com/RyaxTech/kube.training.git/tree/gh-pages//kube/kubenet_fr.md)]
+---
+
+## Le "Container Network Interface" (CNI)
+
+- Le CNI a une [spécification](https://github.com/containernetworking/cni/blob/master/SPEC.md#network-configuration) bien définie pour les plugins réseau
+
+- Lorsqu'un pod est créé, Kubernetes délègue la configuration réseau aux plugins CNI
+
+- Typiquement, un plugin CNI va:
+
+  - allouer une adresse IP (en appelant un plugin IPAM)
+
+  - ajouter une interface réseau dans l'espace de noms réseau du pod
+
+  - configurer l'interface ainsi que les routes requises, etc.
+
+- Utiliser plusieurs plugins peut être fait avec des "méta-plugins" comme CNI-Genie ou Multus
+
+- Tous les plugins CNI ne sont pas égaux
+
+  (par exemple, ils n'implémentent pas tous les stratégies de réseau, qui sont nécessaires pour isoler les pods)
+
+.debug[[kube/kubenet_fr.md](https://github.com/RyaxTech/kube.training.git/tree/gh-pages//kube/kubenet_fr.md)]
+---
+
+class: pic
+
+.interstitial[![Image separating from the next chapter](https://gallant-turing-d0d520.netlify.com/containers/distillery-containers.jpg)]
+
+---
+
+name: toc-premier-contact-avec-kubectl
+class: title
+
+Premier contact avec `kubectl`
+
+.nav[
+[Section précédente](#toc-modle-de-rseau-de-kubernetes)
+|
+[Retour table des matières](#toc-chapter-2)
+|
+[Section suivante](#toc-grer-nos-premiers-conteneurs-sur-kubernetes)
+]
+
+.debug[(automatically generated title slide)]
+
+---
+# Premier contact avec `kubectl`
+
+- `kubectl` est (presque) le seul outil dont nous aurons besoin pour parler à Kubernetes
+
+- C'est un outil CLI riche autour de l'API Kubernetes
+
+  (Tout ce que vous pouvez faire avec `kubectl`, vous pouvez le faire directement avec l'API)
+
+- Sur nos machines, il y a un fichier `~/.kube/config` avec:
+
+  - l'adresse de l'API Kubernetes
+
+  - le chemin vers nos certificats TLS utilisés pour l'authentification
+
+- Vous pouvez également utiliser l'indicateur `--kubeconfig` pour passer un fichier de configuration
+
+- Ou directement `--server`,` --user`, etc.
+
+- «kubectl» peut être prononcé «Cube C T L», «Cube cuttle» ...
+
+.debug[[kube/kubectlget_fr.md](https://github.com/RyaxTech/kube.training.git/tree/gh-pages//kube/kubectlget_fr.md)]
+---
+
+## `kubectl get`
+
+- Regardons nos ressources `Node` avec` kubectl get`!
+
+.exercise[
+
+- Regardez la composition de notre cluster:
+  ```bash
+  kubectl get node
+  ```
+
+- Ces commandes sont équivalentes:
+  ```bash
+  kubectl get no
+  kubectl get node
+  kubectl get nodes
+  ```
+
+]
+
+.debug[[kube/kubectlget_fr.md](https://github.com/RyaxTech/kube.training.git/tree/gh-pages//kube/kubectlget_fr.md)]
+---
+
+## Obtention d'une sortie lisible par machine
+
+- `kubectl get` peut sortir JSON, YAML, ou être directement formaté
+
+.exercise[
+
+- Donnez-nous plus d'informations sur les nœuds:
+  ```bash
+  kubectl get nodes -o wide
+  ```
+
+- Ayons du YAML:
+  ```bash
+  kubectl get no -o yaml
+  ```
+  Vous voyez ce `kind: List` à la fin? C'est le type de notre résultat!
+
+]
+
+.debug[[kube/kubectlget_fr.md](https://github.com/RyaxTech/kube.training.git/tree/gh-pages//kube/kubectlget_fr.md)]
+---
+
+## Utilisation de `kubectl` et `jq`
+
+- C'est super facile de construire des rapports personnalisés
+
+.exercise[
+
+- Afficher la capacité de tous nos nœuds en tant que flux d'objets JSON:
+  ```bash
+    kubectl get nodes -o json |
+            jq ".items [] | {nom: .metadata.name} + .status.capacity"
+  ```
+
+]
+
+.debug[[kube/kubectlget_fr.md](https://github.com/RyaxTech/kube.training.git/tree/gh-pages//kube/kubectlget_fr.md)]
+---
+
+## Qu'est-ce qui est disponible?
+
+- `kubectl` a de très bonnes installations d'introspection
+
+- Nous pouvons lister tous les types de ressources disponibles en exécutant `kubectl get`
+
+- Nous pouvons voir les détails d'une ressource avec:
+  ```bash
+  kubectl describe type/name
+  kubectl describe type name
+  ```
+
+- Nous pouvons voir la définition d'un type de ressource avec:
+  ```bash
+  kubectl explain type
+  ```
+
+Chaque fois, `type` peut être un nom de type singulier, pluriel ou abrégé.
+
+.debug[[kube/kubectlget_fr.md](https://github.com/RyaxTech/kube.training.git/tree/gh-pages//kube/kubectlget_fr.md)]
+---
+
+## Services
+
+- Un *service* est un point de terminaison stable pour se connecter à "quelque chose"
+
+  (Dans la proposition initiale, ils étaient appelés "portals")
+
+.exercise[
+
+- Listez les services sur notre cluster avec l'une de ces commandes:
+  ```bash
+  kubectl get services
+  kubectl get svc
+  ```
+
+]
+
+--
+
+Il y a déjà un service sur notre cluster: l'API Kubernetes elle-même.
+
+.debug[[kube/kubectlget_fr.md](https://github.com/RyaxTech/kube.training.git/tree/gh-pages//kube/kubectlget_fr.md)]
+---
+
+## Services ClusterIP
+
+- Un service `ClusterIP` est interne, disponible uniquement à partir du cluster
+
+- Ceci est utile pour l'introspection à l'intérieur des conteneurs
+
+.exercise[
+
+- Essayez de vous connecter à l'API:
+  ```bash
+  curl -k https://`10.96.0.1`
+  ```
+  
+  - `-k` est utilisé pour ignorer la vérification du certificat
+
+  - Assurez-vous de remplacer 10.96.0.1 avec le CLUSTER-IP montré par `kubectl get svc`
+
+]
+
+--
+
+L'erreur que nous voyons est attendue: l'API Kubernetes nécessite une authentification.
+
+.debug[[kube/kubectlget_fr.md](https://github.com/RyaxTech/kube.training.git/tree/gh-pages//kube/kubectlget_fr.md)]
+---
+
+## Liste des conteneurs en cours d'exécution
+
+- Les conteneurs sont manipulés via *pods*
+
+- Un pod est un groupe de conteneurs:
+
+ - fonctionnant ensemble (sur le même noeud)
+
+ - partage des ressources (RAM, CPU, mais aussi réseau, volumes)
+
+.exercise[
+
+- Liste des pods sur notre cluster:
+  ```bash
+  kubectl get pods
+  ```
+
+]
+
+--
+
+*Ce ne sont pas les pods que vous cherchez.* Mais où sont-ils?!?
+
+.debug[[kube/kubectlget_fr.md](https://github.com/RyaxTech/kube.training.git/tree/gh-pages//kube/kubectlget_fr.md)]
+---
+
+## Namespaces
+
+- Les namespaces nous permettent de séparer les ressources
+
+.exercise[
+
+- Liste les espaces de noms sur notre cluster avec l'une de ces commandes:
+  ```bash
+  kubectl get namespaces
+  kubectl get namespace
+  kubectl get ns
+  ```
+
+]
+
+--
+
+*Vous savez quoi ... Ce truc de "kube-system" semble suspect. *
+
+.debug[[kube/kubectlget_fr.md](https://github.com/RyaxTech/kube.training.git/tree/gh-pages//kube/kubectlget_fr.md)]
+---
+
+## Accès aux namespaces
+
+- Par défaut, `kubectl` utilise le namespace `default`
+
+- Nous pouvons passer à un namespace différent avec l'option `-n`
+
+.exercise[
+
+- Lister les pods dans l'espace de noms `kube-system`:
+  ```bash
+  kubectl -n kube-system get pods
+  ```
+
+]
+
+--
+
+* Ding ding ding ding! *
+
+L'espace de noms `kube-system` est utilisé pour le "Control Plane".
+
+.debug[[kube/kubectlget_fr.md](https://github.com/RyaxTech/kube.training.git/tree/gh-pages//kube/kubectlget_fr.md)]
+---
+
+## Quels sont tous ces pod du Control Plane?
+
+- `etcd` est notre serveur etcd
+
+- `kube-apiserver` est le serveur API
+
+- `kube-controller-manager` et `kube-scheduler` sont d'autres composants principaux
+
+- `kube-dns` (ou `coredns`) est un composant supplémentaire (pas obligatoire mais super utile, donc c'est là)
+
+- `kube-proxy` est le composant (par noeud) gérant les mappages de ports et tel
+
+- `weave` est le composant (par noeud) gérant l'overlay du réseau
+
+- la colonne `READY` indique le nombre de conteneurs dans chaque pod
+
+- les pods dont le nom se termine par `-node1` sont les composants master
+  <br/>
+  (Ils ont été spécifiquement "épinglé" au nœud master)
+
+.debug[[kube/kubectlget_fr.md](https://github.com/RyaxTech/kube.training.git/tree/gh-pages//kube/kubectlget_fr.md)]
+---
+
+## Qu'en est-il de `kube-public`?
+
+.exercise[
+
+- Lister les pods dans le namespace `kube-public`:
+  ```bash
+  kubectl -n kube-public get pods
+  ```
+
+]
+
+--
+
+- Peut-être n'a-t-il pas de pods, mais quels sont les secrets du `kube-public`?
+
+--
+
+.exercise[
+
+- Liste les secrets dans le namespace `kube-public`:
+  ```bash
+  kubectl -n kube-public get secrets
+  ```
+
+]
+--
+
+- `kube-public` est créé par kubeadm & [utilisé pour le bootstrap de sécurité](https://kubernetes.io/blog/2017/01/stronger-foundation-for-creating-and-managing-kubernetes-clusters)
+
+
+.debug[[kube/kubectlget_fr.md](https://github.com/RyaxTech/kube.training.git/tree/gh-pages//kube/kubectlget_fr.md)]
+---
+
+## Pour aller plus loin
+
+- Les [composants de bases](https://kubernetes.io/docs/concepts/overview/components/) de Kubernetes.
+
+- Comprendre [les objets](https://kubernetes.io/docs/concepts/overview/working-with-objects/kubernetes-objects/) de Kubernetes.
+
+
+
+
+.debug[[kube/kubectlget_fr.md](https://github.com/RyaxTech/kube.training.git/tree/gh-pages//kube/kubectlget_fr.md)]
+---
+
+class: pic
+
+.interstitial[![Image separating from the next chapter](https://gallant-turing-d0d520.netlify.com/containers/lots-of-containers.jpg)]
+
+---
+
+name: toc-grer-nos-premiers-conteneurs-sur-kubernetes
+class: title
+
+Gérer nos premiers conteneurs sur Kubernetes
+
+.nav[
+[Section précédente](#toc-premier-contact-avec-kubectl)
+|
+[Retour table des matières](#toc-chapter-2)
+|
+[Section suivante](#toc-installation-de-kubernetes)
+]
+
+.debug[(automatically generated title slide)]
+
+---
+# Gérer nos premiers conteneurs sur Kubernetes
+
+- Premières choses d'abord: nous ne pouvons pas executer un conteneur
+
+--
+
+- Nous allons lancer un pod, et dans ce pod il y aura un seul conteneur
+
+--
+
+- Dans ce conteneur dans le pod, nous allons lancer une simple commande `ping`
+
+- Ensuite, nous allons commencer des copies supplémentaires du pod
+
+.debug[[kube/kubectlrun_fr.md](https://github.com/RyaxTech/kube.training.git/tree/gh-pages//kube/kubectlrun_fr.md)]
+---
+
+## Démarrer un pod simple avec `kubectl run`
+
+- Nous devons spécifier au moins un *name* et l'image que nous voulons utiliser
+
+.exercise[
+
+- Nous allong pinger `1.1.1.1`, Cloudflare's
+  [DNS public resolver](https://blog.cloudflare.com/announcing-1111/):
+  ```bash
+  kubectl run pingpong --image alpine ping 1.1.1.1
+  ```
+
+]
+
+--
+
+OK, qu'est-ce qui vient de se passer?
+
+.debug[[kube/kubectlrun_fr.md](https://github.com/RyaxTech/kube.training.git/tree/gh-pages//kube/kubectlrun_fr.md)]
+---
+
+## Dans les coulisses de `kubectl run`
+
+- Regardons les ressources qui ont été créées par `kubectl run`
+
+.exercise[
+
+- Listez la plupart des types de ressources:
+  ```bash
+  kubectl get all
+  ```
+
+]
+
+--
+
+Nous devrions voir les choses suivantes:
+- `deployment.apps/pingpong` (le *deployment* que nous venons de créer)
+- `replicaset.apps/pingpong-xxxxxxxxxx` (un *replica set* créé par le deployment)
+- `pod/pingpong-xxxxxxxxxx-yyyyy` (un *pod* créé par le replica set)
+
+Note: à partir de 1.10.1, les types de ressources sont affichés plus en détail.
+
+.debug[[kube/kubectlrun_fr.md](https://github.com/RyaxTech/kube.training.git/tree/gh-pages//kube/kubectlrun_fr.md)]
+---
+
+## Quelles sont ces différentes choses?
+
+- Un *deployment* est une construction de haut niveau
+
+  - permet le "scaling", "rolling updates", "rollbacks"
+
+  - plusieurs déploiements peuvent être utilisés ensemble pour mettre en œuvre
+    [canary deployment](https://kubernetes.io/docs/concepts/cluster-administration/manage-deployment/#canary-deployments)
+
+  - délègue la gestion des pods aux *replica sets*
+
+- Un *replica set* est une construction de bas niveau
+
+  - s'assure qu'un nombre donné de pods identiques fonctionnent
+
+  - permet le "scaling"
+
+  - rarement utilisé directement
+
+.debug[[kube/kubectlrun_fr.md](https://github.com/RyaxTech/kube.training.git/tree/gh-pages//kube/kubectlrun_fr.md)]
+---
+
+## Notre deployment `pingpong`
+
+- `kubectl run` a créé un *deployment*,`deployment.apps/pingpong`
+
+```
+NAME                       DESIRED   CURRENT   UP-TO-DATE   AVAILABLE   AGE
+deployment.apps/pingpong   1         1         1            1           10m
+```
+
+- Ce deployment a créé un *replica set*, `replicaset.apps/pingpong-xxxxxxxxxx`
+
+```
+NAME                                  DESIRED   CURRENT   READY     AGE
+replicaset.apps/pingpong-7c8bbcd9bc   1         1         1         10m
+```
+
+- Ce replica set a créé un *pod*, `pod/pingpong-xxxxxxxxxx-yyyyy`
+
+```
+NAME                            READY     STATUS    RESTARTS   AGE
+pod/pingpong-7c8bbcd9bc-6c9qz   1/1       Running   0          10m
+```
+
+- Nous verrons plus tard comment ces trucs jouent ensemble pour:
+
+    - scaling, high availability, rolling updates
+.debug[[kube/kubectlrun_fr.md](https://github.com/RyaxTech/kube.training.git/tree/gh-pages//kube/kubectlrun_fr.md)]
+---
+
+## Affichage de la sortie du conteneur
+
+- Utilisons la commande `kubectl logs`
+
+- Nous allons passer soit un *pod name*, soit un *type/name*
+
+  (Par exemple, si nous spécifions un deployment ou un replica set, il recevra le premier pod)
+
+- Sauf indication contraire, il ne montrera que les logs du premier conteneur dans le pod
+
+  (Bonne chose, il n'y en a qu'une dans la nôtre!)
+
+.exercise[
+
+- Voir le résultat de notre commande `ping`:
+  ```bash
+  kubectl logs deploy/pingpong
+  ```
+
+]
+
+.debug[[kube/kubectlrun_fr.md](https://github.com/RyaxTech/kube.training.git/tree/gh-pages//kube/kubectlrun_fr.md)]
+---
+
+## Flux de logs en temps réel
+
+- Tout comme `docker logs`, `kubectl logs` supporte les options pratiques:
+
+  - `-f`/`--follow` pour streamer les logs en temps réel (à la `tail -f`)
+
+  - `--tail` pour indiquer combien de lignes vous voulez voir (à partir de la fin)
+
+  - `--since` pour obtenir les logs seulement après un timestamp donné
+
+.exercise[
+
+- Voir les derniers logs de notre commande `ping`:
+  ```bash
+  kubectl logs deploy/pingpong --tail 1 --follow
+  ```
+
+]
+
+.debug[[kube/kubectlrun_fr.md](https://github.com/RyaxTech/kube.training.git/tree/gh-pages//kube/kubectlrun_fr.md)]
+---
+
+## "Scaling" de notre application
+
+- Nous pouvons créer des copies supplémentaires de notre conteneur (je veux dire, notre pod) avec «kubectl scale»
+
+.exercise[
+
+- Scale notre deployment `pingpong`:
+  ```bash
+  kubectl scale deploy/pingpong --replicas 8
+  ```
+
+]
+
+Note: Et si nous essayions de scaler `replicaset.apps/pingpong-xxxxxxxxxx`?
+
+Nous pourrions! Mais le *deployment* le remarquerait tout de suite et reviendrait au niveau initial.
+
+.debug[[kube/kubectlrun_fr.md](https://github.com/RyaxTech/kube.training.git/tree/gh-pages//kube/kubectlrun_fr.md)]
+---
+
+## Résilience
+
+- Le *deployment* `pingpong` regarde son *replica set*
+
+- Le *replica set* assure que le bon nombre de *pods* sont en cours d'exécution
+
+- Que se passe-t-il si les pods disparaissent?
+
+.exercise[
+
+- Dans une fenêtre séparée, affichez les pods et continuez à les regarder:
+  ```bash
+  kubectl get pods -w
+  ```
+
+- Détruire un pod:
+  ```bash
+  kubectl delete pod pingpong-xxxxxxxxxx-yyyyy
+  ```
+]
+
+.debug[[kube/kubectlrun_fr.md](https://github.com/RyaxTech/kube.training.git/tree/gh-pages//kube/kubectlrun_fr.md)]
+---
+
+## Et si on voulait quelque chose de différent?
+
+- Et si nous voulions démarrer un conteneur "one-shot" qui ne redémarre pas?
+
+- Nous pourrions utiliser `kubectl run --restart=OnFailure` ou `kubectl run --restart=Never`
+
+- Ces commandes créeraient *jobs* ou *pods* au lieu de *deployments*
+
+- Sous le tapis, `kubectl run` invoque des "generators" pour créer des descriptions de ressources
+
+- Nous pourrions aussi écrire nous-mêmes ces descriptions de ressources (typiquement en YAML), et les créer sur le cluster avec `kubectl apply -f` (discuté plus tard)
+
+- Avec `kubectl run --schedule=...`, nous pouvons aussi créer des *cronjobs*
+
+.debug[[kube/kubectlrun_fr.md](https://github.com/RyaxTech/kube.training.git/tree/gh-pages//kube/kubectlrun_fr.md)]
+---
+
+## Affichage des logs de plusieurs pods
+
+- Lorsque nous spécifions un nom de deployment, seuls les logs d'un seul pod sont affichés
+
+- Nous pouvons voir les logs de plusieurs pods en spécifiant un *selector*
+
+- Un selector est une expression logique utilisant des *labels*
+
+- Commodément, quand vous "kubectl run somename", les objets associés ont un label `run = somename`
+
+.exercise[
+
+- Regardez la dernière ligne du log de tous les pods avec le label `run = pingpong`:
+  ```bash
+  kubectl logs -l run=pingpong --tail 1
+  ```
+
+]
+
+Malheureusement, `--follow` ne peut pas (encore) être utilisé pour diffuser les logs de plusieurs conteneurs.
+
+.debug[[kube/kubectlrun_fr.md](https://github.com/RyaxTech/kube.training.git/tree/gh-pages//kube/kubectlrun_fr.md)]
+---
+
+## Ne nous inondons pas 1.1.1.1?
+
+- Si vous vous posez cette question, bonne question!
+
+- Ne vous inquiétez pas, cependant:
+
+  *Le groupe de recherche de l'APNIC détenait les adresses IP 1.1.1.1 et 1.0.0.1. Alors que les adresses étaient valides, tant de gens les avaient entrés dans divers systèmes aléatoires qu'ils étaient continuellement submergés par un flot de déchets. L'APNIC voulait étudier ce trafic de déchets, mais chaque fois qu'il avait essayé d'annoncer les IP, l'inondation submergerait tout réseau conventionnel.*
+
+  (Source: https://blog.cloudflare.com/announcing-1111/)
+
+- Il est très peu probable que nos pings concertés parviennent à produire
+  même un modeste coup au Cloudflare!
+
+.debug[[kube/kubectlrun_fr.md](https://github.com/RyaxTech/kube.training.git/tree/gh-pages//kube/kubectlrun_fr.md)]
+---
+
+## Tout couper
+
+.exercise[
+
+- Arrétez le deployment:
+  ```bash
+  kubectl delete deploy/pingpong
+  ```
+- Quel est l'état de l'application ?
+  ```bash
+  kubectl get all
+  ```
+
+]
+
+- Pour aller plus loin:
+
+  - [Lancer un deployement dupuis un fichier YAML](https://kubernetes.io/docs/tasks/run-application/run-stateless-application-deployment/)
+
+  - [Lancer un *cronjob*](https://kubernetes.io/docs/tasks/job/automated-tasks-with-cron-jobs/)
+
+
+.debug[[kube/kubectlrun_fr.md](https://github.com/RyaxTech/kube.training.git/tree/gh-pages//kube/kubectlrun_fr.md)]
+---
+
+class: pic
+
+.interstitial[![Image separating from the next chapter](https://gallant-turing-d0d520.netlify.com/containers/plastic-containers.JPG)]
+
+---
+
+name: toc-installation-de-kubernetes
+class: title
+
+Installation de Kubernetes
+
+.nav[
+[Section précédente](#toc-grer-nos-premiers-conteneurs-sur-kubernetes)
+|
+[Retour table des matières](#toc-chapter-3)
+|
+[Section suivante](#toc-le-dashboard-de-kubernetes)
+]
+
+.debug[(automatically generated title slide)]
+
+---
+# Installation de Kubernetes
+
+- Comment avons-nous mis en place ces clusters Kubernetes que nous utilisons?
+
+--
+
+- Nous avons utilisé `kubeadm` sur des instances VM fraîchement installées exécutant Ubuntu 16.04 LTS
+
+    1. Installez Docker
+
+    2. Installer les paquets Kubernetes
+
+    3. Exécutez `kubeadm init` sur le noeud maître
+
+    4. Configurer Weave (le réseau de superposition)
+       <br/>
+       (cette étape est juste une commande "kubectl apply", discutée plus tard)
+
+    5. Exécutez `kubeadm join` sur les autres noeuds (avec le token produit par` kubeadm init`)
+
+    6. Copiez le fichier de configuration généré par `kubeadm init`
+
+- Vérifiez le [prepare VMs README](https://github.com/RyaxTech/kube.training/blob/master/prepare-vms/README.md) pour plus de détails
+
+.debug[[kube/setup-k8s_fr.md](https://github.com/RyaxTech/kube.training.git/tree/gh-pages//kube/setup-k8s_fr.md)]
+---
+
+## "kubeadm" inconvénients
+
+- Ne configure pas Docker ou tout autre moteur de conteneur
+
+- Ne configure pas le réseau d'overlay
+
+- Ne configure pas multi-master (pas de haute disponibilité)
+
+--
+
+  (Au moins pas encore!)
+
+--
+
+- "Il reste deux fois plus d'étapes que la mise en place d'un cluster Docker Swarm" 
+
+.debug[[kube/setup-k8s_fr.md](https://github.com/RyaxTech/kube.training.git/tree/gh-pages//kube/setup-k8s_fr.md)]
+---
+
+## Autres options de déploiement
+
+- Si vous êtes sur Azure:
+  [AKS](https://azure.microsoft.com/services/container-service/)
+
+- Si vous êtes sur Google Cloud:
+  [GKE](https://cloud.google.com/kubernetes-engine/)
+
+- Si vous êtes sur AWS:
+  [EKS](https://aws.amazon.com/eks/)
+  ou
+  [kops](https://github.com/kubernetes/kops)
+
+- Sur une machine locale:
+  [minikube](https://kubernetes.io/docs/getting-started-guides/minikube/),
+  [kubespawn](https://github.com/kinvolk/kube-spawn),
+  [Docker4Mac](https://docs.docker.com/docker-for-mac/kubernetes/)
+
+- Si vous voulez quelque chose de personnalisable:
+  [kubicorn](https://github.com/kubicorn/kubicorn)
+
+  Probablement le plus proche d'une solution multi-cloud / hybride jusqu'à présent, mais en développement
+
+.debug[[kube/setup-k8s_fr.md](https://github.com/RyaxTech/kube.training.git/tree/gh-pages//kube/setup-k8s_fr.md)]
+---
+
+## Encore plus d'options de déploiement
+
+- Si vous aimez Ansible:
+  [kubespray](https://github.com/kubernetes-incubator/kubespray)
+
+- Si vous aimez Terraform:
+  [typhon](https://github.com/poseidon/typhoon/)
+
+- Vous pouvez également apprendre à installer chaque composant manuellement, avec
+  l'excellent tutoriel [Kubernetes The Hard Way](https://github.com/kelseyhightower/kubernetes-the-hard-way)
+
+  *Kubernetes The Hard Way est optimisé pour l'apprentissage, ce qui signifie prendre le long chemin pour s'assurer que vous comprenez chaque tâche requise pour démarrer un cluster Kubernetes.*
+
+- Il y a aussi beaucoup d'options commerciales disponibles!
+
+- Pour une liste plus longue, consultez la documentation de Kubernetes:
+  <br/>
+  il a un excellent guide pour [choisir la bonne solution](https://kubernetes.io/docs/setup/pick-right-solution/) pour configurer Kubernetes.
+
+.debug[[kube/setup-k8s_fr.md](https://github.com/RyaxTech/kube.training.git/tree/gh-pages//kube/setup-k8s_fr.md)]
+---
+
+## Installation avec Kubeadm
+
+- Nous n'allons pas faire l'installation de Kubernetes.
+
+- Les slides suivantes vous permettes d'avoir les bases avec Kubeadm.
+
+.debug[[kube/setup-k8s_fr.md](https://github.com/RyaxTech/kube.training.git/tree/gh-pages//kube/setup-k8s_fr.md)]
+---
+
+## Installation avec Kubeadm
+
+
+.exercise[
+
+- Installation de paquets Docker si ils ne sont pas installé sur chaque noeud du cluster:
+  ```bash
+    sudo su
+    apt-get update
+    apt-get install -y apt-transport-https ca-certificates curl software-properties-common
+    curl -fsSL https://download.docker.com/linux/ubuntu/gpg | sudo apt-key add -
+    add-apt-repository "deb https://download.docker.com/linux/$(. /etc/os-release; echo "$ID") $(lsb_release -cs) stable"
+    apt-get update && apt-get install -y docker-ce docker-compose
+    exit
+    sudo groupadd docker
+    sudo usermod -aG docker $USER
+  ```
+]
+
+.debug[[kube/setup-k8s_fr.md](https://github.com/RyaxTech/kube.training.git/tree/gh-pages//kube/setup-k8s_fr.md)]
+---
+
+## Installation avec Kubeadm suite
+
+
+.exercise[
+
+- Installation de paquets Kubernetes si ils ne sont pas installé sur chaque noeud du cluster:
+  ```bash
+    sudo apt-get update && sudo apt-get install -y apt-transport-https curl
+    curl -s https://packages.cloud.google.com/apt/doc/apt-key.gpg | sudo apt-key add -
+    sudo su
+    cat <<EOF >/etc/apt/sources.list.d/kubernetes.list
+    deb http://apt.kubernetes.io/ kubernetes-xenial main
+    EOF
+    exit
+    sudo apt-get update
+    sudo apt-get install -y kubelet kubeadm kubectl
+   ```
+]
+
+.debug[[kube/setup-k8s_fr.md](https://github.com/RyaxTech/kube.training.git/tree/gh-pages//kube/setup-k8s_fr.md)]
+---
+
+## Installation avec Kubeadm suite
+
+.exercise[
+
+- Configuration de Kubernetes avec Kubeadm au premier noeud du cluster:
+  ```bash
+    sudo kubeadm init 
+    sudo mkdir -p $HOME/.kube /home/docker/.kube
+    sudo cp /etc/kubernetes/admin.conf $HOME/.kube/config
+    sudo cp /etc/kubernetes/admin.conf /home/docker/.kube/config
+    sudo chown -R $(id -u) $HOME/.kube
+    kubever=$(kubectl version | base64 | tr -d '\n')
+    kubectl apply -f https://cloud.weave.works/k8s/net?k8s-version=$kubever
+  ```
+
+- Configuration de Kubernetes avec Kubeadm aux autres noeuds du cluster:
+- Appliquez la commande retourné par `kubeadm init` sur le master
+- Testez si les noeuds sont bien configurés avec:
+  ```bash
+  kubectl get nodes
+  ```
+]
+
+
+
+
+
+.debug[[kube/setup-k8s_fr.md](https://github.com/RyaxTech/kube.training.git/tree/gh-pages//kube/setup-k8s_fr.md)]
+---
+
+class: pic
+
+.interstitial[![Image separating from the next chapter](https://gallant-turing-d0d520.netlify.com/containers/train-of-containers-1.jpg)]
+
+---
+
+name: toc-le-dashboard-de-kubernetes
+class: title
+
+Le dashboard de Kubernetes
+
+.nav[
+[Section précédente](#toc-installation-de-kubernetes)
+|
+[Retour table des matières](#toc-chapter-3)
+|
+[Section suivante](#toc-les-implications-de-scurit-de-kubectl-apply)
+]
+
+.debug[(automatically generated title slide)]
+
+---
+# Le dashboard de Kubernetes
+
+- Les ressources de Kubernetes peuvent également être visualisées avec un dashboard web
+
+- Nous allons déployer ce dashboard avec *trois commandes:*
+
+  1) plutot *exécuter* le dashboard
+
+  2) contourner SSL pour le dashboard
+
+  3) Ignorer l'authentification pour le dashboard
+
+--
+
+Il y a une étape supplémentaire pour rendre le dashboard disponible de l'extérieur (nous y reviendrons)
+
+--
+
+.footnote[.warning[Oui, cela ouvrira notre cluster à toutes sortes de manigances. Ne fais pas ça à la maison.]]
+
+.debug[[kube/dashboard_fr.md](https://github.com/RyaxTech/kube.training.git/tree/gh-pages//kube/dashboard_fr.md)]
+---
+
+## 1) Exécution du dashboard
+
+- Nous devons créer un * déploiement * et un * service * pour le dashboard
+
+- Mais aussi un * secret *, un * compte de service *, un * rôle * et un * rôle contraignant *
+
+- Toutes ces choses peuvent être définies dans un fichier YAML et créées avec `kubectl apply -f`
+
+.exercise[
+
+- Créer toutes les ressources du dashboard, avec la commande suivante:
+  ```bash
+  kubectl apply -f https://goo.gl/Qamqab
+  ```
+
+]
+
+L'URL de goo.gl se développe pour:
+<br/>
+.small[https://raw.githubusercontent.com/kubernetes/dashboard/master/src/deploy/recommended/kubernetes-dashboard.yaml]
+
+.debug[[kube/dashboard_fr.md](https://github.com/RyaxTech/kube.training.git/tree/gh-pages//kube/dashboard_fr.md)]
+---
+
+
+## 2) Contournement SSL pour le dashboard
+
+- Le dashboard Kubernetes utilise HTTPS, mais nous n'avons pas de certificat
+
+- Les versions récentes de Chrome (63 et versions ultérieures) et Edge refusent de se connecter
+
+  (Vous n'aurez même pas l'option d'ignorer un avertissement de sécurité!)
+
+- Nous pourrions (et devrions!) Obtenir un certificat, par ex. avec [Let's Encrypt](https://letsencrypt.org/)
+
+- ... Mais pour plus de commodité, pour cet atelier, nous transmettrons HTTP à HTTPS
+
+.warning[Ne le faites pas à la maison, ou pire, au travail!]
+
+.debug[[kube/dashboard_fr.md](https://github.com/RyaxTech/kube.training.git/tree/gh-pages//kube/dashboard_fr.md)]
+---
+
+## Exécution du déballeur SSL
+
+- Nous allons lancer [`socat`](http://www.dest-unreach.org/socat/doc/socat.html), en lui disant d'accepter les connexions TCP et de les relayer via SSL
+
+- Ensuite, nous allons exposer cette instance `socat` avec un service `NodePort`
+
+- Pour plus de commodité, ces étapes sont soigneusement encapsulées dans un autre fichier YAML
+
+.exercise[
+
+- Appliquez le fichier YAML pratique et annulez la protection SSL:
+  ```bash
+  kubectl apply -f https://goo.gl/tA7GLz
+  ```
+
+]
+
+L'URL goo.gl se développe pour:
+<br/>
+.small[.small[https://gist.githubusercontent.com/jpetazzo/c53a28b5b7fdae88bc3c5f0945552c04/raw/da13ef1bdd38cc0e90b7a4074be8d6a0215e1a65/socat.yaml]]
+
+.warning[Tout notre trafic de dashboard est maintenant en texte clair, y compris les mots de passe!]
+
+.debug[[kube/dashboard_fr.md](https://github.com/RyaxTech/kube.training.git/tree/gh-pages//kube/dashboard_fr.md)]
+---
+
+## Connexion au dashboard
+
+.exercise[
+
+- Vérifiez quel port est le dashboard:
+  ```bash
+  kubectl -n kube-system get svc socat
+  ```
+
+]
+
+Vous aurez besoin du port `8080`.
+
+
+.exercise[
+
+- Connectez-vous à http://oneofournodes:3xxxx/
+
+]
+
+Le dashboard vous demandera ensuite l'authentification que vous souhaitez utiliser.
+
+.debug[[kube/dashboard_fr.md](https://github.com/RyaxTech/kube.training.git/tree/gh-pages//kube/dashboard_fr.md)]
+---
+
+## Authentification de dashboard
+
+- Nous avons trois options d'authentification à ce stade:
+
+  - token (associé à un role disposant des autorisations appropriées)
+
+  - kubeconfig (par exemple en utilisant le fichier `~/.kube/config` de `node1`)
+
+  - "skip" (utilisez le dashboard "service account")
+
+- Utilisons "skip": nous recevons un tas d'avertissements et ne voyons pas grand-chose
+
+.debug[[kube/dashboard_fr.md](https://github.com/RyaxTech/kube.training.git/tree/gh-pages//kube/dashboard_fr.md)]
+---
+
+## 3) Ignorer l'authentification pour le dashboard
+
+- La documentation du dashboard [explique comment procéder](https://github.com/kubernetes/dashboard/wiki/Access-control#admin-privileges)
+
+- Nous avons juste besoin de charger un autre fichier YAML!
+
+.exercise[
+
+- Accorder des privilèges d'administrateur au dashboard afin que nous puissions voir nos ressources:
+  ```bash
+  kubectl apply -f https://goo.gl/CHsLTA
+  ```
+
+- Rechargez le dashboard et profitez-en!
+
+]
+
+--
+
+.warning[Au fait, nous venons d'ajouter une porte dérobée à notre cluster Kubernetes!]
+
+.debug[[kube/dashboard_fr.md](https://github.com/RyaxTech/kube.training.git/tree/gh-pages//kube/dashboard_fr.md)]
+---
+
+## Exposer le dashboard sur HTTPS
+
+- Nous avons pris un raccourci en transférant HTTP à HTTPS dans le cluster
+
+- Exposons le dashboard sur HTTPS!
+
+- Le dashboard est exposé via un service `ClusterIP` (trafic interne uniquement)
+
+- Nous allons changer cela en un service `NodePort` (acceptant le trafic extérieur)
+
+.exercise[
+
+- Modifier le service:
+  ```bash
+  kubectl edit service kubernetes-dashboard
+  ```
+
+]
+
+--
+
+`NotFound`?!? Pourquoi ca ne marche pas?!?
+
+.debug[[kube/dashboard_fr.md](https://github.com/RyaxTech/kube.training.git/tree/gh-pages//kube/dashboard_fr.md)]
+---
+
+## Modification du service `kubernetes-dashboard`
+
+- Si nous regardons le [YAML](https://goo.gl/Qamqab) que nous avons chargé avant, nous aurons un indice
+
+--
+
+- Le dashboard a été créé dans le namespace `kube-system`
+
+--
+
+.exercise[
+
+- Modifier le service:
+  ```bash
+  kubectl -n kube-system edit service kubernetes-dashboard
+  ```
+
+- Changez `type: ClusterIP` en `type: NodePort`, sauvegardez et quittez
+
+- Vérifiez le port qui a été assigné avec `kubectl -n kube-system get services`
+
+- Connectez-vous à https://oneofournodes:3xxxx/ (oui, https)
+
+]
+
+.debug[[kube/dashboard_fr.md](https://github.com/RyaxTech/kube.training.git/tree/gh-pages//kube/dashboard_fr.md)]
+---
+
+## Exécution sécurisée du dashboard Kubernetes
+
+- Les étapes que nous venons de vous montrer sont *avec des buts éducatives seulement!*
+
+- Si vous faites cela sur votre cluster de production, les gens [peuvent et vont en abuser](https://blog.redlock.io/cryptojacking-tesla)
+
+- Pour une discussion approfondie sur la sécurisation du dashboard,
+  <br/>
+  vérifier [cet excellent post sur le blog de Heptio](https://blog.heptio.com/on-securing-the-kubernetes-dashboard-16b09b1b7aca)
+
+.debug[[kube/dashboard_fr.md](https://github.com/RyaxTech/kube.training.git/tree/gh-pages//kube/dashboard_fr.md)]
+---
+
+class: pic
+
+.interstitial[![Image separating from the next chapter](https://gallant-turing-d0d520.netlify.com/containers/train-of-containers-2.jpg)]
+
+---
+
+name: toc-les-implications-de-scurit-de-kubectl-apply
+class: title
+
+Les implications de sécurité de `kubectl apply`
+
+.nav[
+[Section précédente](#toc-le-dashboard-de-kubernetes)
+|
+[Retour table des matières](#toc-chapter-3)
+|
+[Section suivante](#toc-)
+]
+
+.debug[(automatically generated title slide)]
+
+---
+
+# Les implications de sécurité de `kubectl apply`
+
+- Quand nous faisons `kubectl apply -f <URL>`, nous créons des ressources arbitraires
+
+- Les ressources peuvent être mauvaises; Imaginez un `deployment` ...
+
+--
+
+   - démarre des mineurs bitcoin sur l'ensemble du cluster
+
+--
+
+   - cache dans un espace de noms autre que le "default"
+
+--
+
+   - bind-mounts le système de fichiers de nos nœuds
+
+--
+
+   - insère les clés SSH dans le compte root (sur le noeud)
+
+--
+
+   - crypte nos données et les garde en rancon
+
+--
+
+   - ☠️☠️☠️
+
+.debug[[kube/dashboard_fr.md](https://github.com/RyaxTech/kube.training.git/tree/gh-pages//kube/dashboard_fr.md)]
+---
+
+## `kubectl apply` est le nouveau `curl | sh`
+
+- `curl | sh` est pratique
+
+- Il est sûr si vous utilisez des URL HTTPS provenant de sources fiables
+
+--
+
+- `kubectl apply -f` est pratique
+
+- Il est sûr si vous utilisez des URL HTTPS provenant de sources fiables
+
+- Exemple: les instructions d'installation officielles pour la plupart des réseaux de pod
+
+--
+
+- Il introduit de nouveaux modes de défaillance (comme si vous essayez d'appliquer yaml à partir d'un lien qui n'est plus valide)
+
+
+.debug[[kube/dashboard_fr.md](https://github.com/RyaxTech/kube.training.git/tree/gh-pages//kube/dashboard_fr.md)]
+---
+
+## Pour aller plus loin
+
+
+.exercise[
+- Relancez l'exemple préçédent
+  ```bash
+  kubectl run pingpong --image alpine ping 1.1.1.1
+  ```
+- Observez le deployment et son pod. Trouvez-vous les logs du pod?
+
+- Arrétez le deployment.
+
+]
+
+Vous pouvez stopper le dashboard ou le laisser. Comme le dashboard n'est pas sécurisé, nous conseillons de l'arréter.
+```bash
+  kubectl delete -f https://goo.gl/CHsLTA
+  ```
+
+
+
+.debug[[kube/dashboard_fr.md](https://github.com/RyaxTech/kube.training.git/tree/gh-pages//kube/dashboard_fr.md)]</textarea>
+    <script src="remark.min.js" type="text/javascript">
+    </script>
+    <script type="text/javascript">
+      var slideshow = remark.create({
+        ratio: '16:9',
+        highlightSpans: true,
+        excludedClasses: ["self-paced"]
+      });
+    </script>
+    
+    <!-- 
+    These two scripts will be available only when loading the
+    content using the pub/sub server. Otherwise, they'll just
+    404 and that's OK.
+    -->
+    <script src="/socket.io/socket.io.js">
+    </script>
+    <script src="/remote.js">
+    </script>
+
+  </body>
+</html>

@@ -266,3 +266,16 @@ The `kube-system` namespace is used for the control plane.
 --
 
 - `kube-public` is created by kubeadm & [used for security bootstrapping](https://kubernetes.io/blog/2017/01/stronger-foundation-for-creating-and-managing-kubernetes-clusters)
+
+---
+
+## To go even further
+
+- Read the [basic conceptes](https://kubernetes.io/docs/concepts/overview/components/) of Kubernetes.
+
+- Understand [the objects](https://kubernetes.io/docs/concepts/overview/working-with-objects/kubernetes-objects/) of Kubernetes.
+
+
+
+
+

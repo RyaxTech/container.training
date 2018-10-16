@@ -4,6 +4,7 @@
     <title>Introduction à la formation Kubernetes </title>
     <meta http-equiv="Content-Type" content="text/html; charset=UTF-8"/>
     <link rel="stylesheet" href="workshop.css">
+    <link rel="stylesheet" href="override.css">
   </head>
   <body>
     <!--
@@ -29,30 +30,69 @@ Introduction à la formation Kubernetes<br/>
 
 .debug[
 ```
+ M common/composedown.md
+ M common/sampleapp.md
+ M index.html
  M intro-fullday.yml.html
  M intro-selfpaced.yml.html
  M kube-fullday.yml.html
  M kube-halfday.yml.html
  M kube-jour1.yml.html
  M kube-jour2.yml.html
+ M kube-jour3.yml
  M kube-jour3.yml.html
  M kube-selfpaced.yml.html
- M kube/netisolation_fr.md
- M kube/stockage_fr.md
+ M kube/advanced.md
+ M kube/concepts-k8s.md
+ M kube/daemonset.md
+ M kube/dashboard.md
+ M kube/helm.md
+ M kube/kubectlexpose.md
+ M kube/kubectlget.md
+ M kube/kubectlrun.md
+ M kube/logs-centralized.md
+ M kube/namespaces.md
+ M kube/ourapponkube.md
+ M kube/rollout.md
+ M kube/setup-k8s.md
+ M kube/statefulsets.md
+ M kube/stockage.md
+ M logistics.md
  M swarm-fullday.yml.html
  M swarm-halfday.yml.html
  M swarm-selfpaced.yml.html
  M swarm-video.yml.html
-?? .directory
-?? common/.directory
-?? intro/.directory
-?? kube/.directory
-?? kube/recapj2_fr.md
-?? swarm/.directory
+ M swarm/links.md
+ M workshop.html
+?? common/cncf.md
+?? containers/
+?? dock-kube-day1.yml
+?? dock-kube-day1.yml.html
+?? dock-kube-day2.yml
+?? dock-kube-day2.yml.html
+?? dock-kube-day3.yml
+?? dock-kube-day3.yml.html
+?? dock-kube-day4.yml
+?? dock-kube-day4.yml.html
+?? images/container-layers.jpg
+?? images/containers_VMs_CPUs.png
+?? images/containers_vs_VMS.png
+?? images/logo-plb.jpg
+?? images/plb.jpeg
+?? images/sharing-layers.jpg
+?? kube-day1.yml
+?? kube-day1.yml.html
+?? kube/kubeobjects.md
+?? kube/monitoring.md
+?? kube/netisolation.md
+?? kube/serverless.md
+?? kube/statefulsets_fr.md
+?? override.css
+?? shared/
 
 ```
 
-These slides have been built from commit: 714e600
+These slides have been built from commit: 3e7271f
 
 
 [common/title.md](https://github.com/RyaxTech/kube.training.git/tree/gh-pages//common/title.md)]
@@ -1193,17 +1233,9 @@ Our sample application
 
 .exercise[
 
-<!--
-```bash
-if [ -d container.training ]; then
-  mv container.training container.training.$$
-fi
-```
--->
-
 - Clone the repository on `node1`:
   ```bash
-  git clone git://github.com/jpetazzo/container.training
+  git clone https://github.com/RyaxTech/kube.training
   ```
 
 ]
@@ -1221,17 +1253,13 @@ Let's start this before we look around, as downloading will take a little time..
 
 - Go to the `dockercoins` directory, in the cloned repo:
   ```bash
-  cd ~/container.training/dockercoins
+  cd ~/kube.training/dockercoins
   ```
 
 - Use Compose to build and run all containers:
   ```bash
   docker-compose up
   ```
-
-<!--
-```longwait units of work done```
--->
 
 ]
 
@@ -1245,16 +1273,16 @@ and displays aggregated logs.
 ## More detail on our sample application
 
 - Visit the GitHub repository with all the materials of this workshop:
-  <br/>https://github.com/jpetazzo/container.training
+  <br/> https://github.com/RyaxTech/kube.training
 
 - The application is in the [dockercoins](
-  https://github.com/jpetazzo/container.training/tree/master/dockercoins)
+  https://github.com/RyaxTech/kube.training/tree/master/dockercoins)
   subdirectory
 
 - Let's look at the general layout of the source code:
 
   there is a Compose file [docker-compose.yml](
-  https://github.com/jpetazzo/container.training/blob/master/dockercoins/docker-compose.yml) ...
+  https://github.com/RyaxTech/kube.training/blob/master/dockercoins/docker-compose.yml) ...
 
   ... and 4 other services, each in its own directory:
 
@@ -1316,7 +1344,7 @@ def hash_bytes(data):
 ```
 
 (Full source code available [here](
-https://github.com/jpetazzo/container.training/blob/8279a3bce9398f7c1a53bdd95187c53eda4e6435/dockercoins/worker/worker.py#L17
+https://github.com/RyaxTech/kube.training/blob/8279a3bce9398f7c1a53bdd95187c53eda4e6435/dockercoins/worker/worker.py#L17
 ))
 
 .debug[[common/sampleapp.md](https://github.com/RyaxTech/kube.training.git/tree/gh-pages//common/sampleapp.md)]
@@ -1775,6 +1803,16 @@ Note: this is a fiction! We have enough entropy. But we need a pretext to scale 
 .debug[[common/composedown.md](https://github.com/RyaxTech/kube.training.git/tree/gh-pages//common/composedown.md)]
 ---
 
+## To go even further with Docker Compose
+
+- Read the [overview](https://docs.docker.com/compose/overview/) of the official documentation.
+
+- The examples are also interesting such as: [Quickstart: Compose and WordPress](https://docs.docker.com/compose/wordpress/).
+
+
+.debug[[common/composedown.md](https://github.com/RyaxTech/kube.training.git/tree/gh-pages//common/composedown.md)]
+---
+
 class: pic
 
 .interstitial[![Image separating from the next chapter](https://gallant-turing-d0d520.netlify.com/containers/container-cranes.jpg)]
@@ -1810,6 +1848,46 @@ Kubernetes concepts
 .debug[[kube/concepts-k8s.md](https://github.com/RyaxTech/kube.training.git/tree/gh-pages//kube/concepts-k8s.md)]
 ---
 
+## Kubernetes Introduction
+
+--
+
+- It is a software to deploy and manage containerized applications while offering an optimal usage of the compute platform.
+
+--
+
+- It abstracts the underlying infrastructure by simplifying the development of applications and the management of resources.
+
+.debug[[kube/concepts-k8s.md](https://github.com/RyaxTech/kube.training.git/tree/gh-pages//kube/concepts-k8s.md)]
+---
+
+## Kubernetes Benefits
+
+--
+
+- Simplify Application Deployment.
+
+--
+
+- Achieving better utilization of hardware.
+
+--
+
+- Automatic Scaling.
+
+--
+
+- Simplifying applications development
+
+--
+
+- High Availability, heath check and self-healing
+
+.debug[[kube/concepts-k8s.md](https://github.com/RyaxTech/kube.training.git/tree/gh-pages//kube/concepts-k8s.md)]
+---
+
+
+
 ## Basic things we can ask Kubernetes to do
 
 --
@@ -1830,7 +1908,7 @@ Kubernetes concepts
 
 --
 
-- It's Black Friday (or Christmas), traffic spikes, grow our cluster and add containers
+- It's Christmas, traffic spikes, grow our cluster and add containers
 
 --
 
@@ -1887,6 +1965,13 @@ class: pic
 
 class: pic
 
+![Celui-là ressemble plus à la réalité](images/kube_archi_simple.png)
+
+.debug[[kube/concepts-k8s.md](https://github.com/RyaxTech/kube.training.git/tree/gh-pages//kube/concepts-k8s.md)]
+---
+
+class: pic
+
 ![that one is more like the real thing](images/k8s-arch2.png)
 
 .debug[[kube/concepts-k8s.md](https://github.com/RyaxTech/kube.training.git/tree/gh-pages//kube/concepts-k8s.md)]
@@ -1898,9 +1983,24 @@ class: pic
 
   (Courtesy of [Yongbok Kim](https://www.yongbok.net/blog/))
 
-- The second one is a simplified representation of a Kubernetes cluster
+- The second has been taken from the book of Marko Luksa "Kubernetes in Action"
+
+- The third one is a simplified representation of a Kubernetes cluster
 
   (Courtesy of [Imesh Gunaratne](https://medium.com/containermind/a-reference-architecture-for-deploying-wso2-middleware-on-kubernetes-d4dee7601e8e))
+
+.debug[[kube/concepts-k8s.md](https://github.com/RyaxTech/kube.training.git/tree/gh-pages//kube/concepts-k8s.md)]
+---
+
+## Kubernetes name
+
+- How do we pronounce kubernetes?
+    - The word comes from the greek work κυβερνήτης, pronounced "kivernitis" meaning the captain of a ship or plane
+    - In english we say : "coubernetis"
+    - In french : "cubernetesse" ou "cubernette"
+
+- It is quite common to write Kubernetes as k8s
+
 
 .debug[[kube/concepts-k8s.md](https://github.com/RyaxTech/kube.training.git/tree/gh-pages//kube/concepts-k8s.md)]
 ---
@@ -2635,6 +2735,20 @@ The `kube-system` namespace is used for the control plane.
 .debug[[kube/kubectlget.md](https://github.com/RyaxTech/kube.training.git/tree/gh-pages//kube/kubectlget.md)]
 ---
 
+## To go even further
+
+- Read the [basic conceptes](https://kubernetes.io/docs/concepts/overview/components/) of Kubernetes.
+
+- Understand [the objects](https://kubernetes.io/docs/concepts/overview/working-with-objects/kubernetes-objects/) of Kubernetes.
+
+
+
+
+
+
+.debug[[kube/kubectlget.md](https://github.com/RyaxTech/kube.training.git/tree/gh-pages//kube/kubectlget.md)]
+---
+
 class: pic
 
 .interstitial[![Image separating from the next chapter](https://gallant-turing-d0d520.netlify.com/containers/lots-of-containers.jpg)]
@@ -2679,7 +2793,7 @@ Setting up Kubernetes
 
     6. Copy the configuration file generated by `kubeadm init`
 
-- Check the [prepare VMs README](https://github.com/jpetazzo/container.training/blob/master/prepare-vms/README.md) for more details
+- Check the [prepare VMs README](https://github.com/RyaxTech/kube.training/blob/master/prepare-vms/README.md) for more dedtails
 
 .debug[[kube/setup-k8s.md](https://github.com/RyaxTech/kube.training.git/tree/gh-pages//kube/setup-k8s.md)]
 ---
@@ -2747,6 +2861,90 @@ Setting up Kubernetes
 - For a longer list, check the Kubernetes documentation:
   <br/>
   it has a great guide to [pick the right solution](https://kubernetes.io/docs/setup/pick-right-solution/) to set up Kubernetes.
+
+.debug[[kube/setup-k8s.md](https://github.com/RyaxTech/kube.training.git/tree/gh-pages//kube/setup-k8s.md)]
+---
+
+## Installation with Kubeadm
+
+- We are not going to perform the installation of Kubernetes.
+
+- The following slides show us how to do it with Kubeadm (you can do it on your own after the training).
+
+.debug[[kube/setup-k8s.md](https://github.com/RyaxTech/kube.training.git/tree/gh-pages//kube/setup-k8s.md)]
+---
+
+## Installation with Kubeadm
+
+
+.exercise[
+
+- Installation of Docker packages, if they are not installed, on all nodes of the cluster:
+  ```bash
+    sudo su
+    apt-get update
+    apt-get install -y apt-transport-https ca-certificates curl software-properties-common
+    curl -fsSL https://download.docker.com/linux/ubuntu/gpg | sudo apt-key add -
+    add-apt-repository "deb https://download.docker.com/linux/$(. /etc/os-release; echo "$ID") $(lsb_release -cs) stable"
+    apt-get update && apt-get install -y docker-ce docker-compose
+    exit
+    sudo groupadd docker
+    sudo usermod -aG docker $USER
+  ```
+]
+
+.debug[[kube/setup-k8s.md](https://github.com/RyaxTech/kube.training.git/tree/gh-pages//kube/setup-k8s.md)]
+---
+
+## Installation with Kubeadm 
+
+
+.exercise[
+
+- Installation of Kubernetes packages if they are not installed on every node of the cluster:
+  ```bash
+    sudo apt-get update && sudo apt-get install -y apt-transport-https curl
+    curl -s https://packages.cloud.google.com/apt/doc/apt-key.gpg | sudo apt-key add -
+    sudo su
+    cat <<EOF >/etc/apt/sources.list.d/kubernetes.list
+    deb http://apt.kubernetes.io/ kubernetes-xenial main
+    EOF
+    exit
+    sudo apt-get update
+    sudo apt-get install -y kubelet kubeadm kubectl
+   ```
+]
+
+.debug[[kube/setup-k8s.md](https://github.com/RyaxTech/kube.training.git/tree/gh-pages//kube/setup-k8s.md)]
+---
+
+## Installation with Kubeadm
+
+.exercise[
+
+- Configuration of Kubernetes with Kubeadm on the first node of the cluster:
+  ```bash
+    sudo kubeadm init 
+    sudo mkdir -p $HOME/.kube /home/docker/.kube
+    sudo cp /etc/kubernetes/admin.conf $HOME/.kube/config
+    sudo cp /etc/kubernetes/admin.conf /home/docker/.kube/config
+    sudo chown -R $(id -u) $HOME/.kube
+    kubever=$(kubectl version | base64 | tr -d '\n')
+    kubectl apply -f https://cloud.weave.works/k8s/net?k8s-version=$kubever
+  ```
+
+- Configuration of Kubernetes on the other nodes of the cluster:
+- Connect on each compute node and apply the last command returned at the end of the `kubeadm init` command launched on the master node
+- Test if the nodes are correctly configured by returning on the master node and executing:
+  ```bash
+  kubectl get nodes
+  ```
+]
+
+
+
+
+
 
 .debug[[kube/setup-k8s.md](https://github.com/RyaxTech/kube.training.git/tree/gh-pages//kube/setup-k8s.md)]
 ---
@@ -3045,6 +3243,31 @@ Unfortunately, `--follow` cannot (yet) be used to stream the logs from multiple 
 - It's very unlikely that our concerted pings manage to produce
   even a modest blip at Cloudflare's NOC!
 
+## To stop everything
+
+.exercise[
+
+- Stop the deployment:
+  ```bash
+  kubectl delete deploy/pingpong
+  ```
+- What is the state of the application ?
+  ```bash
+  kubectl get all
+  ```
+
+]
+
+- To go even further:
+
+  - [Launch a deployment from a YAML file](https://kubernetes.io/docs/tasks/run-application/run-stateless-application-deployment/)
+
+  - [Launch a *cronjob*](https://kubernetes.io/docs/tasks/job/automated-tasks-with-cron-jobs/)
+
+
+
+
+
 .debug[[kube/kubectlrun.md](https://github.com/RyaxTech/kube.training.git/tree/gh-pages//kube/kubectlrun.md)]
 ---
 
@@ -3333,6 +3556,21 @@ error: the server doesn't have a resource type "endpoint"
 - There is no `endpoint` object: `type Endpoints struct`
 
 - The type doesn't represent a single endpoint, but a list of endpoints
+
+## Reset
+
+- Once you have finished playing with this deployment:
+
+```bash
+kubectl delete deployments elastic
+```
+- To go even further:
+  - The [concept](https://kubernetes.io/docs/concepts/services-networking/service/) of services from the official documentation
+  - [DNS for services](https://kubernetes.io/docs/concepts/services-networking/dns-pod-service/)
+
+
+
+
 
 .debug[[kube/kubectlexpose.md](https://github.com/RyaxTech/kube.training.git/tree/gh-pages//kube/kubectlexpose.md)]
 ---
@@ -3806,6 +4044,15 @@ Exposing services for external access
 
 *Alright, we're back to where we started, when we were running on a single node!*
 
+## To go even further
+
+- Use a private or public [registry](https://kubernetes.io/docs/concepts/containers/images/).
+
+- [Connect services](https://kubernetes.io/docs/concepts/services-networking/connect-applications-service/).
+
+
+
+
 .debug[[kube/ourapponkube.md](https://github.com/RyaxTech/kube.training.git/tree/gh-pages//kube/ourapponkube.md)]
 ---
 
@@ -4128,6 +4375,29 @@ Security implications of `kubectl apply`
 --
 
 - It introduces new failure modes (like if you try to apply yaml from a link that's no longer valid)
+
+.debug[[kube/dashboard.md](https://github.com/RyaxTech/kube.training.git/tree/gh-pages//kube/dashboard.md)]
+---
+
+## To go further
+
+
+.exercise[
+- Relaunch the previous example:
+  ```bash
+  kubectl run pingpong --image alpine ping 1.1.1.1
+  ```
+- Observe the deployment of the pod. Can you find the logs of the pod?
+
+- Stop the deployment.
+
+]
+
+You can stop the dashboard or leave it. Since the dashboard is not secure we propose you to stop it.
+```bash
+  kubectl delete -f https://goo.gl/CHsLTA
+  ```
+
 
 
 .debug[[kube/dashboard.md](https://github.com/RyaxTech/kube.training.git/tree/gh-pages//kube/dashboard.md)]
@@ -4839,6 +5109,14 @@ Ding, dong, the deployment is dead! And the daemon set lives on.
 
 - This gives us building blocks for canary and blue/green deployments
 
+## To go further
+
+- Understand the concept of [DaemonSet](https://kubernetes.io/docs/concepts/workloads/controllers/daemonset/)
+
+- Understand the [labels and selectors](https://kubernetes.io/docs/concepts/overview/working-with-objects/labels/)
+
+
+
 .debug[[kube/daemonset.md](https://github.com/RyaxTech/kube.training.git/tree/gh-pages//kube/daemonset.md)]
 ---
 
@@ -5155,6 +5433,14 @@ spec:
   ] 
 
 ]
+
+## To go even further
+
+- Rollout of a [deployment](https://kubernetes.io/docs/concepts/workloads/controllers/deployment/)
+
+- Rolling updates with deployments in [kubernetes](https://www.linux.com/learn/rolling-updates-and-rollbacks-using-kubernetes-deployments)
+
+
 
 .debug[[kube/rollout.md](https://github.com/RyaxTech/kube.training.git/tree/gh-pages//kube/rollout.md)]
 ---
@@ -5495,6 +5781,18 @@ create the resources in the `kube-system` namespace or in a dedicated namespace.
 .debug[[kube/logs-centralized.md](https://github.com/RyaxTech/kube.training.git/tree/gh-pages//kube/logs-centralized.md)]
 ---
 
+## To go even further
+
+- Architecure of [fluentd](https://www.fluentd.org/architecture)
+
+- The [quickstart](https://docs.fluentd.org/v1.0/articles/quickstart) of fluentd
+
+
+
+
+.debug[[kube/logs-centralized.md](https://github.com/RyaxTech/kube.training.git/tree/gh-pages//kube/logs-centralized.md)]
+---
+
 class: pic
 
 .interstitial[![Image separating from the next chapter](https://gallant-turing-d0d520.netlify.com/containers/distillery-containers.jpg)]
@@ -5747,6 +6045,16 @@ The chart's metadata includes an URL to the project's home page.
 .debug[[kube/helm.md](https://github.com/RyaxTech/kube.training.git/tree/gh-pages//kube/helm.md)]
 ---
 
+## To go even further
+
+- The [quickstart](https://docs.helm.sh/using_helm/#quickstart) of helm.
+
+- The public repository of [helm charts](https://hub.kubeapps.com/)
+
+
+.debug[[kube/helm.md](https://github.com/RyaxTech/kube.training.git/tree/gh-pages//kube/helm.md)]
+---
+
 class: pic
 
 .interstitial[![Image separating from the next chapter](https://gallant-turing-d0d520.netlify.com/containers/lots-of-containers.jpg)]
@@ -5928,52 +6236,6 @@ Note: it might take a minute or two for the app to be up and running.
 
   `https://kubernetes.default.svc.cluster.local:443/`
 
-.debug[[kube/namespaces.md](https://github.com/RyaxTech/kube.training.git/tree/gh-pages//kube/namespaces.md)]
----
-
-## Isolating pods
-
-- Actual isolation is implemented with *network policies*
-
-- Network policies are resources (like deployments, services, namespaces...)
-
-- Network policies specify which flows are allowed:
-
-  - between pods
-
-  - from pods to the outside world
-
-  - and vice-versa
-
-.debug[[kube/namespaces.md](https://github.com/RyaxTech/kube.training.git/tree/gh-pages//kube/namespaces.md)]
----
-
-## Network policies overview
-
-- We can create as many network policies as we want
-
-- Each network policy has:
-
-  - a *pod selector*: "which pods are targeted by the policy?"
-
-  - lists of ingress and/or egress rules: "which peers and ports are allowed or blocked?"
-
-- If a pod is not targeted by any policy, traffic is allowed by default
-
-- If a pod is targeted by at least one policy, traffic must be allowed explicitly
-
-.debug[[kube/namespaces.md](https://github.com/RyaxTech/kube.training.git/tree/gh-pages//kube/namespaces.md)]
----
-
-## More about network policies
-
-- This remains a high level overview of network policies
-
-- For more details, check:
-
-  - the [Kubernetes documentation about network policies](https://kubernetes.io/docs/concepts/services-networking/network-policies/)
-
-  - this [talk about network policies at KubeCon 2017 US](https://www.youtube.com/watch?v=3gGpMmYeEO8) by [@ahmetb](https://twitter.com/ahmetb)
 
 .debug[[kube/namespaces.md](https://github.com/RyaxTech/kube.training.git/tree/gh-pages//kube/namespaces.md)]
 ---
