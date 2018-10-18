@@ -49,6 +49,17 @@ Before diving in, let's see a small example of Compose in action.
 
 ---
 
+## Compose steps
+
+- There are three steps to using Docker Compose:
+
+1. Define each service in a Dockerfile.
+2. Define the services and their relation to each other in the `docker-compose.yml` file.
+3. Use `docker-compose up` to start the system.
+
+---
+
+
 ## Compose in action
 
 ![composeup](images/composeup.gif)
@@ -322,3 +333,82 @@ You can:
 Each copy will run in a different network, totally isolated from the other.
 
 This is ideal to debug regressions, do side-by-side comparisons, etc.
+
+---
+
+## Exercise with Docker-compose, Volume and Database
+
+.exercise[
+
+- Download the ready docker-compose.yml that makes use of a Persistent Data Storage for Postgresql
+
+```bash
+curl -s https://raw.githubusercontent.com/RyaxTech/kube-tutorial/master/docker-compose.yml --output docker-compose.yml
+```
+]
+
+- `external: true` tells Docker Compose to use a pre-existing external data volume. 
+- If no volume named data is present, starting the application will cause an error. Create the volume:
+
+```bash
+docker volume create --name=data
+```
+
+- and then start your compose with
+```bash
+docker-compose up
+```
+]
+
+
+---
+
+## Exercise with Docker-compose, Volume and Database
+
+- Create some content within the postgresql
+- Start another app with docker-compose so that another postgresql is create that makes use of the same database
+- Create data on one container and see if the data exist on the other
+- Kill the applications and start one and see again if the data are available.
+
+
+---
+
+# Security and Docker Containers
+
+The principal security vulnerabilities in Docker:
+
+1. **Kernel exploits**: Unlike a virtual machine, the kernel is shared among all containers and the host. If a container causes a kernel to panic, it will take down the whole host.
+2. **Poisoned images**: If an attacker can trick you into running their image, the host and data are at risk.
+3. **Denial-of-Service (DoS) attacks**: Containers share kernel resources, so if one container is able to monopolise the access to certain resources, it can starve out other containers on the host. This results in a denial-of-service (DoS). Users are then unable to access part or all of the system.
+4. **Container breakouts**: Be aware of potential privilege escalation attacks, where a user gains elevated privileges through a bug in application code that must run with extra privileges. While unlikely, breakouts are possible and should be considered when developing a continuity plan.
+5. **Compromising secrets**: When a container accesses a database or service it will require a secret, like an API key or username and password. An attacker that gains access to the secret will also have access to the service.
+
+---
+
+## Security for Docker Containers best practices
+
+- **1. Use trusted images** 
+
+Make sure that the images that are running are up to date. Developers often assemble Docker images rather than build them from scratch. Be sure to set up a trusted registry of base images, which are the only image developers would be allowed to use.
+
+- **2. Limit the Resource Utilization**
+
+Since Docker containers are lightweight processes, you can run many more containers than virtual machines. This increased density is beneficial, as it increases host resource utilization and allows you to optimize total cost of ownership. It also implies that a far greater number of processes are competing for host resources. To reduce the threat of vulnerabilities such as denial-of-service attacks, and performance impacts due to noisy neighbors, you can put limits on the system resources that individual containers can consume, through container orchestration frameworks such as Kubernetes
+
+---
+
+## Security for Docker Containers best practices
+
+- **3. Docker Host, Application Runtime, and Code-Level Security**
+
+Keep the host operating system properly patched and updated. Processes running inside your container should have the latest security updates. Incorporate security best practices into your application code. As you build Docker container images, you need to know exactly what goes into each layer. Ensure that containers installed by third-party vendors do not download and run anything at runtime. Everything that a Docker container runs must be declared and included in the static container image.
+
+- **4. Manage secrets** 
+
+Putting secrets in the container image exposes it to many users and processes and puts it in jeopardy of being misused. You want to provide the container with access to the secrets it needs as it’s running, and not before. The secret should only be accessible to the relevant containers, and should not be stored on disk or be exposed at the host level. Once the container is stopped, the secret disappears.
+
+- By taking a proactive approach, creating and implementing security policies throughout the entire container lifecycle, a containerized environment can be secured very effectively..
+
+---
+
+

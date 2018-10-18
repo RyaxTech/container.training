@@ -20,6 +20,8 @@ chapters:
   #- kube/intro.md
   #- common/about-slides.md
 - common/toc.md
+- - intro/Working_With_Volumes.md
+  - intro/Compose_For_Dev_Stacks.md
 - - common/sampleapp.md
   - common/composescale.md
   - common/composedown.md  

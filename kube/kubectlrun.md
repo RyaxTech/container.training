@@ -259,6 +259,8 @@ Unfortunately, `--follow` cannot (yet) be used to stream the logs from multiple 
 - It's very unlikely that our concerted pings manage to produce
   even a modest blip at Cloudflare's NOC!
 
+---
+
 ## To stop everything
 
 .exercise[

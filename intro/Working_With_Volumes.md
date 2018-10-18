@@ -23,10 +23,6 @@ At the end of this section, you will be able to:
 
 Docker volumes can be used to achieve many things, including:
 
-* Bypassing the copy-on-write system to obtain native disk I/O performance.
-
-* Bypassing copy-on-write to leave some files out of `docker commit`.
-
 * Sharing a directory between multiple containers.
 
 * Sharing a directory between the host and a container.

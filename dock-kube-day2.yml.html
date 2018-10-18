@@ -31,11 +31,14 @@ Kubernetes<br/>Introduction, Architecture and Installation<br/>
 .debug[
 ```
  M dock-kube-day1.yml.html
+ M dock-kube-day2.yml
  M dock-kube-day2.yml.html
  M dock-kube-day3.yml.html
  M dock-kube-day4.yml.html
  M intro-fullday.yml.html
  M intro-selfpaced.yml.html
+ M intro/Compose_For_Dev_Stacks.md
+ M intro/Working_With_Volumes.md
  M kube-day1.yml.html
  M kube-fullday.yml.html
  M kube-halfday.yml.html
@@ -43,7 +46,7 @@ Kubernetes<br/>Introduction, Architecture and Installation<br/>
  M kube-jour2.yml.html
  M kube-jour3.yml.html
  M kube-selfpaced.yml.html
- M override.css
+ M kube/kubectlrun.md
  M swarm-fullday.yml.html
  M swarm-halfday.yml.html
  M swarm-selfpaced.yml.html
@@ -53,7 +56,7 @@ Kubernetes<br/>Introduction, Architecture and Installation<br/>
 
 ```
 
-These slides have been built from commit: 00a443e
+These slides have been built from commit: 1152017
 
 
 [shared/title.md](https://github.com/RyaxTech/kube.training.git/tree/gh-pages//shared/title.md)]
@@ -71,15 +74,27 @@ name: toc-chapter-1
 
 ## Chapter 1
 
-- [Our sample application](#toc-our-sample-application)
+- [Working with volumes](#toc-working-with-volumes)
 
-- [Identifying bottlenecks](#toc-identifying-bottlenecks)
+- [Compose for development stacks](#toc-compose-for-development-stacks)
+
+- [Security and Docker Containers](#toc-security-and-docker-containers)
 
 .debug[(auto-generated TOC)]
 ---
 name: toc-chapter-2
 
 ## Chapter 2
+
+- [Our sample application](#toc-our-sample-application)
+
+- [Identifying bottlenecks](#toc-identifying-bottlenecks)
+
+.debug[(auto-generated TOC)]
+---
+name: toc-chapter-3
+
+## Chapter 3
 
 - [Kubernetes concepts](#toc-kubernetes-concepts)
 
@@ -93,9 +108,9 @@ name: toc-chapter-2
 
 .debug[(auto-generated TOC)]
 ---
-name: toc-chapter-3
+name: toc-chapter-4
 
-## Chapter 3
+## Chapter 4
 
 - [Setting up Kubernetes](#toc-setting-up-kubernetes)
 
@@ -116,15 +131,1002 @@ class: pic
 
 ---
 
+name: toc-working-with-volumes
+class: title
+
+Working with volumes
+
+.nav[
+[Section précédente](#toc-)
+|
+[Retour table des matières](#toc-chapter-1)
+|
+[Section suivante](#toc-compose-for-development-stacks)
+]
+
+.debug[(automatically generated title slide)]
+
+---
+
+class: title
+
+# Working with volumes
+
+![volume](images/title-working-with-volumes.jpg)
+
+.debug[[intro/Working_With_Volumes.md](https://github.com/RyaxTech/kube.training.git/tree/gh-pages//intro/Working_With_Volumes.md)]
+---
+
+## Objectives
+
+At the end of this section, you will be able to:
+
+* Create containers holding volumes.
+
+* Share volumes across containers.
+
+* Share a host directory with one or many containers.
+
+.debug[[intro/Working_With_Volumes.md](https://github.com/RyaxTech/kube.training.git/tree/gh-pages//intro/Working_With_Volumes.md)]
+---
+
+## Working with volumes
+
+Docker volumes can be used to achieve many things, including:
+
+* Sharing a directory between multiple containers.
+
+* Sharing a directory between the host and a container.
+
+* Sharing a *single file* between the host and a container.
+
+.debug[[intro/Working_With_Volumes.md](https://github.com/RyaxTech/kube.training.git/tree/gh-pages//intro/Working_With_Volumes.md)]
+---
+
+## Volumes are special directories in a container
+
+Volumes can be declared in two different ways.
+
+* Within a `Dockerfile`, with a `VOLUME` instruction.
+
+```dockerfile
+VOLUME /uploads
+```
+
+* On the command-line, with the `-v` flag for `docker run`.
+
+```bash
+$ docker run -d -v /uploads myapp
+```
+
+In both cases, `/uploads` (inside the container) will be a volume.
+
+.debug[[intro/Working_With_Volumes.md](https://github.com/RyaxTech/kube.training.git/tree/gh-pages//intro/Working_With_Volumes.md)]
+---
+
+class: extra-details
+
+## Volumes bypass the copy-on-write system
+
+Volumes act as passthroughs to the host filesystem.
+
+* The I/O performance on a volume is exactly the same as I/O performance
+  on the Docker host.
+
+* When you `docker commit`, the content of volumes is not brought into
+  the resulting image.
+
+* If a `RUN` instruction in a `Dockerfile` changes the content of a
+  volume, those changes are not recorded neither.
+
+* If a container is started with the `--read-only` flag, the volume
+  will still be writable (unless the volume is a read-only volume).
+
+.debug[[intro/Working_With_Volumes.md](https://github.com/RyaxTech/kube.training.git/tree/gh-pages//intro/Working_With_Volumes.md)]
+---
+
+class: extra-details
+
+## Volumes can be shared across containers
+
+You can start a container with *exactly the same volumes* as another one.
+
+The new container will have the same volumes, in the same directories.
+
+They will contain exactly the same thing, and remain in sync.
+
+Under the hood, they are actually the same directories on the host anyway.
+
+This is done using the `--volumes-from` flag for `docker run`.
+
+We will see an example in the following slides.
+
+.debug[[intro/Working_With_Volumes.md](https://github.com/RyaxTech/kube.training.git/tree/gh-pages//intro/Working_With_Volumes.md)]
+---
+
+class: extra-details
+
+## Sharing app server logs with another container
+
+Let's start a Tomcat container:
+
+```bash
+$ docker run --name webapp -d -p 8080:8080 -v /usr/local/tomcat/logs tomcat
+```
+
+Now, start an `alpine` container accessing the same volume:
+
+```bash
+$ docker run --volumes-from webapp alpine sh -c "tail -f /usr/local/tomcat/logs/*"
+```
+
+Then, from another window, send requests to our Tomcat container:
+```bash
+$ curl localhost:8080
+```
+
+.debug[[intro/Working_With_Volumes.md](https://github.com/RyaxTech/kube.training.git/tree/gh-pages//intro/Working_With_Volumes.md)]
+---
+
+## Volumes exist independently of containers
+
+If a container is stopped, its volumes still exist and are available.
+
+Volumes can be listed and manipulated with `docker volume` subcommands:
+
+```bash
+$ docker volume ls
+DRIVER              VOLUME NAME
+local               5b0b65e4316da67c2d471086640e6005ca2264f3...
+local               pgdata-prod
+local               pgdata-dev
+local               13b59c9936d78d109d094693446e174e5480d973...
+```
+
+Some of those volume names were explicit (pgdata-prod, pgdata-dev).
+
+The others (the hex IDs) were generated automatically by Docker.
+
+.debug[[intro/Working_With_Volumes.md](https://github.com/RyaxTech/kube.training.git/tree/gh-pages//intro/Working_With_Volumes.md)]
+---
+
+## Naming volumes
+
+* Volumes can be created without a container, then used in multiple containers.
+
+Let's create a couple of volumes directly.
+
+```bash
+$ docker volume create webapps
+webapps
+```
+
+```bash
+$ docker volume create logs
+logs
+```
+
+Volumes are not anchored to a specific path.
+
+.debug[[intro/Working_With_Volumes.md](https://github.com/RyaxTech/kube.training.git/tree/gh-pages//intro/Working_With_Volumes.md)]
+---
+
+## Using our named volumes
+
+* Volumes are used with the `-v` option.
+
+* When a host path does not contain a /, it is considered to be a volume name.
+
+Let's start a web server using the two previous volumes.
+
+```bash
+$ docker run -d -p 1234:8080 \
+         -v logs:/usr/local/tomcat/logs \
+         -v webapps:/usr/local/tomcat/webapps \
+         tomcat
+```
+
+Check that it's running correctly:
+
+```bash
+$ curl localhost:1234
+... (Tomcat tells us how happy it is to be up and running) ...
+```
+
+.debug[[intro/Working_With_Volumes.md](https://github.com/RyaxTech/kube.training.git/tree/gh-pages//intro/Working_With_Volumes.md)]
+---
+
+## Using a volume in another container
+
+* We will make changes to the volume from another container.
+
+* In this example, we will run a text editor in the other container.
+
+  (But this could be a FTP server, a WebDAV server, a Git receiver...)
+
+Let's start another container using the `webapps` volume.
+
+```bash
+$ docker run -v webapps:/webapps -w /webapps -ti alpine vi ROOT/index.jsp
+```
+
+Vandalize the page, save, exit.
+
+Then run `curl localhost:1234` again to see your changes.
+
+.debug[[intro/Working_With_Volumes.md](https://github.com/RyaxTech/kube.training.git/tree/gh-pages//intro/Working_With_Volumes.md)]
+---
+
+## Managing volumes explicitly
+
+In some cases, you want a specific directory on the host to be mapped
+inside the container:
+
+* You want to manage storage and snapshots yourself.
+
+    (With LVM, or a SAN, or ZFS, or anything else!)
+
+* You have a separate disk with better performance (SSD) or resiliency (EBS)
+  than the system disk, and you want to put important data on that disk.
+
+* You want to share your source directory between your host (where the
+  source gets edited) and the container (where it is compiled or executed).
+
+Wait, we already met the last use-case in our example development workflow!
+Nice.
+
+```bash
+$ docker run -d -v /path/on/the/host:/path/in/container image ...
+```
+
+.debug[[intro/Working_With_Volumes.md](https://github.com/RyaxTech/kube.training.git/tree/gh-pages//intro/Working_With_Volumes.md)]
+---
+
+class: extra-details
+
+## Migrating data with `--volumes-from`
+
+The `--volumes-from` option tells Docker to re-use all the volumes
+of an existing container.
+
+* Scenario: migrating from Redis 2.8 to Redis 3.0.
+
+* We have a container (`myredis`) running Redis 2.8.
+
+* Stop the `myredis` container.
+
+* Start a new container, using the Redis 3.0 image, and the `--volumes-from` option.
+
+* The new container will inherit the data of the old one.
+
+* Newer containers can use `--volumes-from` too.
+
+.debug[[intro/Working_With_Volumes.md](https://github.com/RyaxTech/kube.training.git/tree/gh-pages//intro/Working_With_Volumes.md)]
+---
+
+class: extra-details
+
+## Data migration in practice
+
+Let's create a Redis container.
+
+```bash
+$ docker run -d --name redis28 redis:2.8
+```
+
+Connect to the Redis container and set some data.
+
+```bash
+$ docker run -ti --link redis28:redis alpine telnet redis 6379
+```
+
+Issue the following commands:
+
+```bash
+SET counter 42
+INFO server
+SAVE
+QUIT
+```
+
+.debug[[intro/Working_With_Volumes.md](https://github.com/RyaxTech/kube.training.git/tree/gh-pages//intro/Working_With_Volumes.md)]
+---
+
+class: extra-details
+
+## Upgrading Redis
+
+Stop the Redis container.
+
+```bash
+$ docker stop redis28
+```
+
+Start the new Redis container.
+
+```bash
+$ docker run -d --name redis30 --volumes-from redis28 redis:3.0
+```
+
+.debug[[intro/Working_With_Volumes.md](https://github.com/RyaxTech/kube.training.git/tree/gh-pages//intro/Working_With_Volumes.md)]
+---
+
+class: extra-details
+
+## Testing the new Redis
+
+Connect to the Redis container and see our data.
+
+```bash
+docker run -ti --link redis30:redis alpine telnet redis 6379
+```
+
+Issue a few commands.
+
+```bash
+GET counter
+INFO server
+QUIT
+```
+
+.debug[[intro/Working_With_Volumes.md](https://github.com/RyaxTech/kube.training.git/tree/gh-pages//intro/Working_With_Volumes.md)]
+---
+
+## Volumes lifecycle
+
+* When you remove a container, its volumes are kept around.
+
+* You can list them with `docker volume ls`.
+
+* You can access them by creating a container with `docker run -v`.
+
+* You can remove them with `docker volume rm` or `docker system prune`.
+
+Ultimately, _you_ are the one responsible for logging,
+monitoring, and backup of your volumes.
+
+.debug[[intro/Working_With_Volumes.md](https://github.com/RyaxTech/kube.training.git/tree/gh-pages//intro/Working_With_Volumes.md)]
+---
+
+class: extra-details
+
+## Checking volumes defined by an image
+
+Wondering if an image has volumes? Just use `docker inspect`:
+
+```bash
+$ # docker inspect training/datavol
+[{
+  "config": {
+    . . .
+    "Volumes": {
+        "/var/webapp": {}
+    },
+    . . .
+}]
+```
+
+.debug[[intro/Working_With_Volumes.md](https://github.com/RyaxTech/kube.training.git/tree/gh-pages//intro/Working_With_Volumes.md)]
+---
+
+class: extra-details
+
+## Checking volumes used by a container
+
+To look which paths are actually volumes, and to what they are bound,
+use `docker inspect` (again):
+
+```bash
+$ docker inspect <yourContainerID>
+[{
+  "ID": "<yourContainerID>",
+. . .
+  "Volumes": {
+     "/var/webapp": "/var/lib/docker/vfs/dir/f4280c5b6207ed531efd4cc673ff620cef2a7980f747dbbcca001db61de04468"
+  },
+  "VolumesRW": {
+     "/var/webapp": true
+  },
+}]
+```
+
+* We can see that our volume is present on the file system of the Docker host.
+
+.debug[[intro/Working_With_Volumes.md](https://github.com/RyaxTech/kube.training.git/tree/gh-pages//intro/Working_With_Volumes.md)]
+---
+
+## Sharing a single file
+
+The same `-v` flag can be used to share a single file (instead of a directory).
+
+One of the most interesting examples is to share the Docker control socket.
+
+```bash
+$ docker run -it -v /var/run/docker.sock:/var/run/docker.sock docker sh
+```
+
+From that container, you can now run `docker` commands communicating with
+the Docker Engine running on the host. Try `docker ps`!
+
+.warning[Since that container has access to the Docker socket, it
+has root-like access to the host.]
+
+.debug[[intro/Working_With_Volumes.md](https://github.com/RyaxTech/kube.training.git/tree/gh-pages//intro/Working_With_Volumes.md)]
+---
+
+## Volume plugins
+
+You can install plugins to manage volumes backed by particular storage systems,
+or providing extra features. For instance:
+
+* [dvol](https://github.com/ClusterHQ/dvol) - allows to commit/branch/rollback volumes;
+* [Flocker](https://clusterhq.com/flocker/introduction/), [REX-Ray](https://github.com/emccode/rexray) - create and manage volumes backed by an enterprise storage system (e.g. SAN or NAS), or by cloud block stores (e.g. EBS);
+* [Blockbridge](http://www.blockbridge.com/), [Portworx](http://portworx.com/) - provide distributed block store for containers;
+* and much more!
+
+.debug[[intro/Working_With_Volumes.md](https://github.com/RyaxTech/kube.training.git/tree/gh-pages//intro/Working_With_Volumes.md)]
+---
+
+## Volumes vs. Mounts
+
+* Since Docker 17.06, a new options is available: `--mount`.
+
+* It offers a new, richer syntax to manipulate data in containers.
+
+* It makes an explicit difference between:
+
+  - volumes (identified with a unique name, managed by a storage plugin),
+
+  - bind mounts (identified with a host path, not managed).
+
+* The former `-v` / `--volume` option is still usable.
+
+.debug[[intro/Working_With_Volumes.md](https://github.com/RyaxTech/kube.training.git/tree/gh-pages//intro/Working_With_Volumes.md)]
+---
+
+## `--mount` syntax
+
+Binding a host path to a container path:
+
+```bash
+$ docker run \
+  --mount type=bind,source=/path/on/host,target=/path/in/container alpine
+```
+
+Mounting a volume to a container path:
+
+```bash
+$ docker run \
+  --mount source=myvolume,target=/path/in/container alpine
+```
+
+Mounting a tmpfs (in-memory, for temporary files):
+
+```bash
+$ docker run \
+  --mount type=tmpfs,destination=/path/in/container,tmpfs-size=1000000 alpine
+```
+
+.debug[[intro/Working_With_Volumes.md](https://github.com/RyaxTech/kube.training.git/tree/gh-pages//intro/Working_With_Volumes.md)]
+---
+
+## Section summary
+
+We've learned how to:
+
+* Create and manage volumes.
+
+* Share volumes across containers.
+
+* Share a host directory with one or many containers.
+
+.debug[[intro/Working_With_Volumes.md](https://github.com/RyaxTech/kube.training.git/tree/gh-pages//intro/Working_With_Volumes.md)]
+---
+
+class: pic
+
+.interstitial[![Image separating from the next chapter](https://gallant-turing-d0d520.netlify.com/containers/ShippingContainerSFBay.jpg)]
+
+---
+
+name: toc-compose-for-development-stacks
+class: title
+
+Compose for development stacks
+
+.nav[
+[Section précédente](#toc-working-with-volumes)
+|
+[Retour table des matières](#toc-chapter-1)
+|
+[Section suivante](#toc-security-and-docker-containers)
+]
+
+.debug[(automatically generated title slide)]
+
+---
+# Compose for development stacks
+
+Dockerfiles are great to build container images.
+
+But what if we work with a complex stack made of multiple containers?
+
+Eventually, we will want to write some custom scripts and automation to build, run, and connect
+our containers together.
+
+There is a better way: using Docker Compose.
+
+In this section, you will use Compose to bootstrap a development environment.
+
+.debug[[intro/Compose_For_Dev_Stacks.md](https://github.com/RyaxTech/kube.training.git/tree/gh-pages//intro/Compose_For_Dev_Stacks.md)]
+---
+
+## What is Docker Compose?
+
+Docker Compose (formerly known as `fig`) is an external tool.
+
+Unlike the Docker Engine, it is written in Python. It's open source as well.
+
+The general idea of Compose is to enable a very simple, powerful onboarding workflow:
+
+1. Checkout your code.
+
+2. Run `docker-compose up`.
+
+3. Your app is up and running!
+
+.debug[[intro/Compose_For_Dev_Stacks.md](https://github.com/RyaxTech/kube.training.git/tree/gh-pages//intro/Compose_For_Dev_Stacks.md)]
+---
+
+## Compose overview
+
+This is how you work with Compose:
+
+* You describe a set (or stack) of containers in a YAML file called `docker-compose.yml`.
+
+* You run `docker-compose up`.
+
+* Compose automatically pulls images, builds containers, and starts them.
+
+* Compose can set up links, volumes, and other Docker options for you.
+
+* Compose can run the containers in the background, or in the foreground.
+
+* When containers are running in the foreground, their aggregated output is shown.
+
+Before diving in, let's see a small example of Compose in action.
+
+.debug[[intro/Compose_For_Dev_Stacks.md](https://github.com/RyaxTech/kube.training.git/tree/gh-pages//intro/Compose_For_Dev_Stacks.md)]
+---
+
+## Compose steps
+
+- There are three steps to using Docker Compose:
+
+1. Define each service in a Dockerfile.
+2. Define the services and their relation to each other in the `docker-compose.yml` file.
+3. Use `docker-compose up` to start the system.
+
+.debug[[intro/Compose_For_Dev_Stacks.md](https://github.com/RyaxTech/kube.training.git/tree/gh-pages//intro/Compose_For_Dev_Stacks.md)]
+---
+
+
+## Compose in action
+
+![composeup](images/composeup.gif)
+
+.debug[[intro/Compose_For_Dev_Stacks.md](https://github.com/RyaxTech/kube.training.git/tree/gh-pages//intro/Compose_For_Dev_Stacks.md)]
+---
+
+## Checking if Compose is installed
+
+If you are using the official training virtual machines, Compose has been
+pre-installed.
+
+If you are using Docker for Mac/Windows or the Docker Toolbox, Compose comes with them.
+
+If you are on Linux (desktop or server environment), you will need to install Compose from its [release page](https://github.com/docker/compose/releases) or with `pip install docker-compose`.
+
+You can always check that it is installed by running:
+
+```bash
+$ docker-compose --version
+```
+
+.debug[[intro/Compose_For_Dev_Stacks.md](https://github.com/RyaxTech/kube.training.git/tree/gh-pages//intro/Compose_For_Dev_Stacks.md)]
+---
+
+## Launching Our First Stack with Compose
+
+First step: clone the source code for the app we will be working on.
+
+```bash
+$ cd
+$ git clone git://github.com/jpetazzo/trainingwheels
+...
+$ cd trainingwheels
+```
+
+
+Second step: start your app.
+
+```bash
+$ docker-compose up
+```
+
+Watch Compose build and run your app with the correct parameters,
+including linking the relevant containers together.
+
+.debug[[intro/Compose_For_Dev_Stacks.md](https://github.com/RyaxTech/kube.training.git/tree/gh-pages//intro/Compose_For_Dev_Stacks.md)]
+---
+
+## Launching Our First Stack with Compose
+
+Verify that the app is running at `http://<yourHostIP>:8000`.
+
+![composeapp](images/composeapp.png)
+
+.debug[[intro/Compose_For_Dev_Stacks.md](https://github.com/RyaxTech/kube.training.git/tree/gh-pages//intro/Compose_For_Dev_Stacks.md)]
+---
+
+## Stopping the app
+
+When you hit `^C`, Compose tries to gracefully terminate all of the containers.
+
+After ten seconds (or if you press `^C` again) it will forcibly kill
+them.
+
+.debug[[intro/Compose_For_Dev_Stacks.md](https://github.com/RyaxTech/kube.training.git/tree/gh-pages//intro/Compose_For_Dev_Stacks.md)]
+---
+
+## The `docker-compose.yml` file
+
+Here is the file used in the demo:
+
+.small[
+```yaml
+version: "2"
+
+services:
+  www:
+    build: www
+    ports:
+      - 8000:5000
+    user: nobody
+    environment:
+      DEBUG: 1
+    command: python counter.py
+    volumes:
+      - ./www:/src
+
+  redis:
+    image: redis
+```
+]
+
+.debug[[intro/Compose_For_Dev_Stacks.md](https://github.com/RyaxTech/kube.training.git/tree/gh-pages//intro/Compose_For_Dev_Stacks.md)]
+---
+
+## Compose file structure
+
+A Compose file has multiple sections:
+
+* `version` is mandatory. (We should use `"2"` or later; version 1 is deprecated.)
+
+* `services` is mandatory. A service is one or more replicas of the same image running as containers.
+
+* `networks` is optional and indicates to which networks containers should be connected.
+  <br/>(By default, containers will be connected on a private, per-compose-file network.)
+
+* `volumes` is optional and can define volumes to be used and/or shared by the containers.
+
+.debug[[intro/Compose_For_Dev_Stacks.md](https://github.com/RyaxTech/kube.training.git/tree/gh-pages//intro/Compose_For_Dev_Stacks.md)]
+---
+
+## Compose file versions
+
+* Version 1 is legacy and shouldn't be used.
+
+  (If you see a Compose file without `version` and `services`, it's a legacy v1 file.)
+
+* Version 2 added support for networks and volumes.
+
+* Version 3 added support for deployment options (scaling, rolling updates, etc).
+
+The [Docker documentation](https://docs.docker.com/compose/compose-file/)
+has excellent information about the Compose file format if you need to know more about versions.
+
+.debug[[intro/Compose_For_Dev_Stacks.md](https://github.com/RyaxTech/kube.training.git/tree/gh-pages//intro/Compose_For_Dev_Stacks.md)]
+---
+
+## Containers in `docker-compose.yml`
+
+Each service in the YAML file must contain either `build`, or `image`.
+
+* `build` indicates a path containing a Dockerfile.
+
+* `image` indicates an image name (local, or on a registry).
+
+* If both are specified, an image will be built from the `build` directory and named `image`.
+
+The other parameters are optional.
+
+They encode the parameters that you would typically add to `docker run`.
+
+Sometimes they have several minor improvements.
+
+.debug[[intro/Compose_For_Dev_Stacks.md](https://github.com/RyaxTech/kube.training.git/tree/gh-pages//intro/Compose_For_Dev_Stacks.md)]
+---
+
+## Container parameters
+
+* `command` indicates what to run (like `CMD` in a Dockerfile).
+
+* `ports` translates to one (or multiple) `-p` options to map ports.
+  <br/>You can specify local ports (i.e. `x:y` to expose public port `x`).
+
+* `volumes` translates to one (or multiple) `-v` options.
+  <br/>You can use relative paths here.
+
+For the full list, check: https://docs.docker.com/compose/compose-file/
+
+.debug[[intro/Compose_For_Dev_Stacks.md](https://github.com/RyaxTech/kube.training.git/tree/gh-pages//intro/Compose_For_Dev_Stacks.md)]
+---
+
+## Compose commands
+
+We already saw `docker-compose up`, but another one is `docker-compose build`.
+
+It will execute `docker build` for all containers mentioning a `build` path.
+
+It can also be invoked automatically when starting the application:
+
+```bash
+docker-compose up --build
+```
+
+Another common option is to start containers in the background:
+
+```bash
+docker-compose up -d
+```
+
+.debug[[intro/Compose_For_Dev_Stacks.md](https://github.com/RyaxTech/kube.training.git/tree/gh-pages//intro/Compose_For_Dev_Stacks.md)]
+---
+
+## Check container status
+
+It can be tedious to check the status of your containers with `docker ps`,
+especially when running multiple apps at the same time.
+
+Compose makes it easier; with `docker-compose ps` you will see only the status of the
+containers of the current stack:
+
+
+```bash
+$ docker-compose ps
+Name                      Command             State           Ports          
+----------------------------------------------------------------------------
+trainingwheels_redis_1   /entrypoint.sh red   Up      6379/tcp               
+trainingwheels_www_1     python counter.py    Up      0.0.0.0:8000->5000/tcp 
+```
+
+.debug[[intro/Compose_For_Dev_Stacks.md](https://github.com/RyaxTech/kube.training.git/tree/gh-pages//intro/Compose_For_Dev_Stacks.md)]
+---
+
+## Cleaning up (1)
+
+If you have started your application in the background with Compose and
+want to stop it easily, you can use the `kill` command:
+
+```bash
+$ docker-compose kill
+```
+
+Likewise, `docker-compose rm` will let you remove containers (after confirmation):
+
+```bash
+$ docker-compose rm
+Going to remove trainingwheels_redis_1, trainingwheels_www_1
+Are you sure? [yN] y
+Removing trainingwheels_redis_1...
+Removing trainingwheels_www_1...
+```
+
+.debug[[intro/Compose_For_Dev_Stacks.md](https://github.com/RyaxTech/kube.training.git/tree/gh-pages//intro/Compose_For_Dev_Stacks.md)]
+---
+
+## Cleaning up (2)
+
+Alternatively, `docker-compose down` will stop and remove containers.
+
+It will also remove other resources, like networks that were created for the application.
+
+```bash
+$ docker-compose down
+Stopping trainingwheels_www_1 ... done
+Stopping trainingwheels_redis_1 ... done
+Removing trainingwheels_www_1 ... done
+Removing trainingwheels_redis_1 ... done
+```
+
+Use `docker-compose down -v` to remove everything including volumes.
+
+.debug[[intro/Compose_For_Dev_Stacks.md](https://github.com/RyaxTech/kube.training.git/tree/gh-pages//intro/Compose_For_Dev_Stacks.md)]
+---
+
+## Special handling of volumes
+
+Compose is smart. If your container uses volumes, when you restart your
+application, Compose will create a new container, but carefully re-use
+the volumes it was using previously.
+
+This makes it easy to upgrade a stateful service, by pulling its
+new image and just restarting your stack with Compose.
+
+.debug[[intro/Compose_For_Dev_Stacks.md](https://github.com/RyaxTech/kube.training.git/tree/gh-pages//intro/Compose_For_Dev_Stacks.md)]
+---
+
+## Compose project name
+
+* When you run a Compose command, Compose infers the "project name" of your app.
+
+* By default, the "project name" is the name of the current directory.
+
+* For instance, if you are in `/home/zelda/src/ocarina`, the project name is `ocarina`.
+
+* All resources created by Compose are tagged with this project name.
+
+* The project name also appears as a prefix of the names of the resources.
+
+  E.g. in the previous example, service `www` will create a container `ocarina_www_1`.
+
+* The project name can be overridden with `docker-compose -p`.
+
+.debug[[intro/Compose_For_Dev_Stacks.md](https://github.com/RyaxTech/kube.training.git/tree/gh-pages//intro/Compose_For_Dev_Stacks.md)]
+---
+
+## Running two copies of the same app
+
+If you want to run two copies of the same app simultaneously, all you have to do is to
+make sure that each copy has a different project name.
+
+You can:
+
+* copy your code in a directory with a different name
+
+* start each copy with `docker-compose -p myprojname up`
+
+Each copy will run in a different network, totally isolated from the other.
+
+This is ideal to debug regressions, do side-by-side comparisons, etc.
+
+.debug[[intro/Compose_For_Dev_Stacks.md](https://github.com/RyaxTech/kube.training.git/tree/gh-pages//intro/Compose_For_Dev_Stacks.md)]
+---
+
+## Exercise with Docker-compose, Volume and Database
+
+.exercise[
+
+- Download the ready docker-compose.yml that makes use of a Persistent Data Storage for Postgresql
+
+```bash
+curl -s https://raw.githubusercontent.com/RyaxTech/kube-tutorial/master/docker-compose.yml --output docker-compose.yml
+```
+]
+
+- `external: true` tells Docker Compose to use a pre-existing external data volume. 
+- If no volume named data is present, starting the application will cause an error. Create the volume:
+
+```bash
+docker volume create --name=data
+```
+
+- and then start your compose with
+```bash
+docker-compose up
+```
+]
+
+
+.debug[[intro/Compose_For_Dev_Stacks.md](https://github.com/RyaxTech/kube.training.git/tree/gh-pages//intro/Compose_For_Dev_Stacks.md)]
+---
+
+## Exercise with Docker-compose, Volume and Database
+
+- Create some content within the postgresql
+- Start another app with docker-compose so that another postgresql is create that makes use of the same database
+- Create data on one container and see if the data exist on the other
+- Kill the applications and start one and see again if the data are available.
+
+
+.debug[[intro/Compose_For_Dev_Stacks.md](https://github.com/RyaxTech/kube.training.git/tree/gh-pages//intro/Compose_For_Dev_Stacks.md)]
+---
+
+class: pic
+
+.interstitial[![Image separating from the next chapter](https://gallant-turing-d0d520.netlify.com/containers/aerial-view-of-containers.jpg)]
+
+---
+
+name: toc-security-and-docker-containers
+class: title
+
+Security and Docker Containers
+
+.nav[
+[Section précédente](#toc-compose-for-development-stacks)
+|
+[Retour table des matières](#toc-chapter-1)
+|
+[Section suivante](#toc-our-sample-application)
+]
+
+.debug[(automatically generated title slide)]
+
+---
+
+# Security and Docker Containers
+
+The principal security vulnerabilities in Docker:
+
+1. **Kernel exploits**: Unlike a virtual machine, the kernel is shared among all containers and the host. If a container causes a kernel to panic, it will take down the whole host.
+2. **Poisoned images**: If an attacker can trick you into running their image, the host and data are at risk.
+3. **Denial-of-Service (DoS) attacks**: Containers share kernel resources, so if one container is able to monopolise the access to certain resources, it can starve out other containers on the host. This results in a denial-of-service (DoS). Users are then unable to access part or all of the system.
+4. **Container breakouts**: Be aware of potential privilege escalation attacks, where a user gains elevated privileges through a bug in application code that must run with extra privileges. While unlikely, breakouts are possible and should be considered when developing a continuity plan.
+5. **Compromising secrets**: When a container accesses a database or service it will require a secret, like an API key or username and password. An attacker that gains access to the secret will also have access to the service.
+
+.debug[[intro/Compose_For_Dev_Stacks.md](https://github.com/RyaxTech/kube.training.git/tree/gh-pages//intro/Compose_For_Dev_Stacks.md)]
+---
+
+## Security for Docker Containers best practices
+
+- **1. Use trusted images** 
+
+Make sure that the images that are running are up to date. Developers often assemble Docker images rather than build them from scratch. Be sure to set up a trusted registry of base images, which are the only image developers would be allowed to use.
+
+- **2. Limit the Resource Utilization**
+
+Since Docker containers are lightweight processes, you can run many more containers than virtual machines. This increased density is beneficial, as it increases host resource utilization and allows you to optimize total cost of ownership. It also implies that a far greater number of processes are competing for host resources. To reduce the threat of vulnerabilities such as denial-of-service attacks, and performance impacts due to noisy neighbors, you can put limits on the system resources that individual containers can consume, through container orchestration frameworks such as Kubernetes
+
+.debug[[intro/Compose_For_Dev_Stacks.md](https://github.com/RyaxTech/kube.training.git/tree/gh-pages//intro/Compose_For_Dev_Stacks.md)]
+---
+
+## Security for Docker Containers best practices
+
+- **3. Docker Host, Application Runtime, and Code-Level Security**
+
+Keep the host operating system properly patched and updated. Processes running inside your container should have the latest security updates. Incorporate security best practices into your application code. As you build Docker container images, you need to know exactly what goes into each layer. Ensure that containers installed by third-party vendors do not download and run anything at runtime. Everything that a Docker container runs must be declared and included in the static container image.
+
+- **4. Manage secrets** 
+
+Putting secrets in the container image exposes it to many users and processes and puts it in jeopardy of being misused. You want to provide the container with access to the secrets it needs as it’s running, and not before. The secret should only be accessible to the relevant containers, and should not be stored on disk or be exposed at the host level. Once the container is stopped, the secret disappears.
+
+- By taking a proactive approach, creating and implementing security policies throughout the entire container lifecycle, a containerized environment can be secured very effectively..
+
+.debug[[intro/Compose_For_Dev_Stacks.md](https://github.com/RyaxTech/kube.training.git/tree/gh-pages//intro/Compose_For_Dev_Stacks.md)]
+---
+
+
+
+.debug[[intro/Compose_For_Dev_Stacks.md](https://github.com/RyaxTech/kube.training.git/tree/gh-pages//intro/Compose_For_Dev_Stacks.md)]
+---
+
+class: pic
+
+.interstitial[![Image separating from the next chapter](https://gallant-turing-d0d520.netlify.com/containers/blue-containers.jpg)]
+
+---
+
 name: toc-our-sample-application
 class: title
 
 Our sample application
 
 .nav[
-[Section précédente](#toc-)
+[Section précédente](#toc-security-and-docker-containers)
 |
-[Retour table des matières](#toc-chapter-1)
+[Retour table des matières](#toc-chapter-2)
 |
 [Section suivante](#toc-identifying-bottlenecks)
 ]
@@ -589,7 +1591,7 @@ We have available resources.
 
 class: pic
 
-.interstitial[![Image separating from the next chapter](https://gallant-turing-d0d520.netlify.com/containers/ShippingContainerSFBay.jpg)]
+.interstitial[![Image separating from the next chapter](https://gallant-turing-d0d520.netlify.com/containers/chinook-helicopter-container.jpg)]
 
 ---
 
@@ -601,7 +1603,7 @@ Identifying bottlenecks
 .nav[
 [Section précédente](#toc-our-sample-application)
 |
-[Retour table des matières](#toc-chapter-1)
+[Retour table des matières](#toc-chapter-2)
 |
 [Section suivante](#toc-kubernetes-concepts)
 ]
@@ -722,7 +1724,7 @@ Note: this is a fiction! We have enough entropy. But we need a pretext to scale 
 
 class: pic
 
-.interstitial[![Image separating from the next chapter](https://gallant-turing-d0d520.netlify.com/containers/aerial-view-of-containers.jpg)]
+.interstitial[![Image separating from the next chapter](https://gallant-turing-d0d520.netlify.com/containers/container-cranes.jpg)]
 
 ---
 
@@ -734,7 +1736,7 @@ Kubernetes concepts
 .nav[
 [Section précédente](#toc-identifying-bottlenecks)
 |
-[Retour table des matières](#toc-chapter-2)
+[Retour table des matières](#toc-chapter-3)
 |
 [Section suivante](#toc-declarative-vs-imperative)
 ]
@@ -1098,7 +2100,7 @@ Both diagrams used with permission.
 
 class: pic
 
-.interstitial[![Image separating from the next chapter](https://gallant-turing-d0d520.netlify.com/containers/blue-containers.jpg)]
+.interstitial[![Image separating from the next chapter](https://gallant-turing-d0d520.netlify.com/containers/container-housing.jpg)]
 
 ---
 
@@ -1110,7 +2112,7 @@ Declarative vs imperative
 .nav[
 [Section précédente](#toc-kubernetes-concepts)
 |
-[Retour table des matières](#toc-chapter-2)
+[Retour table des matières](#toc-chapter-3)
 |
 [Section suivante](#toc-kubernetes-network-model)
 ]
@@ -1206,7 +2208,7 @@ specifying how to brew tea?]
 
 class: pic
 
-.interstitial[![Image separating from the next chapter](https://gallant-turing-d0d520.netlify.com/containers/chinook-helicopter-container.jpg)]
+.interstitial[![Image separating from the next chapter](https://gallant-turing-d0d520.netlify.com/containers/containers-by-the-water.jpg)]
 
 ---
 
@@ -1218,7 +2220,7 @@ Kubernetes network model
 .nav[
 [Section précédente](#toc-declarative-vs-imperative)
 |
-[Retour table des matières](#toc-chapter-2)
+[Retour table des matières](#toc-chapter-3)
 |
 [Section suivante](#toc-first-contact-with-kubectl)
 ]
@@ -1339,7 +2341,7 @@ Kubernetes network model
 
 class: pic
 
-.interstitial[![Image separating from the next chapter](https://gallant-turing-d0d520.netlify.com/containers/container-cranes.jpg)]
+.interstitial[![Image separating from the next chapter](https://gallant-turing-d0d520.netlify.com/containers/distillery-containers.jpg)]
 
 ---
 
@@ -1351,7 +2353,7 @@ First contact with `kubectl`
 .nav[
 [Section précédente](#toc-kubernetes-network-model)
 |
-[Retour table des matières](#toc-chapter-2)
+[Retour table des matières](#toc-chapter-3)
 |
 [Section suivante](#toc-running-our-first-containers-on-kubernetes)
 ]
@@ -1658,7 +2660,7 @@ The `kube-system` namespace is used for the control plane.
 
 class: pic
 
-.interstitial[![Image separating from the next chapter](https://gallant-turing-d0d520.netlify.com/containers/container-housing.jpg)]
+.interstitial[![Image separating from the next chapter](https://gallant-turing-d0d520.netlify.com/containers/lots-of-containers.jpg)]
 
 ---
 
@@ -1670,7 +2672,7 @@ Running our first containers on Kubernetes
 .nav[
 [Section précédente](#toc-first-contact-with-kubectl)
 |
-[Retour table des matières](#toc-chapter-2)
+[Retour table des matières](#toc-chapter-3)
 |
 [Section suivante](#toc-setting-up-kubernetes)
 ]
@@ -1950,6 +2952,9 @@ Unfortunately, `--follow` cannot (yet) be used to stream the logs from multiple 
 - It's very unlikely that our concerted pings manage to produce
   even a modest blip at Cloudflare's NOC!
 
+.debug[[kube/kubectlrun.md](https://github.com/RyaxTech/kube.training.git/tree/gh-pages//kube/kubectlrun.md)]
+---
+
 ## To stop everything
 
 .exercise[
@@ -1980,7 +2985,7 @@ Unfortunately, `--follow` cannot (yet) be used to stream the logs from multiple 
 
 class: pic
 
-.interstitial[![Image separating from the next chapter](https://gallant-turing-d0d520.netlify.com/containers/containers-by-the-water.jpg)]
+.interstitial[![Image separating from the next chapter](https://gallant-turing-d0d520.netlify.com/containers/plastic-containers.JPG)]
 
 ---
 
@@ -1992,7 +2997,7 @@ Setting up Kubernetes
 .nav[
 [Section précédente](#toc-running-our-first-containers-on-kubernetes)
 |
-[Retour table des matières](#toc-chapter-3)
+[Retour table des matières](#toc-chapter-4)
 |
 [Section suivante](#toc-the-kubernetes-dashboard)
 ]
@@ -2180,7 +3185,7 @@ Setting up Kubernetes
 
 class: pic
 
-.interstitial[![Image separating from the next chapter](https://gallant-turing-d0d520.netlify.com/containers/distillery-containers.jpg)]
+.interstitial[![Image separating from the next chapter](https://gallant-turing-d0d520.netlify.com/containers/train-of-containers-1.jpg)]
 
 ---
 
@@ -2192,7 +3197,7 @@ The Kubernetes dashboard
 .nav[
 [Section précédente](#toc-setting-up-kubernetes)
 |
-[Retour table des matières](#toc-chapter-3)
+[Retour table des matières](#toc-chapter-4)
 |
 [Section suivante](#toc-security-implications-of-kubectl-apply)
 ]
@@ -2426,7 +3431,7 @@ The dashboard will then ask you which authentication you want to use.
 
 class: pic
 
-.interstitial[![Image separating from the next chapter](https://gallant-turing-d0d520.netlify.com/containers/lots-of-containers.jpg)]
+.interstitial[![Image separating from the next chapter](https://gallant-turing-d0d520.netlify.com/containers/train-of-containers-2.jpg)]
 
 ---
 
@@ -2438,7 +3443,7 @@ Security implications of `kubectl apply`
 .nav[
 [Section précédente](#toc-the-kubernetes-dashboard)
 |
-[Retour table des matières](#toc-chapter-3)
+[Retour table des matières](#toc-chapter-4)
 |
 [Section suivante](#toc-)
 ]
