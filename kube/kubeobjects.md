@@ -122,4 +122,20 @@ class: pic
 ![Exemple de Kubectl](images/kubectl_ex.png)
 
 ---
+## Kubernetes Controllers
+
+- A **Deployment** is a high-level construct
+  - allows scaling, rolling updates, rollbacks
+  - delegates pods management to *replica sets*
+
+- A **ReplicaSet** is a low-level construct
+  - makes sure that a given number of identical pods are running
+  - allows scaling
+  - rarely used directly
+
+- A **DaemonSet** is responsible to run a pod on every node, on all cluster nodes
+  - a ReplicaSet makes sure that a desired number of pod replicas exist in the cluster
+  - If a node goes down, the DaemonSet doesn’t cause the pod to be created elsewhere. But when a new node is added to the cluster, the DaemonSet immediately deploys a new pod instance to it.
+
+---
 

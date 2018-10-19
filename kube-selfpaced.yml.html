@@ -31,14 +31,12 @@ Deploying and Scaling Microservices<br/>with Docker and Kubernetes<br/>
 .debug[
 ```
  M dock-kube-day1.yml.html
- M dock-kube-day2.yml
  M dock-kube-day2.yml.html
+ M dock-kube-day3.yml
  M dock-kube-day3.yml.html
  M dock-kube-day4.yml.html
  M intro-fullday.yml.html
  M intro-selfpaced.yml.html
- M intro/Compose_For_Dev_Stacks.md
- M intro/Working_With_Volumes.md
  M kube-day1.yml.html
  M kube-fullday.yml.html
  M kube-halfday.yml.html
@@ -46,17 +44,16 @@ Deploying and Scaling Microservices<br/>with Docker and Kubernetes<br/>
  M kube-jour2.yml.html
  M kube-jour3.yml.html
  M kube-selfpaced.yml.html
- M kube/kubectlrun.md
+ M kube/kubectlexpose.md
+ M kube/kubeobjects.md
  M swarm-fullday.yml.html
  M swarm-halfday.yml.html
  M swarm-selfpaced.yml.html
  M swarm-video.yml.html
-?? images/plb-logo.png
-?? prepare-vms/
 
 ```
 
-These slides have been built from commit: 1152017
+These slides have been built from commit: 7ff6c45
 
 
 [common/title.md](https://github.com/RyaxTech/kube.training.git/tree/gh-pages//common/title.md)]
@@ -206,6 +203,10 @@ name: toc-chapter-3
 ## Chapter 3
 
 - [Exposing containers](#toc-exposing-containers)
+
+- [Monitoring with Prometheus and Grafana](#toc-monitoring-with-prometheus-and-grafana)
+
+- [Limiting Resource Usage with Kubernetes](#toc-limiting-resource-usage-with-kubernetes)
 
 - [Deploying a self-hosted registry](#toc-deploying-a-self-hosted-registry)
 
@@ -2738,7 +2739,7 @@ Exposing containers
 |
 [Retour table des matières](#toc-chapter-3)
 |
-[Section suivante](#toc-deploying-a-self-hosted-registry)
+[Section suivante](#toc-monitoring-with-prometheus-and-grafana)
 ]
 
 .debug[(automatically generated title slide)]
@@ -3019,7 +3020,129 @@ kubectl delete deployments elastic
   - The [concept](https://kubernetes.io/docs/concepts/services-networking/service/) of services from the official documentation
   - [DNS for services](https://kubernetes.io/docs/concepts/services-networking/dns-pod-service/)
 
+.debug[[kube/kubectlexpose.md](https://github.com/RyaxTech/kube.training.git/tree/gh-pages//kube/kubectlexpose.md)]
+---
 
+class: pic
+
+.interstitial[![Image separating from the next chapter](https://gallant-turing-d0d520.netlify.com/containers/plastic-containers.JPG)]
+
+---
+
+name: toc-monitoring-with-prometheus-and-grafana
+class: title
+
+Monitoring with Prometheus and Grafana
+
+.nav[
+[Section précédente](#toc-exposing-containers)
+|
+[Retour table des matières](#toc-chapter-3)
+|
+[Section suivante](#toc-limiting-resource-usage-with-kubernetes)
+]
+
+.debug[(automatically generated title slide)]
+
+---
+
+# Monitoring with Prometheus and Grafana
+
+Execute the following to start the cluster monitoring with prometheus and grafana
+
+.exercise[
+```bash
+git clone https://github.com/coreos/prometheus-operator.git
+cd prometheus-operator/contrib/kube-prometheus/
+kubectl create -f manifests/ || true
+until kubectl get customresourcedefinitions servicemonitors.monitoring.coreos.com ; do date; sleep 1; echo ""; done
+until kubectl get servicemonitors --all-namespaces ; do date; sleep 1; echo ""; done
+kubectl create -f manifests/ 2>/dev/null || true
+```
+Now we need to connect to grafana with the browser. How can we do that?
+]
+
+.debug[[kube/kubectlexpose.md](https://github.com/RyaxTech/kube.training.git/tree/gh-pages//kube/kubectlexpose.md)]
+---
+
+## Monitoring with Prometheus and Grafana
+
+- The dashboard is exposed through a ClusterIP service (internal traffic only)
+
+- We will change that into a NodePort service (accepting outside traffic)
+
+.exercise[
+
+- Edit the service:
+```bash
+kubectl edit service grafana
+```
+- Why doesn't it work?
+]
+
+.debug[[kube/kubectlexpose.md](https://github.com/RyaxTech/kube.training.git/tree/gh-pages//kube/kubectlexpose.md)]
+---
+
+## Monitoring with Prometheus and Grafana
+
+- If we look at the YAML that we loaded before, we'll get a hint
+
+--
+
+- The dashboard was created in the monitoring namespace
+
+--
+
+.exercise[
+- Edit the service:
+
+```bash
+kubectl -n monitoring edit service grafana
+```
+- Change ClusterIP to NodePort, save, and exit
+
+- Check the port that was assigned with `kubectl -n monitoring get services`
+
+- Connect to https://oneofournodes:3xxxx/ 
+
+]
+
+.debug[[kube/kubectlexpose.md](https://github.com/RyaxTech/kube.training.git/tree/gh-pages//kube/kubectlexpose.md)]
+---
+
+class: pic
+
+.interstitial[![Image separating from the next chapter](https://gallant-turing-d0d520.netlify.com/containers/train-of-containers-1.jpg)]
+
+---
+
+name: toc-limiting-resource-usage-with-kubernetes
+class: title
+
+Limiting Resource Usage with Kubernetes
+
+.nav[
+[Section précédente](#toc-monitoring-with-prometheus-and-grafana)
+|
+[Retour table des matières](#toc-chapter-3)
+|
+[Section suivante](#toc-deploying-a-self-hosted-registry)
+]
+
+.debug[(automatically generated title slide)]
+
+---
+
+# Limiting Resource Usage with Kubernetes
+
+- To declare resource usage limitation per namespace for all containers that running on this namespace we will use **ResourceQuotas**.
+  - We will follow the exercises here: https://kubernetes.io/docs/tasks/administer-cluster/manage-resources/quota-memory-cpu-namespace/
+
+- To declare resource usage limatation per namespace for each container that running on the namespace we will use **LimitRange**.
+  - We will follow the exercise here: https://kubernetes.io/docs/tasks/administer-cluster/manage-resources/memory-constraint-namespace/
+
+.debug[[kube/kubectlexpose.md](https://github.com/RyaxTech/kube.training.git/tree/gh-pages//kube/kubectlexpose.md)]
+---
 
 
 
@@ -3101,7 +3224,7 @@ In this part, we will:
 
 class: pic
 
-.interstitial[![Image separating from the next chapter](https://gallant-turing-d0d520.netlify.com/containers/plastic-containers.JPG)]
+.interstitial[![Image separating from the next chapter](https://gallant-turing-d0d520.netlify.com/containers/train-of-containers-2.jpg)]
 
 ---
 
@@ -3111,7 +3234,7 @@ class: title
 Deploying a self-hosted registry
 
 .nav[
-[Section précédente](#toc-exposing-containers)
+[Section précédente](#toc-limiting-resource-usage-with-kubernetes)
 |
 [Retour table des matières](#toc-chapter-3)
 |
@@ -3360,7 +3483,7 @@ class: extra-details
 
 class: pic
 
-.interstitial[![Image separating from the next chapter](https://gallant-turing-d0d520.netlify.com/containers/train-of-containers-1.jpg)]
+.interstitial[![Image separating from the next chapter](https://gallant-turing-d0d520.netlify.com/containers/two-containers-on-a-truck.jpg)]
 
 ---
 
@@ -3433,7 +3556,7 @@ We should now see the `worker`, well, working happily.
 
 class: pic
 
-.interstitial[![Image separating from the next chapter](https://gallant-turing-d0d520.netlify.com/containers/train-of-containers-2.jpg)]
+.interstitial[![Image separating from the next chapter](https://gallant-turing-d0d520.netlify.com/containers/wall-of-containers.jpeg)]
 
 ---
 
@@ -3509,7 +3632,7 @@ Exposing services for external access
 
 class: pic
 
-.interstitial[![Image separating from the next chapter](https://gallant-turing-d0d520.netlify.com/containers/two-containers-on-a-truck.jpg)]
+.interstitial[![Image separating from the next chapter](https://gallant-turing-d0d520.netlify.com/containers/Container-Ship-Freighter-Navigation-Elbe-Romance-1782991.jpg)]
 
 ---
 
@@ -3755,7 +3878,7 @@ The dashboard will then ask you which authentication you want to use.
 
 class: pic
 
-.interstitial[![Image separating from the next chapter](https://gallant-turing-d0d520.netlify.com/containers/wall-of-containers.jpeg)]
+.interstitial[![Image separating from the next chapter](https://gallant-turing-d0d520.netlify.com/containers/ShippingContainerSFBay.jpg)]
 
 ---
 
@@ -3856,7 +3979,7 @@ You can stop the dashboard or leave it. Since the dashboard is not secure we pro
 
 class: pic
 
-.interstitial[![Image separating from the next chapter](https://gallant-turing-d0d520.netlify.com/containers/Container-Ship-Freighter-Navigation-Elbe-Romance-1782991.jpg)]
+.interstitial[![Image separating from the next chapter](https://gallant-turing-d0d520.netlify.com/containers/aerial-view-of-containers.jpg)]
 
 ---
 
@@ -3906,7 +4029,7 @@ After a few seconds, the graph in the web UI should show up.
 
 class: pic
 
-.interstitial[![Image separating from the next chapter](https://gallant-turing-d0d520.netlify.com/containers/ShippingContainerSFBay.jpg)]
+.interstitial[![Image separating from the next chapter](https://gallant-turing-d0d520.netlify.com/containers/blue-containers.jpg)]
 
 ---
 
@@ -4288,7 +4411,7 @@ The replica set selector also has a `pod-template-hash`, unlike the pods in our 
 
 class: pic
 
-.interstitial[![Image separating from the next chapter](https://gallant-turing-d0d520.netlify.com/containers/aerial-view-of-containers.jpg)]
+.interstitial[![Image separating from the next chapter](https://gallant-turing-d0d520.netlify.com/containers/chinook-helicopter-container.jpg)]
 
 ---
 
@@ -4573,7 +4696,7 @@ Ding, dong, the deployment is dead! And the daemon set lives on.
 
 class: pic
 
-.interstitial[![Image separating from the next chapter](https://gallant-turing-d0d520.netlify.com/containers/blue-containers.jpg)]
+.interstitial[![Image separating from the next chapter](https://gallant-turing-d0d520.netlify.com/containers/container-cranes.jpg)]
 
 ---
 
@@ -4898,7 +5021,7 @@ spec:
 
 class: pic
 
-.interstitial[![Image separating from the next chapter](https://gallant-turing-d0d520.netlify.com/containers/chinook-helicopter-container.jpg)]
+.interstitial[![Image separating from the next chapter](https://gallant-turing-d0d520.netlify.com/containers/container-housing.jpg)]
 
 ---
 
@@ -5057,7 +5180,7 @@ However, you will have to adapt them if you want to install Stern on your local 
 
 class: pic
 
-.interstitial[![Image separating from the next chapter](https://gallant-turing-d0d520.netlify.com/containers/container-cranes.jpg)]
+.interstitial[![Image separating from the next chapter](https://gallant-turing-d0d520.netlify.com/containers/containers-by-the-water.jpg)]
 
 ---
 
@@ -5246,7 +5369,7 @@ create the resources in the `kube-system` namespace or in a dedicated namespace.
 
 class: pic
 
-.interstitial[![Image separating from the next chapter](https://gallant-turing-d0d520.netlify.com/containers/container-housing.jpg)]
+.interstitial[![Image separating from the next chapter](https://gallant-turing-d0d520.netlify.com/containers/distillery-containers.jpg)]
 
 ---
 
@@ -5508,7 +5631,7 @@ The chart's metadata includes an URL to the project's home page.
 
 class: pic
 
-.interstitial[![Image separating from the next chapter](https://gallant-turing-d0d520.netlify.com/containers/containers-by-the-water.jpg)]
+.interstitial[![Image separating from the next chapter](https://gallant-turing-d0d520.netlify.com/containers/lots-of-containers.jpg)]
 
 ---
 
@@ -5693,7 +5816,7 @@ Note: it might take a minute or two for the app to be up and running.
 
 class: pic
 
-.interstitial[![Image separating from the next chapter](https://gallant-turing-d0d520.netlify.com/containers/distillery-containers.jpg)]
+.interstitial[![Image separating from the next chapter](https://gallant-turing-d0d520.netlify.com/containers/plastic-containers.JPG)]
 
 ---
 
@@ -5917,7 +6040,7 @@ Sorry Star Trek fans, this is not the federation you're looking for!
 
 class: pic
 
-.interstitial[![Image separating from the next chapter](https://gallant-turing-d0d520.netlify.com/containers/lots-of-containers.jpg)]
+.interstitial[![Image separating from the next chapter](https://gallant-turing-d0d520.netlify.com/containers/train-of-containers-1.jpg)]
 
 ---
 

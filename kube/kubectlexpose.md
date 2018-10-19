@@ -262,6 +262,77 @@ kubectl delete deployments elastic
   - The [concept](https://kubernetes.io/docs/concepts/services-networking/service/) of services from the official documentation
   - [DNS for services](https://kubernetes.io/docs/concepts/services-networking/dns-pod-service/)
 
+---
 
+# Monitoring with Prometheus and Grafana
+
+Execute the following to start the cluster monitoring with prometheus and grafana
+
+.exercise[
+```bash
+git clone https://github.com/coreos/prometheus-operator.git
+cd prometheus-operator/contrib/kube-prometheus/
+kubectl create -f manifests/ || true
+until kubectl get customresourcedefinitions servicemonitors.monitoring.coreos.com ; do date; sleep 1; echo ""; done
+until kubectl get servicemonitors --all-namespaces ; do date; sleep 1; echo ""; done
+kubectl create -f manifests/ 2>/dev/null || true
+```
+Now we need to connect to grafana with the browser. How can we do that?
+]
+
+---
+
+## Monitoring with Prometheus and Grafana
+
+- The dashboard is exposed through a ClusterIP service (internal traffic only)
+
+- We will change that into a NodePort service (accepting outside traffic)
+
+.exercise[
+
+- Edit the service:
+```bash
+kubectl edit service grafana
+```
+- Why doesn't it work?
+]
+
+---
+
+## Monitoring with Prometheus and Grafana
+
+- If we look at the YAML that we loaded before, we'll get a hint
+
+--
+
+- The dashboard was created in the monitoring namespace
+
+--
+
+.exercise[
+- Edit the service:
+
+```bash
+kubectl -n monitoring edit service grafana
+```
+- Change ClusterIP to NodePort, save, and exit
+
+- Check the port that was assigned with `kubectl -n monitoring get services`
+
+- Connect to https://oneofournodes:3xxxx/ 
+
+]
+
+---
+
+# Limiting Resource Usage with Kubernetes
+
+- To declare resource usage limitation per namespace for all containers that running on this namespace we will use **ResourceQuotas**.
+  - We will follow the exercises here: https://kubernetes.io/docs/tasks/administer-cluster/manage-resources/quota-memory-cpu-namespace/
+
+- To declare resource usage limatation per namespace for each container that running on the namespace we will use **LimitRange**.
+  - We will follow the exercise here: https://kubernetes.io/docs/tasks/administer-cluster/manage-resources/memory-constraint-namespace/
+
+---
 
 

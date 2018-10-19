@@ -20,7 +20,7 @@ chapters:
   #- kube/intro.md
   #- common/about-slides.md
 - common/toc.md
-- - common/cncf.md
+  #- - common/cncf.md
 - - kube/kubeobjects.md
   - kube/kubectlexpose.md
   - kube/ourapponkube.md
@@ -30,6 +30,7 @@ chapters:
   - kube/rollout.md
   - kube/logs-cli.md
   - kube/logs-centralized.md
+- - kube/stockage.md    
 - - kube/helm.md
   - kube/namespaces.md  
   - kube/netisolation.md

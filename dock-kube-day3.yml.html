@@ -31,14 +31,12 @@ Kubernetes <br/>Basic Concepts, Services and Deployment <br/>
 .debug[
 ```
  M dock-kube-day1.yml.html
- M dock-kube-day2.yml
  M dock-kube-day2.yml.html
+ M dock-kube-day3.yml
  M dock-kube-day3.yml.html
  M dock-kube-day4.yml.html
  M intro-fullday.yml.html
  M intro-selfpaced.yml.html
- M intro/Compose_For_Dev_Stacks.md
- M intro/Working_With_Volumes.md
  M kube-day1.yml.html
  M kube-fullday.yml.html
  M kube-halfday.yml.html
@@ -46,17 +44,16 @@ Kubernetes <br/>Basic Concepts, Services and Deployment <br/>
  M kube-jour2.yml.html
  M kube-jour3.yml.html
  M kube-selfpaced.yml.html
- M kube/kubectlrun.md
+ M kube/kubectlexpose.md
+ M kube/kubeobjects.md
  M swarm-fullday.yml.html
  M swarm-halfday.yml.html
  M swarm-selfpaced.yml.html
  M swarm-video.yml.html
-?? images/plb-logo.png
-?? prepare-vms/
 
 ```
 
-These slides have been built from commit: 1152017
+These slides have been built from commit: 7ff6c45
 
 
 [shared/title.md](https://github.com/RyaxTech/kube.training.git/tree/gh-pages//shared/title.md)]
@@ -74,17 +71,13 @@ name: toc-chapter-1
 
 ## Chapter 1
 
-- [Kubernetes ecosystem](#toc-kubernetes-ecosystem)
-
-.debug[(auto-generated TOC)]
----
-name: toc-chapter-2
-
-## Chapter 2
-
 - [Kubernetes objects](#toc-kubernetes-objects)
 
 - [Exposing containers](#toc-exposing-containers)
+
+- [Monitoring with Prometheus and Grafana](#toc-monitoring-with-prometheus-and-grafana)
+
+- [Limiting Resource Usage with Kubernetes](#toc-limiting-resource-usage-with-kubernetes)
 
 - [Deploying a self-hosted registry](#toc-deploying-a-self-hosted-registry)
 
@@ -96,9 +89,9 @@ name: toc-chapter-2
 
 .debug[(auto-generated TOC)]
 ---
-name: toc-chapter-3
+name: toc-chapter-2
 
-## Chapter 3
+## Chapter 2
 
 - [Daemon sets](#toc-daemon-sets)
 
@@ -109,6 +102,20 @@ name: toc-chapter-3
 - [Accessing logs from the CLI](#toc-accessing-logs-from-the-cli)
 
 - [Centralized logging](#toc-centralized-logging)
+
+.debug[(auto-generated TOC)]
+---
+name: toc-chapter-3
+
+## Chapter 3
+
+- [Introducing Volumes](#toc-introducing-volumes)
+
+- [Introducing PersistentVolumes and PersistentVolumeClaims](#toc-introducing-persistentvolumes-and-persistentvolumeclaims)
+
+- [Dynamic Provisioning of PersistentVolumes](#toc-dynamic-provisioning-of-persistentvolumes)
+
+- [Rook: orchestration of distributed storage](#toc-rook-orchestration-of-distributed-storage)
 
 .debug[(auto-generated TOC)]
 ---
@@ -135,75 +142,15 @@ class: pic
 
 ---
 
-name: toc-kubernetes-ecosystem
-class: title
-
-Kubernetes ecosystem
-
-.nav[
-[Section précédente](#toc-)
-|
-[Retour table des matières](#toc-chapter-1)
-|
-[Section suivante](#toc-kubernetes-objects)
-]
-
-.debug[(automatically generated title slide)]
-
----
-# Kubernetes ecosystem
-
-
-- Initially developed by Google
-
-- It is currently maintained by the Cloud Native Computing Foundation (CNCF).
-
-- The CNCF is a project of the Linux Fundation (but kubernetes can function on Windows and Mac!)
-
-- Some representative members of the CNCF: Google, Twitter, Huawei, Intel, Cisco, IBM, Docker, Univa, VMware, Alibaba, jd.com, SAP, redhat, AT&T...
-
-- CNCF delivers certifications, organises the "Kubecon" events, synchronizes developements, but mainly develops Kubernetes ecosystem
-
-
-.debug[[common/cncf.md](https://github.com/RyaxTech/kube.training.git/tree/gh-pages//common/cncf.md)]
----
-
-## The different projects around Kubernetes
-
-- Kubernetes is composed by a number of plugins and connected projects such as:
-    - **Container Network Interface (CNI)**, defines a standard to manage the network.
-    - **coreDNS**, server DNS for micro-services
-    - **envoy**, a plugin CNI
-    - **linkerd**, "service mesh" (load balancing, CNI, DNS, security, policy...)
-    - **Vitess**, server SQL following a micro-services architecture
-
-- CNCF tries to maintain a list of all the surrounding projects in *[landscape](https://landscape.cncf.io/)*
-
-.debug[[common/cncf.md](https://github.com/RyaxTech/kube.training.git/tree/gh-pages//common/cncf.md)]
----
-
-class: pic
-![Landscape](images/CloudNativeLandscape_latest.png)
-
-
-.debug[[common/cncf.md](https://github.com/RyaxTech/kube.training.git/tree/gh-pages//common/cncf.md)]
----
-
-class: pic
-
-.interstitial[![Image separating from the next chapter](https://gallant-turing-d0d520.netlify.com/containers/ShippingContainerSFBay.jpg)]
-
----
-
 name: toc-kubernetes-objects
 class: title
 
 Kubernetes objects
 
 .nav[
-[Section précédente](#toc-kubernetes-ecosystem)
+[Section précédente](#toc-)
 |
-[Retour table des matières](#toc-chapter-2)
+[Retour table des matières](#toc-chapter-1)
 |
 [Section suivante](#toc-exposing-containers)
 ]
@@ -346,6 +293,23 @@ class: pic
 
 .debug[[kube/kubeobjects.md](https://github.com/RyaxTech/kube.training.git/tree/gh-pages//kube/kubeobjects.md)]
 ---
+## Kubernetes Controllers
+
+- A **Deployment** is a high-level construct
+  - allows scaling, rolling updates, rollbacks
+  - delegates pods management to *replica sets*
+
+- A **ReplicaSet** is a low-level construct
+  - makes sure that a given number of identical pods are running
+  - allows scaling
+  - rarely used directly
+
+- A **DaemonSet** is responsible to run a pod on every node, on all cluster nodes
+  - a ReplicaSet makes sure that a desired number of pod replicas exist in the cluster
+  - If a node goes down, the DaemonSet doesn’t cause the pod to be created elsewhere. But when a new node is added to the cluster, the DaemonSet immediately deploys a new pod instance to it.
+
+.debug[[kube/kubeobjects.md](https://github.com/RyaxTech/kube.training.git/tree/gh-pages//kube/kubeobjects.md)]
+---
 
 
 .debug[[kube/kubeobjects.md](https://github.com/RyaxTech/kube.training.git/tree/gh-pages//kube/kubeobjects.md)]
@@ -353,7 +317,7 @@ class: pic
 
 class: pic
 
-.interstitial[![Image separating from the next chapter](https://gallant-turing-d0d520.netlify.com/containers/aerial-view-of-containers.jpg)]
+.interstitial[![Image separating from the next chapter](https://gallant-turing-d0d520.netlify.com/containers/ShippingContainerSFBay.jpg)]
 
 ---
 
@@ -365,9 +329,9 @@ Exposing containers
 .nav[
 [Section précédente](#toc-kubernetes-objects)
 |
-[Retour table des matières](#toc-chapter-2)
+[Retour table des matières](#toc-chapter-1)
 |
-[Section suivante](#toc-deploying-a-self-hosted-registry)
+[Section suivante](#toc-monitoring-with-prometheus-and-grafana)
 ]
 
 .debug[(automatically generated title slide)]
@@ -648,7 +612,129 @@ kubectl delete deployments elastic
   - The [concept](https://kubernetes.io/docs/concepts/services-networking/service/) of services from the official documentation
   - [DNS for services](https://kubernetes.io/docs/concepts/services-networking/dns-pod-service/)
 
+.debug[[kube/kubectlexpose.md](https://github.com/RyaxTech/kube.training.git/tree/gh-pages//kube/kubectlexpose.md)]
+---
 
+class: pic
+
+.interstitial[![Image separating from the next chapter](https://gallant-turing-d0d520.netlify.com/containers/aerial-view-of-containers.jpg)]
+
+---
+
+name: toc-monitoring-with-prometheus-and-grafana
+class: title
+
+Monitoring with Prometheus and Grafana
+
+.nav[
+[Section précédente](#toc-exposing-containers)
+|
+[Retour table des matières](#toc-chapter-1)
+|
+[Section suivante](#toc-limiting-resource-usage-with-kubernetes)
+]
+
+.debug[(automatically generated title slide)]
+
+---
+
+# Monitoring with Prometheus and Grafana
+
+Execute the following to start the cluster monitoring with prometheus and grafana
+
+.exercise[
+```bash
+git clone https://github.com/coreos/prometheus-operator.git
+cd prometheus-operator/contrib/kube-prometheus/
+kubectl create -f manifests/ || true
+until kubectl get customresourcedefinitions servicemonitors.monitoring.coreos.com ; do date; sleep 1; echo ""; done
+until kubectl get servicemonitors --all-namespaces ; do date; sleep 1; echo ""; done
+kubectl create -f manifests/ 2>/dev/null || true
+```
+Now we need to connect to grafana with the browser. How can we do that?
+]
+
+.debug[[kube/kubectlexpose.md](https://github.com/RyaxTech/kube.training.git/tree/gh-pages//kube/kubectlexpose.md)]
+---
+
+## Monitoring with Prometheus and Grafana
+
+- The dashboard is exposed through a ClusterIP service (internal traffic only)
+
+- We will change that into a NodePort service (accepting outside traffic)
+
+.exercise[
+
+- Edit the service:
+```bash
+kubectl edit service grafana
+```
+- Why doesn't it work?
+]
+
+.debug[[kube/kubectlexpose.md](https://github.com/RyaxTech/kube.training.git/tree/gh-pages//kube/kubectlexpose.md)]
+---
+
+## Monitoring with Prometheus and Grafana
+
+- If we look at the YAML that we loaded before, we'll get a hint
+
+--
+
+- The dashboard was created in the monitoring namespace
+
+--
+
+.exercise[
+- Edit the service:
+
+```bash
+kubectl -n monitoring edit service grafana
+```
+- Change ClusterIP to NodePort, save, and exit
+
+- Check the port that was assigned with `kubectl -n monitoring get services`
+
+- Connect to https://oneofournodes:3xxxx/ 
+
+]
+
+.debug[[kube/kubectlexpose.md](https://github.com/RyaxTech/kube.training.git/tree/gh-pages//kube/kubectlexpose.md)]
+---
+
+class: pic
+
+.interstitial[![Image separating from the next chapter](https://gallant-turing-d0d520.netlify.com/containers/blue-containers.jpg)]
+
+---
+
+name: toc-limiting-resource-usage-with-kubernetes
+class: title
+
+Limiting Resource Usage with Kubernetes
+
+.nav[
+[Section précédente](#toc-monitoring-with-prometheus-and-grafana)
+|
+[Retour table des matières](#toc-chapter-1)
+|
+[Section suivante](#toc-deploying-a-self-hosted-registry)
+]
+
+.debug[(automatically generated title slide)]
+
+---
+
+# Limiting Resource Usage with Kubernetes
+
+- To declare resource usage limitation per namespace for all containers that running on this namespace we will use **ResourceQuotas**.
+  - We will follow the exercises here: https://kubernetes.io/docs/tasks/administer-cluster/manage-resources/quota-memory-cpu-namespace/
+
+- To declare resource usage limatation per namespace for each container that running on the namespace we will use **LimitRange**.
+  - We will follow the exercise here: https://kubernetes.io/docs/tasks/administer-cluster/manage-resources/memory-constraint-namespace/
+
+.debug[[kube/kubectlexpose.md](https://github.com/RyaxTech/kube.training.git/tree/gh-pages//kube/kubectlexpose.md)]
+---
 
 
 
@@ -730,7 +816,7 @@ In this part, we will:
 
 class: pic
 
-.interstitial[![Image separating from the next chapter](https://gallant-turing-d0d520.netlify.com/containers/blue-containers.jpg)]
+.interstitial[![Image separating from the next chapter](https://gallant-turing-d0d520.netlify.com/containers/chinook-helicopter-container.jpg)]
 
 ---
 
@@ -740,9 +826,9 @@ class: title
 Deploying a self-hosted registry
 
 .nav[
-[Section précédente](#toc-exposing-containers)
+[Section précédente](#toc-limiting-resource-usage-with-kubernetes)
 |
-[Retour table des matières](#toc-chapter-2)
+[Retour table des matières](#toc-chapter-1)
 |
 [Section suivante](#toc-exposing-services-internally)
 ]
@@ -989,7 +1075,7 @@ class: extra-details
 
 class: pic
 
-.interstitial[![Image separating from the next chapter](https://gallant-turing-d0d520.netlify.com/containers/chinook-helicopter-container.jpg)]
+.interstitial[![Image separating from the next chapter](https://gallant-turing-d0d520.netlify.com/containers/container-cranes.jpg)]
 
 ---
 
@@ -1001,7 +1087,7 @@ Exposing services internally
 .nav[
 [Section précédente](#toc-deploying-a-self-hosted-registry)
 |
-[Retour table des matières](#toc-chapter-2)
+[Retour table des matières](#toc-chapter-1)
 |
 [Section suivante](#toc-exposing-services-for-external-access)
 ]
@@ -1062,7 +1148,7 @@ We should now see the `worker`, well, working happily.
 
 class: pic
 
-.interstitial[![Image separating from the next chapter](https://gallant-turing-d0d520.netlify.com/containers/container-cranes.jpg)]
+.interstitial[![Image separating from the next chapter](https://gallant-turing-d0d520.netlify.com/containers/container-housing.jpg)]
 
 ---
 
@@ -1074,7 +1160,7 @@ Exposing services for external access
 .nav[
 [Section précédente](#toc-exposing-services-internally)
 |
-[Retour table des matières](#toc-chapter-2)
+[Retour table des matières](#toc-chapter-1)
 |
 [Section suivante](#toc-scaling-a-deployment)
 ]
@@ -1138,7 +1224,7 @@ Exposing services for external access
 
 class: pic
 
-.interstitial[![Image separating from the next chapter](https://gallant-turing-d0d520.netlify.com/containers/container-housing.jpg)]
+.interstitial[![Image separating from the next chapter](https://gallant-turing-d0d520.netlify.com/containers/containers-by-the-water.jpg)]
 
 ---
 
@@ -1150,7 +1236,7 @@ Scaling a deployment
 .nav[
 [Section précédente](#toc-exposing-services-for-external-access)
 |
-[Retour table des matières](#toc-chapter-2)
+[Retour table des matières](#toc-chapter-1)
 |
 [Section suivante](#toc-daemon-sets)
 ]
@@ -1188,7 +1274,7 @@ After a few seconds, the graph in the web UI should show up.
 
 class: pic
 
-.interstitial[![Image separating from the next chapter](https://gallant-turing-d0d520.netlify.com/containers/containers-by-the-water.jpg)]
+.interstitial[![Image separating from the next chapter](https://gallant-turing-d0d520.netlify.com/containers/distillery-containers.jpg)]
 
 ---
 
@@ -1200,7 +1286,7 @@ Daemon sets
 .nav[
 [Section précédente](#toc-scaling-a-deployment)
 |
-[Retour table des matières](#toc-chapter-3)
+[Retour table des matières](#toc-chapter-2)
 |
 [Section suivante](#toc-updating-a-service-through-labels-and-selectors)
 ]
@@ -1570,7 +1656,7 @@ The replica set selector also has a `pod-template-hash`, unlike the pods in our 
 
 class: pic
 
-.interstitial[![Image separating from the next chapter](https://gallant-turing-d0d520.netlify.com/containers/distillery-containers.jpg)]
+.interstitial[![Image separating from the next chapter](https://gallant-turing-d0d520.netlify.com/containers/lots-of-containers.jpg)]
 
 ---
 
@@ -1582,7 +1668,7 @@ Updating a service through labels and selectors
 .nav[
 [Section précédente](#toc-daemon-sets)
 |
-[Retour table des matières](#toc-chapter-3)
+[Retour table des matières](#toc-chapter-2)
 |
 [Section suivante](#toc-rolling-updates)
 ]
@@ -1855,7 +1941,7 @@ Ding, dong, the deployment is dead! And the daemon set lives on.
 
 class: pic
 
-.interstitial[![Image separating from the next chapter](https://gallant-turing-d0d520.netlify.com/containers/lots-of-containers.jpg)]
+.interstitial[![Image separating from the next chapter](https://gallant-turing-d0d520.netlify.com/containers/plastic-containers.JPG)]
 
 ---
 
@@ -1867,7 +1953,7 @@ Rolling updates
 .nav[
 [Section précédente](#toc-updating-a-service-through-labels-and-selectors)
 |
-[Retour table des matières](#toc-chapter-3)
+[Retour table des matières](#toc-chapter-2)
 |
 [Section suivante](#toc-accessing-logs-from-the-cli)
 ]
@@ -2180,7 +2266,7 @@ spec:
 
 class: pic
 
-.interstitial[![Image separating from the next chapter](https://gallant-turing-d0d520.netlify.com/containers/plastic-containers.JPG)]
+.interstitial[![Image separating from the next chapter](https://gallant-turing-d0d520.netlify.com/containers/train-of-containers-1.jpg)]
 
 ---
 
@@ -2192,7 +2278,7 @@ Accessing logs from the CLI
 .nav[
 [Section précédente](#toc-rolling-updates)
 |
-[Retour table des matières](#toc-chapter-3)
+[Retour table des matières](#toc-chapter-2)
 |
 [Section suivante](#toc-centralized-logging)
 ]
@@ -2339,7 +2425,7 @@ However, you will have to adapt them if you want to install Stern on your local 
 
 class: pic
 
-.interstitial[![Image separating from the next chapter](https://gallant-turing-d0d520.netlify.com/containers/train-of-containers-1.jpg)]
+.interstitial[![Image separating from the next chapter](https://gallant-turing-d0d520.netlify.com/containers/train-of-containers-2.jpg)]
 
 ---
 
@@ -2351,9 +2437,9 @@ Centralized logging
 .nav[
 [Section précédente](#toc-accessing-logs-from-the-cli)
 |
-[Retour table des matières](#toc-chapter-3)
+[Retour table des matières](#toc-chapter-2)
 |
-[Section suivante](#toc-managing-stacks-with-helm)
+[Section suivante](#toc-introducing-volumes)
 ]
 
 .debug[(automatically generated title slide)]
@@ -2528,7 +2614,515 @@ create the resources in the `kube-system` namespace or in a dedicated namespace.
 
 class: pic
 
-.interstitial[![Image separating from the next chapter](https://gallant-turing-d0d520.netlify.com/containers/train-of-containers-2.jpg)]
+.interstitial[![Image separating from the next chapter](https://gallant-turing-d0d520.netlify.com/containers/two-containers-on-a-truck.jpg)]
+
+---
+
+name: toc-introducing-volumes
+class: title
+
+Introducing Volumes
+
+.nav[
+[Section précédente](#toc-centralized-logging)
+|
+[Retour table des matières](#toc-chapter-3)
+|
+[Section suivante](#toc-introducing-persistentvolumes-and-persistentvolumeclaims)
+]
+
+.debug[(automatically generated title slide)]
+
+---
+# Introducing Volumes
+
+- Kubernetes volumes are a component of a pod and are thus defined in the pod’s specification—much like containers. 
+
+- They aren’t a standalone Kubernetes object and cannot be created or deleted on their own. 
+
+- A volume is available to all containers in the pod, but it must be mounted in each container that needs to access it. 
+
+- In each container, you can mount the volume in any location of its filesystem.
+
+.debug[[kube/stockage.md](https://github.com/RyaxTech/kube.training.git/tree/gh-pages//kube/stockage.md)]
+---
+
+## Explaining volumes in an example 
+
+- Containers no common storage
+
+- Containers sharing 2 volumes mounted in different mount paths
+
+.debug[[kube/stockage.md](https://github.com/RyaxTech/kube.training.git/tree/gh-pages//kube/stockage.md)]
+---
+
+class: pic
+
+![haha seulement blague](images/volumes1.png)
+
+.debug[[kube/stockage.md](https://github.com/RyaxTech/kube.training.git/tree/gh-pages//kube/stockage.md)]
+---
+
+class: pic
+
+![haha seulement blague](images/volume2.png)
+
+.debug[[kube/stockage.md](https://github.com/RyaxTech/kube.training.git/tree/gh-pages//kube/stockage.md)]
+---
+
+
+## Note
+
+- The volume /var/logs is not mounted in the ContentAgent container. 
+
+- The container cannot access its files, even though the container and the volume are part of the same pod. 
+
+- It’s not enough to define a volume in the pod; you need to define a VolumeMount inside the container’s spec also, if you want the container to be able to access it.
+
+.debug[[kube/stockage.md](https://github.com/RyaxTech/kube.training.git/tree/gh-pages//kube/stockage.md)]
+---
+
+## Volume Types
+
+- A wide variety of volume types is available. Several are generic, while others are specific to the actual storage technologies used underneath. 
+
+* `emptyDir`: A simple empty directory used for storing transient data.
+* `hostPath`: Used for mounting directories from the worker node’s filesystem into the pod.
+* `gitRepo`: A volume initialized by checking out the contents of a Git repository.
+* `nfs`: An NFS share mounted into the pod.
+* `gcePersistentDisk`, `awsElasticBlockStore`, `azureDisk`: Used for mounting cloud provider-specific storage.
+* `cinder`, `cephfs`, ...: Used for mounting other types of network storage.
+* `configMap`, `secret`, `downwardAPI`: Special types of volumes used to expose certain Kubernetes resources and cluster information to the pod.
+* `persistentVolumeClaim`: A way to use a pre- or dynamically provisioned persistent storage. 
+
+.debug[[kube/stockage.md](https://github.com/RyaxTech/kube.training.git/tree/gh-pages//kube/stockage.md)]
+---
+
+## Note
+
+- A single pod can use multiple volumes of different types at the same time
+
+- Each of the pod’s containers can either have the volume mounted or not.
+
+.debug[[kube/stockage.md](https://github.com/RyaxTech/kube.training.git/tree/gh-pages//kube/stockage.md)]
+---
+
+## Example a pod using gitrepo volume
+
+.debug[[kube/stockage.md](https://github.com/RyaxTech/kube.training.git/tree/gh-pages//kube/stockage.md)]
+---
+
+.exercise[
+  ```bash
+apiVersion: v1
+kind: Pod
+metadata:
+  name: gitrepo-volume-pod
+spec:
+  containers:
+  - image: nginx:alpine
+    name: web-server
+    volumeMounts:
+    - name: html
+      mountPath: /usr/share/nginx/html
+      readOnly: true
+    ports:
+    - containerPort: 80
+      protocol: TCP
+  volumes:
+  - name: html
+    gitRepo:
+      repository: https://github.com/luksa/kubia-website-example.git
+      revision: master
+      directory: .   
+  ```
+]
+
+.debug[[kube/stockage.md](https://github.com/RyaxTech/kube.training.git/tree/gh-pages//kube/stockage.md)]
+---
+
+## Decoupling pods from the underlying storage technology
+
+- Above case is  against the basic idea of Kubernetes, which aims to hide the actual infrastructure from both the application and its developer.
+
+- When a developer needs a certain amount of persistent storage for their application, they should request it from Kubernetes. 
+
+- The same way they request CPU, memory, and other resources when creating a pod. 
+
+- The system administrator can configure the cluster so it can give the apps what they request.
+
+.debug[[kube/stockage.md](https://github.com/RyaxTech/kube.training.git/tree/gh-pages//kube/stockage.md)]
+---
+
+class: pic
+
+.interstitial[![Image separating from the next chapter](https://gallant-turing-d0d520.netlify.com/containers/wall-of-containers.jpeg)]
+
+---
+
+name: toc-introducing-persistentvolumes-and-persistentvolumeclaims
+class: title
+
+Introducing PersistentVolumes and PersistentVolumeClaims
+
+.nav[
+[Section précédente](#toc-introducing-volumes)
+|
+[Retour table des matières](#toc-chapter-3)
+|
+[Section suivante](#toc-dynamic-provisioning-of-persistentvolumes)
+]
+
+.debug[(automatically generated title slide)]
+
+---
+
+# Introducing PersistentVolumes and PersistentVolumeClaims
+
+- Instead of the developer adding a technology-specific volume to their pod, it’s the cluster administrator who sets up the underlying storage and then registers it in
+Kubernetes by creating a PersistentVolume resource through the Kubernetes API server. 
+
+- When creating the PersistentVolume, the admin specifies its size and the access
+modes it supports.
+
+.debug[[kube/stockage.md](https://github.com/RyaxTech/kube.training.git/tree/gh-pages//kube/stockage.md)]
+---
+
+## Introducing PersistentVolumes and PersistentVolumeClaims
+
+- When a cluster user needs to use persistent storage in one of their pods, they first create a PersistentVolumeClaim manifest, specifying the minimum size and the access
+mode they require. 
+
+- The user then submits the PersistentVolumeClaim manifest to the Kubernetes API server, and Kubernetes finds the appropriate PersistentVolume and binds the volume to the claim.
+
+- The PersistentVolumeClaim can then be used as one of the volumes inside a pod. Other users cannot use the same PersistentVolume until it has been released by deleting
+the bound PersistentVolumeClaim.
+
+.debug[[kube/stockage.md](https://github.com/RyaxTech/kube.training.git/tree/gh-pages//kube/stockage.md)]
+---
+
+## Example of PersistentVolumes and PersistentVolumeClaims
+
+.debug[[kube/stockage.md](https://github.com/RyaxTech/kube.training.git/tree/gh-pages//kube/stockage.md)]
+---
+
+class: pic
+
+![haha seulement blague](images/volumes3.png)
+
+.debug[[kube/stockage.md](https://github.com/RyaxTech/kube.training.git/tree/gh-pages//kube/stockage.md)]
+---
+
+## PersistentVolumes and Namespaces
+
+.debug[[kube/stockage.md](https://github.com/RyaxTech/kube.training.git/tree/gh-pages//kube/stockage.md)]
+---
+
+class: pic
+
+![haha seulement blague](images/Volume4.png)
+
+.debug[[kube/stockage.md](https://github.com/RyaxTech/kube.training.git/tree/gh-pages//kube/stockage.md)]
+---
+
+##  Lifespan of PersistentVolume and PersistentVolumeClaims
+
+.debug[[kube/stockage.md](https://github.com/RyaxTech/kube.training.git/tree/gh-pages//kube/stockage.md)]
+---
+
+class: pic
+
+![haha seulement blague](images/Volume5.png)
+
+.debug[[kube/stockage.md](https://github.com/RyaxTech/kube.training.git/tree/gh-pages//kube/stockage.md)]
+---
+
+class: pic
+
+.interstitial[![Image separating from the next chapter](https://gallant-turing-d0d520.netlify.com/containers/Container-Ship-Freighter-Navigation-Elbe-Romance-1782991.jpg)]
+
+---
+
+name: toc-dynamic-provisioning-of-persistentvolumes
+class: title
+
+Dynamic Provisioning of PersistentVolumes
+
+.nav[
+[Section précédente](#toc-introducing-persistentvolumes-and-persistentvolumeclaims)
+|
+[Retour table des matières](#toc-chapter-3)
+|
+[Section suivante](#toc-rook-orchestration-of-distributed-storage)
+]
+
+.debug[(automatically generated title slide)]
+
+---
+# Dynamic Provisioning of PersistentVolumes
+
+- We have seen how using PersistentVolumes and PersistentVolumeClaims makes it easy to obtain persistent storage without the developer having to deal with the actual storage
+technology used underneath. 
+
+- But this still requires a cluster administrator to provision the actual storage up front. 
+
+.debug[[kube/stockage.md](https://github.com/RyaxTech/kube.training.git/tree/gh-pages//kube/stockage.md)]
+---
+
+## Dynamic Provisioning of PersistentVolumes
+
+- Luckily, Kubernetes can also perform this job automatically through dynamic provisioning of PersistentVolumes.
+
+- The cluster admin, instead of creating PersistentVolumes, can deploy a PersistentVolume provisioner and define one or more StorageClass objects to let users choose what type of PersistentVolume they want. 
+
+- The users can refer to the StorageClass in their PersistentVolumeClaims and the provisioner will take that into account when provisioning the persistent storage. 
+
+.debug[[kube/stockage.md](https://github.com/RyaxTech/kube.training.git/tree/gh-pages//kube/stockage.md)]
+---
+
+class: pic
+
+![haha seulement blague](images/volume6.png)
+
+.debug[[kube/stockage.md](https://github.com/RyaxTech/kube.training.git/tree/gh-pages//kube/stockage.md)]
+---
+
+class: pic
+
+.interstitial[![Image separating from the next chapter](https://gallant-turing-d0d520.netlify.com/containers/ShippingContainerSFBay.jpg)]
+
+---
+
+name: toc-rook-orchestration-of-distributed-storage
+class: title
+
+Rook: orchestration of distributed storage
+
+.nav[
+[Section précédente](#toc-dynamic-provisioning-of-persistentvolumes)
+|
+[Retour table des matières](#toc-chapter-3)
+|
+[Section suivante](#toc-managing-stacks-with-helm)
+]
+
+.debug[(automatically generated title slide)]
+
+---
+
+# Rook: orchestration of distributed storage
+
+- Rook is an open source orchestrator for distributed storage systems.
+
+- Rook turns distributed storage software into a self-managing, self-scaling, and self-healing storage services. 
+
+- It does this by automating deployment, bootstrapping, configuration, provisioning, scaling, upgrading, migration, disaster recovery, monitoring, and resource management. 
+
+.debug[[kube/stockage.md](https://github.com/RyaxTech/kube.training.git/tree/gh-pages//kube/stockage.md)]
+---
+## Rook: orchestration of distributed storage
+- Rook is focused initially on orchestrating Ceph on-top of Kubernetes. Ceph is a distributed storage system that provides file, block and object storage and is deployed in large scale production clusters. 
+
+- Rook is hosted by the Cloud Native Computing Foundation (CNCF) as an inception level project.
+
+.debug[[kube/stockage.md](https://github.com/RyaxTech/kube.training.git/tree/gh-pages//kube/stockage.md)]
+---
+
+## Example of dynamic provisioning of PersistentVolumes using Rook
+
+.exercise[
+  ```bash
+   git clone https://github.com/rook/rook.git
+   cd rook/cluster/examples/kubernetes/ceph
+   kubectl create -f operator.yaml
+   kubect create -f cluster.yaml
+  ```
+- check to see everything is running as expected
+ ```bash
+   kubectl get pods -n rook-ceph
+  ```
+
+]
+
+.debug[[kube/stockage.md](https://github.com/RyaxTech/kube.training.git/tree/gh-pages//kube/stockage.md)]
+---
+
+## Example of dynamic provisioning of PersistentVolumes using Rook
+
+- Block storage allows you to mount storage to a single pod. 
+
+- Let's see how to build a simple, multi-tier web application on Kubernetes using persistent volumes enabled by Rook.
+
+--
+
+- Before Rook can start provisioning storage, a StorageClass and its storage pool need to be created. 
+
+- This is needed for Kubernetes to interoperate with Rook for provisioning persistent volumes.
+
+.debug[[kube/stockage.md](https://github.com/RyaxTech/kube.training.git/tree/gh-pages//kube/stockage.md)]
+---
+
+## Example of dynamic provisioning of PersistentVolumes using Rook
+
+.exercise[
+- Save this storage class definition part as pool.yaml:
+   ```bash
+   apiVersion: ceph.rook.io/v1alpha1
+   kind: Pool
+   metadata:
+     name: replicapool
+     namespace: rook-ceph
+   spec:
+     replicated:
+       size: 3
+   ```
+]
+
+.debug[[kube/stockage.md](https://github.com/RyaxTech/kube.training.git/tree/gh-pages//kube/stockage.md)]
+---
+
+
+## Example of dynamic provisioning of PersistentVolumes using Rook
+
+.exercise[
+- Save this storage class definition part as storageclass.yaml:
+   ```bash
+   apiVersion: storage.k8s.io/v1
+   kind: StorageClass
+   metadata:
+     name: rook-ceph-block
+   provisioner: ceph.rook.io/block
+   parameters:
+      pool: replicapool
+      #The value of "clusterNamespace" MUST be the same as the one in which your rook cluster exist
+      clusterNamespace: rook-ceph
+   ```
+]
+
+.debug[[kube/stockage.md](https://github.com/RyaxTech/kube.training.git/tree/gh-pages//kube/stockage.md)]
+---
+
+## Example of dynamic provisioning of PersistentVolumes using Rook
+
+.exercise[
+- Create the pool and storage class:
+  ```bash
+  kubectl create -f pool.yaml
+  kubectl create -f storageclass.yaml
+  ```
+]
+- Consume the storage with wordpress sample
+- We create a sample app to consume the block storage provisioned by Rook with the classic wordpress and mysql apps. 
+- Both of these apps will make use of block volumes provisioned by Rook.
+
+.debug[[kube/stockage.md](https://github.com/RyaxTech/kube.training.git/tree/gh-pages//kube/stockage.md)]
+---
+
+## Example of dynamic provisioning of PersistentVolumes using Rook
+
+
+.exercise[
+- Start mysql and wordpress from the cluster/examples/kubernetes folder:
+  ```bash
+kubectl create -f mysql.yaml
+kubectl create -f wordpress.yaml
+```
+- Both of these apps create a block volume and mount it to their respective pod. You can see the Kubernetes volume claims by running the following:
+
+ ```bash
+kubectl get pvc
+```
+- You should see something like this:
+```bash
+NAME             STATUS    VOLUME                                     CAPACITY   ACCESSMODES   AGE
+mysql-pv-claim   Bound     pvc-95402dbc-efc0-11e6-bc9a-0cc47a3459ee   20Gi       RWO           1m
+wp-pv-claim      Bound     pvc-39e43169-efc1-11e6-bc9a-0cc47a3459ee   20Gi       RWO           1m
+```
+]
+.debug[[kube/stockage.md](https://github.com/RyaxTech/kube.training.git/tree/gh-pages//kube/stockage.md)]
+---
+
+## Example of dynamic provisioning of PersistentVolumes using Rook
+
+.exercise[
+- Once the wordpress and mysql pods are in the Running state, get the cluster IP of the wordpress app and enter it in your browser along with the port:
+
+```bash
+kubectl get svc wordpress
+```
+]
+You should see the wordpress app running.
+
+.debug[[kube/stockage.md](https://github.com/RyaxTech/kube.training.git/tree/gh-pages//kube/stockage.md)]
+---
+
+## Launch another example of dynamic provisioning
+
+.exercise[
+
+- Copy the file from here : https://github.com/zonca/jupyterhub-deploy-kubernetes-jetstream/blob/master/storage_rook/alpine-rook.yaml
+
+- Modify it so that it fits the specification you have at your cluster and run it using:
+  ```bash
+  kubectl create -f alpine-rook.yaml
+  ```
+
+]
+
+.debug[[kube/stockage.md](https://github.com/RyaxTech/kube.training.git/tree/gh-pages//kube/stockage.md)]
+---
+
+## Launch another example of dynamic provisioning
+
+- It is a very small pod with Alpine Linux that creates a 2 GB volume from Rook and mounts it on /data.
+
+- This creates a Pod with Alpine Linux that requests a Persistent Volume Claim to be mounted under /data. 
+
+- The Persistent Volume Claim specified the type of storage and its size. 
+
+- Once the Pod is created, it asks the Persistent Volume Claim to actually request Rook to prepare a Persistent Volume that is then mounted into the Pod.
+
+.debug[[kube/stockage.md](https://github.com/RyaxTech/kube.training.git/tree/gh-pages//kube/stockage.md)]
+---
+
+## Launch another example of dynamic provisioning
+
+- We can verify the Persistent Volumes are created and associated with the pod, check:
+
+.exercise[
+  ```bash
+  kubectl get pv
+  kubectl get pvc
+  kubectl get logs alpine
+  ```
+- Get a shell in the pod with:
+  ```bash
+  kubectl exec -it alpine  -- /bin/sh
+  ```
+- Access /data/ and write some files.
+- Exit the shell 
+- Now delete the pod and see if you can retrieve the data you wrote.
+]
+
+.debug[[kube/stockage.md](https://github.com/RyaxTech/kube.training.git/tree/gh-pages//kube/stockage.md)]
+---
+## Launch another example of dynamic provisioning
+
+.exercise[
+- How could have we retrieved the data in the last case?
+- Let's change the alpine-rook.yaml to `kind:deployment` write some files and kill again the pod to see what happens.
+]
+
+
+
+
+
+.debug[[kube/stockage.md](https://github.com/RyaxTech/kube.training.git/tree/gh-pages//kube/stockage.md)]
+---
+
+class: pic
+
+.interstitial[![Image separating from the next chapter](https://gallant-turing-d0d520.netlify.com/containers/aerial-view-of-containers.jpg)]
 
 ---
 
@@ -2538,7 +3132,7 @@ class: title
 Managing stacks with Helm
 
 .nav[
-[Section précédente](#toc-centralized-logging)
+[Section précédente](#toc-rook-orchestration-of-distributed-storage)
 |
 [Retour table des matières](#toc-chapter-4)
 |
@@ -2790,7 +3384,7 @@ The chart's metadata includes an URL to the project's home page.
 
 class: pic
 
-.interstitial[![Image separating from the next chapter](https://gallant-turing-d0d520.netlify.com/containers/two-containers-on-a-truck.jpg)]
+.interstitial[![Image separating from the next chapter](https://gallant-turing-d0d520.netlify.com/containers/blue-containers.jpg)]
 
 ---
 
@@ -2975,7 +3569,7 @@ Note: it might take a minute or two for the app to be up and running.
 
 class: pic
 
-.interstitial[![Image separating from the next chapter](https://gallant-turing-d0d520.netlify.com/containers/wall-of-containers.jpeg)]
+.interstitial[![Image separating from the next chapter](https://gallant-turing-d0d520.netlify.com/containers/chinook-helicopter-container.jpg)]
 
 ---
 
