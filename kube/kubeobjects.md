@@ -122,6 +122,40 @@ class: pic
 ![Exemple de Kubectl](images/kubectl_ex.png)
 
 ---
+
+## Simple pod execution
+
+
+.exercise[
+
+- Execute the following pod that will calculate pi
+
+```bash
+kubectl create -f https://raw.githubusercontent.com/RyaxTech/kube-tutorial/master/podpi.yml
+```
+- Follow the lifecycle of the pod.
+- Read the yml file that we submitted.
+- Download and change the yml file.
+- Make changes on the command line parameter to add more precision and resubmit.
+- Find on which node it is executed and find its results when it is completed.
+- Follow the resources consumption on the node that is executed.
+
+]
+
+
+---
+
+## Submitting pods
+
+- `kubectl create` is what we call Imperative Management. On this approach you tell the Kubernetes API what you want to create, replace or delete, not how you want your K8s cluster world to look like.
+
+- `kubectl apply` is part of the Declarative Management approach, where changes that you may have applied to a live object (i.e. through scale) are maintained even if you apply other changes to the object.
+
+- You can read more about imperative and declarative management in the Kubernetes Object Management documentation.
+
+
+---
+
 ## Kubernetes Controllers
 
 - A **Deployment** is a high-level construct
