@@ -48,6 +48,8 @@ Introduction to Apache Spark<br/>
 ?? spark-day1-PE.yml
 ?? spark-day1-PE.yml.html
 ?? spark-day1.yml
+?? spark-day2-PE.yml
+?? spark-day2-PE.yml.html
 ?? spark-day2.yml
 ?? spark-day2.yml.html
 ?? spark-day3.yml
@@ -1875,42 +1877,6 @@ Spark DataFrames: Exercise Exploring Chicago Crimes
 
 ]
 
-.debug[[spark/concepts_spark.md](https://github.com/RyaxTech/kube.training.git/tree/gh-pages//spark/concepts_spark.md)]
----
-
-## Dataframe Transformations - Repartition and Coalesce
-
-- A very important optimization opportunity is to partition the data according to some frequently filtered columns, which control the physical layout of data across the cluster including the partitioning scheme and the number of partitions.
-
-.exercise[
-- Use the `repartition` method as follows:
-```bash
-df.rdd.getNumPartitions()
-df.repartition(5)
-```
-
-- If you’re going to be filtering by a certain column often, it can be worth **repartitioning based on that column**
-```bash
-df.repartition(col("DEST_COUNTRY_NAME"))
-```
-]
-.debug[[spark/concepts_spark.md](https://github.com/RyaxTech/kube.training.git/tree/gh-pages//spark/concepts_spark.md)]
----
-
-## Dataframe Transformations - Repartition and Coalesce
-
-- `Coalesce`, combines partitions.
-
-.exercise[
-- Try the following command which uses both repartition and then coalesce
-```bash
-df.repartition(5, col("DEST_COUNTRY_NAME")).coalesce(2)
-```
-]
-
-- The **repartition** algorithm does a **full shuffle** of the data and creates equal sized partitions of data. **coalesce** **combines** existing partitions to avoid a full shuffle.
-
-
 
 .debug[[spark/concepts_spark.md](https://github.com/RyaxTech/kube.training.git/tree/gh-pages//spark/concepts_spark.md)]
 ---
@@ -1978,7 +1944,7 @@ Datasets (RDDs), a large cohort of users now use Spark SQL.
 
 - We will now create a table or view from a dataframe:
   ```bash
-  df = spark.read.format("json").load("/home/docker/datasets/2015-summary.json") 
+  df = spark.read.format("json").load("/home/docker/2015-summary.json") 
   flightData2015.createOrReplaceTempView("flight_data_2015")
   ```
 - Now let's query our data with SQL style:
@@ -2033,71 +1999,6 @@ previous values that have been seen.
   ```bash
   from pyspark.sql.functions import desc
   flightData2015.groupBy("DEST_COUNTRY_NAME").sum("count").withColumnRenamed("sum(count)", "destination_total").sort(desc("destination_total")).limit(5).show()
-  ```
-]
-
-.debug[[spark/spark_sql.md](https://github.com/RyaxTech/kube.training.git/tree/gh-pages//spark/spark_sql.md)]
----
-
-## Exercise Football players: Spark SQL
-
-.exercise[
-
-- Let's import a JSON file containing the historical World cup player dataset and do some queries
-  ```bash
-  players = spark.read.json("/home/docker/datasets/all-world-cup-players.json")
-  ```
-- Print the schema in a tree format
-  ```bash
-  players.printSchema()
-  ```
-- What do you see?
-
-]
-
-.debug[[spark/spark_sql.md](https://github.com/RyaxTech/kube.training.git/tree/gh-pages//spark/spark_sql.md)]
----
-
-## Exercise Football players: Spark SQL
-
-.exercise[
-
-- The json file is multiline so we need to read it differently
-  ```bash
-  players = spark.read.json("/home/docker/datasets/all-world-cup-players.json", multiLine=True)
-  players.printSchema()
-  ```
-- Select only the "FullName" column
-  ```bash
-  players.select("FullName").show(20)
-  ```
-- Then we can create a view of our DataFrame. The lifetime of this temporary table is tied to the SparkSession that was used to create this DataFrame.
-  ```bash
-  players.registerTempTable("players")
-  ```
-- We can then query our view; for instance to get the names of all the Teams:
-  ```bash
-  spark.sql("select distinct Team from players").show(10)
-  ```
-]
-
-.debug[[spark/spark_sql.md](https://github.com/RyaxTech/kube.training.git/tree/gh-pages//spark/spark_sql.md)]
----
-
-## Exercise Football players: Spark SQL
-
-.exercise[
-
-- Select the teams names from 2014 only 
-  ```bash
-  team2014 = spark.sql("select distinct Team from players where Year == 2014")
-  ```
-- The results of SQL queries are Dataframe objects.
-- `rdd` method returns the content as an :class:`pyspark.RDD` of :class:`Row`.
-  ```bash
-  teamNames = team2014.rdd.map(lambda p: "Name: " + p.Team).collect()
-  for name in teamNames:
-  print(name)
   ```
 ]
 
