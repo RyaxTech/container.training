@@ -1,0 +1,26 @@
+title: |
+    Spark Fundamentals - Clustering, Storage, Cloud 
+
+#chat: "[Slack](https://dockercommunity.slack.com/messages/C7GKACWDV)"
+#chat: "[Gitter](https://gitter.im/jpetazzo/workshop-yyyymmdd-city)"
+chat: "In person!"
+
+exclude:
+- self-paced
+
+chapters:
+- common/title_fr.md
+  #- logistics.md
+  #- common/about-slides_fr.md
+  #- common/sampleapp.md
+  #- common/composescale.md
+  #- common/composedown.md
+  #- kube/versions-k8s.md
+  #- kube/intro.md
+  #- common/about-slides.md
+- common/toc.md
+- - spark/Spark_clustering.md
+- - spark/spark_cloud.md
+- - spark/Spark_streaming-PE.md  
+- - spark/spark_kubernetes-PE.md  
+  #- - spark/Spark_RDD.md
