@@ -592,14 +592,16 @@ class: pic
   export PATH=$PATH:SPARK_HOME
   export PYSPARK_PYTHON=python3
   ```
-  3. Start the service of the master Spark node by executing the following script:
-  ```bash
-  sudo /usr/lib/spark/sbin/start-master.sh
-  ```
-  4. Start the services of the Spark executors by connecting on each node with ssh and launching the following:
+  3. Start the service of the master Spark by executing the following on node1:
   ```bash
   sudo su
-  /usr/lib/spark/sbin/start-slave.sh spark://node1:7077
+  export SPARK_MASTER_HOST=IP_OF_FIRST_NODE_from_eth0
+  sudo /usr/lib/spark/sbin/start-master.sh
+  ```
+  4. Start the services of the Spark executors by connecting on node2 and node3 with ssh and launching the following:
+  ```bash
+  sudo su
+  /usr/lib/spark/sbin/start-slave.sh spark://IP_OF_FIRST_NODE_from_eth0:7077
   ```
 
 .debug[[spark/Spark_clustering.md](https://github.com/RyaxTech/kube.training.git/tree/gh-pages//spark/Spark_clustering.md)]
@@ -610,8 +612,8 @@ class: pic
 .exercise[
 - If you need to stop standalone spark you can execute the following:
 ```bash
-/usr/lib/spark/sbin/stop-slave.sh spark://node1:7077
-/usr/lib/spark/sbin/stop-master.sh spark://node1:7077
+/usr/lib/spark/sbin/stop-slave.sh spark://IP_OF_FIRST_NODE_from_eth0:7077
+/usr/lib/spark/sbin/stop-master.sh
 ```
 
 - Check the deployment on the Spark Web-UI
@@ -644,7 +646,7 @@ class: pic
 - Execute the following: 
 
   ```bash
-  spark-submit --master spark://node1:7077 /usr/lib/spark/examples/src/main/python/pi.py 100
+  spark-submit --master spark://IP_OF_FIRST_NODE_from_eth0:7077 /usr/lib/spark/examples/src/main/python/pi.py 100
   ```
 - And check what happens on the Web-UI.
 - Have you got it now?!!
@@ -1610,6 +1612,8 @@ class: pic
 
 - You should not have to change your query’s code when doing batch or stream processing—you should just have to specify only whether to run that query in a batch or streaming fashion.
 
+.debug[[spark/Spark_streaming-PE.md](https://github.com/RyaxTech/kube.training.git/tree/gh-pages//spark/Spark_streaming-PE.md)]
+---
 
 ## Structured Streaming Core Concepts
 
@@ -1622,6 +1626,9 @@ class: pic
 - Output Modes: how we want Spark to write data to the sink support for: Append, Update, Complete
 
 - Triggers: Triggers define when the system should check for new input data and update its result.
+
+.debug[[spark/Spark_streaming-PE.md](https://github.com/RyaxTech/kube.training.git/tree/gh-pages//spark/Spark_streaming-PE.md)]
+---
 
 ## Structured Streaming in Action
 
