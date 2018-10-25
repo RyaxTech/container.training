@@ -1,0 +1,1734 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <title>Spark Advanced - Machine Learning, Graph Analytics, Deep Learning, RDD </title>
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8"/>
+    <link rel="stylesheet" href="workshop.css">
+  </head>
+  <body>
+    <!--
+    <div style="position: absolute; left: 20%; right: 20%; top: 30%;">
+      <h1 style="font-size: 3em;">Loading ...</h1>
+      The slides should show up here. If they don't, it might be
+      because you are accessing this file directly from your filesystem.
+      It needs to be served from a web server. You can try this:
+      <pre>
+        docker-compose up -d
+        open http://localhost:8888/workshop.html # on MacOS
+        xdg-open http://localhost:8888/workshop.html # on Linux
+      </pre>
+      Once the slides are loaded, this notice disappears when you
+      go full screen (e.g. by hitting "f").
+    </div>
+    -->
+    <textarea id="source">class: title, self-paced
+
+Spark Advanced - Machine Learning, Graph Analytics, Deep Learning, RDD<br/>
+
+.nav[*Self-paced version*]
+
+.debug[
+```
+ M common/about-slides_fr.md
+ M intro-fullday.yml.html
+ M intro-selfpaced.yml.html
+ M kube-fullday.yml.html
+ M kube-halfday.yml.html
+ M kube-jour1.yml.html
+ M kube-jour2.yml.html
+ M kube-jour3.yml
+ M kube-jour3.yml.html
+ M kube-selfpaced.yml.html
+ M logistics.md
+ M spark-day1.yml.html
+ M swarm-fullday.yml.html
+ M swarm-halfday.yml.html
+ M swarm-selfpaced.yml.html
+ M swarm-video.yml.html
+?? Spark_Graph.md
+?? spark-day1-PE.yml
+?? spark-day1-PE.yml.html
+?? spark-day1.yml
+?? spark-day2-PE.yml
+?? spark-day2-PE.yml.html
+?? spark-day2.yml
+?? spark-day2.yml.html
+?? spark-day3-PE.yml
+?? spark-day3-PE.yml.html
+?? spark-day3.yml
+?? spark-day3.yml.html
+?? spark-jour1.yml.html
+?? spark/
+
+```
+
+These slides have been built from commit: 8fb8bc6
+
+
+[common/title_fr.md](https://github.com/RyaxTech/kube.training.git/tree/gh-pages//common/title_fr.md)]
+---
+
+class: title, in-person
+
+Spark Advanced - Machine Learning, Graph Analytics, Deep Learning, RDD<br/><br/></br>
+
+
+.debug[[common/title_fr.md](https://github.com/RyaxTech/kube.training.git/tree/gh-pages//common/title_fr.md)]
+---
+
+name: toc-chapter-1
+
+## Chapter 1
+
+- [Advanced Analytics and Machine Learning Overview](#toc-advanced-analytics-and-machine-learning-overview)
+
+- [Classification](#toc-classification)
+
+- [Regression](#toc-regression)
+
+.debug[(auto-generated TOC)]
+---
+name: toc-chapter-2
+
+## Chapter 2
+
+- [Graph Analytics](#toc-graph-analytics)
+
+- [Deep Learning](#toc-deep-learning)
+
+.debug[(auto-generated TOC)]
+---
+name: toc-chapter-3
+
+## Chapter 3
+
+- [Resilient Distributed Datasets (RDD)](#toc-resilient-distributed-datasets-rdd)
+
+- [Interoperating Between DataFrames and RDDs](#toc-interoperating-between-dataframes-and-rdds)
+
+- [Manipulating RDDs](#toc-manipulating-rdds)
+
+- [Advanced RDDs](#toc-advanced-rdds)
+
+.debug[(auto-generated TOC)]
+
+
+
+.debug[[common/toc.md](https://github.com/RyaxTech/kube.training.git/tree/gh-pages//common/toc.md)]
+---
+
+class: pic
+
+.interstitial[![Image separating from the next chapter](https://gallant-turing-d0d520.netlify.com/containers/Container-Ship-Freighter-Navigation-Elbe-Romance-1782991.jpg)]
+
+---
+
+name: toc-advanced-analytics-and-machine-learning-overview
+class: title
+
+Advanced Analytics and Machine Learning Overview
+
+.nav[
+[Section précédente](#toc-)
+|
+[Retour table des matières](#toc-chapter-1)
+|
+[Section suivante](#toc-classification)
+]
+
+.debug[(automatically generated title slide)]
+
+---
+# Advanced Analytics and Machine Learning Overview
+
+- Spark provides support for advanced analytics such as machine learning and graph analytics.
+- Advanced analytics refers to a variety of techniques aimed at solving the core problem of deriving insights and making predictions or recommendations based on data. 
+- The most common tasks include:
+  - Supervised learning, including classification and regression, where the goal is to predict a label for each data point based on various features.
+  - Recommendation engines to suggest products to users based on behavior.
+  - Unsupervised learning, including clustering, anomaly detection, and topic modeling, where the goal is to discover structure in the data.
+  - Graph analytics tasks such as searching for patterns in a social network.
+
+.debug[[spark/Spark_ML.md](https://github.com/RyaxTech/kube.training.git/tree/gh-pages//spark/Spark_ML.md)]
+---
+
+## Supervised Learning
+
+- Using historical data that already has labels (dependent variables), train a model to predict the values of those labels based on various features of the data points. 
+  - One example would be to predict a person’s income (the dependent variable) based on age (a feature).
+  - Train on historical data, ensure that it generalizes to data we didn’t train on, and then make predictions on new data.
+  - The training process usually proceeds through an iterative optimization algorithm
+
+.debug[[spark/Spark_ML.md](https://github.com/RyaxTech/kube.training.git/tree/gh-pages//spark/Spark_ML.md)]
+---
+
+## Types of supervised Learning
+
+- **Classification** is the act of training an algorithm to predict a dependent variable that is categorical (belonging to a discrete, finite set ofvalues).Use cases:
+  - predicting disease for a particular patient based on his symptoms and taking into account historical data
+  - Classifying images
+- **Regression** allows the prediction of a continuous variable (a real number). Rather than predicting a category, we want to predict a value on a number line.
+  - Predicting sales
+  - Predicting the viewers number for a show
+- **Recommendation** by studying people’s explicit preferences (through ratings) or implicit ones (through observed behavior) for various products or items, an algorithm can make recommendations on what a user may like by drawing similarities between the users or items
+  - Movie recommendations
+  - Product recommendations
+
+.debug[[spark/Spark_ML.md](https://github.com/RyaxTech/kube.training.git/tree/gh-pages//spark/Spark_ML.md)]
+---
+
+## Unsupervised Learning
+
+- Unsupervised learning is the act of trying to find patterns or discover the underlying structure in a given set of data with no dependent variable to predict
+
+- Some use cases are:
+  - Anomaly detection
+  - User Segmentation
+
+.debug[[spark/Spark_ML.md](https://github.com/RyaxTech/kube.training.git/tree/gh-pages//spark/Spark_ML.md)]
+---
+
+## Graph Analytics 
+
+- Graph analytics is the study of structures in which we specify vertices (which are objects) and edges (which represent the relationships between those objects).
+- Some examples include:
+  - Fraud prediction: For instance, any user accounts within two hops of a fraudulent phone number might be considered suspicious.
+  - Anomaly detection
+  - Classification
+  - Recommendation
+
+.debug[[spark/Spark_ML.md](https://github.com/RyaxTech/kube.training.git/tree/gh-pages//spark/Spark_ML.md)]
+---
+
+## Advanced Analytics Steps
+
+The overall process involves, the following steps (with some variation):
+1. Gathering and collecting the relevant data for your task.
+2. Cleaning and inspecting the data to better understand it.
+3. Performing feature engineering to allow the algorithm to leverage the data in a suitable form (e.g., converting the data to numerical vectors).
+4. Using a portion of this data as a training set to train one or more algorithms to generate some candidate models.
+5. Evaluating and comparing models against your success criteria by objectively measuring results on a subset of the same data that was not used for training. This allows you to better understand how your model may perform in the wild.
+6. Leveraging the insights from the above process and/or using the model to make predictions, detect anomalies, or solve more general business challenges.
+
+These steps won’t be exactly the same for every advanced analytics task but gives the general idea.
+
+.debug[[spark/Spark_ML.md](https://github.com/RyaxTech/kube.training.git/tree/gh-pages//spark/Spark_ML.md)]
+---
+
+class: pic
+
+## Advanced Analytics Workflow
+
+![history](spark/images/spark-MLworkflow.png)
+
+.debug[[spark/Spark_ML.md](https://github.com/RyaxTech/kube.training.git/tree/gh-pages//spark/Spark_ML.md)]
+---
+
+## Spark Advanced Analytics Toolkit and MLlib
+
+- Spark includes several core packages and many external packages for performing advanced analytics. The primary package is MLlib, which provides an interface for building machine learning pipelines.
+- MLlib is a package, built on and included in Spark, that provides interfaces for gathering and cleaning data, feature engineering and feature selection, training and tuning large-scale supervised and unsupervised machine learning models, and using those models in production.
+- Main reason for using MLlib instead of scikit-learn or tensorflow: Spark can function on multiple machines whereas the others mainly function on one single machine
+
+.debug[[spark/Spark_ML.md](https://github.com/RyaxTech/kube.training.git/tree/gh-pages//spark/Spark_ML.md)]
+---
+
+## Spark Advanced Analytics Toolkit and MLlib
+
+- MLlib actually consists of two packages that leverage different core data structures:
+  - The package `org.apache.spark.ml` includes an interface for use with DataFrames. This package also offers a high-level interface for building machine learning pipelines
+  - The lower-level package, `org.apache.spark.mllib` which includes interfaces for Spark’s low-level RDD APIs (currently maintenance mode).
+
+.debug[[spark/Spark_ML.md](https://github.com/RyaxTech/kube.training.git/tree/gh-pages//spark/Spark_ML.md)]
+---
+## Spark Advanced Analytics Toolkit and MLlib 
+
+- There are two key use cases where you want to leverage Spark’s ability to scale:
+  1. To leverage Spark for preprocessing and feature generation to reduce the amount of time it might take to produce training and test sets from a large amount of data. Then you might leverage single-machine learning libraries to train on those given data sets. 
+  2. When your input data or model size become too difficult or inconvenient to put on one machine, use Spark to do the heavy lifting. Spark makes distributed machine learning very simple.
+
+- Important note: Spark does not provide a built-in way to serve low-latency predictions from a model, so you may want to export the model to another serving system or a custom application to do that.
+
+.debug[[spark/Spark_ML.md](https://github.com/RyaxTech/kube.training.git/tree/gh-pages//spark/Spark_ML.md)]
+---
+## High-Level MLlib Concepts
+
+- In MLlib there are several fundamental “structural” types: transformers, estimators, evaluators, and pipelines.
+  - Transformers are functions that convert raw data in some way. They are are primarily used in preprocessing and feature engineering.
+  - Transformers take a DataFrame as input and produce a new DataFrame as output
+
+  - Estimators can be a kind of transformer initialized with data or algorithms that allow users to train models
+
+  - An evaluator allows us to see how a given model performs according to criteria we specify
+  - After we use the evaluator to select the best model from the ones we tested, we can then use that model to make predictions
+
+.debug[[spark/Spark_ML.md](https://github.com/RyaxTech/kube.training.git/tree/gh-pages//spark/Spark_ML.md)]
+---
+
+
+class: pic
+
+## Spark Machine Learning Workflow 
+
+![history](spark/images/spark-ML.png)
+
+.debug[[spark/Spark_ML.md](https://github.com/RyaxTech/kube.training.git/tree/gh-pages//spark/Spark_ML.md)]
+---
+
+## High-Level MLlib Concepts
+
+- From a high level we can specify each of the transformations, estimations, and evaluations one by one, but it is often easier to specify our steps as stages in a pipeline.- This pipeline is similar to scikit-learn’s pipeline concept.
+
+.debug[[spark/Spark_ML.md](https://github.com/RyaxTech/kube.training.git/tree/gh-pages//spark/Spark_ML.md)]
+---
+
+## Low-level data types
+ 
+- Besides the structural types for building pipelines, there are also several lower-level data types you may need to work with in MLlib (Vector being the most common). 
+- Whenever we pass a set of features into a machine learning model, we must do it as a vector that consists of Doubles. 
+- This vector can be either sparse (where most of the elements are zero) or dense (where there are many unique values).
+
+.debug[[spark/Spark_ML.md](https://github.com/RyaxTech/kube.training.git/tree/gh-pages//spark/Spark_ML.md)]
+---
+
+## Exercise with MLlib
+
+- Let's do the following exercise to see the Spark ML components in practice
+- We will use a dataset that consists of a categorical label with two values (good or bad), a categorical variable (color), and two numerical variables. 
+- While the data is synthetic, let’s imagine that this dataset represents a company’s customer health. 
+  - The “color” column represents some categorical health rating made by a customer service representative. 
+  - The “lab” column represents the true customer health. 
+  - The other two values are some numerical measures of activity within an application (e.g., minutes spent on site and purchases). 
+
+- Our goal is to train a classification model where we hope to predict a binary variable `the label` from the other values.
+
+.debug[[spark/Spark_ML.md](https://github.com/RyaxTech/kube.training.git/tree/gh-pages//spark/Spark_ML.md)]
+---
+
+## Exercise with MLlib
+
+.exercise[
+
+- Let’s load the data on a dataframe. Do the necessary to prepare the Spark Session if needed before you create the dataframe:
+```bash
+df = spark.read.json("/data/simple-ml")
+df.orderBy("value2").show()
+```
+
+]
+
+.debug[[spark/Spark_ML.md](https://github.com/RyaxTech/kube.training.git/tree/gh-pages//spark/Spark_ML.md)]
+---
+
+## Feature Engineering with Transformers
+
+- Transformers help us manipulate our current columns in one way or another.
+- Manipulating these columns is often in pursuit of building features (to input into our model).
+- Transformers exist to either:
+  - cut down the number of features, 
+  - add more features, 
+  - manipulate current features
+  - or simply to help us format our data correctly. 
+- Transformers add new columns to DataFrames.
+
+.debug[[spark/Spark_ML.md](https://github.com/RyaxTech/kube.training.git/tree/gh-pages//spark/Spark_ML.md)]
+---
+
+## Feature Engineering with Transformers
+
+- When we use MLlib, all inputs to machine learning algorithms in Spark must consist of type `Double` (for labels) and `Vector[Double]` (for features).
+- The current dataset does not meet that requirement and therefore we need to transform it to the proper format.
+- To achieve this in our example, we are going to specify an `RFormula`. This is a declarative language for specifying machine learning transformations
+- In our exercise we want to use all available variables (the .) and also add in the interactions between value1 and color and value2 and color, treating those as new features
+
+.exercise[
+```bash
+from pyspark.ml.feature import RFormula
+supervised = RFormula(formula="lab ~ . + color:value1 + color:value2")
+```
+
+]
+
+.debug[[spark/Spark_ML.md](https://github.com/RyaxTech/kube.training.git/tree/gh-pages//spark/Spark_ML.md)]
+---
+
+## Feature Engineering with Transformers
+
+- At this point, we have declaratively specified how we would like to change our data into what we will train our model on.
+- The next step is to fit the RFormula transformer to the data to let it discover the possible values of each column. Not all transformers have this requirement but because RFormula will automatically handle categorical variables for us, it needs to determine which columns are categorical and which are not, as well as what the distinct values of the categorical columns are. 
+- For this reason, we have to call the fit method. Once we call fit, it returns a “trained” version of our transformer we can then use to actually transform our data.
+- Let’s see how this takes place:
+```bash
+fittedRF = supervised.fit(df)
+preparedDF = fittedRF.transform(df)
+preparedDF.show()
+```
+.debug[[spark/Spark_ML.md](https://github.com/RyaxTech/kube.training.git/tree/gh-pages//spark/Spark_ML.md)]
+---
+
+## Feature Engineering with Transformers
+
+- In the output we can see the result of our transformation, a column called features that has our previously raw data. 
+- `RFormula` inspects our data during the fit call and outputs an object that will transform our data according to the specified formula, which is called an `RFormulaModel`.
+  - This “trained” transformer always has the word Model in the type signature. 
+  - When we use this transformer, Spark automatically converts our categorical variable to Doubles so that we can input it into a (yet to be specified) machine learning model. 
+  - In particular, it assigns a numerical value to each possible color category, creates additional features for the interaction variables between colors and value1/value2, and puts them all into a single vector. 
+  - We then call transform on that object in order to transform our input data into the expected output data.
+
+.debug[[spark/Spark_ML.md](https://github.com/RyaxTech/kube.training.git/tree/gh-pages//spark/Spark_ML.md)]
+---
+
+## Feature Engineering with Transformers
+
+- So to summarize until now we have (pre)processed the data and added some features along the way. 
+- Now we will actually train a model (or a set of models) on this dataset. 
+- In order to do this, we first need to prepare a test set for evaluation.
+- Having a good test set is probably the most important thing you can do to ensure you train a model you can actually use in the real world 
+
+.exercise[
+
+- We will create a simple test set based off a random split of the data
+```bash
+train, test = preparedDF.randomSplit([0.7, 0.3])
+```
+
+]
+
+.debug[[spark/Spark_ML.md](https://github.com/RyaxTech/kube.training.git/tree/gh-pages//spark/Spark_ML.md)]
+---
+
+## Estimators
+
+- Now we will fit our model. In this case we will use a classification algorithm called logistic regression. 
+- To create our classifier we instantiate an instance of LogisticRegression, using the default configuration or hyperparameters. We then set the label columns and the feature columns
+
+.exercise[
+```bash
+from pyspark.ml.classification import LogisticRegression
+lr = LogisticRegression(labelCol="label",featuresCol="features")
+```
+- let’s inspect the parameters which are the available options for each particular model
+- the following actually shows an explanation of all of the parameters for Spark’s implementation of logistic regression.
+```bash
+print lr.explainParams()
+```
+
+]
+
+.debug[[spark/Spark_ML.md](https://github.com/RyaxTech/kube.training.git/tree/gh-pages//spark/Spark_ML.md)]
+---
+
+## Model training
+
+- After instantiating an untrained algorithm, we will fit it to data. This will return a `LogisticRegressionModel`:
+- The following code will start a Spark job to train the model.
+.exercise[
+```bash
+fittedLR = lr.fit(train)
+```
+]
+- In contrast with the transformations in structured API's this is not lazy and is performed immediately.
+- Once complete, we can use the model to make predictions. 
+- This means tranforming features into labels. We make predictions with the transform method. 
+
+.debug[[spark/Spark_ML.md](https://github.com/RyaxTech/kube.training.git/tree/gh-pages//spark/Spark_ML.md)]
+---
+
+## Model training
+
+- Let's transform our training dataset to see what labels our model assigned to the training data and how those compare to the true outputs. 
+- This, again, is just another DataFrame we can manipulate. 
+.exercise[
+```bash
+fittedLR.transform(train).select("label", "prediction").show()
+```
+]
+
+.debug[[spark/Spark_ML.md](https://github.com/RyaxTech/kube.training.git/tree/gh-pages//spark/Spark_ML.md)]
+---
+
+## Need for pipelines
+
+- Then we can manually evaluate this model and calculate performance metrics
+- Then we want to try a different set of parameters to see if those perform better. However, while this is a useful process, it can also be quite
+tedious.
+- For this, Spark allows us to specify a workload as a declarative pipeline of work that includes all transformations as well as tuning of hyperparameters.
+- Hyperparameters are configuration parameters that affect the training process, such as model architecture and regularization. They are set prior to starting training.
+
+.debug[[spark/Spark_ML.md](https://github.com/RyaxTech/kube.training.git/tree/gh-pages//spark/Spark_ML.md)]
+---
+ 
+## Pipelining a workflow
+
+- A pipeline allows to set up a dataflow of the relevant transformations that ends with an estimator that is automatically tuned according to specifications, resulting in a tuned model ready for use.
+
+.debug[[spark/Spark_ML.md](https://github.com/RyaxTech/kube.training.git/tree/gh-pages//spark/Spark_ML.md)]
+---
+## Machine Learning Workflow productionization
+
+
+- Train your machine learning (ML) model offline and then supply it with offline data. In this
+context, we mean offline data to be data that is stored for analysis, and not data that you need
+to get an answer from quickly. Spark is well suited to this sort of deployment.
+
+- Train your model offline and then put the results into a database (usually a key-value store).
+This works well for something like recommendation but poorly for something like classification or regression where you cannot just look up a value for a given user but must calculate one based on the input.
+
+.debug[[spark/Spark_ML.md](https://github.com/RyaxTech/kube.training.git/tree/gh-pages//spark/Spark_ML.md)]
+---
+
+## Machine Learning Workflow productionization
+
+- Train your ML algorithm offline, persist the model to disk, and then use that for serving. This is not a low-latency solution if you use Spark for the serving part, as the overhead of starting up a Spark job can be high, even if you’re not running on a cluster. Additionally this does not parallelize well, so you’ll likely have to put a load balancer in front of multiple model
+
+- Manually (or via some other software) convert your distributed model to one that can run much more quickly on a single machine. This works well when there is not too much manipulation of the raw data in Spark but can be hard to maintain over time. Again, there are several solutions in progress. For example, MLlib can export some models to PMML, a common model interchange format.
+
+- Train your ML algorithm online and use it online. This is possible when used in conjunction with Structured Streaming, but can be complex for some models.
+
+.debug[[spark/Spark_ML.md](https://github.com/RyaxTech/kube.training.git/tree/gh-pages//spark/Spark_ML.md)]
+---
+
+class: pic
+
+.interstitial[![Image separating from the next chapter](https://gallant-turing-d0d520.netlify.com/containers/ShippingContainerSFBay.jpg)]
+
+---
+
+name: toc-classification
+class: title
+
+Classification
+
+.nav[
+[Section précédente](#toc-advanced-analytics-and-machine-learning-overview)
+|
+[Retour table des matières](#toc-chapter-1)
+|
+[Section suivante](#toc-regression)
+]
+
+.debug[(automatically generated title slide)]
+
+---
+
+# Classification
+
+- Classification is the task of predicting a label, category, class, or discrete variable given some input
+features.
+- Types of Classification:
+  - Binary Classification : we can predict only 2 values (fraud analytics)
+  - Multiclass classification, where one label is chosen from more than two distinct possible labels (such as Facebook prediction of people in a given photo)
+  - Multilabel classification, where a given input can produce multiple labels.
+
+.debug[[spark/Spark_ML.md](https://github.com/RyaxTech/kube.training.git/tree/gh-pages//spark/Spark_ML.md)]
+---
+
+## Classification Models in MLlib
+
+- Spark has several models available for performing binary and multiclass classification out of the box.
+- The following models are available for classification in Spark:
+  - Logistic regression
+  - Decision trees
+  - Random forests
+  - Gradient-boosted trees
+- Spark does not support making multilabel predictions natively. In order to train a multilabel model, you must train one model per label and combine them manually.
+
+.debug[[spark/Spark_ML.md](https://github.com/RyaxTech/kube.training.git/tree/gh-pages//spark/Spark_ML.md)]
+---
+
+## Logistic Regression
+
+- This is one of the most popular methods of classification. 
+- It is a linear method that combines each of the individual inputs (or features) with specific weights (these weights are generated during the training process) that are then combined to get a probability of belonging to a particular class.
+  - **Model hyperparameters** are configurations that determine the basic structure of the model itself.
+  - **Training parameters** are used to specify how we perform our training.
+  - **Prediction Parameters** help determine how the model should actually be making predictions at prediction time, but do not affect training.
+
+.debug[[spark/Spark_ML.md](https://github.com/RyaxTech/kube.training.git/tree/gh-pages//spark/Spark_ML.md)]
+---
+
+## Logistic Regression Example
+
+- In this example we won't specify any parameters because we’ll leverage the defaults and our data conforms to the proper column naming.
+.exercise[
+
+- Let’s load in some data:
+```bash
+bInput = spark.read.format("parquet").load("/data/binary-classification")\
+  .selectExpr("features", "cast(label as double) as label")
+```
+- Let's use the model for our data:
+```bash
+from pyspark.ml.classification import LogisticRegression
+lr = LogisticRegression()
+print lr.explainParams() # see all parameters
+lrModel = lr.fit(bInput)
+```
+
+]
+
+.debug[[spark/Spark_ML.md](https://github.com/RyaxTech/kube.training.git/tree/gh-pages//spark/Spark_ML.md)]
+---
+
+## Logistic Regression Example
+
+- Once the model is trained you can get information about the model by taking a look at the coefficients and the intercept. The coefficients correspond to the individual feature weights (each feature weight is multiplied by each respective feature to compute the prediction) while the intercept is the value of the italics-intercept (if we chose to fit one when specifying the model). Seeing the coefficients can be helpful for inspecting the model that you built and comparing how features affect the prediction:
+.exercise[
+```bash
+print lrModel.coefficients
+print lrModel.intercept
+```
+]
+- For a multinomial model (the current one is binary), lrModel.coefficientMatrix and lrModel.interceptVector can be used to get the coefficients and intercept. These will return Matrix and Vector types representing the values or each of the given classes.
+
+.debug[[spark/Spark_ML.md](https://github.com/RyaxTech/kube.training.git/tree/gh-pages//spark/Spark_ML.md)]
+---
+
+## Logistic Regression Example - Model Summary
+
+- Logistic regression provides a model summary that gives you information about the final, trained model. 
+- This is analogous to the same types of summaries we see in many R language machine learning packages. 
+- You can see the summary using the following APIs:
+.exercise[
+```bash
+summary = lrModel.summary
+print summary.areaUnderROC
+summary.roc.show()
+summary.pr.show()
+```
+- The speed at which the model descends to the final result is shown in the objective history.
+```bash
+summary.objectiveHistory
+```
+- This is an array of doubles that specify how, over each training iteration, we are performing with respect to our objective function.
+]
+
+.debug[[spark/Spark_ML.md](https://github.com/RyaxTech/kube.training.git/tree/gh-pages//spark/Spark_ML.md)]
+---
+
+## Decision trees
+
+- Decision trees are one of the more friendly and interpretable models for performing classification because they’re similar to simple decision models that humans use quite often. 
+- For example, if you have to predict whether or not someone will eat ice cream when offered, a good feature might be whether or not that individual likes ice cream.
+
+.exercise[
+- Here’s a minimal but complete example of using a decision tree classifier:
+```bash
+from pyspark.ml.classification import DecisionTreeClassifier
+dt = DecisionTreeClassifier()
+print dt.explainParams()
+dtModel = dt.fit(bInput)
+```
+
+]
+
+.debug[[spark/Spark_ML.md](https://github.com/RyaxTech/kube.training.git/tree/gh-pages//spark/Spark_ML.md)]
+---
+
+## Random Forest and Gradient-Boosted Trees
+
+- These methods are extensions of the decision tree. Rather than training one tree on all of the data, you train multiple trees on varying subsets of the data. 
+- The intuition behind doing this is that various decision trees will become “experts” in that particular domain while others become experts in others.
+- By combining these various experts, you then get a “wisdom of the crowds” effect, where the group’s performance exceeds any individual. In addition, these methods can help prevent overfitting.
+- Random forests and gradient-boosted trees are two distinct methods for combining decision trees. 
+  - In random forests, we simply train a lot of trees and then average their response to make a prediction.
+  - With gradient-boosted trees, each tree makes a weighted prediction (such that some trees have more predictive power for some classes than others).
+- One current limitation is that gradient-boosted trees currently only support binary labels.
+
+.debug[[spark/Spark_ML.md](https://github.com/RyaxTech/kube.training.git/tree/gh-pages//spark/Spark_ML.md)]
+---
+
+## Random Forest and Gradient-Boosted Trees Example
+
+.exercise[
+- Let's use our data with a Random Forest model
+```bash
+from pyspark.ml.classification import RandomForestClassifier
+rfClassifier = RandomForestClassifier()
+print rfClassifier.explainParams()
+trainedModel = rfClassifier.fit(bInput)
+```
+
+- and now with a Gradient-Boosted model
+```bash
+from pyspark.ml.classification import GBTClassifier
+gbtClassifier = GBTClassifier()
+print gbtClassifier.explainParams()
+trainedModel = gbtClassifier.fit(bInput)
+```
+]
+
+.debug[[spark/Spark_ML.md](https://github.com/RyaxTech/kube.training.git/tree/gh-pages//spark/Spark_ML.md)]
+---
+
+## Naive Bayes
+
+- Naive Bayes classifiers are a collection of classifiers based on Bayes’ theorem. 
+- The core assumption behind the models is that all features in your data are independent of one another. 
+- Naturally, strict independence is a bit naive, but even if this is violated, useful models can still be produced. 
+- Naive Bayes classifiers are commonly used in text or document classification, although it can be used as a more general-purpose classifier as well.
+
+- One important note when it comes to Naive Bayes is that all input features must be non-negative.
+
+.debug[[spark/Spark_ML.md](https://github.com/RyaxTech/kube.training.git/tree/gh-pages//spark/Spark_ML.md)]
+---
+
+## Naive Bayes Example
+
+.exercise[
+
+- Here’s an example of using a Naive Bayes classifier with our data
+
+```bash
+from pyspark.ml.classification import NaiveBayes
+nb = NaiveBayes()
+print nb.explainParams()
+trainedModel = nb.fit(bInput.where("label != 0"))
+```
+
+]
+
+.debug[[spark/Spark_ML.md](https://github.com/RyaxTech/kube.training.git/tree/gh-pages//spark/Spark_ML.md)]
+---
+
+class: pic
+
+.interstitial[![Image separating from the next chapter](https://gallant-turing-d0d520.netlify.com/containers/aerial-view-of-containers.jpg)]
+
+---
+
+name: toc-regression
+class: title
+
+Regression
+
+.nav[
+[Section précédente](#toc-classification)
+|
+[Retour table des matières](#toc-chapter-1)
+|
+[Section suivante](#toc-graph-analytics)
+]
+
+.debug[(automatically generated title slide)]
+
+---
+
+# Regression
+
+- Regression is a logical extension of classification. Rather than just predicting a single value from a set of values, regression is the act of predicting a real number (or continuous variable) from a set of features (represented as numbers).
+- Regression can be harder than classification because, from a mathematical perspective, there are an infinite number of possible output values. Furthermore, we aim to optimize some metric of error between the predicted and true value, as opposed to an accuracy rate.
+
+.debug[[spark/Spark_ML.md](https://github.com/RyaxTech/kube.training.git/tree/gh-pages//spark/Spark_ML.md)]
+---
+
+## Linear Regression
+
+- Linear regression assumes that a linear combination of your input features (the sum of each feature multiplied by a weight) results along with an amount of Gaussian error in the output. 
+- This linear assumption (along with Gaussian error) does not always hold true, but it does make for a simple, interpretable model that’s hard to overfit. Like logistic regression, Spark implements ElasticNet regularization for this, allowing you to mix L1 and L2 regularization.
+
+.debug[[spark/Spark_ML.md](https://github.com/RyaxTech/kube.training.git/tree/gh-pages//spark/Spark_ML.md)]
+---
+
+## Linear Regression
+
+.exercise[
+- Let's load some sample data:
+```bash
+df = spark.read.load("/data/regression") 
+```
+- Here’s a short example of using linear regression on our sample dataset
+```bash
+from pyspark.ml.regression import LinearRegression
+lr = LinearRegression().setMaxIter(10).setRegParam(0.3).setElasticNetParam(0.8)
+print lr.explainParams()
+lrModel = lr.fit(df)
+```
+]
+
+.debug[[spark/Spark_ML.md](https://github.com/RyaxTech/kube.training.git/tree/gh-pages//spark/Spark_ML.md)]
+---
+
+## Linear Regression Training Summary
+
+.exercise[
+
+- The summary method returns a summary object with several fields. 
+- Here are some of the attributes of the model summary for linear regression:
+```bash
+summary = lrModel.summary
+summary.residuals.show()
+print summary.totalIterations
+print summary.objectiveHistory
+print summary.rootMeanSquaredError
+print summary.r2
+```
+- The residuals are simply the weights for each of the features that we input into the model. 
+- The objective history shows how our training is going at every iteration. 
+- The root mean squared error is a measure of how well our line is fitting the data, determined by looking at the distance between each predicted value and the actual value in the data. 
+- The R-squared variable is a measure of the proportion of the variance of the predicted variable that is captured by the model.
+
+]
+
+
+
+
+
+
+
+
+.debug[[spark/Spark_ML.md](https://github.com/RyaxTech/kube.training.git/tree/gh-pages//spark/Spark_ML.md)]
+---
+
+class: pic
+
+.interstitial[![Image separating from the next chapter](https://gallant-turing-d0d520.netlify.com/containers/blue-containers.jpg)]
+
+---
+
+name: toc-graph-analytics
+class: title
+
+Graph Analytics
+
+.nav[
+[Section précédente](#toc-regression)
+|
+[Retour table des matières](#toc-chapter-2)
+|
+[Section suivante](#toc-deep-learning)
+]
+
+.debug[(automatically generated title slide)]
+
+---
+# Graph Analytics
+
+- Graphs are data structures composed of nodes, or vertices, which are arbitrary objects, and edges that define relationships between these nodes. 
+- Graph analytics is the process of analyzing these relationships. 
+- An example graph might be your friend group. In the context of graph analytics, each vertex or node would represent a person, and each edge would represent a relationship.
+- A graph can be undirected, when the edges do not have a specified “start” and “end” vertex or directed when they specify a start and end.
+
+.debug[[spark/Spark_Graph.md](https://github.com/RyaxTech/kube.training.git/tree/gh-pages//spark/Spark_Graph.md)]
+---
+
+## Graph Analytics
+
+- Edges and vertices in graphs can also have data associated with them. 
+- In our friend example, the weight of the edge might represent the intimacy between different friends; 
+  - acquaintances would have low-weight edges between them, 
+  - while married individuals would have edges with large weights. 
+- We could set this value by looking at communication frequency between nodes and weighting the edges accordingly. 
+- Each vertex (person) might also have data such as a name.
+- Graphs are a natural way of describing relationships and many different problem sets, and Spark provides several ways of working in this analytics paradigm.
+
+.debug[[spark/Spark_Graph.md](https://github.com/RyaxTech/kube.training.git/tree/gh-pages//spark/Spark_Graph.md)]
+---
+
+## Graph Analytics Use Cases
+
+- Some business use cases are:
+ - detecting credit card fraud, 
+ - motif finding, 
+ - determining importance of papers in bibliographic networks (i.e., which papers are most referenced), 
+ - and ranking web pages
+
+.debug[[spark/Spark_Graph.md](https://github.com/RyaxTech/kube.training.git/tree/gh-pages//spark/Spark_Graph.md)]
+---
+## Graph Analytics and Spark
+
+- Spark contains an RDD-based library for performing graph processing: GraphX. 
+- This provids a very low-level interface that is extremely powerful, but just like RDDs, isn’t easy to use or optimize. 
+- GraphX remains a core part of Spark. Companies continue to build production applications on top of it, and it still sees some minor feature development. 
+- The GraphX API is well documented simply because it hasn’t changed much since its creation. 
+- However, some of the developers of Spark (including some of the original authors of GraphX) have recently created a next-generation graph analytics library on Spark called: GraphFrames. 
+- GraphFrames extends GraphX to provide a DataFrame API and support for Spark’s different language bindings so that users of Python can take advantage of the scalability of the tool
+.debug[[spark/Spark_Graph.md](https://github.com/RyaxTech/kube.training.git/tree/gh-pages//spark/Spark_Graph.md)]
+---
+## Spark GraphFrames
+
+- GraphFrames is currently available as a Spark package, an external package that you need to load when you start up your Spark application, but may be merged into the core of Spark in the future.
+- There is some small overhead when using GraphFrames, but for the most part it tries to call down to GraphX where appropriate; and for most, the user experience gains greatly outweigh this minor overhead.
+.debug[[spark/Spark_Graph.md](https://github.com/RyaxTech/kube.training.git/tree/gh-pages//spark/Spark_Graph.md)]
+---
+## Spark GraphFrames vs Graph Databases
+
+- Spark is not a database. Spark is a distributed computation engine, but it does not store data long-term or perform transactions. 
+- You can build a graph computation on top of Spark, but that’s fundamentally different from a database. 
+- GraphFrames can scale to much larger workloads than many graph databases and performs well for analytics but does not support transactional processing and serving.
+.debug[[spark/Spark_Graph.md](https://github.com/RyaxTech/kube.training.git/tree/gh-pages//spark/Spark_Graph.md)]
+---
+## Exercise with Spark GraphFrames
+
+- Let's see how to use GraphFrames to perform graph analytics on Spark.
+- We are going to use publicly available bike data from the Bay Area Bike Share portal.
+.exercise[
+- To get set up, you’re going to need to point to the proper package. To do this from the command line, we need to start pyspark with the latest graphframes package
+- Once this is done let's load our data:
+```bash
+bikeStations = spark.read.option("header","true")\
+.csv("/data/bike-data/201508_station_data.csv")
+tripData = spark.read.option("header","true")\
+.csv("/data/bike-data/201508_trip_data.csv")
+```
+]
+.debug[[spark/Spark_Graph.md](https://github.com/RyaxTech/kube.training.git/tree/gh-pages//spark/Spark_Graph.md)]
+---
+## Building a Graph
+
+- The first step is to build the graph. To do this we need to define the vertices and edges, which are DataFrames with some specifically named columns. 
+- In our case, we’re creating a directed graph. This graph will point from the source to the location. In the context of this bike trip data, this will point from a trip’s starting location to a trip’s ending location. 
+- To define the graph, we use the naming conventions for columns presented in the GraphFrames library. In the vertices table we define our identifier as id (in our case this is of string type), and in the edges table we label each edge’s source vertex ID as src and the destination ID as dst:
+
+.exercise[
+```bash
+stationVertices = bikeStations.withColumnRenamed("name", "id").distinct()
+tripEdges = tripData\
+.withColumnRenamed("Start Station", "src")\
+.withColumnRenamed("End Station", "dst")
+```
+
+
+
+]
+.debug[[spark/Spark_Graph.md](https://github.com/RyaxTech/kube.training.git/tree/gh-pages//spark/Spark_Graph.md)]
+---
+
+## Build a graphframe object
+
+- We can now build a GraphFrame object, which represents our graph, from the vertex and edge DataFrames we have so far. 
+- We will also leverage caching because we’ll be accessing this data frequently in later queries:
+
+.exercise[
+```bash
+from graphframes import GraphFrame
+stationGraph = GraphFrame(stationVertices, tripEdges)
+stationGraph.cache()
+```
+- Now we can see the basic statistics about graph (and query our original DataFrame to ensure that we see the expected results):
+
+```bash
+print "Total Number of Stations: " + str(stationGraph.vertices.count())
+print "Total Number of Trips in Graph: " + str(stationGraph.edges.count())
+print "Total Number of Trips in Original Data: " + str(tripData.count())
+```
+]
+.debug[[spark/Spark_Graph.md](https://github.com/RyaxTech/kube.training.git/tree/gh-pages//spark/Spark_Graph.md)]
+---
+
+## Quering the graph
+
+- The most basic way of interacting with the graph is simply querying it, performing things like counting trips and filtering by given destinations. 
+- GraphFrames provides simple access to both vertices and edges as DataFrames. 
+- Note that our graph retained all the additional columns in the data in addition to IDs, sources, and destinations, so we can also query those if needed:
+.exercise[
+```bash
+from pyspark.sql.functions import desc
+stationGraph.edges.groupBy("src", "dst").count().orderBy(desc("count")).show(10)
+```
+- We can also filter by any valid DataFrame expression. 
+- Let's look at one specific station and the count of trips in and out of that station:
+```bash
+stationGraph.edges\
+.where("src = 'Townsend at 7th' OR dst = 'Townsend at 7th'")\
+.groupBy("src", "dst").count()\
+.orderBy(desc("count"))\
+.show(10)
+```
+
+]
+
+.debug[[spark/Spark_Graph.md](https://github.com/RyaxTech/kube.training.git/tree/gh-pages//spark/Spark_Graph.md)]
+---
+## Subgraphs
+
+- Subgraphs are just smaller graphs within the larger one. We saw how we can query a given set of edges and vertices. 
+- We can use this query ability to create subgraphs:
+.exercise[
+```bash
+townAnd7thEdges = stationGraph.edges\
+.where("src = 'Townsend at 7th' OR dst = 'Townsend at 7th'")
+subgraph = GraphFrame(stationGraph.vertices, townAnd7thEdges)
+```
+- We can then apply the following algorithms to either the original graph or the subgraph.
+]
+.debug[[spark/Spark_Graph.md](https://github.com/RyaxTech/kube.training.git/tree/gh-pages//spark/Spark_Graph.md)]
+---
+
+## Motif Finding
+
+- Motifs are a way of expresssing structural patterns in a graph. 
+- When we specify a motif, we are querying for patterns in the data instead of actual data. 
+- In GraphFrames, we specify our query in a domain-specific language similar to Neo4J’s Cypher language. 
+- This language lets us specify combinations of vertices and edges and assign then names. 
+- For example, if we want to specify that a given vertex a connects to another vertex b through an edge ab, we would specify (a)-[ab]->(b).
+- The names inside parentheses or brackets do not signify values but instead what the columns for matching vertices and edges should be named in the resulting DataFrame. 
+
+.debug[[spark/Spark_Graph.md](https://github.com/RyaxTech/kube.training.git/tree/gh-pages//spark/Spark_Graph.md)]
+---
+## Motif Example
+
+- Let’s perform a query on our bike data. In plain English, let’s find all the rides that form a “triangle” pattern between three stations. 
+- We express this with the following motif, using the find method to query our GraphFrame for that pattern. 
+  - (a) signifies the starting station, 
+  - and [ab] represents an edge from (a) to our next station (b). 
+  - We repeat this for stations (b) to (c) and then from (c) to (a)
+
+.exercise[
+```bash
+motifs = stationGraph.find("(a)-[ab]->(b); (b)-[bc]->(c); (c)-[ca]->(a)")
+```
+
+]
+
+.debug[[spark/Spark_Graph.md](https://github.com/RyaxTech/kube.training.git/tree/gh-pages//spark/Spark_Graph.md)]
+---
+
+## Motif Example
+
+- The DataFrame we get from running the previous query contains nested fields for vertices a, b, and c, as well as the respective edges. 
+- We can now query this as we would a DataFrame. For example, given a certain bike, what is the shortest trip the bike has taken from station a, to station b, to station c, and back to station a? 
+- The following logic will parse our timestamps, into Spark timestamps and then we’ll do comparisons to make sure that it’s the same bike, traveling from station to station, and that the start times for each trip are correct:
+.debug[[spark/Spark_Graph.md](https://github.com/RyaxTech/kube.training.git/tree/gh-pages//spark/Spark_Graph.md)]
+---
+
+## Motif Example
+
+.exercise[
+
+```bash
+from pyspark.sql.functions import expr
+motifs.selectExpr("*",
+"to_timestamp(ab.`Start Date`, 'MM/dd/yyyy HH:mm') as abStart",
+"to_timestamp(bc.`Start Date`, 'MM/dd/yyyy HH:mm') as bcStart",
+"to_timestamp(ca.`Start Date`, 'MM/dd/yyyy HH:mm') as caStart")\.where("ca.`Bike #` = bc.`Bike #`").where("ab.`Bike #` = bc.`Bike #`")\
+.where("a.id != b.id").where("b.id != c.id")\
+.where("abStart < bcStart").where("bcStart < caStart")\
+.orderBy(expr("cast(caStart as long) - cast(abStart as long)"))\
+.selectExpr("a.id", "b.id", "c.id", "ab.`Start Date`", "ca.`End Date`")
+.limit(1).show(1, False)
+```
+]
+
+.debug[[spark/Spark_Graph.md](https://github.com/RyaxTech/kube.training.git/tree/gh-pages//spark/Spark_Graph.md)]
+---
+## Motif Example
+
+- We should see that the fastest trip is approximately 20 minutes. 
+- Note also that we had to filter the triangles returned by our motif query in this example. 
+- In general, different vertex IDs used in the query will not be forced to match distinct vertices, so you should perform this type of filtering if you want distinct vertices. 
+- One of the most powerful features of GraphFrames is that you can combine motif finding with DataFarme queries over the resulting tables to further narrow down, sort, or aggregate the patterns found.
+
+.debug[[spark/Spark_Graph.md](https://github.com/RyaxTech/kube.training.git/tree/gh-pages//spark/Spark_Graph.md)]
+---
+
+## Graph Algorithms
+
+- A graph is just a logical representation of data. Graph theory provides numerous algorithms for analyzing data in this format, and GraphFrames allows us to leverage many algorithms out of the box.
+- Development continues and new algorithms are added to GraphFrames, so this list will most likely continue to grow.
+- Here are some graph algorithms that currently exist in GraphFrames:
+  - PageRank
+  - In-Degree and Out-Degree Metrics
+  - Breadth-First Search
+  - Connected Components
+  - Strongly Connected Components
+.debug[[spark/Spark_Graph.md](https://github.com/RyaxTech/kube.training.git/tree/gh-pages//spark/Spark_Graph.md)]
+---
+
+## PageRank
+
+- PageRank is one of the most productive graph algorithms. 
+- Created by Larry Page, cofounder of Google, as a research project for how to rank web pages. 
+- In few words PageRank works by counting the number and quality of links to a page to determine a rough estimate of how important the website is. 
+- The underlying assumption is that more important websites are likely to receive more links from other websites.
+
+- PageRank generalizes quite well outside of the web domain. We can apply this right to our own data and get a sense for important bike stations (specifically, those that receive a lot of bike traffic). 
+- In this example, important bike stations will be assigned large PageRank values:
+.debug[[spark/Spark_Graph.md](https://github.com/RyaxTech/kube.training.git/tree/gh-pages//spark/Spark_Graph.md)]
+---
+## PageRank Example
+
+.exercise[
+```bash
+from pyspark.sql.functions import desc
+ranks = stationGraph.pageRank(resetProbability=0.15, maxIter=10)
+ranks.vertices.orderBy(desc("pagerank")).select("id", "pagerank").show(10)
+```
+- Most algorithms in GraphFrames are accessed as methods which take parameters (e.g., resetProbability in this PageRank example). 
+- Most algorithms return either a new GraphFrame or a single DataFrame. 
+- The results of the algorithm are stored as one or more columns in the GraphFrame’s vertices and/or edges or the DataFrame. 
+- For PageRank, the algorithm returns a GraphFrame, and we can extract the estimated PageRank values for each vertex from the new pagerank column.
+
+]
+.debug[[spark/Spark_Graph.md](https://github.com/RyaxTech/kube.training.git/tree/gh-pages//spark/Spark_Graph.md)]
+---
+## In-Degree and Out-Degree Metrics
+
+- Our graph is a directed graph. This is due to the bike trips being directional, starting in one location and ending in another. 
+- One common task is to count the number of trips into or out of a given station.
+- To measure trips in and out of stations, we will use the in-degree and out-degree metric
+
+- This is particularly applicable in the context of social networking because certain users may have many more inbound connections (i.e., followers) than outbound connections (i.e., people they follow).
+- Using the following query, you can find interesting people in the social network who might have more influence than others. 
+
+- GraphFrames provides a simple way to query our graph for this information
+
+.debug[[spark/Spark_Graph.md](https://github.com/RyaxTech/kube.training.git/tree/gh-pages//spark/Spark_Graph.md)]
+---
+
+## In-Degree and Out-Degree Metrics Example
+
+.exercise[
+- Let's query the in-degrees:
+```bash
+inDeg = stationGraph.inDegrees
+inDeg.orderBy(desc("inDegree")).show(5, False)
+```
+- and the out-degrees in the same way:
+```bash
+outDeg = stationGraph.outDegrees
+outDeg.orderBy(desc("outDegree")).show(5, False)
+```
+
+]
+.debug[[spark/Spark_Graph.md](https://github.com/RyaxTech/kube.training.git/tree/gh-pages//spark/Spark_Graph.md)]
+---
+
+## In-Degree and Out-Degree Metrics Example
+
+- The ratio of these two values is an interesting metric to look at. A higher ratio value will tell us
+where a large number of trips end (but rarely begin), while a lower value tells us where trips often
+begin (but infrequently end)
+
+.exercise[
+```bash
+degreeRatio = inDeg.join(outDeg, "id")\
+.selectExpr("id", "double(inDegree)/double(outDegree) as degreeRatio")
+degreeRatio.orderBy(desc("degreeRatio")).show(10, False)
+degreeRatio.orderBy("degreeRatio").show(10, False)
+```
+
+]
+.debug[[spark/Spark_Graph.md](https://github.com/RyaxTech/kube.training.git/tree/gh-pages//spark/Spark_Graph.md)]
+---
+
+## Breadth-First Search
+
+- Breadth-first search will search our graph for how to connect two sets of nodes, based on the edges in the graph. 
+- In our context, we might want to do this to find the shortest paths to different stations, but the algorithm also works for sets of nodes specified through a SQL expression. 
+- We can specify the maximum of edges to follow with the maxPathLength, and we can also specify an edgeFilter to filter out edges that do not meet a requirement, like trips during nonbusiness hours.
+
+.debug[[spark/Spark_Graph.md](https://github.com/RyaxTech/kube.training.git/tree/gh-pages//spark/Spark_Graph.md)]
+---
+
+## Breadth-First Search Example
+
+
+.exercise[
+- We initially choose two fairly close stations so that this does not run too long. 
+```bash
+stationGraph.bfs(fromExpr="id = 'Townsend at 7th'",
+toExpr="id = 'Spear at Folsom'", maxPathLength=2).show(10)
+```
+- However, we can do interesting graph traversals when we have sparse graphs that have distant connections.
+- Feel free to play around with the stations (especially those in other cities) to see if you can get distant stations to connect
+
+
+]
+.debug[[spark/Spark_Graph.md](https://github.com/RyaxTech/kube.training.git/tree/gh-pages//spark/Spark_Graph.md)]
+---
+## Graphframes and advanced tasks
+
+- This was a short selection of some of the features of GraphFrames. 
+- The GraphFrames library also includes features such as writing your own algorithms via a message-passing interface, triangle counting, and converting to and from GraphX. 
+- For more information look in the [GraphFrames documentation](https://docs.databricks.com/spark/latest/graph-analysis/graphframes/index.html).
+
+.debug[[spark/Spark_Graph.md](https://github.com/RyaxTech/kube.training.git/tree/gh-pages//spark/Spark_Graph.md)]
+---
+
+class: pic
+
+.interstitial[![Image separating from the next chapter](https://gallant-turing-d0d520.netlify.com/containers/chinook-helicopter-container.jpg)]
+
+---
+
+name: toc-deep-learning
+class: title
+
+Deep Learning
+
+.nav[
+[Section précédente](#toc-graph-analytics)
+|
+[Retour table des matières](#toc-chapter-2)
+|
+[Section suivante](#toc-resilient-distributed-datasets-rdd)
+]
+
+.debug[(automatically generated title slide)]
+
+---
+
+# Deep Learning
+
+- Deep learning is one of the most exciting areas of development around Spark 
+- It can be used to solve several difficult machine learning problems, especially those involving unstructured data such as images, audio, and text.
+
+.debug[[spark/Spark_Graph.md](https://github.com/RyaxTech/kube.training.git/tree/gh-pages//spark/Spark_Graph.md)]
+---
+
+## Deep Learning Basics
+
+- Before we define deep learning, we must first define neural networks. 
+- A neural network is a graph of nodes with weights and activation functions. 
+- These nodes are organized into layers that are stacked on top of one another. 
+- Each layer is connected, either partially or completely, to the previous layer in the network. 
+- By stacking layers one after the other, these simple functions can learn to recognize more and more complex signals in the input: 
+  - simple lines with one layer, 
+  - circles and squares with the next layer, 
+  - complex textures in another, 
+  - and finally the full object or output you hope to identify. 
+
+.debug[[spark/Spark_Graph.md](https://github.com/RyaxTech/kube.training.git/tree/gh-pages//spark/Spark_Graph.md)]
+---
+
+## Deep Learning Basics
+
+- The goal is to train the network to associate certain inputs with certain outputs by tuning the weights associated with each connection and the values of each node in the network.
+- Deep learning, or deep neural networks, stack many of these layers together into various different
+architectures.
+- A combination of much larger datasets, powerful hardware (clusters and GPUs), and new training algorithms have enabled training much larger neural networks that outperform previous approaches in many machine learning tasks. 
+- Deep neural networks have now become the standard in computer vision, speech processing, and some natural language tasks, where they often “learn” better features than previous hand-tuned models.
+
+.debug[[spark/Spark_Graph.md](https://github.com/RyaxTech/kube.training.git/tree/gh-pages//spark/Spark_Graph.md)]
+---
+
+## Deep Learning Basics
+
+- Nowadays, the most popular way to use neural networks or deep learning is to use a framework, implemented by a research institute or corporation such as TensorFlow, MXNet, Keras, and PyTorch. 
+- Apache Spark’s strength as a big data and parallel computing system makes it a natural framework to use with deep learning.
+
+.debug[[spark/Spark_Graph.md](https://github.com/RyaxTech/kube.training.git/tree/gh-pages//spark/Spark_Graph.md)]
+---
+
+## Usage of Deep Learning in Spark
+
+- There are three major ways to use deep learning in Spark:
+  - Inference
+  - Featurization and transfer learning
+  - Model training
+- In all three cases, the deep learning code typically runs as part of a larger application that includes Extract, Transform, and Load (ETL) steps to parse the input data, I/O from various sources, and potentially batch or streaming inference. 
+- For these other parts of the application, you can simply use the DataFrame, RDD, and MLlib APIs. 
+- One of Spark’s strengths is the ease of combining these steps into a single parallel workflow.
+
+.debug[[spark/Spark_Graph.md](https://github.com/RyaxTech/kube.training.git/tree/gh-pages//spark/Spark_Graph.md)]
+---
+
+## Deep Learning Libraries
+
+- Here are some of the most popular libraries available for deep learning in Spark.
+- The list is not exhaustive and there currently is a large movement in this area.
+  - [TensorFrames](https://github.com/databricks/tensorframes) is an inference and transfer learning-oriented library that makes it easy to pass data
+between Spark DataFrames and TensorFlow.
+  - [BigDL](https://github.com/intel-analytics/BigDL) aims to support distributed training of large models as well as fast applications of these models using inference.
+  - [TensorFlowOnSpark](https://github.com/yahoo/TensorFlowOnSpark) is a widely used library that can train TensorFlow models in a parallel fashion on Spark clusters.
+  - [DeepLearning4j](https://deeplearning4j.org/spark) is an open-source, distributed deep learning project in Java and Scala that provides both single-node and distributed training options.
+  - [Sparkling Water](https://github.com/h2oai/sparkling-water) integrates H2O's fast scalable machine learning engine with Spark.
+  - [Deep Learning Pipelines](https://github.com/databricks/spark-deep-learning) is an open source package from Databricks that integrates deep learning functionality into Spark’s ML Pipelines API.
+
+.debug[[spark/Spark_Graph.md](https://github.com/RyaxTech/kube.training.git/tree/gh-pages//spark/Spark_Graph.md)]
+---
+
+## Deep Learning Pipelines
+
+- Deep Learning Pipelines focuses on two goals:
+  - To incorporate Tensorflow and Keras frameworks into standard Spark APIs (such as ML Pipelines and Spark SQL) to make them very easy to use
+  - Distributing all computation by default
+
+- For example, Deep Learning Pipelines provides a DeepImageFeaturizer class that acts as a transformer in the Spark ML Pipeline API, allowing you to build a transfer learning pipeline in just a few lines of code (e.g., by adding a perceptron or logistic regression classifier on top). 
+- Likewise, the library supports parallel grid search over multiple model parameters using MLlib’s grid search and cross-validation API. 
+- Finally, users can export an ML model as a Spark SQL user-defined function and make it available to analysts using SQL or streaming applications.
+
+.debug[[spark/Spark_Graph.md](https://github.com/RyaxTech/kube.training.git/tree/gh-pages//spark/Spark_Graph.md)]
+---
+
+## Deep Learning Pipelines
+
+- Deep Learning Pipelines is probably the only approach aiming for the closest integration with MLlib and DataFrames. 
+- This library aims to improve Spark’s support for image and tensor data, and to make all deep learning functionality available in the ML Pipeline API. 
+- Its friendly API makes it the simplest way to run deep learning on Spark today.
+
+.debug[[spark/Spark_Graph.md](https://github.com/RyaxTech/kube.training.git/tree/gh-pages//spark/Spark_Graph.md)]
+---
+
+## Deep Learning Pipelines exercise
+
+- A rather thorough example exercise to get to know the basics of Deep Learning Pipelines is given in its official documentation page.
+- Access the content of the exercise on this link: [Deep Learning Pipelines exercise](https://docs.databricks.com/applications/deep-learning/deep-learning-pipelines.html)
+- Copy the needed data on your cluster and deploy the different steps of the exercise in pyspark environment on your Spark cluster.
+
+.debug[[spark/Spark_Graph.md](https://github.com/RyaxTech/kube.training.git/tree/gh-pages//spark/Spark_Graph.md)]
+---
+
+## Sparkling Water exercises
+
+- Various examples exist in the official github page of sparkling water.
+- Access the examples from here: [Sparkling Water exercises](https://github.com/h2oai/sparkling-water/tree/master/examples)
+
+
+
+
+
+
+.debug[[spark/Spark_Graph.md](https://github.com/RyaxTech/kube.training.git/tree/gh-pages//spark/Spark_Graph.md)]
+---
+
+class: pic
+
+.interstitial[![Image separating from the next chapter](https://gallant-turing-d0d520.netlify.com/containers/container-cranes.jpg)]
+
+---
+
+name: toc-resilient-distributed-datasets-rdd
+class: title
+
+Resilient Distributed Datasets (RDD)
+
+.nav[
+[Section précédente](#toc-deep-learning)
+|
+[Retour table des matières](#toc-chapter-3)
+|
+[Section suivante](#toc-interoperating-between-dataframes-and-rdds)
+]
+
+.debug[(automatically generated title slide)]
+
+---
+# Resilient Distributed Datasets (RDD)
+
+- We have previously seen Spark’s Structured APIs (Dataframes, SQL and Datasets). In general you should favor these APIs in almost all scenarios. However, there are times when higher-level manipulation will not meet the business or engineering problem you are trying to solve. 
+-For those cases, you might need to use Spark’s lower-level APIs, such as the Resilient Distributed Dataset (RDD)
+
+.debug[[spark/Spark_RDD.md](https://github.com/RyaxTech/kube.training.git/tree/gh-pages//spark/Spark_RDD.md)]
+---
+
+## Low-Level APIs
+
+- There are two sets of low-level APIs: there is one for manipulating distributed data (RDDs), and another for distributing and manipulating distributed shared variables (broadcast variables and accumulators).
+
+- You should generally use the lower-level APIs in three situations:
+  - You need some functionality that you cannot find in the higher-level APIs; for example, if you need very tight control over physical data placement across the cluster.
+  - You need to maintain some legacy codebase written using RDDs. 
+  - You need to do some custom shared variable manipulation.
+- When you’re calling a DataFrame transformation, it actually just becomes a set of RDD transformations. This understanding can make your task easier as you begin debugging more and more complex workloads.
+
+.debug[[spark/Spark_RDD.md](https://github.com/RyaxTech/kube.training.git/tree/gh-pages//spark/Spark_RDD.md)]
+---
+
+## About RDDs
+
+- In short, an RDD represents an immutable, partitioned collection of records that can be operated on in parallel. 
+- Unlike DataFrames though, where each record is a structured row containing fields with a known schema, in RDDs the records are just Java, Scala, or Python objects of the programmer’s choosing. 
+
+- RDDs give you complete control because every record in an RDD is a just a Java or Python object. You can store anything you want in these objects, in any format you want. - This gives you great power, but not without potential issues. 
+
+- Every manipulation and interaction between values must be defined by hand, meaning that you must “reinvent the wheel” for whatever task you are trying to carry out.
+- Optimizations like reordering filters and aggregations that occur automatically in Spark SQL need to be implemented by hand with RDDs.
+
+.debug[[spark/Spark_RDD.md](https://github.com/RyaxTech/kube.training.git/tree/gh-pages//spark/Spark_RDD.md)]
+---
+
+## Types and properties of RDDs
+
+- From the user point of view there are basically two usable types of RDDs: the “generic” RDD type or a key-value RDD that provides additional functions, such as aggregating by key.
+
+- Internally, each RDD is characterized by five main properties:
+  - A list of partitions
+  - A function for computing each split
+  - A list of dependencies on other RDDs
+  - Optionally, a Partitioner for key-value RDDs (e.g., to say that the RDD is hashpartitioned)
+  -  Optionally, a list of preferred locations on which to compute each split (e.g., block locations for a Hadoop Distributed File System [HDFS] file)
+
+.debug[[spark/Spark_RDD.md](https://github.com/RyaxTech/kube.training.git/tree/gh-pages//spark/Spark_RDD.md)]
+---
+
+## Internal functions of RDDs
+
+- RDDs follow the exact same Spark programming paradigms with Structured APIs. They provide transformations, which evaluate lazily, and actions, which evaluate eagerly, to manipulate data in a distributed fashion. These work the same way as transformations and actions on DataFrames and Datasets. 
+
+- However, there is no concept of “rows” in RDDs; individual records are just raw Java/Scala/Python objects, and you manipulate those manually instead of tapping into the repository of functions that you have in the structured APIs.
+
+.debug[[spark/Spark_RDD.md](https://github.com/RyaxTech/kube.training.git/tree/gh-pages//spark/Spark_RDD.md)]
+---
+
+## Internal functions of RDDs
+
+- The RDD APIs are available in Python as well as Scala and Java. For Scala and Java, the performance is for the most part the same, the large costs incurred in manipulating the raw objects.
+
+- Python, however, can lose a substantial amount of performance when using RDDs. Running Python RDDs equates to running Python user-defined functions (UDFs) row by row. 
+  - The data is serialized to the Python process, operate on it in Python, and then serialize it back to the Java Virtual Machine (JVM). 
+  - This causes a high overhead for Python RDD manipulations.
+  - Especially in Python it's better to build on the Structured APIs and only dropping down to RDDs if absolutely necessary.
+
+
+.debug[[spark/Spark_RDD.md](https://github.com/RyaxTech/kube.training.git/tree/gh-pages//spark/Spark_RDD.md)]
+---
+
+class: pic
+
+.interstitial[![Image separating from the next chapter](https://gallant-turing-d0d520.netlify.com/containers/container-housing.jpg)]
+
+---
+
+name: toc-interoperating-between-dataframes-and-rdds
+class: title
+
+Interoperating Between DataFrames and RDDs
+
+.nav[
+[Section précédente](#toc-resilient-distributed-datasets-rdd)
+|
+[Retour table des matières](#toc-chapter-3)
+|
+[Section suivante](#toc-manipulating-rdds)
+]
+
+.debug[(automatically generated title slide)]
+
+---
+
+# Interoperating Between DataFrames and RDDs
+
+- One of the easiest ways to get RDDs is from an existing DataFrame or Dataset. Converting these to an RDD is simple: just use the rdd method on any of these data types. 
+```bash
+spark.range(10).rdd
+```
+- To operate on this data, you will need to convert this Row object to the correct data type or extract values out of it, as shown in the example that follows. This is now an RDD of type Row:
+```bash
+spark.range(10).toDF("id").rdd.map(lambda row: row[0])
+```
+.debug[[spark/Spark_RDD.md](https://github.com/RyaxTech/kube.training.git/tree/gh-pages//spark/Spark_RDD.md)]
+---
+## Interoperating Between DataFrames and RDDs
+
+- You can use the same methodology to create a DataFrame from an RDD. All you need to do is call the toDF method on the RDD:
+```bash
+spark.range(10).rdd.toDF()
+```
+- This command creates an RDD of type Row. This row is the internal Catalyst format that Spark uses to represent data in the Structured APIs. This functionality makes it possible for you to jump between the Structured and low-level APIs as it suits your use case.
+
+.debug[[spark/Spark_RDD.md](https://github.com/RyaxTech/kube.training.git/tree/gh-pages//spark/Spark_RDD.md)]
+---
+
+## Creating RDDs From Local Collection
+
+- To create an RDD from a collection, you will need to use the `parallelize` method on a `SparkContext` (within a SparkSession). This turns a single node collection into a parallel collection. When creating this parallel collection, you can also explicitly state the number of partitions into which you would like to distribute this array. In this case, we are creating two partitions:
+```bash
+myCollection = "Apache Spark is a unified computing engine for Data Processing".split(" ")
+words = spark.sparkContext.parallelize(myCollection, 2)
+```
+- An additional feature is that you can then name this RDD to show up in the Spark UI according to a given name:
+```bash
+words.setName("myWords")
+words.name() # myWords
+```
+.debug[[spark/Spark_RDD.md](https://github.com/RyaxTech/kube.training.git/tree/gh-pages//spark/Spark_RDD.md)]
+---
+
+class: pic
+
+.interstitial[![Image separating from the next chapter](https://gallant-turing-d0d520.netlify.com/containers/containers-by-the-water.jpg)]
+
+---
+
+name: toc-manipulating-rdds
+class: title
+
+Manipulating RDDs
+
+.nav[
+[Section précédente](#toc-interoperating-between-dataframes-and-rdds)
+|
+[Retour table des matières](#toc-chapter-3)
+|
+[Section suivante](#toc-advanced-rdds)
+]
+
+.debug[(automatically generated title slide)]
+
+---
+
+# Manipulating RDDs
+
+- We manipulate RDDs in much the same way that we manipulate DataFrames. The core difference being that you manipulate raw Java or Scala objects instead of Spark types. There is also a dearth of “helper” methods or functions that you can draw upon to simplify calculations. Rather, you must define each filter, map functions, aggregation, and any other manipulation that you want as a function.
+
+- To demonstrate some data manipulation, let’s use the simple RDD (words) we created previously to define some more details.
+
+.debug[[spark/Spark_RDD.md](https://github.com/RyaxTech/kube.training.git/tree/gh-pages//spark/Spark_RDD.md)]
+---
+## Transformations on RDDs - distinct and filter
+
+
+- Exactly as for Dataframes we specify transformations on one RDD to create another. Hence, we define an RDD as a dependency to another along with some manipulation of the data contained in that RDD.
+
+.exercise[
+- distint: A distinct method call on an RDD removes duplicates from the RDD:
+```bash 
+words.distinct().count() # The result should be 10
+```
+
+- filter: Filtering is equivalent to creating a SQL-like where clause. For example filter the RDD to keep only the words that begin with the letter “S”:
+
+```bash
+def startsWithS(individual):
+  return individual.startswith("S")
+
+words.filter(lambda word: startsWithS(word)).collect() # This should return Spark
+```
+]
+
+.debug[[spark/Spark_RDD.md](https://github.com/RyaxTech/kube.training.git/tree/gh-pages//spark/Spark_RDD.md)]
+---
+
+## Transformations on RDDs - map
+
+.exercise[
+- map: 
+Filtering is a simple transformation, but sometimes you need to map one value to another value. It is applied, record by record.
+Let’s perform something similar to what we just did. In this example, we’ll map the current word tothe word, its starting letter, and whether the word begins with “S.”
+Notice in this instance that we define our functions completely inline using the relevant lambda syntax:
+
+```bash
+words2 = words.map(lambda word: (word, word[0], word.startswith("S")))
+```
+- You can subsequently filter on this by selecting the relevant Boolean value in a new function:
+```bash
+words2.filter(lambda record: record[2]).take(5)
+```
+- This returns a tuple of “Spark,” “S,” and “true” 
+]
+
+.debug[[spark/Spark_RDD.md](https://github.com/RyaxTech/kube.training.git/tree/gh-pages//spark/Spark_RDD.md)]
+---
+
+## Transformations on RDDs - flatmap
+
+.exercise[
+- flatMap: It provides a simple extension of the map function. Sometimes, each current row should return multiple rows, instead. For example, you might want to take your set of words and flatMap it into a set of characters. Because each word has multiple characters, you should use flatMap to expand it. flatMap requires that the ouput of the map function be an iterable that can be expanded:
+```bash
+words.flatMap(lambda word: list(word)).take(5)
+```
+- This yields S, p, a, r, k.
+]
+
+.debug[[spark/Spark_RDD.md](https://github.com/RyaxTech/kube.training.git/tree/gh-pages//spark/Spark_RDD.md)]
+---
+## Transofrmations on RDDs - sort
+
+.exercise[
+- sort: To sort an RDD you must use the `sortBy` method, and just like any other RDD operation, you do this by specifying a function to extract a value from the objects in your RDDs and then sort based on that.
+- For instance, the following example sorts by word length from longest to shortest:
+```bash
+words.sortBy(lambda word: len(word) * -1).take(2)
+```
+]
+
+.debug[[spark/Spark_RDD.md](https://github.com/RyaxTech/kube.training.git/tree/gh-pages//spark/Spark_RDD.md)]
+---
+
+## Actions for RDDs - first, max/min, take
+
+- Just as we do with DataFrames and Datasets, we specify actions to kick off our specified transformations. Actions either collect data to the driver or write to an external data source.
+
+.exercise[
+
+- first: The first method returns the first value in the dataset:
+```bash
+words.first()
+```
+- max and min: They return the maximum and minimum values, respectively:
+```bash
+spark.sparkContext.parallelize(1 to 20).max()
+spark.sparkContext.parallelize(1 to 20).min()
+```
+- take and its derivative methods (takeOrdered, top, etc) take a number of values from your RDD. This works by first scanning one partition and then using the results from that partition to estimate the number of additional partitions needed to satisfy the limit.
+```bash
+words.take(5)
+words.takeOrdered(5)
+words.top(5)
+```
+
+]
+
+.debug[[spark/Spark_RDD.md](https://github.com/RyaxTech/kube.training.git/tree/gh-pages//spark/Spark_RDD.md)]
+---
+
+## Actions for RDDs - reduce
+
+.exercise[
+- You can use the reduce method to specify a function to “reduce” an RDD of any kind of value to one value. For instance, given a set of numbers, you can reduce this to its sum by specifying a function that takes as input two values and reduces them into one. 
+```bash
+spark.sparkContext.parallelize(range(1, 21)).reduce(lambda x, y: x + y) # 210
+```
+]
+
+.debug[[spark/Spark_RDD.md](https://github.com/RyaxTech/kube.training.git/tree/gh-pages//spark/Spark_RDD.md)]
+---
+
+
+
+## Saving Files from RDDs
+
+- Saving files means writing to plain-text files. With RDDs, you cannot actually “save” to a data source in the conventional sense. You must iterate over the partitions in order to save the contents of each partition to some external database. This is a low-level approach that reveals the underlying operation that is being performed in the higher-level APIs. Spark will take each partition, and write that out to the destination.
+- saveAsTextFile: To save to a text file, you just specify a path and optionally a compression codec
+```bash
+words.saveAsTextFile("file:/tmp/bookTitle")
+```
+- saveAsObjectFile method can explicitly write key–value pairs on sequenceFile 
+```bash
+words.saveAsObjectFile("/tmp/my/sequenceFilePath")
+```
+.debug[[spark/Spark_RDD.md](https://github.com/RyaxTech/kube.training.git/tree/gh-pages//spark/Spark_RDD.md)]
+---
+
+## Caching and Checkpointing
+
+- Caching for RDDs works similarly as with Dataframes. It is possible to either cache or persist an RDD. By default, cache and persist only handle data in memory. For example:
+```bash
+words.cache()
+```
+- One feature not available in the DataFrame API is the concept of checkpointing. Checkpointing is the act of saving an RDD to disk so that future references to this RDD point to those intermediate partitions on disk rather than recomputing the RDD from its original source. This is similar to caching except that it’s not stored in memory, only disk. This can be helpful when performing iterative computation, similar to the use cases for caching:
+  ```bash
+  spark.sparkContext.setCheckpointDir("/some/path/for/checkpointing")
+  words.checkpoint()
+  ```
+- Now, when we reference this RDD, it will derive from the checkpoint instead of the source data. This can be a helpful optimization.
+
+.debug[[spark/Spark_RDD.md](https://github.com/RyaxTech/kube.training.git/tree/gh-pages//spark/Spark_RDD.md)]
+---
+
+## Pipe RDDs to System Commands
+ 
+- The pipe method is probably one of Spark’s more interesting methods. With pipe, you can return an RDD created by piping elements to a forked external process. The resulting RDD is computed by executing the given process once per partition. All elements of each input partition are written to a process’s stdin as lines of input separated by a newline. The resulting partition consists of the process’s stdout output, with each line of stdout resulting in one element of the output partition. 
+- We can use a simple example and pipe each partition to the command wc. Each row will be passed in as a new line, so if we perform a line count, we will get the number of lines, one per partition:
+```bash
+words.pipe("wc -l").collect()
+```
+
+.debug[[spark/Spark_RDD.md](https://github.com/RyaxTech/kube.training.git/tree/gh-pages//spark/Spark_RDD.md)]
+---
+
+## mapPartitions, foreachPartition and glom
+
+- Physically on the cluster we operate on each partition individually (and not a specific row). A simple example creates the value “1” for every partition in our data, and the sum of the following expression will count the number of partitions we have:
+```bash
+words.mapPartitions(lambda part: [1]).sum() # 2
+```
+- foreachPartition simply iterates over all the partitions of the data. The difference is that the function has no return value.
+- glom is an interesting function that takes every partition in your dataset and converts them to arrays.
+```bash
+spark.sparkContext.parallelize(["Hello", "World"], 2).glom().collect()
+```
+.debug[[spark/Spark_RDD.md](https://github.com/RyaxTech/kube.training.git/tree/gh-pages//spark/Spark_RDD.md)]
+---
+
+class: pic
+
+.interstitial[![Image separating from the next chapter](https://gallant-turing-d0d520.netlify.com/containers/distillery-containers.jpg)]
+
+---
+
+name: toc-advanced-rdds
+class: title
+
+Advanced RDDs
+
+.nav[
+[Section précédente](#toc-manipulating-rdds)
+|
+[Retour table des matières](#toc-chapter-3)
+|
+[Section suivante](#toc-)
+]
+
+.debug[(automatically generated title slide)]
+
+---
+
+# Advanced RDDs
+
+- We will discuss about the advanced RDD operations and focuses on key–value RDDs, a powerful abstraction for manipulating data. 
+- We also touch on some custom partitioning function, which allows us to control exactly how data is laid out on the cluster and manipulate that individual partition accordingly. 
+- We also talk about RDD joins
+- For the exercises we will use the same dataset as previously 
+```bash
+myCollection = "Spark The Definitive Guide : Big Data Processing Made Simple"\
+.split(" ")
+words = spark.sparkContext.parallelize(myCollection, 2)
+```
+.debug[[spark/Spark_RDD.md](https://github.com/RyaxTech/kube.training.git/tree/gh-pages//spark/Spark_RDD.md)]
+---
+
+## Key-Value RDDs
+
+- There are many methods on RDDs that require you to put your data in a key–value format. A hint that this is required is that the method will include <some-operation>ByKey
+- Whenever you see ByKey in a method name, it means that you can perform this only on a PairRDD type. The easiest way is to just map over your current RDD to a basic key–value structure. This means having two values in each record of your RDD:
+
+```bash
+words.map(lambda word: (word.lower(), 1))
+```
+- you can also use the keyBy function to achieve the same result by specifying a function that creates the key from your current value. 
+- In this case, you are keying by the first letter in the word. Spark then keeps the record as the value for the keyed RDD:
+```bash
+keyword = words.keyBy(lambda word: word.lower()[0])
+```
+.debug[[spark/Spark_RDD.md](https://github.com/RyaxTech/kube.training.git/tree/gh-pages//spark/Spark_RDD.md)]
+---
+
+## Key-Value RDDs Mapping over Values
+
+- After you have a set of key–value pairs, you can begin manipulating them as such. If we have a tuple, Spark will assume that the first element is the key, and the second is the value. When in this format, you can explicitly choose to map-over the values (and ignore the individual keys). 
+```bash
+keyword.mapValues(lambda word: word.upper()).collect()
+```
+- We can also use flatmap
+```bash
+keyword.flatMapValues(lambda word: word.upper()).collect()
+```
+.debug[[spark/Spark_RDD.md](https://github.com/RyaxTech/kube.training.git/tree/gh-pages//spark/Spark_RDD.md)]
+---
+
+## Extracting Keys and Values
+- When we are in the key–value pair format, we can also extract the specific keys or values by using the following methods:
+```bash
+keyword.keys().collect()
+keyword.values().collect()
+```
+
+
+
+
+.debug[[spark/Spark_RDD.md](https://github.com/RyaxTech/kube.training.git/tree/gh-pages//spark/Spark_RDD.md)]</textarea>
+    <script src="remark.min.js" type="text/javascript">
+    </script>
+    <script type="text/javascript">
+      var slideshow = remark.create({
+        ratio: '16:9',
+        highlightSpans: true,
+        excludedClasses: ["self-paced"]
+      });
+    </script>
+    
+    <!-- 
+    These two scripts will be available only when loading the
+    content using the pub/sub server. Otherwise, they'll just
+    404 and that's OK.
+    -->
+    <script src="/socket.io/socket.io.js">
+    </script>
+    <script src="/remote.js">
+    </script>
+
+  </body>
+</html>
