@@ -2,11 +2,11 @@
     background-repeat: no-repeat;
     background-position: 99% -3%;
     background-size: 8%;
-    background-image: url(images/plb.jpeg);
+/*     background-image: url(images/plb.jpeg); */
 }
 
 div.extra-details:not(.pic) {
-  background-image: url("images/extra-details.png"), url(images/plb.jpeg);
+/*   background-image: url("images/extra-details.png"), url(images/plb.jpeg); */
   background-position: 0.5% 1%, 99% -3%;
   background-size: 4%, 8%;
 }
@@ -14,4 +14,8 @@ div.extra-details:not(.pic) {
 .remark-slide-content:not(.pic) div.remark-slide-number {
 	top: 16px;
 	right: 112px
+}
+
+.debug {
+    display:none;
 }

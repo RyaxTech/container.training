@@ -11,7 +11,7 @@ exclude:
 
 chapters:
 - common/title_fr.md
-- logistics.md
+- logistics_david.md
 - common/about-slides_fr.md
   #- common/sampleapp.md
   #- common/composescale.md

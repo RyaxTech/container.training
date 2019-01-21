@@ -19,8 +19,8 @@ chapters:
   #- kube/intro.md
   #- common/about-slides.md
 - common/toc.md
-- - spark/Spark_clustering.md
-- - spark/spark_cloud.md
-- - spark/Spark_streaming-PE.md  
-- - spark/spark_kubernetes-PE.md  
+#- - spark/Spark_clustering.md
+#- - spark/spark_cloud.md
+#- - spark/Spark_streaming-PE.md  
+#- - spark/spark_kubernetes-PE.md  
   #- - spark/Spark_RDD.md

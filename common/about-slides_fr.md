@@ -1,8 +1,8 @@
 ## Les slides de la formation
 
-Tout le contenu est disponible dans un depot Github:
+<!-- Tout le contenu est disponible dans un depot Github: -->
 
-  https://github.com/RyaxTech/kube.training
+<!--   https://github.com/RyaxTech/kube.training -->
 
 - Le contenu est basé sur les slides écrites initiallement par [Jérôme Petazzoni](https://twitter.com/jpetazzo) pour supporter de workshops et tutoriels autour des Conteneurs et de Kubernetes. 
 

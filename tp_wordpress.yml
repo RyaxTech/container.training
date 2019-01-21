@@ -1,0 +1,11 @@
+title: |
+    Kubernetes
+    TP Wordpress
+
+chat: "In person!"
+
+exclude:
+- self-paced
+
+chapters:
+- kube/tp_wordpress.md
