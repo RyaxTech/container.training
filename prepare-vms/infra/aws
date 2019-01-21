@@ -1,8 +1,0 @@
-INFRACLASS=aws
-# If you are using AWS to deploy, copy this file (e.g. to "aws", or "us-east-1")
-# and customize the variables below.
-export AWS_DEFAULT_REGION=eu-west-3
-#export AWS_ACCESS_KEY_ID=AKIAIENOEGP7QJ45FYAA
-#export AWS_SECRET_ACCESS_KEY=DWGr8V71z0i1J9/jDLZW4TVPvss44gqjrZlNWT7e
-export AWS_ACCESS_KEY_ID=AKIAJGYZ4JPNDZQO7ZHA
-export AWS_SECRET_ACCESS_KEY=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

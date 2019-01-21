@@ -1,0 +1,323 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <title>Kubernetes TP Wordpress </title>
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8"/>
+    <link rel="stylesheet" href="workshop.css">
+    <link rel="stylesheet" href="override.css">
+  </head>
+  <body>
+    <!--
+    <div style="position: absolute; left: 20%; right: 20%; top: 30%;">
+      <h1 style="font-size: 3em;">Loading ...</h1>
+      The slides should show up here. If they don't, it might be
+      because you are accessing this file directly from your filesystem.
+      It needs to be served from a web server. You can try this:
+      <pre>
+        docker-compose up -d
+        open http://localhost:8888/workshop.html # on MacOS
+        xdg-open http://localhost:8888/workshop.html # on Linux
+      </pre>
+      Once the slides are loaded, this notice disappears when you
+      go full screen (e.g. by hitting "f").
+    </div>
+    -->
+    <textarea id="source"># TP Wordpress
+
+Wordpress est un moteur de site web écrit en PHP. Il est utilisé par plus de 60 millions de sites webs dans le monde.
+
+Nous allons déployer une instance wordpress sur notre cluster
+
+Wordpress necessite une base de donnée pour fonctionner (généralement MySQL).
+
+Mais aussi d'un dossier de cache.
+
+Et un dossier permettant de stocker les fichiers uploadés.
+
+
+.debug[
+```
+ M dock-kube-day1.yml.html
+ M dock-kube-day2.yml.html
+ M dock-kube-day3.yml.html
+ M dock-kube-day4.yml.html
+ M intro-fullday.yml.html
+ M intro-selfpaced.yml.html
+ M kube-day1.yml.html
+ M kube-fullday.yml.html
+ M kube-halfday.yml.html
+ M kube-jour1.yml.html
+ M kube-jour2.yml.html
+ M kube-jour3.yml.html
+ M kube-selfpaced.yml.html
+ D kube/tp_wordpress.md
+ D prepare-vms/infra/aws
+ D prepare-vms/lib/commands.sh_new
+ D prepare-vms/lib/commands.sh_old
+ M spark-day2-PE.yml.html
+ M swarm-fullday.yml.html
+ M swarm-halfday.yml.html
+ M swarm-selfpaced.yml.html
+ M swarm-video.yml.html
+ M tp_wordpress.yml
+?? .directory
+?? common/.directory
+?? intro/.directory
+?? kube/.directory
+?? kube/exo-wordpress/
+?? prepare-vms/Dockerfile
+?? prepare-vms/README.md
+?? prepare-vms/azuredeploy.json
+?? prepare-vms/azuredeploy.parameters.json
+?? prepare-vms/cards.html
+?? prepare-vms/clusters.csv
+?? prepare-vms/cncsetup.sh
+?? prepare-vms/docker-compose.yml
+?? prepare-vms/docker.png
+?? prepare-vms/lib/.directory
+?? prepare-vms/lib/aws.sh
+?? prepare-vms/lib/cli.sh
+?? prepare-vms/lib/colors.sh
+?? prepare-vms/lib/commands.sh
+?? prepare-vms/lib/docker-prompt
+?? prepare-vms/lib/find-ubuntu-ami.sh
+?? prepare-vms/lib/ips-txt-to-html.py
+?? prepare-vms/lib/postprep.py
+?? prepare-vms/lib/pssh.sh
+?? prepare-vms/lib/wkhtmltopdf
+?? prepare-vms/settings/
+?? prepare-vms/workshopctl
+?? swarm/.directory
+?? tp_wordpress.yml.html
+
+```
+
+These slides have been built from commit: 1d2b6fe
+
+
+[kube/exo-wordpress/tp_wordpress.md](https://github.com/RyaxTech/kube.training.git/tree/gh-pages//kube/exo-wordpress/tp_wordpress.md)]
+---
+
+## Question 1
+
+.exercise[
+
+De quels "objets" Kubernetes avons-nous besoin ?
+
+]
+
+
+.debug[[kube/exo-wordpress/tp_wordpress.md](https://github.com/RyaxTech/kube.training.git/tree/gh-pages//kube/exo-wordpress/tp_wordpress.md)]
+---
+
+## Question 1
+
+.exercise[
+
+De quels "objets" Kubernetes avons-nous besoin ?
+
+]
+
+- 2 pods : 1 pour Kubernetes, 1 pour Mysql
+
+- 2 deployments : pour gérer les pods
+
+- 1 service "ClusterIP" mysql, pour n'éxposer la BdD en interne uniquement
+
+- 1 service "NodePort" (ou "LoadBalancer") wordpress, pour exposer le service au monde exterieur
+
+- 3 persistentVolume pour stocker les données.
+
+- 1 secret pour partager entre les pods le mot de passe d'accès à MySQL.
+
+.debug[[kube/exo-wordpress/tp_wordpress.md](https://github.com/RyaxTech/kube.training.git/tree/gh-pages//kube/exo-wordpress/tp_wordpress.md)]
+---
+## persistentVolume
+
+Sur le cluster est installé rook.
+Rook est un fournisseur de persistentVolume basé sur Ceph.
+
+Il nous suffira de créer des PersistentVolumeClaim avec comme classe "rook-ceph-block" pour obtenir dynamiquent de nouveaux volumes.
+
+```yaml
+apiVersion: v1
+kind: PersistentVolumeClaim
+metadata:
+  name: mysql-pv-claim
+  labels:
+    app: wordpress
+spec:
+  storageClassName: rook-ceph-block
+  accessModes:
+  - ReadWriteOnce
+  resources:
+    requests:
+      storage: 20Gi
+```
+
+.debug[[kube/exo-wordpress/tp_wordpress.md](https://github.com/RyaxTech/kube.training.git/tree/gh-pages//kube/exo-wordpress/tp_wordpress.md)]
+---
+## persistentVolume
+
+Et pour utiliser ce PersistentVolumeClaim, on ajoutera un volume au pod, et on montera se volume dans le bon dossier:
+
+
+```yaml
+    ...
+    spec:
+      containers:
+        ...
+        volumeMounts:
+        - name: mysql-persistent-storage
+          mountPath: /var/lib/mysql
+      volumes:
+      - name: mysql-persistent-storage
+        persistentVolumeClaim:
+          claimName: mysql-pv-claim
+```
+
+.debug[[kube/exo-wordpress/tp_wordpress.md](https://github.com/RyaxTech/kube.training.git/tree/gh-pages//kube/exo-wordpress/tp_wordpress.md)]
+---
+## Secrets
+
+.exercise[
+- Créer, depuis la ligne de commande, un ssecret contenant le mot de passe MySQL.
+```bash
+kubectl create secret generic mysql-pass --from-literal=password=superpassword```
+
+]
+
+On pourra ensutie utiliser cette valeure au moment de définir les variables d'environement de l'image:
+
+```yaml
+env:
+- name: MYSQL_ROOT_PASSWORD
+    valueFrom:
+    secretKeyRef:
+        name: mysql-pass
+        key: password
+```
+
+.debug[[kube/exo-wordpress/tp_wordpress.md](https://github.com/RyaxTech/kube.training.git/tree/gh-pages//kube/exo-wordpress/tp_wordpress.md)]
+---
+## Deployments
+
+Nous utiliserons des deployments pour gérer nos pods.
+
+```yaml
+apiVersion: apps/v1beta1
+kind: Deployment
+metadata:
+  name: wordpress-mysql
+  labels:
+    app: wordpress
+spec:
+  template:
+    metadata:
+      labels:
+        app: wordpress
+        tier: mysql
+    spec:
+      containers:
+      - image: mysql:5.6
+        name: mysql
+      ...
+```
+
+.debug[[kube/exo-wordpress/tp_wordpress.md](https://github.com/RyaxTech/kube.training.git/tree/gh-pages//kube/exo-wordpress/tp_wordpress.md)]
+---
+## Service
+
+Enfin nous auront des services pour éxposer en interne ou externe les déployments wordpress et mysql.
+
+Exemple:
+
+```yaml
+apiVersion: v1
+kind: Service
+metadata:
+  name: wordpress-mysql
+  labels:
+    app: wordpress
+spec:
+  ports:
+    - port: 3306
+  selector:
+    app: wordpress
+    tier: mysql
+  clusterIP: None
+```
+
+.debug[[kube/exo-wordpress/tp_wordpress.md](https://github.com/RyaxTech/kube.training.git/tree/gh-pages//kube/exo-wordpress/tp_wordpress.md)]
+---
+## Let's go!
+
+.exercise[
+Récupérer les yamls et déployez-les!
+
+```bash
+wget https://gist.githubusercontent.com/glesserd/24310a37f464d6d7569c358bcec3213d/raw/f3d0ad463659b002d2d7a047ccae9dea7fe6a60f/mysql.yaml
+
+wget https://gist.githubusercontent.com/glesserd/e89d765ee9cfa99bd274350c3fbdb12b/raw/66e26359f5b81d7be3b58f043500428db7fe78ea/wordpress.yaml
+
+kubectl apply -f mysql.yaml
+kubectl apply -f wordpress.yaml
+
+```
+
+]
+
+
+
+
+
+
+
+
+
+.debug[[kube/exo-wordpress/tp_wordpress.md](https://github.com/RyaxTech/kube.training.git/tree/gh-pages//kube/exo-wordpress/tp_wordpress.md)
+---
+
+class: pic
+
+.interstitial[![Image separating from the next chapter](https://gallant-turing-d0d520.netlify.com/containers/Container-Ship-Freighter-Navigation-Elbe-Romance-1782991.jpg)]
+
+---
+
+name: toc-tp-wordpress
+class: title
+
+TP Wordpress
+
+.nav[
+[Section précédente](#toc-)
+|
+[Retour table des matières](#toc-chapter-1)
+|
+[Section suivante](#toc-)
+]
+
+.debug[(automatically generated title slide)]
+]</textarea>
+    <script src="remark.min.js" type="text/javascript">
+    </script>
+    <script type="text/javascript">
+      var slideshow = remark.create({
+        ratio: '16:9',
+        highlightSpans: true,
+        excludedClasses: ["self-paced"]
+      });
+    </script>
+    
+    <!-- 
+    These two scripts will be available only when loading the
+    content using the pub/sub server. Otherwise, they'll just
+    404 and that's OK.
+    -->
+    <script src="/socket.io/socket.io.js">
+    </script>
+    <script src="/remote.js">
+    </script>
+
+  </body>
+</html>

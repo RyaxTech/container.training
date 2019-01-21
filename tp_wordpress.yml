@@ -8,4 +8,4 @@ exclude:
 - self-paced
 
 chapters:
-- kube/tp_wordpress.md
+- kube/exo-wordpress/tp_wordpress.md
