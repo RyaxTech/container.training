@@ -30,54 +30,59 @@ Kubernetes<br/>Introduction, Architecture et Installation<br/>
 
 .debug[
 ```
+ M common/prereqs_fr.md
+ M common/sampleapp_fr.md
  M dock-kube-day1.yml.html
  M dock-kube-day2.yml.html
  M dock-kube-day3.yml.html
  M dock-kube-day4.yml.html
+ M index.html
  M intro-fullday.yml.html
  M intro-selfpaced.yml.html
  M kube-day1.yml.html
  M kube-fullday.yml.html
  M kube-halfday.yml.html
  M kube-jour1.yml.html
- D kube/tp_wordpress.md
- D prepare-vms/infra/aws
- D prepare-vms/lib/commands.sh_new
- D prepare-vms/lib/commands.sh_old
- M tp_wordpress.yml
+ M kube-jour2.yml
+ M kube-jour2.yml.html
+ M kube-jour3.yml
+ M kube-jour3.yml.html
+ M kube-selfpaced.yml.html
+ M kube/daemonset_fr.md
+ M kube/dashboard_fr.md
+ M kube/kubectlexpose_fr.md
+ M kube/kubeobjects_fr.md
+ D kube/recapj1_fr.md
+ D kube/recapj2_fr.md
+ M logistics_david.md
+ M override.css
+ M spark-day2-PE.yml.html
+ M swarm-fullday.yml.html
+ M swarm-halfday.yml.html
+ M swarm-selfpaced.yml.html
+ M swarm-video.yml.html
+ M tp_wordpress.yml.html
+ M workshop.html
 ?? .directory
 ?? common/.directory
+?? exemples.md
+?? exemples.yml
+?? exemples.yml.html
+?? index_spark.html
 ?? intro/.directory
 ?? kube/.directory
+?? kube/exo-ab-testing/
 ?? kube/exo-wordpress/
-?? prepare-vms/Dockerfile
-?? prepare-vms/README.md
-?? prepare-vms/azuredeploy.json
-?? prepare-vms/azuredeploy.parameters.json
-?? prepare-vms/cards.html
-?? prepare-vms/clusters.csv
-?? prepare-vms/cncsetup.sh
-?? prepare-vms/docker-compose.yml
-?? prepare-vms/docker.png
+?? lite.render.js
+?? prepare-vms/.directory
 ?? prepare-vms/lib/.directory
-?? prepare-vms/lib/aws.sh
-?? prepare-vms/lib/cli.sh
-?? prepare-vms/lib/colors.sh
-?? prepare-vms/lib/commands.sh
-?? prepare-vms/lib/docker-prompt
-?? prepare-vms/lib/find-ubuntu-ami.sh
-?? prepare-vms/lib/ips-txt-to-html.py
-?? prepare-vms/lib/postprep.py
-?? prepare-vms/lib/pssh.sh
-?? prepare-vms/lib/wkhtmltopdf
-?? prepare-vms/settings/
-?? prepare-vms/workshopctl
+?? prepare-vms/settings/.directory
 ?? swarm/.directory
-?? tp_wordpress.yml.html
+?? viz.js
 
 ```
 
-These slides have been built from commit: 1d2b6fe
+These slides have been built from commit: b090a14
 
 
 [common/title_fr.md](https://github.com/RyaxTech/kube.training.git/tree/gh-pages//common/title_fr.md)]
@@ -106,11 +111,13 @@ Kubernetes<br/>Introduction, Architecture et Installation<br/><br/></br>
 
 ## Logistique
 
-- 3 x 2h de cours, au lieu de 3 jours !
+- 3 jours, de 9h à 17h30
+
+- Une pause de 12h30 à 14h
 
 - N'hésitez pas à me couper pour poser vos questions !
 
-
+- Surtout losque vous voyez des images en plein écran !
 .debug[[logistics_david.md](https://github.com/RyaxTech/kube.training.git/tree/gh-pages//logistics_david.md)]
 ---
 ## Les slides de la formation
@@ -840,7 +847,7 @@ class: title
 <br/>
 *Implique-moi et j'apprends.*
 
-Misattribué à Benjamin Franklin
+Erronément attribué à Benjamin Franklin
 
 [(Probablement inspiré par le philosophe confucéen chinois Xunzi)](https://www.barrypopik.com/index.php/new_york_city/entry/tell_me_and_i_forget_teach_me_and_i_may_remember_involve_me_and_i_will_lear/)
 
@@ -861,7 +868,7 @@ Misattribué à Benjamin Franklin
 
 - C'est ce que tu es censé faire!
 
-- Allez dans [kube.training] (https://goo.gl/dekbTb) pour voir ces diapositives
+<!-- - Allez dans [kube.training] (https://goo.gl/dekbTb) pour voir ces diapositives -->
 
 ]
 
@@ -1171,7 +1178,7 @@ class: extra-details
 
 .exercise[
 
-- Avec un navigateur Web, connectez-vous à `node1` sur le port 8080
+- Avec un navigateur Web, connectez-vous à `node1` sur le port 8000
 
 - Rappel: les alias `nodeX` ne sont valables que sur les nœuds eux-mêmes
 
@@ -3005,14 +3012,10 @@ Il y a une étape supplémentaire pour rendre le dashboard disponible de l'exté
 
 - Créer toutes les ressources du dashboard, avec la commande suivante:
   ```bash
-  kubectl apply -f https://goo.gl/Qamqab
+  kubectl apply -f ~/kube.training/k8s/kubernetes-dashboard.yaml
   ```
 
 ]
-
-L'URL de goo.gl se développe pour:
-<br/>
-.small[https://raw.githubusercontent.com/kubernetes/dashboard/master/src/deploy/recommended/kubernetes-dashboard.yaml]
 
 .debug[[kube/dashboard_fr.md](https://github.com/RyaxTech/kube.training.git/tree/gh-pages//kube/dashboard_fr.md)]
 ---
@@ -3047,14 +3050,10 @@ L'URL de goo.gl se développe pour:
 
 - Appliquez le fichier YAML pratique et annulez la protection SSL:
   ```bash
-  kubectl apply -f https://goo.gl/tA7GLz
+  kubectl apply -f ~/kube.training/k8s/socat.yaml
   ```
 
 ]
-
-L'URL goo.gl se développe pour:
-<br/>
-.small[.small[https://gist.githubusercontent.com/jpetazzo/c53a28b5b7fdae88bc3c5f0945552c04/raw/da13ef1bdd38cc0e90b7a4074be8d6a0215e1a65/socat.yaml]]
 
 .warning[Tout notre trafic de dashboard est maintenant en texte clair, y compris les mots de passe!]
 
@@ -3071,8 +3070,6 @@ L'URL goo.gl se développe pour:
   ```
 
 ]
-
-Vous aurez besoin du port `8080`.
 
 
 .exercise[
@@ -3111,7 +3108,7 @@ Le dashboard vous demandera ensuite l'authentification que vous souhaitez utilis
 
 - Accorder des privilèges d'administrateur au dashboard afin que nous puissions voir nos ressources:
   ```bash
-  kubectl apply -f https://goo.gl/CHsLTA
+  kubectl apply -f ~/kube.training/k8s/grant-admin-to-dashboard.yaml
   ```
 
 - Rechargez le dashboard et profitez-en!
@@ -3146,7 +3143,7 @@ Le dashboard vous demandera ensuite l'authentification que vous souhaitez utilis
 
 --
 
-`NotFound`?!? Pourquoi ca ne marche pas?!?
+`NotFound`?!? Pourquoi ça ne marche pas?!?
 
 .debug[[kube/dashboard_fr.md](https://github.com/RyaxTech/kube.training.git/tree/gh-pages//kube/dashboard_fr.md)]
 ---
@@ -3286,7 +3283,9 @@ Les implications de sécurité de `kubectl apply`
 
 Vous pouvez stopper le dashboard ou le laisser. Comme le dashboard n'est pas sécurisé, nous conseillons de l'arréter.
 ```bash
-  kubectl delete -f https://goo.gl/CHsLTA
+  kubectl delete -f ~/kube.training/k8s/grant-admin-to-dashboard.yaml
+  kubectl delete -f ~/kube.training/k8s/socat.yaml
+  kubectl delete -f ~/kube.training/k8s/kubernetes-dashboard.yaml
   ```
 
 
@@ -3294,14 +3293,26 @@ Vous pouvez stopper le dashboard ou le laisser. Comme le dashboard n'est pas sé
 .debug[[kube/dashboard_fr.md](https://github.com/RyaxTech/kube.training.git/tree/gh-pages//kube/dashboard_fr.md)]</textarea>
     <script src="remark.min.js" type="text/javascript">
     </script>
+    <script src="viz.js"></script>
     <script type="text/javascript">
       var slideshow = remark.create({
         ratio: '16:9',
         highlightSpans: true,
         excludedClasses: ["self-paced"]
       });
+
+    var viz = new Viz({ workerURL: './lite.render.js' });
+    var currentSlideViz = document.querySelectorAll(".vizgraph");
+    currentSlideViz.forEach((elm) => {
+        viz.renderSVGElement(elm.innerText)
+        .then(function(element) {
+            //the new svg element inherit class of the old element
+            elm.classList.forEach((l) => { element.classList.add(l)});
+            elm.replaceWith(element);
+        });
+    });
+
     </script>
-    
     <!-- 
     These two scripts will be available only when loading the
     content using the pub/sub server. Otherwise, they'll just

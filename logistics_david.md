@@ -13,7 +13,10 @@
 
 ## Logistique
 
-- 3 x 2h de cours, au lieu de 3 jours !
+- 3 jours, de 9h à 17h30
+
+- Une pause de 12h30 à 14h
 
 - N'hésitez pas à me couper pour poser vos questions !
 
+- Surtout losque vous voyez des images en plein écran !

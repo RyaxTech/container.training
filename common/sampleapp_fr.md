@@ -161,7 +161,7 @@ class: extra-details
 
 .exercise[
 
-- Avec un navigateur Web, connectez-vous à `node1` sur le port 8080
+- Avec un navigateur Web, connectez-vous à `node1` sur le port 8000
 
 - Rappel: les alias `nodeX` ne sont valables que sur les nœuds eux-mêmes
 

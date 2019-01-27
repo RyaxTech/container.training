@@ -28,7 +28,7 @@ class: title
 <br/>
 *Implique-moi et j'apprends.*
 
-Misattribué à Benjamin Franklin
+Erronément attribué à Benjamin Franklin
 
 [(Probablement inspiré par le philosophe confucéen chinois Xunzi)](https://www.barrypopik.com/index.php/new_york_city/entry/tell_me_and_i_forget_teach_me_and_i_may_remember_involve_me_and_i_will_lear/)
 
@@ -48,7 +48,7 @@ Misattribué à Benjamin Franklin
 
 - C'est ce que tu es censé faire!
 
-- Allez dans [kube.training] (https://goo.gl/dekbTb) pour voir ces diapositives
+<!-- - Allez dans [kube.training] (https://goo.gl/dekbTb) pour voir ces diapositives -->
 
 ]
 

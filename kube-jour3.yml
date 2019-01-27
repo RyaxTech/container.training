@@ -22,8 +22,9 @@ chapters:
 - common/toc.md
 - - kube/serverless_fr.md
 - - kube/stockage_fr.md
-- - kube/recapj1_fr.md
+- - kube/exo-ab-testing/exo2.md
 - - kube/configs_fr.md
 - - kube/monitoring_fr.md
 - - kube/statefulsets.md
+- - kube/exo-wordpress/tp_wordpress.md
 - - kube/advanced_fr.md

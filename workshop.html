@@ -25,14 +25,26 @@
     <textarea id="source">@@MARKDOWN@@</textarea>
     <script src="remark.min.js" type="text/javascript">
     </script>
+    <script src="viz.js"></script>
     <script type="text/javascript">
       var slideshow = remark.create({
         ratio: '16:9',
         highlightSpans: true,
         excludedClasses: [@@EXCLUDE@@]
       });
+
+    var viz = new Viz({ workerURL: './lite.render.js' });
+    var currentSlideViz = document.querySelectorAll(".vizgraph");
+    currentSlideViz.forEach((elm) => {
+        viz.renderSVGElement(elm.innerText)
+        .then(function(element) {
+            //the new svg element inherit class of the old element
+            elm.classList.forEach((l) => { element.classList.add(l)});
+            elm.replaceWith(element);
+        });
+    });
+
     </script>
-    
     <!-- 
     These two scripts will be available only when loading the
     content using the pub/sub server. Otherwise, they'll just

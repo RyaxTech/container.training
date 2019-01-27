@@ -19,3 +19,18 @@ div.extra-details:not(.pic) {
 .debug {
     display:none;
 }
+
+
+/* Viz integration */
+.viz-center {
+    padding: 10px;
+    text-align:center;
+}
+.viz-float-left {
+    padding: 10px;
+    float:left;
+}
+.viz-float-right {
+    padding: 10px;
+    float:right;
+}

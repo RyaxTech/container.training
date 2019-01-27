@@ -60,15 +60,39 @@
 
 ---
 
-class: pic
+## Les objets de Kubernetes (suite)
 
-![Un des meilleurs diagrammes d'architecture Kubernetes disponibles](images/k8s-arch4-thanks-luxas.png)
+<div class="viz-center"><div class="vizgraph">
+digraph {
 
----
+subgraph cluster2 {
+	style=filled;
+    label = "node1";
+    labelloc= "b";
+    "pod A" [shape=circle];
+    "pod B" [shape=circle];
+}
+subgraph cluster3 {
+	style=filled;
+    label = "node2";
+    labelloc= "b";
+    "pod C" [shape=circle];
+}
 
-class: pic
+"DaemonSet Y" [shape=parallelogram]
+"DaemonSet Y" -> "pod B"
+"DaemonSet Y" -> "pod C"
 
-![Un des meilleurs diagrammes d'architecture Kubernetes disponibles](images/kube_archi_simple.png)
+
+"Service X" [shape=hexagon]
+"Service X" -> "pod B"
+"Service X" -> "pod C"
+
+
+}
+
+</div></div>
+
 
 ---
 
@@ -118,10 +142,22 @@ class: pic
   - L'algorithme de planification par défaut détermine les nœuds acceptables et sélectionne le meilleur pour le pod en fonction de divers paramètres configurables.
   - Plusieurs schedulers peuvent s'exécuter simultanément dans le cluster et un module peut utiliser celui qui est le plus adapté.
 
+
+---
+
+class: pic
+
+![Un des meilleurs diagrammes d'architecture Kubernetes disponibles](images/kube_archi_simple.png)
+
+---
+
+class: pic
+
+![Un des meilleurs diagrammes d'architecture Kubernetes disponibles](images/k8s-arch4-thanks-luxas.png)
+
+
 ---
 class: pic
 
 ![Exemple de Kubectl](images/kubectl_ex.png)
-
----
 

@@ -1,0 +1,10 @@
+title: |
+    Slides exemples
+
+chat: ""
+
+exclude:
+- self-paced
+
+chapters:
+- exemples.md

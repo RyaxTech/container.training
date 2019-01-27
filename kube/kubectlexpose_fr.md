@@ -1,5 +1,9 @@
 # Exposition des conteneurs
 
+<div class="viz-float-right"><div class="vizgraph">
+digraph { "Service A" [shape=hexagon] }
+</div></div>
+
 - `kubectl expose` crée un *service* pour les pods existants
 
 - Un *service* est une adresse stable pour un pod (ou un groupe de pods)
@@ -97,6 +101,48 @@ Note: veuillez NE PAS appeler le service `search`. Cela entrerait en conflit ave
 
 ---
 
+## Les objets que nous venons de créer
+
+<div class="viz-center"><div class="vizgraph">
+digraph {
+
+"Pod\nelastic-fd4fd-s89" [shape=circle]
+"Pod\nelastic-fd4fd-df7" [shape=circle]
+"Pod\nelastic-fd4fd-hzd" [shape=circle]
+"Pod\nelastic-fd4fd-c4c" [shape=circle]
+c1 [shape=cds, label="container: elasticsearch:2"]
+c2 [shape=cds, label="container: elasticsearch:2"]
+c3 [shape=cds, label="container: elasticsearch:2"]
+c4 [shape=cds, label="container: elasticsearch:2"]
+
+
+"Pod\nelastic-fd4fd-s89" -> c1
+"Pod\nelastic-fd4fd-df7" -> c2
+"Pod\nelastic-fd4fd-hzd" -> c3
+"Pod\nelastic-fd4fd-c4c" -> c4
+
+"Svc NodePort elastic" [shape=hexagon]
+"Svc NodePort elastic" -> "Pod\nelastic-fd4fd-s89"
+"Svc NodePort elastic" -> "Pod\nelastic-fd4fd-df7"
+"Svc NodePort elastic" -> "Pod\nelastic-fd4fd-hzd"
+"Svc NodePort elastic" -> "Pod\nelastic-fd4fd-c4c"
+
+"Deploy elastic" [shape=trapezium]
+"ReplicaSet elastic-fd4fd" [shape=house]
+"Deploy elastic" -> "ReplicaSet elastic-fd4fd"
+"ReplicaSet elastic-fd4fd" -> "Pod\nelastic-fd4fd-s89"
+"ReplicaSet elastic-fd4fd" -> "Pod\nelastic-fd4fd-df7"
+"ReplicaSet elastic-fd4fd" -> "Pod\nelastic-fd4fd-hzd"
+"ReplicaSet elastic-fd4fd" -> "Pod\nelastic-fd4fd-c4c"
+
+
+}
+</div></div>
+
+
+
+---
+
 ## Les services sont des constructions de couche 4
 
 - Vous pouvez attribuer des adresses IP aux services, mais ils sont toujours *couche 4*
@@ -135,9 +181,7 @@ Note: veuillez NE PAS appeler le service `search`. Cela entrerait en conflit ave
 
 --
 
-Nous pouvons voir `curl: (7) Failed to connect to _IP_ port 9200: Connection refused`.
-
-C'est normal pendant que le service démarre.
+Nous pouvons voir `curl: (7) Failed to connect to _IP_ port 9200: Connection refused`. C'est normal pendant que le service démarre.
 
 --
 

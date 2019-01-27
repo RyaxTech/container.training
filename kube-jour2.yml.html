@@ -30,55 +30,59 @@ Kubernetes <br/>Concepts de base, Services et Deploiement <br/>
 
 .debug[
 ```
+ M common/prereqs_fr.md
+ M common/sampleapp_fr.md
  M dock-kube-day1.yml.html
  M dock-kube-day2.yml.html
  M dock-kube-day3.yml.html
  M dock-kube-day4.yml.html
+ M index.html
  M intro-fullday.yml.html
  M intro-selfpaced.yml.html
  M kube-day1.yml.html
  M kube-fullday.yml.html
  M kube-halfday.yml.html
  M kube-jour1.yml.html
+ M kube-jour2.yml
  M kube-jour2.yml.html
- D kube/tp_wordpress.md
- D prepare-vms/infra/aws
- D prepare-vms/lib/commands.sh_new
- D prepare-vms/lib/commands.sh_old
- M tp_wordpress.yml
+ M kube-jour3.yml
+ M kube-jour3.yml.html
+ M kube-selfpaced.yml.html
+ M kube/daemonset_fr.md
+ M kube/dashboard_fr.md
+ M kube/kubectlexpose_fr.md
+ M kube/kubeobjects_fr.md
+ D kube/recapj1_fr.md
+ D kube/recapj2_fr.md
+ M logistics_david.md
+ M override.css
+ M spark-day2-PE.yml.html
+ M swarm-fullday.yml.html
+ M swarm-halfday.yml.html
+ M swarm-selfpaced.yml.html
+ M swarm-video.yml.html
+ M tp_wordpress.yml.html
+ M workshop.html
 ?? .directory
 ?? common/.directory
+?? exemples.md
+?? exemples.yml
+?? exemples.yml.html
+?? index_spark.html
 ?? intro/.directory
 ?? kube/.directory
+?? kube/exo-ab-testing/
 ?? kube/exo-wordpress/
-?? prepare-vms/Dockerfile
-?? prepare-vms/README.md
-?? prepare-vms/azuredeploy.json
-?? prepare-vms/azuredeploy.parameters.json
-?? prepare-vms/cards.html
-?? prepare-vms/clusters.csv
-?? prepare-vms/cncsetup.sh
-?? prepare-vms/docker-compose.yml
-?? prepare-vms/docker.png
+?? lite.render.js
+?? prepare-vms/.directory
 ?? prepare-vms/lib/.directory
-?? prepare-vms/lib/aws.sh
-?? prepare-vms/lib/cli.sh
-?? prepare-vms/lib/colors.sh
-?? prepare-vms/lib/commands.sh
-?? prepare-vms/lib/docker-prompt
-?? prepare-vms/lib/find-ubuntu-ami.sh
-?? prepare-vms/lib/ips-txt-to-html.py
-?? prepare-vms/lib/postprep.py
-?? prepare-vms/lib/pssh.sh
-?? prepare-vms/lib/wkhtmltopdf
-?? prepare-vms/settings/
-?? prepare-vms/workshopctl
+?? prepare-vms/settings/.directory
 ?? swarm/.directory
-?? tp_wordpress.yml.html
+?? viz.js
 
 ```
 
-These slides have been built from commit: 1d2b6fe
+These slides have been built from commit: b090a14
 
 
 [common/title_fr.md](https://github.com/RyaxTech/kube.training.git/tree/gh-pages//common/title_fr.md)]
@@ -126,7 +130,7 @@ name: toc-chapter-3
 
 - [Mise à jour d'un service via des labels et des selectors](#toc-mise--jour-dun-service-via-des-labels-et-des-selectors)
 
-- [Recap Jour 1](#toc-recap-jour-)
+- [Exercice A/B testing](#toc-exercice-ab-testing)
 
 - [Rolling updates](#toc-rolling-updates)
 
@@ -303,16 +307,39 @@ Les objets de Kubernetes
 .debug[[kube/kubeobjects_fr.md](https://github.com/RyaxTech/kube.training.git/tree/gh-pages//kube/kubeobjects_fr.md)]
 ---
 
-class: pic
+## Les objets de Kubernetes (suite)
 
-![Un des meilleurs diagrammes d'architecture Kubernetes disponibles](images/k8s-arch4-thanks-luxas.png)
+<div class="viz-center"><div class="vizgraph">
+digraph {
 
-.debug[[kube/kubeobjects_fr.md](https://github.com/RyaxTech/kube.training.git/tree/gh-pages//kube/kubeobjects_fr.md)]
----
+subgraph cluster2 {
+	style=filled;
+    label = "node1";
+    labelloc= "b";
+    "pod A" [shape=circle];
+    "pod B" [shape=circle];
+}
+subgraph cluster3 {
+	style=filled;
+    label = "node2";
+    labelloc= "b";
+    "pod C" [shape=circle];
+}
 
-class: pic
+"DaemonSet Y" [shape=parallelogram]
+"DaemonSet Y" -> "pod B"
+"DaemonSet Y" -> "pod C"
 
-![Un des meilleurs diagrammes d'architecture Kubernetes disponibles](images/kube_archi_simple.png)
+
+"Service X" [shape=hexagon]
+"Service X" -> "pod B"
+"Service X" -> "pod C"
+
+
+}
+
+</div></div>
+
 
 .debug[[kube/kubeobjects_fr.md](https://github.com/RyaxTech/kube.training.git/tree/gh-pages//kube/kubeobjects_fr.md)]
 ---
@@ -365,14 +392,27 @@ class: pic
   - L'algorithme de planification par défaut détermine les nœuds acceptables et sélectionne le meilleur pour le pod en fonction de divers paramètres configurables.
   - Plusieurs schedulers peuvent s'exécuter simultanément dans le cluster et un module peut utiliser celui qui est le plus adapté.
 
+
+.debug[[kube/kubeobjects_fr.md](https://github.com/RyaxTech/kube.training.git/tree/gh-pages//kube/kubeobjects_fr.md)]
+---
+
+class: pic
+
+![Un des meilleurs diagrammes d'architecture Kubernetes disponibles](images/kube_archi_simple.png)
+
+.debug[[kube/kubeobjects_fr.md](https://github.com/RyaxTech/kube.training.git/tree/gh-pages//kube/kubeobjects_fr.md)]
+---
+
+class: pic
+
+![Un des meilleurs diagrammes d'architecture Kubernetes disponibles](images/k8s-arch4-thanks-luxas.png)
+
+
 .debug[[kube/kubeobjects_fr.md](https://github.com/RyaxTech/kube.training.git/tree/gh-pages//kube/kubeobjects_fr.md)]
 ---
 class: pic
 
 ![Exemple de Kubectl](images/kubectl_ex.png)
-
-.debug[[kube/kubeobjects_fr.md](https://github.com/RyaxTech/kube.training.git/tree/gh-pages//kube/kubeobjects_fr.md)]
----
 
 
 .debug[[kube/kubeobjects_fr.md](https://github.com/RyaxTech/kube.training.git/tree/gh-pages//kube/kubeobjects_fr.md)]
@@ -401,6 +441,10 @@ Exposition des conteneurs
 
 ---
 # Exposition des conteneurs
+
+<div class="viz-float-right"><div class="vizgraph">
+digraph { "Service A" [shape=hexagon] }
+</div></div>
 
 - `kubectl expose` crée un *service* pour les pods existants
 
@@ -504,6 +548,49 @@ Note: veuillez NE PAS appeler le service `search`. Cela entrerait en conflit ave
 .debug[[kube/kubectlexpose_fr.md](https://github.com/RyaxTech/kube.training.git/tree/gh-pages//kube/kubectlexpose_fr.md)]
 ---
 
+## Les objets que nous venons de créer
+
+<div class="viz-center"><div class="vizgraph">
+digraph {
+
+"Pod\nelastic-fd4fd-s89" [shape=circle]
+"Pod\nelastic-fd4fd-df7" [shape=circle]
+"Pod\nelastic-fd4fd-hzd" [shape=circle]
+"Pod\nelastic-fd4fd-c4c" [shape=circle]
+c1 [shape=cds, label="container: elasticsearch:2"]
+c2 [shape=cds, label="container: elasticsearch:2"]
+c3 [shape=cds, label="container: elasticsearch:2"]
+c4 [shape=cds, label="container: elasticsearch:2"]
+
+
+"Pod\nelastic-fd4fd-s89" -> c1
+"Pod\nelastic-fd4fd-df7" -> c2
+"Pod\nelastic-fd4fd-hzd" -> c3
+"Pod\nelastic-fd4fd-c4c" -> c4
+
+"Svc NodePort elastic" [shape=hexagon]
+"Svc NodePort elastic" -> "Pod\nelastic-fd4fd-s89"
+"Svc NodePort elastic" -> "Pod\nelastic-fd4fd-df7"
+"Svc NodePort elastic" -> "Pod\nelastic-fd4fd-hzd"
+"Svc NodePort elastic" -> "Pod\nelastic-fd4fd-c4c"
+
+"Deploy elastic" [shape=trapezium]
+"ReplicaSet elastic-fd4fd" [shape=house]
+"Deploy elastic" -> "ReplicaSet elastic-fd4fd"
+"ReplicaSet elastic-fd4fd" -> "Pod\nelastic-fd4fd-s89"
+"ReplicaSet elastic-fd4fd" -> "Pod\nelastic-fd4fd-df7"
+"ReplicaSet elastic-fd4fd" -> "Pod\nelastic-fd4fd-hzd"
+"ReplicaSet elastic-fd4fd" -> "Pod\nelastic-fd4fd-c4c"
+
+
+}
+</div></div>
+
+
+
+.debug[[kube/kubectlexpose_fr.md](https://github.com/RyaxTech/kube.training.git/tree/gh-pages//kube/kubectlexpose_fr.md)]
+---
+
 ## Les services sont des constructions de couche 4
 
 - Vous pouvez attribuer des adresses IP aux services, mais ils sont toujours *couche 4*
@@ -543,9 +630,7 @@ Note: veuillez NE PAS appeler le service `search`. Cela entrerait en conflit ave
 
 --
 
-Nous pouvons voir `curl: (7) Failed to connect to _IP_ port 9200: Connection refused`.
-
-C'est normal pendant que le service démarre.
+Nous pouvons voir `curl: (7) Failed to connect to _IP_ port 9200: Connection refused`. C'est normal pendant que le service démarre.
 
 --
 
@@ -1324,7 +1409,7 @@ Note: `--export` supprimera les informations spécifiques au cluster, c'est-à-d
 
 .exercise[
 
-- Changez `kind: Deployment` en` kind: DaemonSet`
+- Changez `kind: Deployment` en `kind: DaemonSet`
 
 - Enregistrer, quitter
 
@@ -1597,7 +1682,7 @@ Mise à jour d'un service via des labels et des selectors
 |
 [Retour table des matières](#toc-chapter-3)
 |
-[Section suivante](#toc-recap-jour-)
+[Section suivante](#toc-exercice-ab-testing)
 ]
 
 .debug[(automatically generated title slide)]
@@ -1736,7 +1821,7 @@ Les timestamps devraient nous donner un indice sur le nombre de pods qui reçoiv
 .debug[[kube/daemonset_fr.md](https://github.com/RyaxTech/kube.training.git/tree/gh-pages//kube/daemonset_fr.md)]
 ---
 
-## Nettoyage des pods mortes
+## Nettoyage des pods morts
 
 ```
 $ kubectl get pods
@@ -1750,7 +1835,7 @@ rng-xbpvg                   1/1       Running       0          7m
 [...]
 ```
 
-- Les pods supplémentaires (notées `Terminating` ci-dessus) vont disparaître
+- Les pods supplémentaires (notés `Terminating` ci-dessus) vont disparaître
 
 - ... Mais un nouveau (`rng-54f57d4d49-vgz9h` ci-dessus) a été redémarré immédiatement!
 
@@ -1874,10 +1959,10 @@ class: pic
 
 ---
 
-name: toc-recap-jour-
+name: toc-exercice-ab-testing
 class: title
 
-Recap Jour 1
+Exercice A/B testing
 
 .nav[
 [Section précédente](#toc-mise--jour-dun-service-via-des-labels-et-des-selectors)
@@ -1891,7 +1976,7 @@ Recap Jour 1
 
 ---
 
-# Recap Jour 1
+# Exercice A/B testing
 
 Obectif: déployer un service faisant du A/B Testing.
 
@@ -1899,7 +1984,7 @@ Obectif: déployer un service faisant du A/B Testing.
 
 - Mise en place...
 
-.debug[[kube/recapj1_fr.md](https://github.com/RyaxTech/kube.training.git/tree/gh-pages//kube/recapj1_fr.md)]
+.debug[[kube/exo-ab-testing/exo1.md](https://github.com/RyaxTech/kube.training.git/tree/gh-pages//kube/exo-ab-testing/exo1.md)]
 ---
 
 ## Construction des containers
@@ -1926,7 +2011,7 @@ CMD cd /tmp ; python -m SimpleHTTPServer 80
 
 ]
 
-.debug[[kube/recapj1_fr.md](https://github.com/RyaxTech/kube.training.git/tree/gh-pages//kube/recapj1_fr.md)]
+.debug[[kube/exo-ab-testing/exo1.md](https://github.com/RyaxTech/kube.training.git/tree/gh-pages//kube/exo-ab-testing/exo1.md)]
 ---
 
 ## Mise en place des containers
@@ -1950,7 +2035,7 @@ docker push $REGISTRY/serverweb:vB
 
 ]
 
-.debug[[kube/recapj1_fr.md](https://github.com/RyaxTech/kube.training.git/tree/gh-pages//kube/recapj1_fr.md)]
+.debug[[kube/exo-ab-testing/exo1.md](https://github.com/RyaxTech/kube.training.git/tree/gh-pages//kube/exo-ab-testing/exo1.md)]
 ---
 
 ## C'est parti!
@@ -1979,7 +2064,7 @@ kubectl expose serverwebab --type=NodePort --port 80
 
 
 
-.debug[[kube/recapj1_fr.md](https://github.com/RyaxTech/kube.training.git/tree/gh-pages//kube/recapj1_fr.md)]
+.debug[[kube/exo-ab-testing/exo1.md](https://github.com/RyaxTech/kube.training.git/tree/gh-pages//kube/exo-ab-testing/exo1.md)]
 ---
 
 class: pic
@@ -1994,7 +2079,7 @@ class: title
 Rolling updates
 
 .nav[
-[Section précédente](#toc-recap-jour-)
+[Section précédente](#toc-exercice-ab-testing)
 |
 [Retour table des matières](#toc-chapter-3)
 |
@@ -3297,14 +3382,26 @@ Supprimez le service, le deployement et le network policy de cet exemple.
 .debug[[kube/netisolation_fr.md](https://github.com/RyaxTech/kube.training.git/tree/gh-pages//kube/netisolation_fr.md)]</textarea>
     <script src="remark.min.js" type="text/javascript">
     </script>
+    <script src="viz.js"></script>
     <script type="text/javascript">
       var slideshow = remark.create({
         ratio: '16:9',
         highlightSpans: true,
         excludedClasses: ["self-paced"]
       });
+
+    var viz = new Viz({ workerURL: './lite.render.js' });
+    var currentSlideViz = document.querySelectorAll(".vizgraph");
+    currentSlideViz.forEach((elm) => {
+        viz.renderSVGElement(elm.innerText)
+        .then(function(element) {
+            //the new svg element inherit class of the old element
+            elm.classList.forEach((l) => { element.classList.add(l)});
+            elm.replaceWith(element);
+        });
+    });
+
     </script>
-    
     <!-- 
     These two scripts will be available only when loading the
     content using the pub/sub server. Otherwise, they'll just

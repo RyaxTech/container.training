@@ -93,7 +93,7 @@ Note: `--export` supprimera les informations spécifiques au cluster, c'est-à-d
 
 .exercise[
 
-- Changez `kind: Deployment` en` kind: DaemonSet`
+- Changez `kind: Deployment` en `kind: DaemonSet`
 
 - Enregistrer, quitter
 
@@ -466,7 +466,7 @@ Les timestamps devraient nous donner un indice sur le nombre de pods qui reçoiv
 
 ---
 
-## Nettoyage des pods mortes
+## Nettoyage des pods morts
 
 ```
 $ kubectl get pods
@@ -480,7 +480,7 @@ rng-xbpvg                   1/1       Running       0          7m
 [...]
 ```
 
-- Les pods supplémentaires (notées `Terminating` ci-dessus) vont disparaître
+- Les pods supplémentaires (notés `Terminating` ci-dessus) vont disparaître
 
 - ... Mais un nouveau (`rng-54f57d4d49-vgz9h` ci-dessus) a été redémarré immédiatement!
 

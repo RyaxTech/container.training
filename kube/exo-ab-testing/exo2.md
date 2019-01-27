@@ -1,6 +1,5 @@
 
-# Recap Jour 2
-
+# Exercice A/B testing, la suite
 
 L'équipe marketing à determiner que la vA du serveurweb était la meilleure.
 

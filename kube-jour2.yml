@@ -26,7 +26,7 @@ chapters:
   - kube/ourapponkube_fr.md
   - kube/kubectlscale_fr.md
 - - kube/daemonset_fr.md
-  - kube/recapj1_fr.md
+  - kube/exo-ab-testing/exo1.md
   - kube/rollout_fr.md
   - kube/logs-cli_fr.md
   - kube/logs-centralized_fr.md

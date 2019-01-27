@@ -1,5 +1,5 @@
 
-# Recap Jour 1
+# Exercice A/B testing
 
 Obectif: déployer un service faisant du A/B Testing.
 

@@ -32,14 +32,10 @@ Il y a une étape supplémentaire pour rendre le dashboard disponible de l'exté
 
 - Créer toutes les ressources du dashboard, avec la commande suivante:
   ```bash
-  kubectl apply -f https://goo.gl/Qamqab
+  kubectl apply -f ~/kube.training/k8s/kubernetes-dashboard.yaml
   ```
 
 ]
-
-L'URL de goo.gl se développe pour:
-<br/>
-.small[https://raw.githubusercontent.com/kubernetes/dashboard/master/src/deploy/recommended/kubernetes-dashboard.yaml]
 
 ---
 
@@ -72,14 +68,10 @@ L'URL de goo.gl se développe pour:
 
 - Appliquez le fichier YAML pratique et annulez la protection SSL:
   ```bash
-  kubectl apply -f https://goo.gl/tA7GLz
+  kubectl apply -f ~/kube.training/k8s/socat.yaml
   ```
 
 ]
-
-L'URL goo.gl se développe pour:
-<br/>
-.small[.small[https://gist.githubusercontent.com/jpetazzo/c53a28b5b7fdae88bc3c5f0945552c04/raw/da13ef1bdd38cc0e90b7a4074be8d6a0215e1a65/socat.yaml]]
 
 .warning[Tout notre trafic de dashboard est maintenant en texte clair, y compris les mots de passe!]
 
@@ -95,8 +87,6 @@ L'URL goo.gl se développe pour:
   ```
 
 ]
-
-Vous aurez besoin du port `8080`.
 
 
 .exercise[
@@ -133,7 +123,7 @@ Le dashboard vous demandera ensuite l'authentification que vous souhaitez utilis
 
 - Accorder des privilèges d'administrateur au dashboard afin que nous puissions voir nos ressources:
   ```bash
-  kubectl apply -f https://goo.gl/CHsLTA
+  kubectl apply -f ~/kube.training/k8s/grant-admin-to-dashboard.yaml
   ```
 
 - Rechargez le dashboard et profitez-en!
@@ -167,7 +157,7 @@ Le dashboard vous demandera ensuite l'authentification que vous souhaitez utilis
 
 --
 
-`NotFound`?!? Pourquoi ca ne marche pas?!?
+`NotFound`?!? Pourquoi ça ne marche pas?!?
 
 ---
 
@@ -279,7 +269,9 @@ Le dashboard vous demandera ensuite l'authentification que vous souhaitez utilis
 
 Vous pouvez stopper le dashboard ou le laisser. Comme le dashboard n'est pas sécurisé, nous conseillons de l'arréter.
 ```bash
-  kubectl delete -f https://goo.gl/CHsLTA
+  kubectl delete -f ~/kube.training/k8s/grant-admin-to-dashboard.yaml
+  kubectl delete -f ~/kube.training/k8s/socat.yaml
+  kubectl delete -f ~/kube.training/k8s/kubernetes-dashboard.yaml
   ```
 
 
