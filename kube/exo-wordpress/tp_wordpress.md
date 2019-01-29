@@ -47,7 +47,7 @@ De quels "objets" Kubernetes avons-nous besoin ?
 - 1 secret pour partager entre les pods le mot de passe d'accès à MySQL.
 
 ---
-# C'est parti !
+## C'est parti !
 
 .exercise[
 Créez les YAMLs nécessaire (ou non) pour chaque objet.

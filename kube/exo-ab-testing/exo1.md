@@ -74,9 +74,9 @@ docker push $REGISTRY/serverweb:vB
 kubectl run serverweba --image $REGISTRY/serverweb:vA
 kubectl run serverwebb --image $REGISTRY/serverweb:vB
 
-kubectl expose serverwebab --type=NodePort --port 80
+kubectl expose serverweba --type=NodePort --port 80
 
-=> edit each service (and their template) to have a common key/value
+=> edit each deploy (and their template) to have a common key/value
 => edit the service to select this key/value.-->
 
 

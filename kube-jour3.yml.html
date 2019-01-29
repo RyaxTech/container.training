@@ -30,59 +30,37 @@ Kubernetes <br/>Stockage, Configuration, Secrets et Concepts Avancés <br/>
 
 .debug[
 ```
- M common/prereqs_fr.md
- M common/sampleapp_fr.md
  M dock-kube-day1.yml.html
  M dock-kube-day2.yml.html
  M dock-kube-day3.yml.html
  M dock-kube-day4.yml.html
- M index.html
+ M exemples.yml.html
  M intro-fullday.yml.html
  M intro-selfpaced.yml.html
  M kube-day1.yml.html
  M kube-fullday.yml.html
  M kube-halfday.yml.html
  M kube-jour1.yml.html
- M kube-jour2.yml
  M kube-jour2.yml.html
  M kube-jour3.yml
  M kube-jour3.yml.html
- M kube-selfpaced.yml.html
- M kube/daemonset_fr.md
- M kube/dashboard_fr.md
- M kube/kubectlexpose_fr.md
- M kube/kubeobjects_fr.md
- D kube/recapj1_fr.md
- D kube/recapj2_fr.md
- M logistics_david.md
- M override.css
- M spark-day2-PE.yml.html
- M swarm-fullday.yml.html
- M swarm-halfday.yml.html
- M swarm-selfpaced.yml.html
- M swarm-video.yml.html
- M tp_wordpress.yml.html
- M workshop.html
+ M kube/exo-ab-testing/exo1.md
+ M kube/exo-wordpress/tp_wordpress.md
 ?? .directory
 ?? common/.directory
-?? exemples.md
-?? exemples.yml
-?? exemples.yml.html
-?? index_spark.html
 ?? intro/.directory
 ?? kube/.directory
-?? kube/exo-ab-testing/
-?? kube/exo-wordpress/
-?? lite.render.js
+?? kube/authn-authz.md
+?? kube/gitworkflows.md
+?? kube/ingress.md
 ?? prepare-vms/.directory
 ?? prepare-vms/lib/.directory
 ?? prepare-vms/settings/.directory
 ?? swarm/.directory
-?? viz.js
 
 ```
 
-These slides have been built from commit: b090a14
+These slides have been built from commit: 0004ddb
 
 
 [common/title_fr.md](https://github.com/RyaxTech/kube.training.git/tree/gh-pages//common/title_fr.md)]
@@ -158,8 +136,6 @@ name: toc-chapter-7
 
 - [TP Wordpress](#toc-tp-wordpress)
 
-- [C'est parti !](#toc-cest-parti-)
-
 .debug[(auto-generated TOC)]
 ---
 name: toc-chapter-8
@@ -175,6 +151,30 @@ name: toc-chapter-8
 - [Scheduling avancée avec Kubernetes](#toc-scheduling-avance-avec-kubernetes)
 
 - [Big Data analytics sur Kubernetes](#toc-big-data-analytics-sur-kubernetes)
+
+.debug[(auto-generated TOC)]
+---
+name: toc-chapter-9
+
+## Chapter 9
+
+- [Authentication and authorization](#toc-authentication-and-authorization)
+
+.debug[(auto-generated TOC)]
+---
+name: toc-chapter-10
+
+## Chapter 10
+
+- [Exposing HTTP services with Ingress resources](#toc-exposing-http-services-with-ingress-resources)
+
+.debug[(auto-generated TOC)]
+---
+name: toc-chapter-11
+
+## Chapter 11
+
+- [Git-based workflows](#toc-git-based-workflows)
 
 .debug[(auto-generated TOC)]
 
@@ -1299,7 +1299,7 @@ TP Wordpress
 |
 [Retour table des matières](#toc-chapter-7)
 |
-[Section suivante](#toc-cest-parti-)
+[Section suivante](#toc-autoscaling-avec-kubernetes)
 ]
 
 .debug[(automatically generated title slide)]
@@ -1357,30 +1357,7 @@ De quels "objets" Kubernetes avons-nous besoin ?
 
 .debug[[kube/exo-wordpress/tp_wordpress.md](https://github.com/RyaxTech/kube.training.git/tree/gh-pages//kube/exo-wordpress/tp_wordpress.md)]
 ---
-
-class: pic
-
-.interstitial[![Image separating from the next chapter](https://gallant-turing-d0d520.netlify.com/containers/train-of-containers-1.jpg)]
-
----
-
-name: toc-cest-parti-
-class: title
-
-C'est parti !
-
-.nav[
-[Section précédente](#toc-tp-wordpress)
-|
-[Retour table des matières](#toc-chapter-7)
-|
-[Section suivante](#toc-autoscaling-avec-kubernetes)
-]
-
-.debug[(automatically generated title slide)]
-
----
-# C'est parti !
+## C'est parti !
 
 .exercise[
 Créez les YAMLs nécessaire (ou non) pour chaque objet.
@@ -1542,7 +1519,7 @@ kubectl apply -f wordpress.yaml
 
 class: pic
 
-.interstitial[![Image separating from the next chapter](https://gallant-turing-d0d520.netlify.com/containers/train-of-containers-2.jpg)]
+.interstitial[![Image separating from the next chapter](https://gallant-turing-d0d520.netlify.com/containers/train-of-containers-1.jpg)]
 
 ---
 
@@ -1552,7 +1529,7 @@ class: title
 Autoscaling avec Kubernetes
 
 .nav[
-[Section précédente](#toc-cest-parti-)
+[Section précédente](#toc-tp-wordpress)
 |
 [Retour table des matières](#toc-chapter-8)
 |
@@ -1708,7 +1685,7 @@ kubectl delete -f ./metrics-server
 
 class: pic
 
-.interstitial[![Image separating from the next chapter](https://gallant-turing-d0d520.netlify.com/containers/two-containers-on-a-truck.jpg)]
+.interstitial[![Image separating from the next chapter](https://gallant-turing-d0d520.netlify.com/containers/train-of-containers-2.jpg)]
 
 ---
 
@@ -1746,7 +1723,7 @@ CI/CD with Spinnaker
 
 class: pic
 
-.interstitial[![Image separating from the next chapter](https://gallant-turing-d0d520.netlify.com/containers/wall-of-containers.jpeg)]
+.interstitial[![Image separating from the next chapter](https://gallant-turing-d0d520.netlify.com/containers/two-containers-on-a-truck.jpg)]
 
 ---
 
@@ -1780,7 +1757,7 @@ Déploiement de Jupiter sur Kubernetes
 
 class: pic
 
-.interstitial[![Image separating from the next chapter](https://gallant-turing-d0d520.netlify.com/containers/Container-Ship-Freighter-Navigation-Elbe-Romance-1782991.jpg)]
+.interstitial[![Image separating from the next chapter](https://gallant-turing-d0d520.netlify.com/containers/wall-of-containers.jpeg)]
 
 ---
 
@@ -1815,7 +1792,7 @@ Scheduling avancée avec Kubernetes
 
 class: pic
 
-.interstitial[![Image separating from the next chapter](https://gallant-turing-d0d520.netlify.com/containers/ShippingContainerSFBay.jpg)]
+.interstitial[![Image separating from the next chapter](https://gallant-turing-d0d520.netlify.com/containers/Container-Ship-Freighter-Navigation-Elbe-Romance-1782991.jpg)]
 
 ---
 
@@ -1829,7 +1806,7 @@ Big Data analytics sur Kubernetes
 |
 [Retour table des matières](#toc-chapter-8)
 |
-[Section suivante](#toc-)
+[Section suivante](#toc-authentication-and-authorization)
 ]
 
 .debug[(automatically generated title slide)]
@@ -1845,7 +1822,1531 @@ https://github.com/RyaxTech/kube-tutorial#3-execute-big-data-job-with-spark-on-t
 
 
 
-.debug[[kube/advanced_fr.md](https://github.com/RyaxTech/kube.training.git/tree/gh-pages//kube/advanced_fr.md)]</textarea>
+.debug[[kube/advanced_fr.md](https://github.com/RyaxTech/kube.training.git/tree/gh-pages//kube/advanced_fr.md)]
+---
+
+class: pic
+
+.interstitial[![Image separating from the next chapter](https://gallant-turing-d0d520.netlify.com/containers/ShippingContainerSFBay.jpg)]
+
+---
+
+name: toc-authentication-and-authorization
+class: title
+
+Authentication and authorization
+
+.nav[
+[Section précédente](#toc-big-data-analytics-sur-kubernetes)
+|
+[Retour table des matières](#toc-chapter-9)
+|
+[Section suivante](#toc-exposing-http-services-with-ingress-resources)
+]
+
+.debug[(automatically generated title slide)]
+
+---
+# Authentication and authorization
+
+*And first, a little refresher!*
+
+- Authentication = verifying the identity of a person
+
+  On a UNIX system, we can authenticate with login+password, SSH keys ...
+
+- Authorization = listing what they are allowed to do
+
+  On a UNIX system, this can include file permissions, sudoer entries ...
+
+- Sometimes abbreviated as "authn" and "authz"
+
+- In good modular systems, these things are decoupled
+
+   (so we can e.g. change a password or SSH key without having to reset access rights)
+
+.debug[[kube/authn-authz.md](https://github.com/RyaxTech/kube.training.git/tree/gh-pages//kube/authn-authz.md)]
+---
+
+## Authentication in Kubernetes
+
+- When the API server receives a request, it tries to authenticate it
+
+  (it examines headers, certificates ... anything available)
+
+- Many authentication methods are available and can be used simultaneously
+
+  (we will see them on the next slide)
+
+- It's the job of the authentication method to produce:
+
+  - the user name
+  - the user ID
+  - a list of groups
+
+- The API server doesn't interpret these; it'll be the job of *authorizers*
+
+.debug[[kube/authn-authz.md](https://github.com/RyaxTech/kube.training.git/tree/gh-pages//kube/authn-authz.md)]
+---
+
+## Authentication methods
+
+- TLS client certificates
+
+  (that's what we've been doing with `kubectl` so far)
+
+- Bearer tokens
+
+  (a secret token in the HTTP headers of the request)
+
+- [HTTP basic auth](https://en.wikipedia.org/wiki/Basic_access_authentication)
+
+  (carrying user and password in a HTTP header)
+
+- Authentication proxy
+
+  (sitting in front of the API and setting trusted headers)
+
+.debug[[kube/authn-authz.md](https://github.com/RyaxTech/kube.training.git/tree/gh-pages//kube/authn-authz.md)]
+---
+
+## Anonymous requests
+
+- If any authentication method *rejects* a request, it's denied
+
+  (`401 Unauthorized` HTTP code)
+
+- If a request is neither accepted nor accepted by anyone, it's anonymous
+
+  - the user name is `system:anonymous`
+
+  - the list of groups is `[system:unauthenticated]`
+
+- By default, the anonymous user can't do anything
+
+  (that's what you get if you just `curl` the Kubernetes API)
+
+.debug[[kube/authn-authz.md](https://github.com/RyaxTech/kube.training.git/tree/gh-pages//kube/authn-authz.md)]
+---
+
+## Authentication with TLS certificates
+
+- This is enabled in most Kubernetes deployments
+
+- The user name is derived from the `CN` in the client certificates
+
+- The groups are derived from the `O` fields in the client certificate
+
+- From the point of view of the Kubernetes API, users do not exist
+
+  (i.e. they are not stored in etcd or anywhere else)
+
+- Users can be created (and given membership to groups) independently of the API
+
+- The Kubernetes API can be set up to use your custom CA to validate client certs
+
+.debug[[kube/authn-authz.md](https://github.com/RyaxTech/kube.training.git/tree/gh-pages//kube/authn-authz.md)]
+---
+
+class: extra-details
+
+## Viewing our admin certificate
+
+- Let's inspect the certificate we've been using all this time!
+
+.exercise[
+
+- This command will show the `CN` and `O` fields for our certificate:
+  ```bash
+  kubectl config view \
+          --raw \
+          -o json \
+          | jq -r .users[0].user[\"client-certificate-data\"] \
+          | base64 -d \
+          | openssl x509 -text \
+          | grep Subject:
+  ```
+
+]
+
+Let's break down that command together! 😅
+
+.debug[[kube/authn-authz.md](https://github.com/RyaxTech/kube.training.git/tree/gh-pages//kube/authn-authz.md)]
+---
+
+class: extra-details
+
+## Breaking down the command
+
+- `kubectl config view` shows the Kubernetes user configuration
+- `--raw` includes certificate information (which shows as REDACTED otherwise)
+- `-o json` outputs the information in JSON format
+- `| jq ...` extracts the field with the user certificate (in base64)
+- `| base64 -d` decodes the base64 format (now we have a PEM file)
+- `| openssl x509 -text` parses the certificate and outputs it as plain text
+- `| grep Subject:` shows us the line that interests us
+
+→ We are user `kubernetes-admin`, in group `system:masters`.
+
+(We will see later how and why this gives us the permissions that we have.)
+
+.debug[[kube/authn-authz.md](https://github.com/RyaxTech/kube.training.git/tree/gh-pages//kube/authn-authz.md)]
+---
+
+## User certificates in practice
+
+- The Kubernetes API server does not support certificate revocation
+
+  (see issue [#18982](https://github.com/kubernetes/kubernetes/issues/18982))
+
+- As a result, we cannot easily suspend a user's access
+
+- There are workarounds, but they are very inconvenient:
+
+  - issue short-lived certificates (e.g. 24 hours) and regenerate them often
+
+  - re-create the CA and re-issue all certificates in case of compromise
+
+  - grant permissions to individual users, not groups
+    <br/>
+    (and remove all permissions to a compromised user)
+
+- Until this is fixed, we probably want to use other methods
+
+.debug[[kube/authn-authz.md](https://github.com/RyaxTech/kube.training.git/tree/gh-pages//kube/authn-authz.md)]
+---
+
+## Authentication with tokens
+
+- Tokens are passed as HTTP headers:
+
+  `Authorization: Bearer and-then-here-comes-the-token`
+
+- Tokens can be validated through a number of different methods:
+
+  - static tokens hard-coded in a file on the API server
+
+  - [bootstrap tokens](https://kubernetes.io/docs/reference/access-authn-authz/bootstrap-tokens/) (special case to create a cluster or join nodes)
+
+  - [OpenID Connect tokens](https://kubernetes.io/docs/reference/access-authn-authz/authentication/#openid-connect-tokens) (to delegate authentication to compatible OAuth2 providers)
+
+  - service accounts (these deserve more details, coming right up!)
+
+.debug[[kube/authn-authz.md](https://github.com/RyaxTech/kube.training.git/tree/gh-pages//kube/authn-authz.md)]
+---
+
+## Service accounts
+
+- A service account is a user that exists in the Kubernetes API
+
+  (it is visible with e.g. `kubectl get serviceaccounts`)
+
+- Service accounts can therefore be created / updated dynamically
+
+  (they don't require hand-editing a file and restarting the API server)
+
+- A service account is associated with a set of secrets
+
+  (the kind that you can view with `kubectl get secrets`)
+
+- Service accounts are generally used to grant permissions to applications, services ...
+
+  (as opposed to humans)
+
+.debug[[kube/authn-authz.md](https://github.com/RyaxTech/kube.training.git/tree/gh-pages//kube/authn-authz.md)]
+---
+
+class: extra-details
+
+## Token authentication in practice
+
+- We are going to list existing service accounts
+
+- Then we will extract the token for a given service account
+
+- And we will use that token to authenticate with the API
+
+.debug[[kube/authn-authz.md](https://github.com/RyaxTech/kube.training.git/tree/gh-pages//kube/authn-authz.md)]
+---
+
+class: extra-details
+
+## Listing service accounts
+
+.exercise[
+
+- The resource name is `serviceaccount` or `sa` in short:
+  ```bash
+  kubectl get sa
+  ```
+
+]
+
+There should be just one service account in the default namespace: `default`.
+
+.debug[[kube/authn-authz.md](https://github.com/RyaxTech/kube.training.git/tree/gh-pages//kube/authn-authz.md)]
+---
+
+class: extra-details
+
+## Finding the secret
+
+.exercise[
+
+- List the secrets for the `default` service account:
+  ```bash
+  kubectl get sa default -o yaml
+  SECRET=$(kubectl get sa default -o json | jq -r .secrets[0].name)
+  ```
+
+]
+
+It should be named `default-token-XXXXX`.
+
+.debug[[kube/authn-authz.md](https://github.com/RyaxTech/kube.training.git/tree/gh-pages//kube/authn-authz.md)]
+---
+
+class: extra-details
+
+## Extracting the token
+
+- The token is stored in the secret, wrapped with base64 encoding
+
+.exercise[
+
+- View the secret:
+  ```bash
+  kubectl get secret $SECRET -o yaml
+  ```
+
+- Extract the token and decode it:
+  ```bash
+  TOKEN=$(kubectl get secret $SECRET -o json \
+          | jq -r .data.token | base64 -d)
+  ```
+
+]
+
+.debug[[kube/authn-authz.md](https://github.com/RyaxTech/kube.training.git/tree/gh-pages//kube/authn-authz.md)]
+---
+
+class: extra-details
+
+## Using the token
+
+- Let's send a request to the API, without and with the token
+
+.exercise[
+
+- Find the ClusterIP for the `kubernetes` service:
+  ```bash
+  kubectl get svc kubernetes
+  API=$(kubectl get svc kubernetes -o json | jq -r .spec.clusterIP)
+  ```
+
+- Connect without the token:
+  ```bash
+  curl -k https://$API
+  ```
+
+- Connect with the token:
+  ```bash
+  curl -k -H "Authorization: Bearer $TOKEN" https://$API
+  ```
+
+]
+
+.debug[[kube/authn-authz.md](https://github.com/RyaxTech/kube.training.git/tree/gh-pages//kube/authn-authz.md)]
+---
+
+class: extra-details
+
+## Results
+
+- In both cases, we will get a "Forbidden" error
+
+- Without authentication, the user is `system:anonymous`
+
+- With authentication, it is shown as `system:serviceaccount:default:default`
+
+- The API "sees" us as a different user
+
+- But neither user has any right, so we can't do nothin'
+
+- Let's change that!
+
+.debug[[kube/authn-authz.md](https://github.com/RyaxTech/kube.training.git/tree/gh-pages//kube/authn-authz.md)]
+---
+
+## Authorization in Kubernetes
+
+- There are multiple ways to grant permissions in Kubernetes, called [authorizers](https://kubernetes.io/docs/reference/access-authn-authz/authorization/#authorization-modules):
+
+  - [Node Authorization](https://kubernetes.io/docs/reference/access-authn-authz/node/) (used internally by kubelet; we can ignore it)
+
+  - [Attribute-based access control](https://kubernetes.io/docs/reference/access-authn-authz/abac/) (powerful but complex and static; ignore it too)
+
+  - [Webhook](https://kubernetes.io/docs/reference/access-authn-authz/webhook/) (each API request is submitted to an external service for approval)
+
+  - [Role-based access control](https://kubernetes.io/docs/reference/access-authn-authz/rbac/) (associates permissions to users dynamically)
+
+- The one we want is the last one, generally abbreviated as RBAC
+
+.debug[[kube/authn-authz.md](https://github.com/RyaxTech/kube.training.git/tree/gh-pages//kube/authn-authz.md)]
+---
+
+## Role-based access control
+
+- RBAC allows to specify fine-grained permissions
+
+- Permissions are expressed as *rules*
+
+- A rule is a combination of:
+
+  - [verbs](https://kubernetes.io/docs/reference/access-authn-authz/authorization/#determine-the-request-verb) like create, get, list, update, delete ...
+
+  - resources (as in "API resource", like pods, nodes, services ...)
+
+  - resource names (to specify e.g. one specific pod instead of all pods)
+
+  - in some case, [subresources](https://kubernetes.io/docs/reference/access-authn-authz/rbac/#referring-to-resources) (e.g. logs are subresources of pods)
+
+.debug[[kube/authn-authz.md](https://github.com/RyaxTech/kube.training.git/tree/gh-pages//kube/authn-authz.md)]
+---
+
+## From rules to roles to rolebindings
+
+- A *role* is an API object containing a list of *rules*
+
+  Example: role "external-load-balancer-configurator" can:
+  - [list, get] resources [endpoints, services, pods]
+  - [update] resources [services]
+
+- A *rolebinding* associates a role with a user
+
+  Example: rolebinding "external-load-balancer-configurator":
+  - associates user "external-load-balancer-configurator"
+  - with role "external-load-balancer-configurator"
+
+- Yes, there can be users, roles, and rolebindings with the same name
+
+- It's a good idea for 1-1-1 bindings; not so much for 1-N ones
+
+.debug[[kube/authn-authz.md](https://github.com/RyaxTech/kube.training.git/tree/gh-pages//kube/authn-authz.md)]
+---
+
+## Cluster-scope permissions
+
+- API resources Role and RoleBinding are for objects within a namespace
+
+- We can also define API resources ClusterRole and ClusterRoleBinding
+
+- These are a superset, allowing to:
+
+  - specify actions on cluster-wide objects (like nodes)
+
+  - operate across all namespaces
+
+- We can create Role and RoleBinding resources within a namespaces
+
+- ClusterRole and ClusterRoleBinding resources are global
+
+.debug[[kube/authn-authz.md](https://github.com/RyaxTech/kube.training.git/tree/gh-pages//kube/authn-authz.md)]
+---
+
+## Pods and service accounts
+
+- A pod can be associated to a service account
+
+  - by default, it is associated to the `default` service account
+
+  - as we've seen earlier, this service account has no permission anyway
+
+- The associated token is exposed into the pod's filesystem
+
+  (in `/var/run/secrets/kubernetes.io/serviceaccount/token`)
+
+- Standard Kubernetes tooling (like `kubectl`) will look for it there
+
+- So Kubernetes tools running in a pod will automatically use the service account
+
+.debug[[kube/authn-authz.md](https://github.com/RyaxTech/kube.training.git/tree/gh-pages//kube/authn-authz.md)]
+---
+
+## In practice
+
+- We are going to create a service account
+
+- We will use an existing cluster role (`view`)
+
+- We will bind together this role and this service account
+
+- Then we will run a pod using that service account
+
+- In this pod, we will install `kubectl` and check our permissions
+
+.debug[[kube/authn-authz.md](https://github.com/RyaxTech/kube.training.git/tree/gh-pages//kube/authn-authz.md)]
+---
+
+## Creating a service account
+
+- We will call the new service account `viewer`
+
+  (note that nothing prevents us from calling it `view`, like the role)
+
+.exercise[
+
+- Create the new service account:
+  ```bash
+  kubectl create serviceaccount viewer
+  ```
+
+- List service accounts now:
+  ```bash
+  kubectl get serviceaccounts
+  ```
+
+]
+
+.debug[[kube/authn-authz.md](https://github.com/RyaxTech/kube.training.git/tree/gh-pages//kube/authn-authz.md)]
+---
+
+## Binding a role to the service account
+
+- Binding a role = creating a *rolebinding* object
+
+- We will call that object `viewercanview`
+
+  (but again, we could call it `view`)
+
+.exercise[
+
+- Create the new role binding:
+  ```bash
+  kubectl create rolebinding viewercanview \
+          --clusterrole=view \
+          --serviceaccount=default:viewer
+  ```
+
+]
+
+It's important to note a couple of details in these flags ...
+
+.debug[[kube/authn-authz.md](https://github.com/RyaxTech/kube.training.git/tree/gh-pages//kube/authn-authz.md)]
+---
+
+## Roles vs Cluster Roles
+
+- We used `--clusterrole=view`
+
+- What would have happened if we had used `--role=view`?
+
+  - we would have bound the role `view` from the local namespace
+    <br/>(instead of the cluster role `view`)
+
+  - the command would have worked fine (no error)
+
+  - but later, our API requests would have been denied
+
+- This is a deliberate design decision
+
+  (we can reference roles that don't exist, and create/update them later)
+
+.debug[[kube/authn-authz.md](https://github.com/RyaxTech/kube.training.git/tree/gh-pages//kube/authn-authz.md)]
+---
+
+## Users vs Service Accounts
+
+- We used `--serviceaccount=default:viewer`
+
+- What would have happened if we had used `--user=default:viewer`?
+
+  - we would have bound the role to a user instead of a service account
+
+  - again, the command would have worked fine (no error)
+
+  - ... but our API requests would have been denied later
+
+- What's about the `default:` prefix?
+
+  - that's the namespace of the service account
+
+  - yes, it could be inferred from context, but ... `kubectl` requires it
+
+.debug[[kube/authn-authz.md](https://github.com/RyaxTech/kube.training.git/tree/gh-pages//kube/authn-authz.md)]
+---
+
+## Testing
+
+- We will run an `alpine` pod and install `kubectl` there
+
+.exercise[
+
+- Run a one-time pod:
+  ```bash
+  kubectl run eyepod --rm -ti --restart=Never \
+          --serviceaccount=viewer \
+          --image alpine
+  ```
+
+- Install `curl`, then use it to install `kubectl`:
+  ```bash
+  apk add --no-cache curl
+  URLBASE=https://storage.googleapis.com/kubernetes-release/release
+  KUBEVER=$(curl -s $URLBASE/stable.txt)
+  curl -LO $URLBASE/$KUBEVER/bin/linux/amd64/kubectl
+  chmod +x kubectl
+  ```
+
+]
+
+.debug[[kube/authn-authz.md](https://github.com/RyaxTech/kube.training.git/tree/gh-pages//kube/authn-authz.md)]
+---
+
+## Running `kubectl` in the pod
+
+- We'll try to use our `view` permissions, then to create an object
+
+.exercise[
+
+- Check that we can, indeed, view things:
+  ```bash
+  ./kubectl get all
+  ```
+
+- But that we can't create things:
+  ```
+  ./kubectl create deployment testrbac --image=nginx
+  ```
+
+- Exit the container with `exit` or `^D`
+
+<!-- ```keys ^D``` -->
+
+]
+
+.debug[[kube/authn-authz.md](https://github.com/RyaxTech/kube.training.git/tree/gh-pages//kube/authn-authz.md)]
+---
+
+## Testing directly with `kubectl`
+
+- We can also check for permission with `kubectl auth can-i`:
+  ```bash
+  kubectl auth can-i list nodes
+  kubectl auth can-i create pods
+  kubectl auth can-i get pod/name-of-pod
+  kubectl auth can-i get /url-fragment-of-api-request/
+  kubectl auth can-i '*' services
+  ```
+
+- And we can check permissions on behalf of other users:
+  ```bash
+  kubectl auth can-i list nodes \
+          --as some-user
+  kubectl auth can-i list nodes \
+          --as system:serviceaccount:<namespace>:<name-of-service-account>
+  ```
+
+.debug[[kube/authn-authz.md](https://github.com/RyaxTech/kube.training.git/tree/gh-pages//kube/authn-authz.md)]
+---
+
+class: extra-details
+
+## Where do our permissions come from?
+
+- When interacting with the Kubernetes API, we are using a client certificate
+
+- We saw previously that this client certificate contained:
+
+  `CN=kubernetes-admin` and `O=system:masters`
+
+- Let's look for these in existing ClusterRoleBindings:
+  ```bash
+  kubectl get clusterrolebindings -o yaml | 
+    grep -e kubernetes-admin -e system:masters
+  ```
+
+  (`system:masters` should show up, but not `kubernetes-admin`.)
+
+- Where does this match come from?
+
+.debug[[kube/authn-authz.md](https://github.com/RyaxTech/kube.training.git/tree/gh-pages//kube/authn-authz.md)]
+---
+
+class: extra-details
+
+## The `system:masters` group
+
+- If we eyeball the output of `kubectl get clusterrolebindings -o yaml`, we'll find out!
+
+- It is in the `cluster-admin` binding:
+  ```bash
+  kubectl describe clusterrolebinding cluster-admin
+  ```
+
+- This binding associates `system:masters` to the cluster role `cluster-admin`
+
+- And the `cluster-admin` is, basically, `root`:
+  ```bash
+  kubectl describe clusterrole cluster-admin
+  ```
+
+.debug[[kube/authn-authz.md](https://github.com/RyaxTech/kube.training.git/tree/gh-pages//kube/authn-authz.md)]
+---
+
+class: pic
+
+.interstitial[![Image separating from the next chapter](https://gallant-turing-d0d520.netlify.com/containers/aerial-view-of-containers.jpg)]
+
+---
+
+name: toc-exposing-http-services-with-ingress-resources
+class: title
+
+Exposing HTTP services with Ingress resources
+
+.nav[
+[Section précédente](#toc-authentication-and-authorization)
+|
+[Retour table des matières](#toc-chapter-10)
+|
+[Section suivante](#toc-git-based-workflows)
+]
+
+.debug[(automatically generated title slide)]
+
+---
+# Exposing HTTP services with Ingress resources
+
+- *Services* give us a way to access a pod or a set of pods
+
+- Services can be exposed to the outside world:
+
+  - with type `NodePort` (on a port >30000)
+
+  - with type `LoadBalancer` (allocating an external load balancer)
+
+- What about HTTP services?
+
+  - how can we expose `webui`, `rng`, `hasher`?
+
+  - the Kubernetes dashboard?
+
+  - a new version of `webui`?
+
+.debug[[kube/ingress.md](https://github.com/RyaxTech/kube.training.git/tree/gh-pages//kube/ingress.md)]
+---
+
+## Exposing HTTP services
+
+- If we use `NodePort` services, clients have to specify port numbers
+
+  (i.e. http://xxxxx:31234 instead of just http://xxxxx)
+
+- `LoadBalancer` services are nice, but:
+
+  - they are not available in all environments
+
+  - they often carry an additional cost (e.g. they provision an ELB)
+
+  - they require one extra step for DNS integration
+    <br/>
+    (waiting for the `LoadBalancer` to be provisioned; then adding it to DNS)
+
+- We could build our own reverse proxy
+
+.debug[[kube/ingress.md](https://github.com/RyaxTech/kube.training.git/tree/gh-pages//kube/ingress.md)]
+---
+
+## Building a custom reverse proxy
+
+- There are many options available:
+
+  Apache, HAProxy, Hipache, NGINX, Traefik, ...
+
+  (look at [jpetazzo/aiguillage](https://github.com/jpetazzo/aiguillage) for a minimal reverse proxy configuration using NGINX)
+
+- Most of these options require us to update/edit configuration files after each change
+
+- Some of them can pick up virtual hosts and backends from a configuration store
+
+- Wouldn't it be nice if this configuration could be managed with the Kubernetes API?
+
+--
+
+- Enter.red[¹] *Ingress* resources!
+
+.footnote[.red[¹] Pun maybe intended.]
+
+.debug[[kube/ingress.md](https://github.com/RyaxTech/kube.training.git/tree/gh-pages//kube/ingress.md)]
+---
+
+## Ingress resources
+
+- Kubernetes API resource (`kubectl get ingress`/`ingresses`/`ing`)
+
+- Designed to expose HTTP services
+
+- Basic features:
+
+  - load balancing
+  - SSL termination
+  - name-based virtual hosting
+
+- Can also route to different services depending on:
+
+  - URI path (e.g. `/api`→`api-service`, `/static`→`assets-service`)
+  - Client headers, including cookies (for A/B testing, canary deployment...)
+  - and more!
+
+.debug[[kube/ingress.md](https://github.com/RyaxTech/kube.training.git/tree/gh-pages//kube/ingress.md)]
+---
+
+## Principle of operation
+
+- Step 1: deploy an *ingress controller*
+
+  - ingress controller = load balancer + control loop
+
+  - the control loop watches over ingress resources, and configures the LB accordingly
+
+- Step 2: setup DNS
+
+  - associate DNS entries with the load balancer address
+
+- Step 3: create *ingress resources*
+
+  - the ingress controller picks up these resources and configures the LB
+
+- Step 4: profit!
+
+.debug[[kube/ingress.md](https://github.com/RyaxTech/kube.training.git/tree/gh-pages//kube/ingress.md)]
+---
+
+## Ingress in action
+
+- We will deploy the Traefik ingress controller
+
+  - this is an arbitrary choice
+
+  - maybe motivated by the fact that Traefik releases are named after cheeses
+
+- For DNS, we will use [nip.io](http://nip.io/)
+
+  - `*.1.2.3.4.nip.io` resolves to `1.2.3.4`
+
+- We will create ingress resources for various HTTP services
+
+.debug[[kube/ingress.md](https://github.com/RyaxTech/kube.training.git/tree/gh-pages//kube/ingress.md)]
+---
+
+## Deploying pods listening on port 80
+
+- We want our ingress load balancer to be available on port 80
+
+- We could do that with a `LoadBalancer` service
+
+  ... but it requires support from the underlying infrastructure
+
+- We could use pods specifying `hostPort: 80` 
+
+  ... but with most CNI plugins, this [doesn't work or require additional setup](https://github.com/kubernetes/kubernetes/issues/23920)
+
+- We could use a `NodePort` service
+
+  ... but that requires [changing the `--service-node-port-range` flag in the API server](https://kubernetes.io/docs/reference/command-line-tools-reference/kube-apiserver/)
+
+- Last resort: the `hostNetwork` mode
+
+.debug[[kube/ingress.md](https://github.com/RyaxTech/kube.training.git/tree/gh-pages//kube/ingress.md)]
+---
+
+## Without `hostNetwork`
+
+- Normally, each pod gets its own *network namespace*
+
+  (sometimes called sandbox or network sandbox)
+
+- An IP address is associated to the pod
+
+- This IP address is routed/connected to the cluster network
+
+- All containers of that pod are sharing that network namespace
+
+  (and therefore using the same IP address)
+
+.debug[[kube/ingress.md](https://github.com/RyaxTech/kube.training.git/tree/gh-pages//kube/ingress.md)]
+---
+
+## With `hostNetwork: true`
+
+- No network namespace gets created
+
+- The pod is using the network namespace of the host
+
+- It "sees" (and can use) the interfaces (and IP addresses) of the host
+
+- The pod can receive outside traffic directly, on any port
+
+- Downside: with most network plugins, network policies won't work for that pod
+
+  - most network policies work at the IP address level
+
+  - filtering that pod = filtering traffic from the node
+
+.debug[[kube/ingress.md](https://github.com/RyaxTech/kube.training.git/tree/gh-pages//kube/ingress.md)]
+---
+
+## Running Traefik
+
+- The [Traefik documentation](https://docs.traefik.io/user-guide/kubernetes/#deploy-trfik-using-a-deployment-or-daemonset) tells us to pick between Deployment and Daemon Set
+
+- We are going to use a Daemon Set so that each node can accept connections
+
+- We will do two minor changes to the [YAML provided by Traefik](https://github.com/containous/traefik/blob/master/examples/k8s/traefik-ds.yaml):
+
+  - enable `hostNetwork`
+
+  - add a *toleration* so that Traefik also runs on `node1`
+
+.debug[[kube/ingress.md](https://github.com/RyaxTech/kube.training.git/tree/gh-pages//kube/ingress.md)]
+---
+
+## Taints and tolerations
+
+- A *taint* is an attribute added to a node
+
+- It prevents pods from running on the node
+
+- ... Unless they have a matching *toleration*
+
+- When deploying with `kubeadm`:
+
+  - a taint is placed on the node dedicated the control plane
+
+  - the pods running the control plane have a matching toleration
+
+.debug[[kube/ingress.md](https://github.com/RyaxTech/kube.training.git/tree/gh-pages//kube/ingress.md)]
+---
+
+class: extra-details
+
+## Checking taints on our nodes
+
+.exercise[
+
+- Check our nodes specs:
+  ```bash
+  kubectl get node node1 -o json | jq .spec
+  kubectl get node node2 -o json | jq .spec
+  ```
+
+]
+
+We should see a result only for `node1` (the one with the control plane):
+
+```json
+  "taints": [
+    {
+      "effect": "NoSchedule",
+      "key": "node-role.kubernetes.io/master"
+    }
+  ]
+```
+
+.debug[[kube/ingress.md](https://github.com/RyaxTech/kube.training.git/tree/gh-pages//kube/ingress.md)]
+---
+
+class: extra-details
+
+## Understanding a taint
+
+- The `key` can be interpreted as:
+
+  - a reservation for a special set of pods
+    <br/>
+    (here, this means "this node is reserved for the control plane")
+
+  - an error condition on the node
+    <br/>
+    (for instance: "disk full", do not start new pods here!)
+
+- The `effect` can be:
+
+  - `NoSchedule` (don't run new pods here)
+
+  - `PreferNoSchedule` (try not to run new pods here)
+
+  - `NoExecute` (don't run new pods and evict running pods)
+
+.debug[[kube/ingress.md](https://github.com/RyaxTech/kube.training.git/tree/gh-pages//kube/ingress.md)]
+---
+
+class: extra-details
+
+## Checking tolerations on the control plane
+
+.exercise[
+
+- Check tolerations for CoreDNS:
+  ```bash
+  kubectl -n kube-system get deployments coredns -o json |
+          jq .spec.template.spec.tolerations
+  ```
+
+]
+
+The result should include:
+```json
+  {
+    "effect": "NoSchedule",
+    "key": "node-role.kubernetes.io/master"
+  }
+```
+
+It means: "bypass the exact taint that we saw earlier on `node1`."
+
+.debug[[kube/ingress.md](https://github.com/RyaxTech/kube.training.git/tree/gh-pages//kube/ingress.md)]
+---
+
+class: extra-details
+
+## Special tolerations
+
+.exercise[
+
+- Check tolerations on `kube-proxy`:
+  ```bash
+  kubectl -n kube-system get ds kube-proxy -o json | 
+          jq .spec.template.spec.tolerations
+  ```
+
+]
+
+The result should include:
+```json
+  {
+    "operator": "Exists"
+  }
+```
+
+This one is a special case that means "ignore all taints and run anyway."
+
+.debug[[kube/ingress.md](https://github.com/RyaxTech/kube.training.git/tree/gh-pages//kube/ingress.md)]
+---
+
+## Running Traefik on our cluster
+
+- We provide a YAML file (`k8s/traefik.yaml`) which is essentially the sum of:
+
+  - [Traefik's Daemon Set resources](https://github.com/containous/traefik/blob/master/examples/k8s/traefik-ds.yaml) (patched with `hostNetwork` and tolerations)
+
+  - [Traefik's RBAC rules](https://github.com/containous/traefik/blob/master/examples/k8s/traefik-rbac.yaml) allowing it to watch necessary API objects
+
+.exercise[
+
+- Apply the YAML:
+  ```bash
+  kubectl apply -f ~/container.training/k8s/traefik.yaml
+  ```
+
+]
+
+.debug[[kube/ingress.md](https://github.com/RyaxTech/kube.training.git/tree/gh-pages//kube/ingress.md)]
+---
+
+## Checking that Traefik runs correctly
+
+- If Traefik started correctly, we now have a web server listening on each node
+
+.exercise[
+
+- Check that Traefik is serving 80/tcp:
+  ```bash
+  curl localhost
+  ```
+
+]
+
+We should get a `404 page not found` error.
+
+This is normal: we haven't provided any ingress rule yet.
+
+.debug[[kube/ingress.md](https://github.com/RyaxTech/kube.training.git/tree/gh-pages//kube/ingress.md)]
+---
+
+## Setting up DNS
+
+- To make our lives easier, we will use [nip.io](http://nip.io)
+
+- Check out `http://cheddar.A.B.C.D.nip.io`
+
+  (replacing A.B.C.D with the IP address of `node1`)
+
+- We should get the same `404 page not found` error
+
+  (meaning that our DNS is "set up properly", so to speak!)
+
+.debug[[kube/ingress.md](https://github.com/RyaxTech/kube.training.git/tree/gh-pages//kube/ingress.md)]
+---
+
+## Traefik web UI
+
+- Traefik provides a web dashboard
+
+- With the current install method, it's listening on port 8080
+
+.exercise[
+
+- Go to `http://node1:8080` (replacing `node1` with its IP address)
+
+]
+
+.debug[[kube/ingress.md](https://github.com/RyaxTech/kube.training.git/tree/gh-pages//kube/ingress.md)]
+---
+
+## Setting up host-based routing ingress rules
+
+- We are going to use `errm/cheese` images
+
+  (there are [3 tags available](https://hub.docker.com/r/errm/cheese/tags/): wensleydale, cheddar, stilton)
+
+- These images contain a simple static HTTP server sending a picture of cheese
+
+- We will run 3 deployments (one for each cheese)
+
+- We will create 3 services (one for each deployment)
+
+- Then we will create 3 ingress rules (one for each service)
+
+- We will route `<name-of-cheese>.A.B.C.D.nip.io` to the corresponding deployment
+
+.debug[[kube/ingress.md](https://github.com/RyaxTech/kube.training.git/tree/gh-pages//kube/ingress.md)]
+---
+
+## Running cheesy web servers
+
+.exercise[
+
+- Run all three deployments:
+  ```bash
+  kubectl create deployment cheddar --image=errm/cheese:cheddar
+  kubectl create deployment stilton --image=errm/cheese:stilton
+  kubectl create deployment wensleydale --image=errm/cheese:wensleydale
+  ```
+
+- Create a service for each of them:
+  ```bash
+  kubectl expose deployment cheddar --port=80
+  kubectl expose deployment stilton --port=80
+  kubectl expose deployment wensleydale --port=80
+  ```
+
+]
+
+.debug[[kube/ingress.md](https://github.com/RyaxTech/kube.training.git/tree/gh-pages//kube/ingress.md)]
+---
+
+## What does an ingress resource look like?
+
+Here is a minimal host-based ingress resource:
+
+```yaml
+apiVersion: extensions/v1beta1
+kind: Ingress
+metadata:
+  name: cheddar
+spec:
+  rules:
+  - host: cheddar.`A.B.C.D`.nip.io
+    http:
+      paths:
+      - path: /
+        backend:
+          serviceName: cheddar
+          servicePort: 80
+
+```
+
+(It is in `k8s/ingress.yaml`.)
+
+.debug[[kube/ingress.md](https://github.com/RyaxTech/kube.training.git/tree/gh-pages//kube/ingress.md)]
+---
+
+## Creating our first ingress resources
+
+.exercise[
+
+- Edit the file `~/container.training/k8s/ingress.yaml`
+
+- Replace A.B.C.D with the IP address of `node1`
+
+- Apply the file
+
+- Open http://cheddar.A.B.C.D.nip.io
+
+]
+
+(An image of a piece of cheese should show up.)
+
+.debug[[kube/ingress.md](https://github.com/RyaxTech/kube.training.git/tree/gh-pages//kube/ingress.md)]
+---
+
+## Creating the other ingress resources
+
+.exercise[
+
+- Edit the file `~/container.training/k8s/ingress.yaml`
+
+- Replace `cheddar` with `stilton` (in `name`, `host`, `serviceName`)
+
+- Apply the file
+
+- Check that `stilton.A.B.C.D.nip.io` works correctly
+
+- Repeat for `wensleydale`
+
+]
+
+.debug[[kube/ingress.md](https://github.com/RyaxTech/kube.training.git/tree/gh-pages//kube/ingress.md)]
+---
+
+## Using multiple ingress controllers
+
+- You can have multiple ingress controllers active simultaneously
+
+  (e.g. Traefik and NGINX)
+
+- You can even have multiple instances of the same controller
+
+  (e.g. one for internal, another for external traffic)
+
+- The `kubernetes.io/ingress.class` annotation can be used to tell which one to use
+
+- It's OK if multiple ingress controllers configure the same resource
+
+  (it just means that the service will be accessible through multiple paths)
+
+.debug[[kube/ingress.md](https://github.com/RyaxTech/kube.training.git/tree/gh-pages//kube/ingress.md)]
+---
+
+## Ingress: the good
+
+- The traffic flows directly from the ingress load balancer to the backends
+
+  - it doesn't need to go through the `ClusterIP`
+
+  - in fact, we don't even need a `ClusterIP` (we can use a headless service)
+
+- The load balancer can be outside of Kubernetes
+
+  (as long as it has access to the cluster subnet)
+
+- This allows to use external (hardware, physical machines...) load balancers
+
+- Annotations can encode special features
+
+  (rate-limiting, A/B testing, session stickiness, etc.) 
+
+.debug[[kube/ingress.md](https://github.com/RyaxTech/kube.training.git/tree/gh-pages//kube/ingress.md)]
+---
+
+## Ingress: the bad
+
+- Aforementioned "special features" are not standardized yet
+
+- Some controllers will support them; some won't
+
+- Even relatively common features (stripping a path prefix) can differ:
+
+  - [traefik.ingress.kubernetes.io/rule-type: PathPrefixStrip](https://docs.traefik.io/user-guide/kubernetes/#path-based-routing)
+
+  - [ingress.kubernetes.io/rewrite-target: /](https://github.com/kubernetes/contrib/tree/master/ingress/controllers/nginx/examples/rewrite)
+
+- This should eventually stabilize
+
+  (remember that ingresses are currently `apiVersion: extensions/v1beta1`)
+
+.debug[[kube/ingress.md](https://github.com/RyaxTech/kube.training.git/tree/gh-pages//kube/ingress.md)]
+---
+
+class: pic
+
+.interstitial[![Image separating from the next chapter](https://gallant-turing-d0d520.netlify.com/containers/blue-containers.jpg)]
+
+---
+
+name: toc-git-based-workflows
+class: title
+
+Git-based workflows
+
+.nav[
+[Section précédente](#toc-exposing-http-services-with-ingress-resources)
+|
+[Retour table des matières](#toc-chapter-11)
+|
+[Section suivante](#toc-)
+]
+
+.debug[(automatically generated title slide)]
+
+---
+# Git-based workflows
+
+- Deploying with `kubectl` has downsides:
+
+  - we don't know *who* deployed *what* and *when*
+
+  - there is no audit trail (except the API server logs)
+
+  - there is no easy way to undo most operations
+
+  - there is no review/approval process (like for code reviews)
+
+- We have all these things for *code*, though
+
+- Can we manage cluster state like we manage our source code?
+
+.debug[[kube/gitworkflows.md](https://github.com/RyaxTech/kube.training.git/tree/gh-pages//kube/gitworkflows.md)]
+---
+
+## Reminder: Kubernetes is *declarative*
+
+- All we do is create/change resources
+
+- These resources have a perfect YAML representation
+
+- All we do is manipulating these YAML representations
+
+  (`kubectl run` generates a YAML file that gets applied)
+
+- We can store these YAML representations in a code repository
+
+- We can version that code repository and maintain it with best practices
+
+  - define which branch(es) can go to qa/staging/production
+
+  - control who can push to which branches
+
+  - have formal review processes, pull requests ...
+
+.debug[[kube/gitworkflows.md](https://github.com/RyaxTech/kube.training.git/tree/gh-pages//kube/gitworkflows.md)]
+---
+
+## Enabling git-based workflows
+
+- There are a few tools out there to help us do that
+
+- We'll see demos of two of them: [Flux] and [Gitkube]
+
+- There are *many* other tools, some of them with even more features
+
+- There are also *many* integrations with popular CI/CD systems
+
+  (e.g.: GitLab, Jenkins, ...)
+
+[Flux]: https://www.weave.works/oss/flux/
+[Gitkube]: https://gitkube.sh/
+
+.debug[[kube/gitworkflows.md](https://github.com/RyaxTech/kube.training.git/tree/gh-pages//kube/gitworkflows.md)]
+---
+
+## Flux overview
+
+- We put our Kubernetes resources as YAML files in a git repository
+
+- Flux polls that repository regularly (every 5 minutes by default)
+
+- The resources described by the YAML files are created/updated automatically
+
+- Changes are made by updating the code in the repository
+
+.debug[[kube/gitworkflows.md](https://github.com/RyaxTech/kube.training.git/tree/gh-pages//kube/gitworkflows.md)]
+---
+
+## Preparing a repository for Flux
+
+- We need a repository with Kubernetes YAML files
+
+- I have one: https://github.com/jpetazzo/kubercoins
+
+- Fork it to your GitHub account
+
+- Create a new branch in your fork; e.g. `prod`
+
+  (e.g. by adding a line in the README through the GitHub web UI)
+
+- This is the branch that we are going to use for deployment
+
+.debug[[kube/gitworkflows.md](https://github.com/RyaxTech/kube.training.git/tree/gh-pages//kube/gitworkflows.md)]
+---
+
+## Setting up Flux
+
+- Clone the Flux repository:
+  ```
+  git clone https://github.com/weaveworks/flux
+  ```
+
+- Edit `deploy/flux-deployment.yaml`
+
+- Change the `--git-url` and `--git-branch` parameters:
+  ```yaml
+  - --git-url=git@github.com:your-git-username/kubercoins
+  - --git-branch=prod
+  ```
+
+- Apply all the YAML:
+  ```
+  kubectl apply -f deploy/
+  ```
+
+.debug[[kube/gitworkflows.md](https://github.com/RyaxTech/kube.training.git/tree/gh-pages//kube/gitworkflows.md)]
+---
+
+## Allowing Flux to access the repository
+
+- When it starts, Flux generates an SSH key
+
+- Display that key:
+  ```
+  kubectl logs deployment flux | grep identity
+  ```
+
+- Then add that key to the repository, giving it **write** access
+
+  (some Flux features require write access)
+
+- After a minute or so, DockerCoins will be deployed to the current namespace
+
+.debug[[kube/gitworkflows.md](https://github.com/RyaxTech/kube.training.git/tree/gh-pages//kube/gitworkflows.md)]
+---
+
+## Making changes
+
+- Make changes (on the `prod` branch), e.g. change `replicas` in `worker`
+
+- After a few minutes, the changes will be picked up by Flux and applied
+
+.debug[[kube/gitworkflows.md](https://github.com/RyaxTech/kube.training.git/tree/gh-pages//kube/gitworkflows.md)]
+---
+
+## Other features
+
+- Flux can keep a list of all the tags of all the images we're running
+
+- The `fluxctl` tool can show us if we're running the latest images
+
+- We can also "automate" a resource (i.e. automatically deploy new images)
+
+- And much more!
+
+.debug[[kube/gitworkflows.md](https://github.com/RyaxTech/kube.training.git/tree/gh-pages//kube/gitworkflows.md)]
+---
+
+## Gitkube overview
+
+- We put our Kubernetes resources as YAML files in a git repository
+
+- Gitkube is a git server (or "git remote")
+
+- After making changes to the repository, we push to Gitkube
+
+- Gitkube applies the resources to the cluster
+
+.debug[[kube/gitworkflows.md](https://github.com/RyaxTech/kube.training.git/tree/gh-pages//kube/gitworkflows.md)]
+---
+
+## Setting up Gitkube
+
+- Install the CLI:
+  ```
+  sudo curl -L -o /usr/local/bin/gitkube \
+       https://github.com/hasura/gitkube/releases/download/v0.2.1/gitkube_linux_amd64
+  sudo chmod +x /usr/local/bin/gitkube
+  ```
+
+- Install Gitkube on the cluster:
+  ```
+  gitkube install --expose ClusterIP
+  ```
+
+.debug[[kube/gitworkflows.md](https://github.com/RyaxTech/kube.training.git/tree/gh-pages//kube/gitworkflows.md)]
+---
+
+## Creating a Remote
+
+- Gitkube provides a new type of API resource: *Remote*
+
+  (this is using a mechanism called Custom Resource Definitions or CRD)
+
+- Create and apply a YAML file containing the following manifest:
+  ```yaml
+	apiVersion: gitkube.sh/v1alpha1
+	kind: Remote
+	metadata:
+	  name: example
+	spec:
+	  authorizedKeys:
+	  - `ssh-rsa AAA...`
+	  manifests:
+	    path: "."
+  ```
+
+  (replace the `ssh-rsa AAA...` section with the content of `~/.ssh/id_rsa.pub`)
+
+.debug[[kube/gitworkflows.md](https://github.com/RyaxTech/kube.training.git/tree/gh-pages//kube/gitworkflows.md)]
+---
+
+## Pushing to our remote
+
+- Get the `gitkubed` IP address:
+  ```
+  kubectl -n kube-system get svc gitkubed
+  IP=$(kubectl -n kube-system get svc gitkubed -o json | 
+  	   jq -r .spec.clusterIP)
+  ```
+
+- Get ourselves a sample repository with resource YAML files:
+  ```
+  git clone git://github.com/jpetazzo/kubercoins
+  cd kubercoins
+  ```
+
+- Add the remote and push to it:
+  ```
+  git remote add k8s ssh://default-example@$IP/~/git/default-example
+  git push k8s master
+  ```
+
+.debug[[kube/gitworkflows.md](https://github.com/RyaxTech/kube.training.git/tree/gh-pages//kube/gitworkflows.md)]
+---
+
+## Making changes
+
+- Edit a local file
+
+- Commit
+
+- Push!
+
+- Make sure that you push to the `k8s` remote
+
+.debug[[kube/gitworkflows.md](https://github.com/RyaxTech/kube.training.git/tree/gh-pages//kube/gitworkflows.md)]
+---
+
+## Other features
+
+- Gitkube can also build container images for us
+
+  (see the [documentation](https://github.com/hasura/gitkube/blob/master/docs/remote.md) for more details)
+
+- Gitkube can also deploy Helm Charts
+
+  (instead of raw YAML files)
+
+.debug[[kube/gitworkflows.md](https://github.com/RyaxTech/kube.training.git/tree/gh-pages//kube/gitworkflows.md)]</textarea>
     <script src="remark.min.js" type="text/javascript">
     </script>
     <script src="viz.js"></script>

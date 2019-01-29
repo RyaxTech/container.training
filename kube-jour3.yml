@@ -28,3 +28,6 @@ chapters:
 - - kube/statefulsets.md
 - - kube/exo-wordpress/tp_wordpress.md
 - - kube/advanced_fr.md
+- - kube/authn-authz.md
+- - kube/ingress.md
+- - kube/gitworkflows.md

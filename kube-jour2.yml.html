@@ -30,59 +30,36 @@ Kubernetes <br/>Concepts de base, Services et Deploiement <br/>
 
 .debug[
 ```
- M common/prereqs_fr.md
- M common/sampleapp_fr.md
  M dock-kube-day1.yml.html
  M dock-kube-day2.yml.html
  M dock-kube-day3.yml.html
  M dock-kube-day4.yml.html
- M index.html
+ M exemples.yml.html
  M intro-fullday.yml.html
  M intro-selfpaced.yml.html
  M kube-day1.yml.html
  M kube-fullday.yml.html
  M kube-halfday.yml.html
  M kube-jour1.yml.html
- M kube-jour2.yml
  M kube-jour2.yml.html
  M kube-jour3.yml
- M kube-jour3.yml.html
- M kube-selfpaced.yml.html
- M kube/daemonset_fr.md
- M kube/dashboard_fr.md
- M kube/kubectlexpose_fr.md
- M kube/kubeobjects_fr.md
- D kube/recapj1_fr.md
- D kube/recapj2_fr.md
- M logistics_david.md
- M override.css
- M spark-day2-PE.yml.html
- M swarm-fullday.yml.html
- M swarm-halfday.yml.html
- M swarm-selfpaced.yml.html
- M swarm-video.yml.html
- M tp_wordpress.yml.html
- M workshop.html
+ M kube/exo-ab-testing/exo1.md
+ M kube/exo-wordpress/tp_wordpress.md
 ?? .directory
 ?? common/.directory
-?? exemples.md
-?? exemples.yml
-?? exemples.yml.html
-?? index_spark.html
 ?? intro/.directory
 ?? kube/.directory
-?? kube/exo-ab-testing/
-?? kube/exo-wordpress/
-?? lite.render.js
+?? kube/authn-authz.md
+?? kube/gitworkflows.md
+?? kube/ingress.md
 ?? prepare-vms/.directory
 ?? prepare-vms/lib/.directory
 ?? prepare-vms/settings/.directory
 ?? swarm/.directory
-?? viz.js
 
 ```
 
-These slides have been built from commit: b090a14
+These slides have been built from commit: 0004ddb
 
 
 [common/title_fr.md](https://github.com/RyaxTech/kube.training.git/tree/gh-pages//common/title_fr.md)]
@@ -2054,9 +2031,9 @@ docker push $REGISTRY/serverweb:vB
 kubectl run serverweba --image $REGISTRY/serverweb:vA
 kubectl run serverwebb --image $REGISTRY/serverweb:vB
 
-kubectl expose serverwebab --type=NodePort --port 80
+kubectl expose serverweba --type=NodePort --port 80
 
-=> edit each service (and their template) to have a common key/value
+=> edit each deploy (and their template) to have a common key/value
 => edit the service to select this key/value.-->
 
 
