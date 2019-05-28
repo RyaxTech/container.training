@@ -39,8 +39,16 @@ individual Docker VM.*
 
 ---
 
+class: pic
+
 ## What *is* Docker?
 
+![Docker Architecture](https://i2.wp.com/www.tutorialkart.com/wp-content/uploads/2017/09/docker-architecture.png?w=597&ssl=1)
+.small.center[source: https://www.tutorialkart.com/docker/docker-architecture/]
+
+---
+
+## What *installing* Docker means?
 - "Installing Docker" really means "Installing the Docker Engine and CLI".
 
 - The Docker Engine is a daemon (a service running in the background).

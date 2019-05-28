@@ -17,5 +17,6 @@ class: title, in-person
 *Don't stream videos or download big files during the workshop[.](https://www.youtube.com/watch?v=h16zyxiwDLY)*<br/>
 *Thank you!*
 
-**Slides: @@SLIDES@@**
+**Slides: @@SLIDES@@**<br/>
+**Chat: @@CHAT@@**
 ]

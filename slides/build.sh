@@ -1,4 +1,5 @@
-#!/bin/sh
+#!/usr/bin/env bash
+set -x
 set -e
 case "$1" in
 once)

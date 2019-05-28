@@ -1,11 +1,11 @@
 ## Quelques infos sur le formateur
 
-- Yiannis Georgiou - CTO Ryax Technologies
+- Michael Mercier - Lead Software Engineer @ Ryax Technologies
 
-- PhD Université Grenoble-Alpes - Gestion de ressources et orchestration sur de systèmes de calcul intensif
-
-- 11 ans à Bull/Atos Technologies - Ingenieur R&D / Architecte
-
+- PhD Candidate - Université Grenoble-Alpes - contribution to HPC and Big Data
+  infrastructure convergence.
+- 4 years @ Bull/Atos Technologies - PhD
+- 2 years @ Stimergy - R&D Engineer
 ---
 
 ## Logistique
@@ -16,26 +16,6 @@
 
 - N'hésitez pas à interrompre pour des questions à tout moment
 
-- * Surtout quand vous voyez des photos de conteneurs en plein écran! *
-
-   - .emoji[🚁] Alexandre ([@alexbuisine](https://twitter.com/alexbuisine), Enix SAS)
-
-   - .emoji[🐳] Jérôme ([@jpetazzo](https://twitter.com/jpetazzo), Enix SAS)
-
-   - .emoji[⛵] Jérémy ([@jeremygarrouste](twitter.com/jeremygarrouste), Inpiwee)
-
-   - .emoji[🎧] Romain ([@rdegez](https://twitter.com/rdegez), Enix SAS)
-
-] -->
-
-- The workshop will run from ...
-
-- There will be a lunch break at ...
-
-  (And coffee breaks!)
-
-- Feel free to interrupt for questions at any time
-
-- *Especially when you see full screen container pictures!*
+- *Surtout quand vous voyez des photos de conteneurs en plein écran!*
 
 - Live feedback, questions, help: @@CHAT@@

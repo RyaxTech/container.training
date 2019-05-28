@@ -6,6 +6,9 @@ title: |
 #chat: "[Gitter](https://gitter.im/jpetazzo/workshop-yyyymmdd-city)"
 chat: "In person!"
 
+gitrepo: https://github.com/RyaxTech/kube.training
+slides: https://ryaxtech.github.io/kube.training/dock-kube-day2.yml.html#1
+
 exclude:
 - self-paced
 
