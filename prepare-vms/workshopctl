@@ -1,4 +1,4 @@
-#!/bin/bash
+#!/usr/bin/env bash
 
 # Get the script's real directory.
 # This should work whether we're being called directly or via a symlink.
