@@ -19,7 +19,7 @@ chapters:
 - shared/about-slides.md
 - shared/toc.md
 - - containers/Docker_Overview.md
-  - containers/Docker_History.md
+  #- containers/Docker_History.md
   - containers/Container_Engines.md
   - containers/Ecosystem.md
   - containers/Orchestration_Overview.md

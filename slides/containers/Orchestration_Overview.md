@@ -24,123 +24,10 @@ According to Wikipedia:
 coordination, and management of complex computer systems,
 middleware, and services.*
 
---
-
-*[...] orchestration is often discussed in the context of 
-__service-oriented architecture__, __virtualization__, provisioning, 
-Converged Infrastructure and __dynamic datacenter__ topics.*
-
---
-
 What does that really mean?
 
----
-
-## Example 1: dynamic cloud instances
-
---
-
-- Q: do we always use 100% of our servers?
-
---
-
-- A: obviously not!
-
-.center[![Daily variations of traffic](images/traffic-graph.png)]
-
----
-
-## Example 1: dynamic cloud instances
-
-- Every night, scale down
-  
-  (by shutting down extraneous replicated instances)
-
-- Every morning, scale up
-  
-  (by deploying new copies)
-
-- "Pay for what you use"
-  
-  (i.e. save big $$$ here)
-
----
-
-## Example 1: dynamic cloud instances
-
-How do we implement this?
-
-- Crontab
-  
-- Autoscaling (save even bigger $$$)
-
-That's *relatively* easy.
-
-Now, how are things for our IAAS provider?
-
----
-
-## Example 2: dynamic datacenter
-
-- Q: what's the #1 cost in a datacenter?
-
---
-
-- A: electricity!
-
---
-
-- Q: what uses electricity?
-
---
-
-- A: servers, obviously
-
-- A: ... and associated cooling
-
---
-
-- Q: do we always use 100% of our servers?
-
---
-
-- A: obviously not!
-
----
-
-## Example 2: dynamic datacenter
-
-- If only we could turn off unused servers during the night...
-
-- Problem: we can only turn off a server if it's totally empty!
-  
-  (i.e. all VMs on it are stopped/moved)
-
-- Solution: *migrate* VMs and shutdown empty servers
-  
-  (e.g. combine two hypervisors with 40% load into 80%+0%,
-  <br/>and shutdown the one at 0%)
-
----
-
-## Example 2: dynamic datacenter
-
-How do we implement this?
-
-- Shutdown empty hosts (but keep some spare capacity)
-
-- Start hosts again when capacity gets low
-
-- Ability to "live migrate" VMs
-  
-  (Xen already did this 10+ years ago)
-
-- Rebalance VMs on a regular basis
-  
-  - what if a VM is stopped while we move it?
-  - should we allow provisioning on hosts involved in a migration?
-
-*Scheduling* becomes more complex.
+- Application scheduling (where to put them)
+- Application life-cycle management
 
 ---
 
@@ -153,91 +40,14 @@ processes or data flows are given access to system resources.*
 
 The scheduler is concerned mainly with:
 
+- maximize resources utilization (don't use two machines when one is enough)
 - throughput (total amount of work done per time unit);
 - turnaround time (between submission and completion);
-- response time (between submission and start);
-- waiting time (between job readiness and execution);
 - fairness (appropriate times according to priorities).
 
 In practice, these goals often conflict.
 
 **"Scheduling" = decide which resources to use.**
-
----
-
-## Exercise 1
-
-- You have:
-
-  - 5 hypervisors (physical machines)
-
-- Each server has:
-
-  - 16 GB RAM, 8 cores, 1 TB disk
-
-- Each week, your team asks:
-
-  - one VM with X RAM, Y CPU, Z disk
-
-Scheduling = deciding which hypervisor to use for each VM.
-
-Difficulty: easy!
-
----
-
-<!-- Warning, two almost identical slides (for img effect) -->
-
-## Exercise 2
-
-- You have:
-
-  - 1000+ hypervisors (and counting!)
-
-- Each server has different resources:
-
-  - 8-500 GB of RAM, 4-64 cores, 1-100 TB disk
-
-- Multiple times a day, a different team asks for:
-
-  - up to 50 VMs with different characteristics
-
-Scheduling = deciding which hypervisor to use for each VM.
-
-Difficulty: ???
-
----
-
-<!-- Warning, two almost identical slides (for img effect) -->
-
-## Exercise 2
-
-- You have:
-
-  - 1000+ hypervisors (and counting!)
-
-- Each server has different resources:
-
-  - 8-500 GB of RAM, 4-64 cores, 1-100 TB disk
-
-- Multiple times a day, a different team asks for:
-
-  - up to 50 VMs with different characteristics
-
-Scheduling = deciding which hypervisor to use for each VM.
-
-![Troll face](images/trollface.png)
-
----
-
-## Exercise 3
-
-- You have machines (physical and/or virtual)
-
-- You have containers
-
-- You are trying to put the containers on the machines
-
-- Sounds familiar?
 
 ---
 
@@ -327,7 +137,7 @@ class: pic
 
 ---
 
-## But our orchestrator also needs to manage ...
+## But our orchestrator also needs to manage applications life-cycles
 
 * Network connectivity (or filtering) between containers.
 
@@ -392,16 +202,6 @@ It depends on:
 
 ---
 
-## Rancher
-
-- Rancher 1 offered a simple interface for Docker hosts.
-
-- Rancher 2 is a complete management platform for Docker and Kubernetes.
-
-- Technically not an orchestrator, but it's a popular option.
-
----
-
 ## Swarm
 
 - Tightly integrated with the Docker Engine.
@@ -436,3 +236,21 @@ It depends on:
 
   - false, if we focus on what matters.
 
+---
+## Orchestration platforms
+
+- Nice web UI and API on to abstract ochestrators
+
+### Rancher
+
+- Rancher 1 offered a simple interface for Docker hosts.
+
+- Rancher 2 is a complete management platform for Docker and Kubernetes.
+
+- Lightweight
+
+### OpenShift
+
+- RedHat enterprise distribution of Kubernetes
+
+- Featureful
