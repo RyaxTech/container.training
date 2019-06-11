@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html>
   <head>
-    <title>Kubernetes Introduction, Concepts and Architecture </title>
+    <title>Kubernetes Introduction, Concepts, Basics and Architecture </title>
     <meta http-equiv="Content-Type" content="text/html; charset=UTF-8"/>
     <link rel="stylesheet" href="workshop.css">
   </head>
@@ -23,24 +23,18 @@
     -->
     <textarea id="source">class: title, self-paced
 
-Kubernetes Introduction, Concepts and Architecture<br/>
+Kubernetes Introduction, Concepts, Basics and Architecture<br/>
 
 .nav[*Self-paced version*]
 
 .debug[
 ```
- M slides/k8s/intro.md
  M slides/kube-day1.yml
- M slides/kube-jour1.yml.html
- M slides/kube/concepts-k8s.md
- M slides/logistics.md
- M slides/shared/title.md
-?? slides/kube-day2.yml
-?? slides/kube-day3.yml
+ M slides/shared/sampleapp.md
 
 ```
 
-These slides have been built from commit: 8d20221
+These slides have been built from commit: 426c6b5
 
 
 [shared/title.md](https://github.com/RyaxTech/kube.training.git/tree/k8s_metropole_de_lyon/slides/shared/title.md)]
@@ -48,7 +42,7 @@ These slides have been built from commit: 8d20221
 
 class: title, in-person
 
-Kubernetes Introduction, Concepts and Architecture<br/><br/></br>
+Kubernetes Introduction, Concepts, Basics and Architecture<br/><br/></br>
 
 **Slides: https://ryaxtech.github.io/kube.training/**<br/>
 **Chat: [Slack](https://join.slack.com/t/ryax-formation/shared_invite/enQtNjQ3OTA2NjkwODAwLTY0NzA4OGVjN2YyZWE0MTlhYTBkMTg1NGUxMGMyODE5NTM2MGJkNTk0NDk2NTU4YzQ0YjkzZTA0ZGI3NDQ0Yjc)**
@@ -771,6 +765,7 @@ fi
 - Clone the repository on `node1`:
   ```bash
   git clone https://https://github.com/RyaxTech/kube.training/
+  git checkout k8s_metropole_de_lyon
   ```
 
 ]
@@ -788,7 +783,7 @@ Let's start this before we look around, as downloading will take a little time..
 
 - Go to the `dockercoins` directory, in the cloned repo:
   ```bash
-  cd ~/container.training/dockercoins
+  cd ~/kube.training/dockercoins
   ```
 
 - Use Compose to build and run all containers:
