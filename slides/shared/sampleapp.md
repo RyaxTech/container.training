@@ -18,6 +18,7 @@ fi
 - Clone the repository on `node1`:
   ```bash
   git clone https://@@GITREPO@@
+  git checkout k8s_metropole_de_lyon
   ```
 
 ]
@@ -34,7 +35,7 @@ Let's start this before we look around, as downloading will take a little time..
 
 - Go to the `dockercoins` directory, in the cloned repo:
   ```bash
-  cd ~/container.training/dockercoins
+  cd ~/kube.training/dockercoins
   ```
 
 - Use Compose to build and run all containers:
