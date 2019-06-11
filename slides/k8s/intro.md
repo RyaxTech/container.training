@@ -1,6 +1,6 @@
 ## A brief introduction
 
-- This was initially written by [Jérôme Petazzoni](https://twitter.com/jpetazzo) to support in-person,
+- Training material based on the slides initially written by [Jérôme Petazzoni](https://twitter.com/jpetazzo) to support in-person,
   instructor-led workshops and tutorials
   
 - Credit is also due to [multiple contributors](https://@@GITREPO@@/graphs/contributors) — thank you!

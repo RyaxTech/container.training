@@ -1,6 +1,6 @@
 ## Some infos about the instructor
 
-- Yiannis Georgiou - CTO Ryax Technologies
+- Yiannis Georgiou - CTO/Co-Founder Ryax Technologies (Startup that provides a software platform for Data Analytics Workflows Automation)
 
 - PhD Université Grenoble-Alpes - Resource Management and Scheduling on High Performance Computing
 

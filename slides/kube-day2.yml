@@ -1,0 +1,29 @@
+title: |
+  Kubernetes Controllers, Logs and Advanced Networking
+
+chat: "[Slack](https://join.slack.com/t/ryax-formation/shared_invite/enQtNjQ3OTA2NjkwODAwLTY0NzA4OGVjN2YyZWE0MTlhYTBkMTg1NGUxMGMyODE5NTM2MGJkNTk0NDk2NTU4YzQ0YjkzZTA0ZGI3NDQ0Yjc)"
+
+gitrepo: https://github.com/RyaxTech/kube.training/ 
+
+slides: https://ryaxtech.github.io/kube.training/
+
+exclude:
+- self-paced
+
+chapters:
+- shared/title.md
+- shared/toc.md
+- - k8s/daemonset.md
+  - k8s/rollout.md
+  - k8s/healthchecks.md
+  - k8s/logs-cli.md
+  - k8s/logs-centralized.md
+- - k8s/helm.md
+  #- k8s/create-chart.md
+  - k8s/kustomize.md
+  - k8s/namespaces.md
+  - k8s/netpol.md
+  - k8s/authn-authz.md
+- - k8s/ingress.md
+  #- k8s/gitworkflows.md
+  - k8s/prometheus.md

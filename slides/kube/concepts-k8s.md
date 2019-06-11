@@ -22,6 +22,17 @@
 
 ---
 
+## Kubernetes name
+
+- How do we pronounce kubernetes?
+    - The word comes from the greek work κυβερνήτης, pronounced "kivernitis" meaning the captain of a ship or plane
+    - In english we say : "coubernetis"
+    - In french : "cubernetesse" ou "cubernette"
+
+- It is quite common to write Kubernetes as k8s or kube
+
+---
+
 ## Kubernetes Benefits
 
 --
@@ -42,7 +53,7 @@
 
 --
 
-- High Availability, heath check and self-healing
+- High Availability, health check and self-healing
 
 ---
 
@@ -141,18 +152,6 @@ class: pic
 - The third one is a simplified representation of a Kubernetes cluster
 
   (Courtesy of [Imesh Gunaratne](https://medium.com/containermind/a-reference-architecture-for-deploying-wso2-middleware-on-kubernetes-d4dee7601e8e))
-
----
-
-## Kubernetes name
-
-- How do we pronounce kubernetes?
-    - The word comes from the greek work κυβερνήτης, pronounced "kivernitis" meaning the captain of a ship or plane
-    - In english we say : "coubernetis"
-    - In french : "cubernetesse" ou "cubernette"
-
-- It is quite common to write Kubernetes as k8s
-
 
 ---
 
