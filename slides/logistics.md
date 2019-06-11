@@ -1,21 +1,19 @@
-## Quelques infos sur le formateur
+## Some infos about the instructor
 
-- Michael Mercier - Lead Software Engineer @ Ryax Technologies
+- Yiannis Georgiou - CTO Ryax Technologies
 
-- PhD Candidate - Université Grenoble-Alpes - contribution to HPC and Big Data
-  infrastructure convergence.
-- 4 years @ Bull/Atos Technologies - PhD
-- 2 years @ Stimergy - R&D Engineer
+- PhD Université Grenoble-Alpes - Resource Management and Scheduling on High Performance Computing
+
+- 11 ans at Bull/Atos Technologies - R&D Architect / Software Engineer 
+
 ---
 
-## Logistique
+## Logistics
 
-- La formation se déroulera de 9h à 17h
+- The training will take place from  9h until 17h30
 
-- Il y aura une pause déjeuner à 12h30
+- There will be a break for lunch from 12h30 to 14h
 
-- N'hésitez pas à interrompre pour des questions à tout moment
+- Feel free to interrupt for questions at any time
 
-- *Surtout quand vous voyez des photos de conteneurs en plein écran!*
-
-- Live feedback, questions, help: @@CHAT@@
+- Especially when you see full screen container pictures!
