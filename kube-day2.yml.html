@@ -1,0 +1,6240 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <title>Kubernetes Controllers, Logs and Advanced Networking </title>
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8"/>
+    <link rel="stylesheet" href="workshop.css">
+  </head>
+  <body>
+    <!--
+    <div style="position: absolute; left: 20%; right: 20%; top: 30%;">
+      <h1 style="font-size: 3em;">Loading ...</h1>
+      The slides should show up here. If they don't, it might be
+      because you are accessing this file directly from your filesystem.
+      It needs to be served from a web server. You can try this:
+      <pre>
+        docker-compose up -d
+        open http://localhost:8888/workshop.html # on MacOS
+        xdg-open http://localhost:8888/workshop.html # on Linux
+      </pre>
+      Once the slides are loaded, this notice disappears when you
+      go full screen (e.g. by hitting "f").
+    </div>
+    -->
+    <textarea id="source">class: title, self-paced
+
+Kubernetes Controllers, Logs and Advanced Networking<br/>
+
+.nav[*Self-paced version*]
+
+.debug[
+```
+ M slides/k8s/cluster-backup.md
+ M slides/k8s/cluster-upgrade.md
+ M slides/k8s/ingress.md
+ M slides/k8s/logs-centralized.md
+ M slides/k8s/netpol.md
+ M slides/k8s/staticpods.md
+ M slides/kube-day2.yml
+ M slides/kube-jour1.yml.html
+
+```
+
+These slides have been built from commit: b43ef0b
+
+
+[shared/title.md](https://github.com/RyaxTech/kube.training.git/tree/k8s_metropole_de_lyon/slides/shared/title.md)]
+---
+
+class: title, in-person
+
+Kubernetes Controllers, Logs and Advanced Networking<br/><br/></br>
+
+**Slides: https://ryaxtech.github.io/kube.training/**<br/>
+**Chat: [Slack](https://join.slack.com/t/ryax-formation/shared_invite/enQtNjQ3OTA2NjkwODAwLTY0NzA4OGVjN2YyZWE0MTlhYTBkMTg1NGUxMGMyODE5NTM2MGJkNTk0NDk2NTU4YzQ0YjkzZTA0ZGI3NDQ0Yjc)**
+
+
+.debug[[shared/title.md](https://github.com/RyaxTech/kube.training.git/tree/k8s_metropole_de_lyon/slides/shared/title.md)]
+---
+
+name: toc-chapter-1
+
+## Chapter 1
+
+- [Upgrading clusters](#toc-upgrading-clusters)
+
+- [Static pods](#toc-static-pods)
+
+- [Backing up clusters](#toc-backing-up-clusters)
+
+.debug[(auto-generated TOC)]
+---
+name: toc-chapter-2
+
+## Chapter 2
+
+- [Daemon sets](#toc-daemon-sets)
+
+- [Labels and selectors](#toc-labels-and-selectors)
+
+- [Rolling updates](#toc-rolling-updates)
+
+- [Healthchecks](#toc-healthchecks)
+
+- [Accessing logs from the CLI](#toc-accessing-logs-from-the-cli)
+
+- [Centralized logging](#toc-centralized-logging)
+
+.debug[(auto-generated TOC)]
+---
+name: toc-chapter-3
+
+## Chapter 3
+
+- [Managing stacks with Helm](#toc-managing-stacks-with-helm)
+
+- [Kustomize](#toc-kustomize)
+
+- [Namespaces](#toc-namespaces)
+
+- [Network policies](#toc-network-policies)
+
+- [Authentication and authorization](#toc-authentication-and-authorization)
+
+.debug[(auto-generated TOC)]
+---
+name: toc-chapter-4
+
+## Chapter 4
+
+- [Exposing HTTP services with Ingress resources](#toc-exposing-http-services-with-ingress-resources)
+
+- [Git-based workflows](#toc-git-based-workflows)
+
+- [Collecting metrics with Prometheus](#toc-collecting-metrics-with-prometheus)
+
+.debug[(auto-generated TOC)]
+
+
+
+.debug[[shared/toc.md](https://github.com/RyaxTech/kube.training.git/tree/k8s_metropole_de_lyon/slides/shared/toc.md)]
+---
+
+class: pic
+
+.interstitial[![Image separating from the next chapter](https://gallant-turing-d0d520.netlify.com/containers/Container-Ship-Freighter-Navigation-Elbe-Romance-1782991.jpg)]
+
+---
+
+name: toc-upgrading-clusters
+class: title
+
+Upgrading clusters
+
+.nav[
+[Section précédente](#toc-)
+|
+[Retour table des matières](#toc-chapter-1)
+|
+[Section suivante](#toc-static-pods)
+]
+
+.debug[(automatically generated title slide)]
+
+---
+# Upgrading clusters
+
+- It's *recommended* to run consistent versions across a cluster
+
+  (mostly to have feature parity and latest security updates)
+
+- It's not *mandatory*
+
+  (otherwise, cluster upgrades would be a nightmare!)
+
+- Components can be upgraded one at a time without problems
+
+.debug[[k8s/cluster-upgrade.md](https://github.com/RyaxTech/kube.training.git/tree/k8s_metropole_de_lyon/slides/k8s/cluster-upgrade.md)]
+---
+
+## Checking what we're running
+
+- It's easy to check the version for the API server
+
+.exercise[
+
+- Log into node `node1`
+
+- Check the version of kubectl and of the API server:
+  ```bash
+  kubectl version
+  ```
+
+]
+
+- In a HA setup with multiple API servers, they can have different versions
+
+- Running the command above multiple times can return different values
+
+.debug[[k8s/cluster-upgrade.md](https://github.com/RyaxTech/kube.training.git/tree/k8s_metropole_de_lyon/slides/k8s/cluster-upgrade.md)]
+---
+
+## Node versions
+
+- It's also easy to check the version of kubelet
+
+.exercise[
+
+- Check node versions (includes kubelet, kernel, container engine):
+  ```bash
+  kubectl get nodes -o wide
+  ```
+
+]
+
+- Different nodes can run different kubelet versions
+
+- Different nodes can run different kernel versions
+
+- Different nodes can run different container engines
+
+.debug[[k8s/cluster-upgrade.md](https://github.com/RyaxTech/kube.training.git/tree/k8s_metropole_de_lyon/slides/k8s/cluster-upgrade.md)]
+---
+
+## Control plane versions
+
+- If the control plane is self-hosted (running in pods), we can check it
+
+.exercise[
+
+- Show image versions for all pods in `kube-system` namespace:
+  ```bash
+    kubectl --namespace=kube-system get pods -o json \
+            | jq -r '
+              .items[]
+              | [.spec.nodeName, .metadata.name]
+                + 
+                (.spec.containers[].image | split(":"))
+              | @tsv
+              ' \
+            | column -t
+  ```
+
+]
+
+.debug[[k8s/cluster-upgrade.md](https://github.com/RyaxTech/kube.training.git/tree/k8s_metropole_de_lyon/slides/k8s/cluster-upgrade.md)]
+---
+
+## What version are we running anyway?
+
+- When I say, "I'm running Kubernetes 1.11", is that the version of:
+
+  - kubectl
+
+  - API server
+
+  - kubelet
+
+  - controller manager
+
+  - something else?
+
+.debug[[k8s/cluster-upgrade.md](https://github.com/RyaxTech/kube.training.git/tree/k8s_metropole_de_lyon/slides/k8s/cluster-upgrade.md)]
+---
+
+## Other versions that are important
+
+- etcd
+
+- kube-dns or CoreDNS
+
+- CNI plugin(s)
+
+- Network controller, network policy controller
+
+- Container engine
+
+- Linux kernel
+
+.debug[[k8s/cluster-upgrade.md](https://github.com/RyaxTech/kube.training.git/tree/k8s_metropole_de_lyon/slides/k8s/cluster-upgrade.md)]
+---
+
+## General guidelines
+
+- To update a component, use whatever was used to install it
+
+- If it's a distro package, update that distro package
+
+- If it's a container or pod, update that container or pod
+
+- If you used configuration management, update with that
+
+.debug[[k8s/cluster-upgrade.md](https://github.com/RyaxTech/kube.training.git/tree/k8s_metropole_de_lyon/slides/k8s/cluster-upgrade.md)]
+---
+
+## Know where your binaries come from
+
+- Sometimes, we need to upgrade *quickly*
+
+  (when a vulnerability is announced and patched)
+
+- If we are using an installer, we should:
+
+  - make sure it's using upstream packages
+
+  - or make sure that whatever packages it uses are current
+
+  - make sure we can tell it to pin specific component versions
+
+.debug[[k8s/cluster-upgrade.md](https://github.com/RyaxTech/kube.training.git/tree/k8s_metropole_de_lyon/slides/k8s/cluster-upgrade.md)]
+---
+
+## In practice
+
+- We are going to update a few cluster components
+
+- We will change the kubelet version on one node
+
+- We will change the version of the API server
+
+- We will work with our cluster
+
+.debug[[k8s/cluster-upgrade.md](https://github.com/RyaxTech/kube.training.git/tree/k8s_metropole_de_lyon/slides/k8s/cluster-upgrade.md)]
+---
+
+## Updating kubelet
+
+- These nodes have been installed using the official Kubernetes packages
+
+- We can therefore use `apt` or `apt-get`
+
+.exercise[
+
+- Log into node `node2` as docker and then change to root
+
+- View available versions for package `kubelet`:
+  ```bash
+  apt show kubelet -a | grep ^Version
+  ```
+
+- Upgrade kubelet:
+  ```bash
+  apt install kubelet=1.14.2-00
+  ```
+
+]
+
+.debug[[k8s/cluster-upgrade.md](https://github.com/RyaxTech/kube.training.git/tree/k8s_metropole_de_lyon/slides/k8s/cluster-upgrade.md)]
+---
+
+## Checking what we've done
+
+.exercise[
+
+- Log into node `node1`
+
+- Check node versions:
+  ```bash
+  kubectl get nodes -o wide
+  ```
+
+- Create a deployment and scale it to make sure that the node still works
+
+]
+
+.debug[[k8s/cluster-upgrade.md](https://github.com/RyaxTech/kube.training.git/tree/k8s_metropole_de_lyon/slides/k8s/cluster-upgrade.md)]
+---
+
+## Updating the API server
+
+- This cluster has been deployed with kubeadm
+
+- The control plane runs in *static pods*
+
+- These pods are started automatically by kubelet
+
+  (even when kubelet can't contact the API server)
+
+- They are defined in YAML files in `/etc/kubernetes/manifests`
+
+  (this path is set by a kubelet command-line flag)
+
+- kubelet automatically updates the pods when the files are changed
+
+.debug[[k8s/cluster-upgrade.md](https://github.com/RyaxTech/kube.training.git/tree/k8s_metropole_de_lyon/slides/k8s/cluster-upgrade.md)]
+---
+
+## Changing the API server version
+
+- We will edit the YAML file to use a different image version
+
+.exercise[
+
+- Log into node `node1`
+
+- Check API server version:
+  ```bash
+  kubectl version
+  ```
+
+- Edit the API server pod manifest:
+  ```bash
+  sudo vim /etc/kubernetes/manifests/kube-apiserver.yaml
+  ```
+
+- Look for the `image:` line, and update it to e.g. `v1.14.0`
+
+]
+
+.debug[[k8s/cluster-upgrade.md](https://github.com/RyaxTech/kube.training.git/tree/k8s_metropole_de_lyon/slides/k8s/cluster-upgrade.md)]
+---
+
+## Checking what we've done
+
+- The API server will be briefly unavailable while kubelet restarts it
+
+.exercise[
+
+- Check the API server version:
+  ```bash
+  kubectl version
+  ```
+
+]
+
+.debug[[k8s/cluster-upgrade.md](https://github.com/RyaxTech/kube.training.git/tree/k8s_metropole_de_lyon/slides/k8s/cluster-upgrade.md)]
+---
+
+## Updating the whole control plane
+
+- As an example, we'll use kubeadm to upgrade the entire control plane
+
+  (note: this is possible only because the cluster was installed with kubeadm)
+
+.exercise[
+
+- Check what will be upgraded:
+  ```bash
+  sudo kubeadm upgrade plan
+  ```
+
+  (Note: kubeadm is confused by our manual upgrade of the API server.
+  <br/>It thinks the cluster is running 1.14.0!)
+
+<!-- ##VERSION## -->
+
+- Perform the upgrade:
+  ```bash
+  sudo kubeadm upgrade apply v1.14.2
+  ```
+
+]
+
+.debug[[k8s/cluster-upgrade.md](https://github.com/RyaxTech/kube.training.git/tree/k8s_metropole_de_lyon/slides/k8s/cluster-upgrade.md)]
+---
+
+## Updating kubelets
+
+- After updating the control plane, we need to update each kubelet
+
+- This requires to run a special command on each node, to download the config
+
+  (this config is generated by kubeadm)
+
+.exercise[
+
+- Download the configuration on each node, and upgrade kubelet:
+  ```bash
+    for N in 1 2 3; do
+    	ssh node$N sudo kubeadm upgrade node config --kubelet-version v1.14.2
+  	  ssh node $N sudo apt install kubelet=1.14.2-00
+    done
+  ```
+]
+
+.debug[[k8s/cluster-upgrade.md](https://github.com/RyaxTech/kube.training.git/tree/k8s_metropole_de_lyon/slides/k8s/cluster-upgrade.md)]
+---
+
+## Checking what we've done
+
+- All our nodes should now be updated to version 1.14.2
+
+.exercise[
+
+- Check nodes versions:
+  ```bash
+  kubectl get nodes -o wide
+  ```
+
+]
+
+.debug[[k8s/cluster-upgrade.md](https://github.com/RyaxTech/kube.training.git/tree/k8s_metropole_de_lyon/slides/k8s/cluster-upgrade.md)]
+---
+
+class: pic
+
+.interstitial[![Image separating from the next chapter](https://gallant-turing-d0d520.netlify.com/containers/ShippingContainerSFBay.jpg)]
+
+---
+
+name: toc-static-pods
+class: title
+
+Static pods
+
+.nav[
+[Section précédente](#toc-upgrading-clusters)
+|
+[Retour table des matières](#toc-chapter-1)
+|
+[Section suivante](#toc-backing-up-clusters)
+]
+
+.debug[(automatically generated title slide)]
+
+---
+# Static pods
+
+- Hosting the Kubernetes control plane on Kubernetes has advantages:
+
+  - we can use Kubernetes' replication and scaling features for the control plane
+
+  - we can leverage rolling updates to upgrade the control plane
+
+- However, there is a catch:
+
+  - deploying on Kubernetes requires the API to be available
+
+  - the API won't be available until the control plane is deployed
+
+- How can we get out of that chicken-and-egg problem?
+
+.debug[[k8s/staticpods.md](https://github.com/RyaxTech/kube.training.git/tree/k8s_metropole_de_lyon/slides/k8s/staticpods.md)]
+---
+
+## A possible approach
+
+- Since each component of the control plane can be replicated ...
+
+- We could set up the control plane outside of the cluster
+
+- Then, once the cluster is fully operational, create replicas running on the cluster
+
+- Finally, remove the replicas that are running outside of the cluster
+
+*What could possibly go wrong?*
+
+.debug[[k8s/staticpods.md](https://github.com/RyaxTech/kube.training.git/tree/k8s_metropole_de_lyon/slides/k8s/staticpods.md)]
+---
+
+## Sawing off the branch you're sitting on
+
+- What if anything goes wrong?
+
+  (During the setup or at a later point)
+
+- Worst case scenario, we might need to:
+
+  - set up a new control plane (outside of the cluster)
+  
+  - restore a backup from the old control plane
+  
+  - move the new control plane to the cluster (again)
+
+- This doesn't sound like a great experience
+
+.debug[[k8s/staticpods.md](https://github.com/RyaxTech/kube.training.git/tree/k8s_metropole_de_lyon/slides/k8s/staticpods.md)]
+---
+
+## Static pods to the rescue
+
+- Pods are started by kubelet (an agent running on every node)
+
+- To know which pods it should run, the kubelet queries the API server
+
+- The kubelet can also get a list of *static pods* from:
+
+  - a directory containing one (or multiple) *manifests*, and/or
+  
+  - a URL (serving a *manifest*)
+
+- These "manifests" are basically YAML definitions
+
+  (As produced by `kubectl get pod my-little-pod -o yaml --export`)
+
+.debug[[k8s/staticpods.md](https://github.com/RyaxTech/kube.training.git/tree/k8s_metropole_de_lyon/slides/k8s/staticpods.md)]
+---
+
+## Static pods are dynamic
+
+- Kubelet will periodically reload the manifests
+
+- It will start/stop pods accordingly
+
+  (i.e. it is not necessary to restart the kubelet after updating the manifests)
+
+- When connected to the Kubernetes API, the kubelet will create *mirror pods*
+
+- Mirror pods are copies of the static pods
+
+  (so they can be seen with e.g. `kubectl get pods`)
+
+.debug[[k8s/staticpods.md](https://github.com/RyaxTech/kube.training.git/tree/k8s_metropole_de_lyon/slides/k8s/staticpods.md)]
+---
+
+## Bootstrapping a cluster with static pods
+
+- We can run control plane components with these static pods
+
+- They can start without requiring access to the API server
+
+- Once they are up and running, the API becomes available
+
+- These pods are then visible through the API
+
+  (We cannot upgrade them from the API, though)
+
+*This is how kubeadm has initialized our clusters.*
+
+.debug[[k8s/staticpods.md](https://github.com/RyaxTech/kube.training.git/tree/k8s_metropole_de_lyon/slides/k8s/staticpods.md)]
+---
+
+## Static pods vs normal pods
+
+- The API only gives us a read-only access to static pods
+
+- We can `kubectl delete` a static pod ...
+
+  ... But the kubelet will restart it immediately
+
+- Static pods can be selected just like other pods
+
+  (So they can receive service traffic)
+
+- A service can select a mixture of static and other pods
+
+.debug[[k8s/staticpods.md](https://github.com/RyaxTech/kube.training.git/tree/k8s_metropole_de_lyon/slides/k8s/staticpods.md)]
+---
+
+## From static pods to normal pods
+
+- Once the control plane is up and running, it can be used to create normal pods
+
+- We can then set up a copy of the control plane in normal pods
+
+- Then the static pods can be removed
+
+- The scheduler and the controller manager use leader election
+
+  (Only one is active at a time; removing an instance is seamless)
+
+- Each instance of the API server adds itself to the `kubernetes` service
+
+- Etcd will typically require more work!
+
+.debug[[k8s/staticpods.md](https://github.com/RyaxTech/kube.training.git/tree/k8s_metropole_de_lyon/slides/k8s/staticpods.md)]
+---
+
+## From normal pods back to static pods
+
+- Alright, but what if the control plane is down and we need to fix it?
+
+- We restart it using static pods!
+
+- This can be done automatically with the [Pod Checkpointer]
+
+- The Pod Checkpointer automatically generates manifests of running pods
+
+- The manifests are used to restart these pods if API contact is lost
+
+  (More details in the [Pod Checkpointer] documentation page)
+
+- This technique is used by [bootkube]
+
+[Pod Checkpointer]: https://github.com/kubernetes-incubator/bootkube/blob/master/cmd/checkpoint/README.md
+[bootkube]: https://github.com/kubernetes-incubator/bootkube
+
+.debug[[k8s/staticpods.md](https://github.com/RyaxTech/kube.training.git/tree/k8s_metropole_de_lyon/slides/k8s/staticpods.md)]
+---
+
+## Where should the control plane run?
+
+*Is it better to run the control plane in static pods, or normal pods?*
+
+- If I'm a *user* of the cluster: I don't care, it makes no difference to me
+
+- What if I'm an *admin*, i.e. the person who installs, upgrades, repairs... the cluster?
+
+- If I'm using a managed Kubernetes cluster (AKS, EKS, GKE...) it's not my problem
+
+  (I'm not the one setting up and managing the control plane)
+
+- If I already picked a tool (kubeadm, kops...) to set up my cluster, the tool decides for me
+
+- What if I haven't picked a tool yet, or if I'm installing from scratch?
+
+  - static pods = easier to set up, easier to troubleshoot, less risk of outage
+
+  - normal pods = easier to upgrade, easier to move (if nodes need to be shut down)
+
+.debug[[k8s/staticpods.md](https://github.com/RyaxTech/kube.training.git/tree/k8s_metropole_de_lyon/slides/k8s/staticpods.md)]
+---
+
+## Static pods in action
+
+- On our clusters, the `staticPodPath` is `/etc/kubernetes/manifests`
+
+.exercise[
+
+- Have a look at this directory:
+  ```bash
+  ls -l /etc/kubernetes/manifests
+  ```
+
+]
+
+We should see YAML files corresponding to the pods of the control plane.
+
+.debug[[k8s/staticpods.md](https://github.com/RyaxTech/kube.training.git/tree/k8s_metropole_de_lyon/slides/k8s/staticpods.md)]
+---
+
+class: static-pods-exercise
+
+## Running a static pod
+
+- We are going to add a pod manifest to the directory, and kubelet will run it
+
+.exercise[
+
+- Copy a manifest to the directory:
+  ```bash
+  sudo cp ~/kube.training/k8s/just-a-pod.yaml /etc/kubernetes/manifests
+  ```
+
+- Check that it's running:
+  ```bash
+  kubectl get pods
+  ```
+
+]
+
+The output should include a pod named `hello-node1`.
+
+.debug[[k8s/staticpods.md](https://github.com/RyaxTech/kube.training.git/tree/k8s_metropole_de_lyon/slides/k8s/staticpods.md)]
+---
+
+class: static-pods-exercise
+
+## Remarks
+
+In the manifest, the pod was named `hello`.
+
+```yaml
+apiVersion: v1
+Kind: Pod
+metadata:
+  name: hello
+  namespace: default
+spec:
+  containers:
+  - name: hello
+    image: nginx
+```
+
+The `-node1` suffix was added automatically by kubelet.
+
+If we delete the pod (with `kubectl delete`), it will be recreated immediately.
+
+To delete the pod, we need to delete (or move) the manifest file.
+
+.debug[[k8s/staticpods.md](https://github.com/RyaxTech/kube.training.git/tree/k8s_metropole_de_lyon/slides/k8s/staticpods.md)]
+---
+
+class: pic
+
+.interstitial[![Image separating from the next chapter](https://gallant-turing-d0d520.netlify.com/containers/aerial-view-of-containers.jpg)]
+
+---
+
+name: toc-backing-up-clusters
+class: title
+
+Backing up clusters
+
+.nav[
+[Section précédente](#toc-static-pods)
+|
+[Retour table des matières](#toc-chapter-1)
+|
+[Section suivante](#toc-daemon-sets)
+]
+
+.debug[(automatically generated title slide)]
+
+---
+# Backing up clusters
+
+- Backups can have multiple purposes:
+
+  - disaster recovery (servers or storage are destroyed or unreachable)
+
+  - error recovery (human or process has altered or corrupted data)
+
+  - cloning environments (for testing, validation ...)
+
+- Let's see the strategies and tools available with Kubernetes!
+
+.debug[[k8s/cluster-backup.md](https://github.com/RyaxTech/kube.training.git/tree/k8s_metropole_de_lyon/slides/k8s/cluster-backup.md)]
+---
+
+## Important
+
+- Kubernetes helps us with disaster recovery
+
+  (it gives us replication primitives)
+
+- Kubernetes helps us to clone / replicate environments
+
+  (all resources can be described with manifests)
+
+- Kubernetes *does not* help us with error recovery
+
+- We still need to backup / snapshot our data:
+
+  - with database backups (mysqldump, pgdump, etc.)
+
+  - and/or snapshots at the storage layer
+
+  - and/or traditional full disk backups
+
+.debug[[k8s/cluster-backup.md](https://github.com/RyaxTech/kube.training.git/tree/k8s_metropole_de_lyon/slides/k8s/cluster-backup.md)]
+---
+
+## In a perfect world ...
+
+- The deployment of our Kubernetes clusters is automated
+
+  (recreating a cluster takes less than a minute of human time)
+
+- All the resources (Deployments, Services...) on our clusters are under version control
+
+  (never use `kubectl run`; always apply YAML files coming from a repository)
+
+- Stateful components are either:
+
+  - stored on systems with regular snapshots
+
+  - backed up regularly to an external, durable storage
+
+  - outside of Kubernetes
+
+.debug[[k8s/cluster-backup.md](https://github.com/RyaxTech/kube.training.git/tree/k8s_metropole_de_lyon/slides/k8s/cluster-backup.md)]
+---
+
+## Kubernetes cluster deployment
+
+- If our deployment system isn't fully automated, it should at least be documented
+
+- Litmus test: how long does it take to deploy a cluster ...
+
+  - for a senior engineer?
+
+  - for a new hire?
+
+- Does it require external intervention?
+
+  (e.g. provisioning servers, signing TLS certs ...)
+
+.debug[[k8s/cluster-backup.md](https://github.com/RyaxTech/kube.training.git/tree/k8s_metropole_de_lyon/slides/k8s/cluster-backup.md)]
+---
+
+## Plan B
+
+- Full machine backups of the control plane can help
+
+- If the control plane is in pods (or containers), pay attention to storage drivers
+
+  (if the backup mechanism is not container-aware, the backups can take way more resources than they should, or even be unusable!)
+
+- If the previous sentence worries you:
+
+  **automate the deployment of your clusters!**
+
+.debug[[k8s/cluster-backup.md](https://github.com/RyaxTech/kube.training.git/tree/k8s_metropole_de_lyon/slides/k8s/cluster-backup.md)]
+---
+
+## Managing our Kubernetes resources
+
+- Ideal scenario:
+
+  - never create a resource directly on a cluster
+
+  - push to a code repository
+
+  - a special branch (`production` or even `master`) gets automatically deployed
+
+- Some folks call this "GitOps"
+
+  (it's the logical evolution of configuration management and infrastructure as code)
+
+.debug[[k8s/cluster-backup.md](https://github.com/RyaxTech/kube.training.git/tree/k8s_metropole_de_lyon/slides/k8s/cluster-backup.md)]
+---
+
+## GitOps in theory
+
+- What do we keep in version control?
+
+- For very simple scenarios: source code, Dockerfiles, scripts
+
+- For real applications: add resources (as YAML files)
+
+- For applications deployed multiple times: Helm, Kustomize ...
+
+  (staging and production count as "multiple times")
+
+.debug[[k8s/cluster-backup.md](https://github.com/RyaxTech/kube.training.git/tree/k8s_metropole_de_lyon/slides/k8s/cluster-backup.md)]
+---
+
+## GitOps tooling
+
+- Various tools exist (Weave Flux, GitKube...)
+
+- These tools are still very young
+
+- You still need to write YAML for all your resources
+
+- There is no tool to:
+
+  - list *all* resources in a namespace
+
+  - get resource YAML in a canonical form
+
+  - diff YAML descriptions with current state
+
+.debug[[k8s/cluster-backup.md](https://github.com/RyaxTech/kube.training.git/tree/k8s_metropole_de_lyon/slides/k8s/cluster-backup.md)]
+---
+
+## GitOps in practice
+
+- Start describing your resources with YAML
+
+- Leverage a tool like Kustomize or Helm
+
+- Make sure that you can easily deploy to a new namespace
+
+  (or even better: to a new cluster)
+
+- When tooling matures, you will be ready
+
+.debug[[k8s/cluster-backup.md](https://github.com/RyaxTech/kube.training.git/tree/k8s_metropole_de_lyon/slides/k8s/cluster-backup.md)]
+---
+
+## Plan B
+
+- What if we can't describe everything with YAML?
+
+- What if we manually create resources and forget to commit them to source control?
+
+- What about global resources, that don't live in a namespace?
+
+- How can we be sure that we saved *everything*?
+
+.debug[[k8s/cluster-backup.md](https://github.com/RyaxTech/kube.training.git/tree/k8s_metropole_de_lyon/slides/k8s/cluster-backup.md)]
+---
+
+## Backing up etcd
+
+- All objects are saved in etcd
+
+- etcd data should be relatively small
+
+  (and therefore, quick and easy to back up)
+
+- Two options to back up etcd:
+
+  - snapshot the data directory
+
+  - use `etcdctl snapshot`
+
+.debug[[k8s/cluster-backup.md](https://github.com/RyaxTech/kube.training.git/tree/k8s_metropole_de_lyon/slides/k8s/cluster-backup.md)]
+---
+
+## Making an etcd snapshot
+
+- The basic command is simple:
+  ```bash
+  etcdctl snapshot save <filename>
+  ```
+
+- But we also need to specify:
+
+  - an environment variable to specify that we want etcdctl v3
+
+  - the address of the server to back up
+
+  - the path to the key, certificate, and CA certificate
+    <br/>(if our etcd uses TLS certificates)
+
+.debug[[k8s/cluster-backup.md](https://github.com/RyaxTech/kube.training.git/tree/k8s_metropole_de_lyon/slides/k8s/cluster-backup.md)]
+---
+
+## Snapshotting etcd on kubeadm
+
+- The following command will work on clusters deployed with kubeadm
+
+  (and maybe others)
+
+- It should be executed on a master node
+
+```bash
+docker run --rm --net host -v $PWD:/vol \
+    -v /etc/kubernetes/pki/etcd:/etc/kubernetes/pki/etcd:ro \
+    -e ETCDCTL_API=3 k8s.gcr.io/etcd:3.3.10 \
+    etcdctl --endpoints=https://[127.0.0.1]:2379 \
+            --cacert=/etc/kubernetes/pki/etcd/ca.crt \
+            --cert=/etc/kubernetes/pki/etcd/healthcheck-client.crt \
+            --key=/etc/kubernetes/pki/etcd/healthcheck-client.key \
+            snapshot save /vol/snapshot
+```
+
+- It will create a file named `snapshot` in the current directory
+
+.debug[[k8s/cluster-backup.md](https://github.com/RyaxTech/kube.training.git/tree/k8s_metropole_de_lyon/slides/k8s/cluster-backup.md)]
+---
+
+## How can we remember all these flags?
+
+- Look at the static pod manifest for etcd
+
+  (in `/etc/kubernetes/manifests`)
+
+- The healthcheck probe is calling `etcdctl` with all the right flags 
+  😉👍✌️
+
+- Exercise: write the YAML for a batch job to perform the backup
+
+.debug[[k8s/cluster-backup.md](https://github.com/RyaxTech/kube.training.git/tree/k8s_metropole_de_lyon/slides/k8s/cluster-backup.md)]
+---
+
+## Restoring an etcd snapshot
+
+- ~~Execute exactly the same command, but replacing `save` with `restore`~~
+
+  (Believe it or not, doing that will *not* do anything useful!)
+
+- The `restore` command does *not* load a snapshot into a running etcd server
+
+- The `restore` command creates a new data directory from the snapshot
+
+  (it's an offline operation; it doesn't interact with an etcd server)
+
+- It will create a new data directory in a temporary container
+
+  (leaving the running etcd node untouched)
+
+.debug[[k8s/cluster-backup.md](https://github.com/RyaxTech/kube.training.git/tree/k8s_metropole_de_lyon/slides/k8s/cluster-backup.md)]
+---
+
+## When using kubeadm
+
+1. Create a new data directory from the snapshot:
+   ```bash
+   sudo rm -rf /var/lib/etcd
+   docker run --rm -v /var/lib:/var/lib -v $PWD:/vol \
+          -e ETCDCTL_API=3 k8s.gcr.io/etcd:3.3.10 \
+          etcdctl snapshot restore /vol/snapshot --data-dir=/var/lib/etcd
+   ```
+
+2. Provision the control plane, using that data directory:
+   ```bash
+   sudo kubeadm init \
+        --ignore-preflight-errors=DirAvailable--var-lib-etcd
+   ```
+
+3. Rejoin the other nodes
+
+.debug[[k8s/cluster-backup.md](https://github.com/RyaxTech/kube.training.git/tree/k8s_metropole_de_lyon/slides/k8s/cluster-backup.md)]
+---
+
+## The fine print
+
+- This only saves etcd state
+
+- It **does not** save persistent volumes and local node data
+
+- Some critical components (like the pod network) might need to be reset
+
+- As a result, our pods might have to be recreated, too
+
+- If we have proper liveness checks, this should happen automatically
+
+.debug[[k8s/cluster-backup.md](https://github.com/RyaxTech/kube.training.git/tree/k8s_metropole_de_lyon/slides/k8s/cluster-backup.md)]
+---
+
+## More information about etcd backups
+
+- [Kubernetes documentation](https://kubernetes.io/docs/tasks/administer-cluster/configure-upgrade-etcd/#built-in-snapshot) about etcd backups
+
+- [etcd documentation](https://coreos.com/etcd/docs/latest/op-guide/recovery.html#snapshotting-the-keyspace) about snapshots and restore
+
+- [A good blog post by elastisys](https://elastisys.com/2018/12/10/backup-kubernetes-how-and-why/) explaining how to restore a snapshot
+
+- [Another good blog post by consol labs](https://labs.consol.de/kubernetes/2018/05/25/kubeadm-backup.html) on the same topic
+
+.debug[[k8s/cluster-backup.md](https://github.com/RyaxTech/kube.training.git/tree/k8s_metropole_de_lyon/slides/k8s/cluster-backup.md)]
+---
+
+## Don't forget ...
+
+- Also back up the TLS information
+
+  (at the very least: CA key and cert; API server key and cert)
+
+- With clusters provisioned by kubeadm, this is in `/etc/kubernetes/pki`
+
+- If you don't:
+
+  - you will still be able to restore etcd state and bring everything back up
+
+  - you will need to redistribute user certificates
+
+.warning[**TLS information is highly sensitive! 
+<br/>Anyone who has it has full access to your cluster!**]
+
+.debug[[k8s/cluster-backup.md](https://github.com/RyaxTech/kube.training.git/tree/k8s_metropole_de_lyon/slides/k8s/cluster-backup.md)]
+---
+
+
+.debug[[k8s/cluster-backup.md](https://github.com/RyaxTech/kube.training.git/tree/k8s_metropole_de_lyon/slides/k8s/cluster-backup.md)]
+---
+
+class: pic
+
+.interstitial[![Image separating from the next chapter](https://gallant-turing-d0d520.netlify.com/containers/blue-containers.jpg)]
+
+---
+
+name: toc-daemon-sets
+class: title
+
+Daemon sets
+
+.nav[
+[Section précédente](#toc-backing-up-clusters)
+|
+[Retour table des matières](#toc-chapter-2)
+|
+[Section suivante](#toc-labels-and-selectors)
+]
+
+.debug[(automatically generated title slide)]
+
+---
+# Daemon sets
+
+- We want to scale `rng` in a way that is different from how we scaled `worker`
+
+- We want one (and exactly one) instance of `rng` per node
+
+- What if we just scale up `deploy/rng` to the number of nodes?
+
+  - nothing guarantees that the `rng` containers will be distributed evenly
+
+  - if we add nodes later, they will not automatically run a copy of `rng`
+
+  - if we remove (or reboot) a node, one `rng` container will restart elsewhere
+
+- Instead of a `deployment`, we will use a `daemonset`
+
+.debug[[k8s/daemonset.md](https://github.com/RyaxTech/kube.training.git/tree/k8s_metropole_de_lyon/slides/k8s/daemonset.md)]
+---
+
+## Daemon sets in practice
+
+- Daemon sets are great for cluster-wide, per-node processes:
+
+  - `kube-proxy`
+
+  - `weave` (our overlay network)
+
+  - monitoring agents
+
+  - hardware management tools (e.g. SCSI/FC HBA agents)
+
+  - etc.
+
+- They can also be restricted to run [only on some nodes](https://kubernetes.io/docs/concepts/workloads/controllers/daemonset/#running-pods-on-only-some-nodes)
+
+.debug[[k8s/daemonset.md](https://github.com/RyaxTech/kube.training.git/tree/k8s_metropole_de_lyon/slides/k8s/daemonset.md)]
+---
+
+## Creating a daemon set
+
+<!-- ##VERSION## -->
+
+- Unfortunately, as of Kubernetes 1.14, the CLI cannot create daemon sets
+
+--
+
+- More precisely: it doesn't have a subcommand to create a daemon set
+
+--
+
+- But any kind of resource can always be created by providing a YAML description:
+  ```bash
+  kubectl apply -f foo.yaml
+  ```
+
+--
+
+- How do we create the YAML file for our daemon set?
+
+--
+
+  - option 1: [read the docs](https://kubernetes.io/docs/concepts/workloads/controllers/daemonset/#create-a-daemonset)
+
+--
+
+  - option 2: `vi` our way out of it
+
+.debug[[k8s/daemonset.md](https://github.com/RyaxTech/kube.training.git/tree/k8s_metropole_de_lyon/slides/k8s/daemonset.md)]
+---
+
+## Creating the YAML file for our daemon set
+
+- Let's start with the YAML file for the current `rng` resource
+
+.exercise[
+
+- Dump the `rng` resource in YAML:
+  ```bash
+  kubectl get deploy/rng -o yaml --export >rng.yml 
+  ```
+
+- Edit `rng.yml`
+
+]
+
+Note: `--export` will remove "cluster-specific" information, i.e.:
+- namespace (so that the resource is not tied to a specific namespace)
+- status and creation timestamp (useless when creating a new resource)
+- resourceVersion and uid (these would cause... *interesting* problems)
+
+.debug[[k8s/daemonset.md](https://github.com/RyaxTech/kube.training.git/tree/k8s_metropole_de_lyon/slides/k8s/daemonset.md)]
+---
+
+## "Casting" a resource to another
+
+- What if we just changed the `kind` field?
+
+  (It can't be that easy, right?)
+
+.exercise[
+
+- Change `kind: Deployment` to `kind: DaemonSet`
+
+<!--
+```bash vim rng.yml```
+```wait kind: Deployment```
+```keys /Deployment```
+```keys ^J```
+```keys cwDaemonSet```
+```keys ^[``` ]
+```keys :wq```
+```keys ^J```
+-->
+
+- Save, quit
+
+- Try to create our new resource:
+  ```
+  kubectl apply -f rng.yml
+  ```
+
+]
+
+--
+
+We all knew this couldn't be that easy, right!
+
+.debug[[k8s/daemonset.md](https://github.com/RyaxTech/kube.training.git/tree/k8s_metropole_de_lyon/slides/k8s/daemonset.md)]
+---
+
+## Understanding the problem
+
+- The core of the error is:
+  ```
+  error validating data:
+  [ValidationError(DaemonSet.spec):
+  unknown field "replicas" in io.k8s.api.extensions.v1beta1.DaemonSetSpec,
+  ...
+  ```
+
+--
+
+- *Obviously,* it doesn't make sense to specify a number of replicas for a daemon set
+
+--
+
+- Workaround: fix the YAML
+
+  - remove the `replicas` field
+  - remove the `strategy` field (which defines the rollout mechanism for a deployment)
+  - remove the `progressDeadlineSeconds` field (also used by the rollout mechanism)
+  - remove the `status: {}` line at the end
+
+--
+
+- Or, we could also ...
+
+.debug[[k8s/daemonset.md](https://github.com/RyaxTech/kube.training.git/tree/k8s_metropole_de_lyon/slides/k8s/daemonset.md)]
+---
+
+## Use the `--force`, Luke
+
+- We could also tell Kubernetes to ignore these errors and try anyway
+
+- The `--force` flag's actual name is `--validate=false`
+
+.exercise[
+
+- Try to load our YAML file and ignore errors:
+  ```bash
+  kubectl apply -f rng.yml --validate=false
+  ```
+
+]
+
+--
+
+🎩✨🐇
+
+--
+
+Wait ... Now, can it be *that* easy?
+
+.debug[[k8s/daemonset.md](https://github.com/RyaxTech/kube.training.git/tree/k8s_metropole_de_lyon/slides/k8s/daemonset.md)]
+---
+
+## Checking what we've done
+
+- Did we transform our `deployment` into a `daemonset`?
+
+.exercise[
+
+- Look at the resources that we have now:
+  ```bash
+  kubectl get all
+  ```
+
+]
+
+--
+
+We have two resources called `rng`:
+
+- the *deployment* that was existing before
+
+- the *daemon set* that we just created
+
+We also have one too many pods.
+<br/>
+(The pod corresponding to the *deployment* still exists.)
+
+.debug[[k8s/daemonset.md](https://github.com/RyaxTech/kube.training.git/tree/k8s_metropole_de_lyon/slides/k8s/daemonset.md)]
+---
+
+## `deploy/rng` and `ds/rng`
+
+- You can have different resource types with the same name
+
+  (i.e. a *deployment* and a *daemon set* both named `rng`)
+
+- We still have the old `rng` *deployment*
+
+  ```
+NAME                       DESIRED   CURRENT   UP-TO-DATE   AVAILABLE   AGE
+deployment.apps/rng        1         1         1            1           18m
+  ```
+
+- But now we have the new `rng` *daemon set* as well
+
+  ```
+NAME                DESIRED  CURRENT  READY  UP-TO-DATE  AVAILABLE  NODE SELECTOR  AGE
+daemonset.apps/rng  2        2        2      2           2          <none>         9s
+  ```
+
+.debug[[k8s/daemonset.md](https://github.com/RyaxTech/kube.training.git/tree/k8s_metropole_de_lyon/slides/k8s/daemonset.md)]
+---
+
+## Too many pods
+
+- If we check with `kubectl get pods`, we see:
+
+  - *one pod* for the deployment (named `rng-xxxxxxxxxx-yyyyy`)
+
+  - *one pod per node* for the daemon set (named `rng-zzzzz`)
+
+  ```
+  NAME                        READY     STATUS    RESTARTS   AGE
+  rng-54f57d4d49-7pt82        1/1       Running   0          11m
+  rng-b85tm                   1/1       Running   0          25s
+  rng-hfbrr                   1/1       Running   0          25s
+  [...]
+  ```
+
+--
+
+The daemon set created one pod per node, except on the master node.
+
+The master node has [taints](https://kubernetes.io/docs/concepts/configuration/taint-and-toleration/) preventing pods from running there.
+
+(To schedule a pod on this node anyway, the pod will require appropriate [tolerations](https://kubernetes.io/docs/concepts/configuration/taint-and-toleration/).)
+
+.footnote[(Off by one? We don't run these pods on the node hosting the control plane.)]
+
+.debug[[k8s/daemonset.md](https://github.com/RyaxTech/kube.training.git/tree/k8s_metropole_de_lyon/slides/k8s/daemonset.md)]
+---
+
+## Is this working?
+
+- Look at the web UI
+
+--
+
+- The graph should now go above 10 hashes per second!
+
+--
+
+- It looks like the newly created pods are serving traffic correctly
+
+- How and why did this happen?
+
+  (We didn't do anything special to add them to the `rng` service load balancer!)
+
+.debug[[k8s/daemonset.md](https://github.com/RyaxTech/kube.training.git/tree/k8s_metropole_de_lyon/slides/k8s/daemonset.md)]
+---
+
+class: pic
+
+.interstitial[![Image separating from the next chapter](https://gallant-turing-d0d520.netlify.com/containers/chinook-helicopter-container.jpg)]
+
+---
+
+name: toc-labels-and-selectors
+class: title
+
+Labels and selectors
+
+.nav[
+[Section précédente](#toc-daemon-sets)
+|
+[Retour table des matières](#toc-chapter-2)
+|
+[Section suivante](#toc-rolling-updates)
+]
+
+.debug[(automatically generated title slide)]
+
+---
+
+# Labels and selectors
+
+- The `rng` *service* is load balancing requests to a set of pods
+
+- That set of pods is defined by the *selector* of the `rng` service
+
+.exercise[
+
+- Check the *selector* in the `rng` service definition:
+  ```bash
+  kubectl describe service rng
+  ```
+
+]
+
+- The selector is `app=rng`
+
+- It means "all the pods having the label `app=rng`"
+
+  (They can have additional labels as well, that's OK!)
+
+.debug[[k8s/daemonset.md](https://github.com/RyaxTech/kube.training.git/tree/k8s_metropole_de_lyon/slides/k8s/daemonset.md)]
+---
+
+## Selector evaluation
+
+- We can use selectors with many `kubectl` commands
+
+- For instance, with `kubectl get`, `kubectl logs`, `kubectl delete` ... and more
+
+.exercise[
+
+- Get the list of pods matching selector `app=rng`:
+  ```bash
+  kubectl get pods -l app=rng
+  kubectl get pods --selector app=rng
+  ```
+
+]
+
+But ... why do these pods (in particular, the *new* ones) have this `app=rng` label?
+
+.debug[[k8s/daemonset.md](https://github.com/RyaxTech/kube.training.git/tree/k8s_metropole_de_lyon/slides/k8s/daemonset.md)]
+---
+
+## Where do labels come from?
+
+- When we create a deployment with `kubectl create deployment rng`,
+  <br/>this deployment gets the label `app=rng`
+
+- The replica sets created by this deployment also get the label `app=rng`
+
+- The pods created by these replica sets also get the label `app=rng`
+
+- When we created the daemon set from the deployment, we re-used the same spec
+
+- Therefore, the pods created by the daemon set get the same labels
+
+.footnote[Note: when we use `kubectl run stuff`, the label is `run=stuff` instead.]
+
+.debug[[k8s/daemonset.md](https://github.com/RyaxTech/kube.training.git/tree/k8s_metropole_de_lyon/slides/k8s/daemonset.md)]
+---
+
+## Updating load balancer configuration
+
+- We would like to remove a pod from the load balancer
+
+- What would happen if we removed that pod, with `kubectl delete pod ...`?
+
+--
+
+  It would be re-created immediately (by the replica set or the daemon set)
+
+--
+
+- What would happen if we removed the `app=rng` label from that pod?
+
+--
+
+  It would *also* be re-created immediately
+
+--
+
+  Why?!?
+
+.debug[[k8s/daemonset.md](https://github.com/RyaxTech/kube.training.git/tree/k8s_metropole_de_lyon/slides/k8s/daemonset.md)]
+---
+
+## Selectors for replica sets and daemon sets
+
+- The "mission" of a replica set is:
+
+  "Make sure that there is the right number of pods matching this spec!"
+
+- The "mission" of a daemon set is:
+
+  "Make sure that there is a pod matching this spec on each node!"
+
+--
+
+- *In fact,* replica sets and daemon sets do not check pod specifications
+
+- They merely have a *selector*, and they look for pods matching that selector
+
+- Yes, we can fool them by manually creating pods with the "right" labels
+
+- Bottom line: if we remove our `app=rng` label ...
+
+ ... The pod "diseappears" for its parent, which re-creates another pod to replace it
+
+.debug[[k8s/daemonset.md](https://github.com/RyaxTech/kube.training.git/tree/k8s_metropole_de_lyon/slides/k8s/daemonset.md)]
+---
+
+class: extra-details
+
+## Isolation of replica sets and daemon sets
+
+- Since both the `rng` daemon set and the `rng` replica set use `app=rng` ...
+
+  ... Why don't they "find" each other's pods?
+
+--
+
+- *Replica sets* have a more specific selector, visible with `kubectl describe`
+
+  (It looks like `app=rng,pod-template-hash=abcd1234`)
+
+- *Daemon sets* also have a more specific selector, but it's invisible
+
+  (It looks like `app=rng,controller-revision-hash=abcd1234`)
+
+- As a result, each controller only "sees" the pods it manages
+
+.debug[[k8s/daemonset.md](https://github.com/RyaxTech/kube.training.git/tree/k8s_metropole_de_lyon/slides/k8s/daemonset.md)]
+---
+
+## Removing a pod from the load balancer
+
+- Currently, the `rng` service is defined by the `app=rng` selector
+
+- The only way to remove a pod is to remove or change the `app` label
+
+- ... But that will cause another pod to be created instead!
+
+- What's the solution?
+
+--
+
+- We need to change the selector of the `rng` service!
+
+- Let's add another label to that selector (e.g. `enabled=yes`) 
+
+.debug[[k8s/daemonset.md](https://github.com/RyaxTech/kube.training.git/tree/k8s_metropole_de_lyon/slides/k8s/daemonset.md)]
+---
+
+## Complex selectors
+
+- If a selector specifies multiple labels, they are understood as a logical *AND*
+
+  (In other words: the pods must match all the labels)
+
+- Kubernetes has support for advanced, set-based selectors
+
+  (But these cannot be used with services, at least not yet!)
+
+.debug[[k8s/daemonset.md](https://github.com/RyaxTech/kube.training.git/tree/k8s_metropole_de_lyon/slides/k8s/daemonset.md)]
+---
+
+## The plan
+
+1. Add the label `enabled=yes` to all our `rng` pods
+
+2. Update the selector for the `rng` service to also include `enabled=yes`
+
+3. Toggle traffic to a pod by manually adding/removing the `enabled` label
+
+4. Profit!
+
+*Note: if we swap steps 1 and 2, it will cause a short
+service disruption, because there will be a period of time
+during which the service selector won't match any pod.
+During that time, requests to the service will time out.
+By doing things in the order above, we guarantee that there won't
+be any interruption.*
+
+.debug[[k8s/daemonset.md](https://github.com/RyaxTech/kube.training.git/tree/k8s_metropole_de_lyon/slides/k8s/daemonset.md)]
+---
+
+## Adding labels to pods
+
+- We want to add the label `enabled=yes` to all pods that have `app=rng`
+
+- We could edit each pod one by one with `kubectl edit` ...
+
+- ... Or we could use `kubectl label` to label them all
+
+- `kubectl label` can use selectors itself
+
+.exercise[
+
+- Add `enabled=yes` to all pods that have `app=rng`:
+  ```bash
+  kubectl label pods -l app=rng enabled=yes
+  ```
+
+]
+
+.debug[[k8s/daemonset.md](https://github.com/RyaxTech/kube.training.git/tree/k8s_metropole_de_lyon/slides/k8s/daemonset.md)]
+---
+
+## Updating the service selector
+
+- We need to edit the service specification
+
+- Reminder: in the service definition, we will see `app: rng` in two places
+
+  - the label of the service itself (we don't need to touch that one)
+
+  - the selector of the service (that's the one we want to change)
+
+.exercise[
+
+- Update the service to add `enabled: yes` to its selector:
+  ```bash
+  kubectl edit service rng
+  ```
+
+<!--
+```wait Please edit the object below```
+```keys /app: rng```
+```keys ^J```
+```keys noenabled: yes```
+```keys ^[``` ]
+```keys :wq```
+```keys ^J```
+-->
+
+]
+
+--
+
+... And then we get *the weirdest error ever.* Why?
+
+.debug[[k8s/daemonset.md](https://github.com/RyaxTech/kube.training.git/tree/k8s_metropole_de_lyon/slides/k8s/daemonset.md)]
+---
+
+## When the YAML parser is being too smart
+
+- YAML parsers try to help us:
+
+  - `xyz` is the string `"xyz"`
+
+  - `42` is the integer `42`
+
+  - `yes` is the boolean value `true`
+
+- If we want the string `"42"` or the string `"yes"`, we have to quote them
+
+- So we have to use `enabled: "yes"`
+
+.footnote[For a good laugh: if we had used "ja", "oui", "si" ... as the value, it would have worked!]
+
+.debug[[k8s/daemonset.md](https://github.com/RyaxTech/kube.training.git/tree/k8s_metropole_de_lyon/slides/k8s/daemonset.md)]
+---
+
+## Updating the service selector, take 2
+
+.exercise[
+
+- Update the service to add `enabled: "yes"` to its selector:
+  ```bash
+  kubectl edit service rng
+  ```
+
+<!--
+```wait Please edit the object below```
+```keys /app: rng```
+```keys ^J```
+```keys noenabled: "yes"```
+```keys ^[``` ]
+```keys :wq```
+```keys ^J```
+-->
+
+]
+
+This time it should work!
+
+If we did everything correctly, the web UI shouldn't show any change.
+
+.debug[[k8s/daemonset.md](https://github.com/RyaxTech/kube.training.git/tree/k8s_metropole_de_lyon/slides/k8s/daemonset.md)]
+---
+
+## Updating labels
+
+- We want to disable the pod that was created by the deployment
+
+- All we have to do, is remove the `enabled` label from that pod
+
+- To identify that pod, we can use its name
+
+- ... Or rely on the fact that it's the only one with a `pod-template-hash` label
+
+- Good to know:
+
+  - `kubectl label ... foo=` doesn't remove a label (it sets it to an empty string)
+
+  - to remove label `foo`, use `kubectl label ... foo-`
+
+  - to change an existing label, we would need to add `--overwrite`
+
+.debug[[k8s/daemonset.md](https://github.com/RyaxTech/kube.training.git/tree/k8s_metropole_de_lyon/slides/k8s/daemonset.md)]
+---
+
+## Removing a pod from the load balancer
+
+.exercise[
+
+- In one window, check the logs of that pod:
+  ```bash
+  POD=$(kubectl get pod -l app=rng,pod-template-hash -o name)
+  kubectl logs --tail 1 --follow $POD
+
+  ```
+  (We should see a steady stream of HTTP logs)
+
+- In another window, remove the label from the pod:
+  ```bash
+  kubectl label pod -l app=rng,pod-template-hash enabled-
+  ```
+  (The stream of HTTP logs should stop immediately)
+
+]
+
+There might be a slight change in the web UI (since we removed a bit
+of capacity from the `rng` service). If we remove more pods,
+the effect should be more visible.
+
+.debug[[k8s/daemonset.md](https://github.com/RyaxTech/kube.training.git/tree/k8s_metropole_de_lyon/slides/k8s/daemonset.md)]
+---
+
+class: extra-details
+
+## Updating the daemon set
+
+- If we scale up our cluster by adding new nodes, the daemon set will create more pods
+
+- These pods won't have the `enabled=yes` label
+
+- If we want these pods to have that label, we need to edit the daemon set spec
+
+- We can do that with e.g. `kubectl edit daemonset rng`
+
+.debug[[k8s/daemonset.md](https://github.com/RyaxTech/kube.training.git/tree/k8s_metropole_de_lyon/slides/k8s/daemonset.md)]
+---
+
+class: extra-details
+
+## We've put resources in your resources
+
+- Reminder: a daemon set is a resource that creates more resources!
+
+- There is a difference between:
+
+  - the label(s) of a resource (in the `metadata` block in the beginning)
+
+  - the selector of a resource (in the `spec` block)
+
+  - the label(s) of the resource(s) created by the first resource (in the `template` block)
+
+- We would need to update the selector and the template
+
+  (metadata labels are not mandatory)
+
+- The template must match the selector
+
+  (i.e. the resource will refuse to create resources that it will not select)
+
+.debug[[k8s/daemonset.md](https://github.com/RyaxTech/kube.training.git/tree/k8s_metropole_de_lyon/slides/k8s/daemonset.md)]
+---
+
+## Labels and debugging
+
+- When a pod is misbehaving, we can delete it: another one will be recreated
+
+- But we can also change its labels
+
+- It will be removed from the load balancer (it won't receive traffic anymore)
+
+- Another pod will be recreated immediately
+
+- But the problematic pod is still here, and we can inspect and debug it
+
+- We can even re-add it to the rotation if necessary
+
+  (Very useful to troubleshoot intermittent and elusive bugs)
+
+.debug[[k8s/daemonset.md](https://github.com/RyaxTech/kube.training.git/tree/k8s_metropole_de_lyon/slides/k8s/daemonset.md)]
+---
+
+## Labels and advanced rollout control
+
+- Conversely, we can add pods matching a service's selector
+
+- These pods will then receive requests and serve traffic
+
+- Examples:
+
+  - one-shot pod with all debug flags enabled, to collect logs
+
+  - pods created automatically, but added to rotation in a second step
+    <br/>
+    (by setting their label accordingly)
+
+- This gives us building blocks for canary and blue/green deployments
+
+.debug[[k8s/daemonset.md](https://github.com/RyaxTech/kube.training.git/tree/k8s_metropole_de_lyon/slides/k8s/daemonset.md)]
+---
+
+class: pic
+
+.interstitial[![Image separating from the next chapter](https://gallant-turing-d0d520.netlify.com/containers/container-cranes.jpg)]
+
+---
+
+name: toc-rolling-updates
+class: title
+
+Rolling updates
+
+.nav[
+[Section précédente](#toc-labels-and-selectors)
+|
+[Retour table des matières](#toc-chapter-2)
+|
+[Section suivante](#toc-healthchecks)
+]
+
+.debug[(automatically generated title slide)]
+
+---
+# Rolling updates
+
+- By default (without rolling updates), when a scaled resource is updated:
+
+  - new pods are created
+
+  - old pods are terminated
+  
+  - ... all at the same time
+  
+  - if something goes wrong, ¯\\\_(ツ)\_/¯
+
+.debug[[k8s/rollout.md](https://github.com/RyaxTech/kube.training.git/tree/k8s_metropole_de_lyon/slides/k8s/rollout.md)]
+---
+
+## Rolling updates
+
+- With rolling updates, when a resource is updated, it happens progressively
+
+- Two parameters determine the pace of the rollout: `maxUnavailable` and `maxSurge`
+
+- They can be specified in absolute number of pods, or percentage of the `replicas` count
+
+- At any given time ...
+
+  - there will always be at least `replicas`-`maxUnavailable` pods available
+
+  - there will never be more than `replicas`+`maxSurge` pods in total
+
+  - there will therefore be up to `maxUnavailable`+`maxSurge` pods being updated
+
+- We have the possibility to rollback to the previous version
+  <br/>(if the update fails or is unsatisfactory in any way)
+
+.debug[[k8s/rollout.md](https://github.com/RyaxTech/kube.training.git/tree/k8s_metropole_de_lyon/slides/k8s/rollout.md)]
+---
+
+## Checking current rollout parameters
+
+- Recall how we build custom reports with `kubectl` and `jq`:
+
+.exercise[
+
+- Show the rollout plan for our deployments:
+  ```bash
+    kubectl get deploy -o json |
+            jq ".items[] | {name:.metadata.name} + .spec.strategy.rollingUpdate"
+  ```
+
+]
+
+.debug[[k8s/rollout.md](https://github.com/RyaxTech/kube.training.git/tree/k8s_metropole_de_lyon/slides/k8s/rollout.md)]
+---
+
+
+## Rolling updates in practice
+
+- As of Kubernetes 1.8, we can do rolling updates with:
+
+  `deployments`, `daemonsets`, `statefulsets`
+
+- Editing one of these resources will automatically result in a rolling update
+
+- Rolling updates can be monitored with the `kubectl rollout` subcommand
+
+.debug[[k8s/rollout.md](https://github.com/RyaxTech/kube.training.git/tree/k8s_metropole_de_lyon/slides/k8s/rollout.md)]
+---
+
+## Building a new version of the `worker` service
+
+.exercise[
+
+- Go to the `stack` directory:
+  ```bash
+  cd ~/container.training/stacks
+  ```
+
+- Edit `dockercoins/worker/worker.py`; update the first `sleep` line to sleep 1 second
+
+- Build a new tag and push it to the registry:
+  ```bash
+  #export REGISTRY=localhost:3xxxx
+  export TAG=v0.2
+  docker-compose -f dockercoins.yml build
+  docker-compose -f dockercoins.yml push
+  ```
+
+]
+
+.debug[[k8s/rollout.md](https://github.com/RyaxTech/kube.training.git/tree/k8s_metropole_de_lyon/slides/k8s/rollout.md)]
+---
+
+## Rolling out the new `worker` service
+
+.exercise[
+
+- Let's monitor what's going on by opening a few terminals, and run:
+  ```bash
+  kubectl get pods -w
+  kubectl get replicasets -w
+  kubectl get deployments -w
+  ```
+
+<!--
+```wait NAME```
+```keys ^C```
+-->
+
+- Update `worker` either with `kubectl edit`, or by running:
+  ```bash
+  kubectl set image deploy worker worker=$REGISTRY/worker:$TAG
+  ```
+
+]
+
+--
+
+That rollout should be pretty quick. What shows in the web UI?
+
+.debug[[k8s/rollout.md](https://github.com/RyaxTech/kube.training.git/tree/k8s_metropole_de_lyon/slides/k8s/rollout.md)]
+---
+
+## Give it some time
+
+- At first, it looks like nothing is happening (the graph remains at the same level)
+
+- According to `kubectl get deploy -w`, the `deployment` was updated really quickly
+
+- But `kubectl get pods -w` tells a different story
+
+- The old `pods` are still here, and they stay in `Terminating` state for a while
+
+- Eventually, they are terminated; and then the graph decreases significantly
+
+- This delay is due to the fact that our worker doesn't handle signals
+
+- Kubernetes sends a "polite" shutdown request to the worker, which ignores it
+
+- After a grace period, Kubernetes gets impatient and kills the container
+
+  (The grace period is 30 seconds, but [can be changed](https://kubernetes.io/docs/concepts/workloads/pods/pod/#termination-of-pods) if needed)
+
+.debug[[k8s/rollout.md](https://github.com/RyaxTech/kube.training.git/tree/k8s_metropole_de_lyon/slides/k8s/rollout.md)]
+---
+
+## Rolling out something invalid
+
+- What happens if we make a mistake?
+
+.exercise[
+
+- Update `worker` by specifying a non-existent image:
+  ```bash
+  export TAG=v0.3
+  kubectl set image deploy worker worker=$REGISTRY/worker:$TAG
+  ```
+
+- Check what's going on:
+  ```bash
+  kubectl rollout status deploy worker
+  ```
+
+<!--
+```wait Waiting for deployment```
+```keys ^C```
+-->
+
+]
+
+--
+
+Our rollout is stuck. However, the app is not dead.
+
+(After a minute, it will stabilize to be 20-25% slower.)
+
+.debug[[k8s/rollout.md](https://github.com/RyaxTech/kube.training.git/tree/k8s_metropole_de_lyon/slides/k8s/rollout.md)]
+---
+
+## What's going on with our rollout?
+
+- Why is our app a bit slower?
+
+- Because `MaxUnavailable=25%`
+
+  ... So the rollout terminated 2 replicas out of 10 available
+
+- Okay, but why do we see 5 new replicas being rolled out?
+
+- Because `MaxSurge=25%`
+
+  ... So in addition to replacing 2 replicas, the rollout is also starting 3 more
+
+- It rounded down the number of MaxUnavailable pods conservatively,
+  <br/>
+  but the total number of pods being rolled out is allowed to be 25+25=50%
+
+.debug[[k8s/rollout.md](https://github.com/RyaxTech/kube.training.git/tree/k8s_metropole_de_lyon/slides/k8s/rollout.md)]
+---
+
+class: extra-details
+
+## The nitty-gritty details
+
+- We start with 10 pods running for the `worker` deployment
+
+- Current settings: MaxUnavailable=25% and MaxSurge=25%
+
+- When we start the rollout:
+
+  - two replicas are taken down (as per MaxUnavailable=25%)
+  - two others are created (with the new version) to replace them
+  - three others are created (with the new version) per MaxSurge=25%)
+
+- Now we have 8 replicas up and running, and 5 being deployed
+
+- Our rollout is stuck at this point!
+
+.debug[[k8s/rollout.md](https://github.com/RyaxTech/kube.training.git/tree/k8s_metropole_de_lyon/slides/k8s/rollout.md)]
+---
+
+## Checking the dashboard during the bad rollout
+
+If you haven't deployed the Kubernetes dashboard earlier, just skip this slide.
+
+.exercise[
+
+- Check which port the dashboard is on:
+  ```bash
+  kubectl -n kube-system get svc socat
+  ```
+
+]
+
+Note the `3xxxx` port.
+
+.exercise[
+
+- Connect to http://oneofournodes:3xxxx/
+
+<!-- ```open https://node1:3xxxx/``` -->
+
+]
+
+--
+
+- We have failures in Deployments, Pods, and Replica Sets
+
+.debug[[k8s/rollout.md](https://github.com/RyaxTech/kube.training.git/tree/k8s_metropole_de_lyon/slides/k8s/rollout.md)]
+---
+
+## Recovering from a bad rollout
+
+- We could push some `v0.3` image
+
+  (the pod retry logic will eventually catch it and the rollout will proceed)
+
+- Or we could invoke a manual rollback
+
+.exercise[
+
+<!--
+```keys
+^C
+```
+-->
+
+- Cancel the deployment and wait for the dust to settle down:
+  ```bash
+  kubectl rollout undo deploy worker
+  kubectl rollout status deploy worker
+  ```
+
+]
+
+.debug[[k8s/rollout.md](https://github.com/RyaxTech/kube.training.git/tree/k8s_metropole_de_lyon/slides/k8s/rollout.md)]
+---
+
+## Changing rollout parameters
+
+- We want to:
+
+  - revert to `v0.1`
+  - be conservative on availability (always have desired number of available workers)
+  - go slow on rollout speed (update only one pod at a time) 
+  - give some time to our workers to "warm up" before starting more
+
+The corresponding changes can be expressed in the following YAML snippet:
+
+.small[
+```yaml
+spec:
+  template:
+    spec:
+      containers:
+      - name: worker
+        image: $REGISTRY/worker:v0.1
+  strategy:
+    rollingUpdate:
+      maxUnavailable: 0
+      maxSurge: 1
+  minReadySeconds: 10
+```
+]
+
+.debug[[k8s/rollout.md](https://github.com/RyaxTech/kube.training.git/tree/k8s_metropole_de_lyon/slides/k8s/rollout.md)]
+---
+
+## Applying changes through a YAML patch
+
+- We could use `kubectl edit deployment worker`
+
+- But we could also use `kubectl patch` with the exact YAML shown before
+
+.exercise[
+
+.small[
+
+- Apply all our changes and wait for them to take effect:
+  ```bash
+  kubectl patch deployment worker -p "
+    spec:
+      template:
+        spec:
+          containers:
+          - name: worker
+            image: $REGISTRY/worker:v0.1
+      strategy:
+        rollingUpdate:
+          maxUnavailable: 0
+          maxSurge: 1
+      minReadySeconds: 10
+    "
+  kubectl rollout status deployment worker
+  kubectl get deploy -o json worker |
+          jq "{name:.metadata.name} + .spec.strategy.rollingUpdate"
+  ```
+  ] 
+
+]
+
+.debug[[k8s/rollout.md](https://github.com/RyaxTech/kube.training.git/tree/k8s_metropole_de_lyon/slides/k8s/rollout.md)]
+---
+
+class: pic
+
+.interstitial[![Image separating from the next chapter](https://gallant-turing-d0d520.netlify.com/containers/container-housing.jpg)]
+
+---
+
+name: toc-healthchecks
+class: title
+
+Healthchecks
+
+.nav[
+[Section précédente](#toc-rolling-updates)
+|
+[Retour table des matières](#toc-chapter-2)
+|
+[Section suivante](#toc-accessing-logs-from-the-cli)
+]
+
+.debug[(automatically generated title slide)]
+
+---
+# Healthchecks
+
+- Kubernetes provides two kinds of healthchecks: liveness and readiness
+
+- Healthchecks are *probes* that apply to *containers* (not to pods)
+
+- Each container can have two (optional) probes:
+
+  - liveness = is this container dead or alive?
+
+  - readiness = is this container ready to serve traffic?
+
+- Different probes are available (HTTP, TCP, program execution)
+
+- Let's see the difference and how to use them!
+
+.debug[[k8s/healthchecks.md](https://github.com/RyaxTech/kube.training.git/tree/k8s_metropole_de_lyon/slides/k8s/healthchecks.md)]
+---
+
+## Liveness probe
+
+- Indicates if the container is dead or alive
+
+- A dead container cannot come back to life
+
+- If the liveness probe fails, the container is killed
+
+  (to make really sure that it's really dead; no zombies or undeads!)
+
+- What happens next depends on the pod's `restartPolicy`:
+
+  - `Never`: the container is not restarted
+
+  - `OnFailure` or `Always`: the container is restarted
+
+.debug[[k8s/healthchecks.md](https://github.com/RyaxTech/kube.training.git/tree/k8s_metropole_de_lyon/slides/k8s/healthchecks.md)]
+---
+
+## When to use a liveness probe
+
+- To indicate failures that can't be recovered
+
+  - deadlocks (causing all requests to time out)
+
+  - internal corruption (causing all requests to error)
+
+- If the liveness probe fails *N* consecutive times, the container is killed
+
+- *N* is the `failureThreshold` (3 by default)
+
+.debug[[k8s/healthchecks.md](https://github.com/RyaxTech/kube.training.git/tree/k8s_metropole_de_lyon/slides/k8s/healthchecks.md)]
+---
+
+## Readiness probe
+
+- Indicates if the container is ready to serve traffic
+
+- If a container becomes "unready" (let's say busy!) it might be ready again soon
+
+- If the readiness probe fails:
+
+  - the container is *not* killed
+
+  - if the pod is a member of a service, it is temporarily removed
+
+  - it is re-added as soon as the readiness probe passes again
+
+.debug[[k8s/healthchecks.md](https://github.com/RyaxTech/kube.training.git/tree/k8s_metropole_de_lyon/slides/k8s/healthchecks.md)]
+---
+
+## When to use a readiness probe
+
+- To indicate temporary failures
+
+  - the application can only service *N* parallel connections
+
+  - the runtime is busy doing garbage collection or initial data load
+
+- The container is marked as "not ready" after `failureThreshold` failed attempts
+
+  (3 by default)
+
+- It is marked again as "ready" after `successThreshold` successful attempts
+
+  (1 by default)
+
+.debug[[k8s/healthchecks.md](https://github.com/RyaxTech/kube.training.git/tree/k8s_metropole_de_lyon/slides/k8s/healthchecks.md)]
+---
+
+## Different types of probes
+
+- HTTP request
+
+  - specify URL of the request (and optional headers)
+
+  - any status code between 200 and 399 indicates success
+
+- TCP connection
+
+  - the probe succeeds if the TCP port is open
+
+- arbitrary exec
+
+  - a command is executed in the container
+
+  - exit status of zero indicates success
+
+.debug[[k8s/healthchecks.md](https://github.com/RyaxTech/kube.training.git/tree/k8s_metropole_de_lyon/slides/k8s/healthchecks.md)]
+---
+
+## Benefits of using probes
+
+- Rolling updates proceed when containers are *actually ready*
+
+  (as opposed to merely started)
+
+- Containers in a broken state gets killed and restarted
+
+  (instead of serving errors or timeouts)
+
+- Overloaded backends get removed from load balancer rotation
+
+  (thus improving response times across the board)
+
+.debug[[k8s/healthchecks.md](https://github.com/RyaxTech/kube.training.git/tree/k8s_metropole_de_lyon/slides/k8s/healthchecks.md)]
+---
+
+## Example: HTTP probe
+
+Here is a pod template for the `rng` web service of the DockerCoins app:
+
+```yaml
+apiVersion: v1
+kind: Pod
+metadata:
+  name: rng-with-liveness
+spec:
+  containers:
+  - name: rng
+    image: dockercoins/rng:v0.1
+    livenessProbe:
+      httpGet:
+        path: /
+        port: 80
+      initialDelaySeconds: 10
+      periodSeconds: 1
+```
+
+If the backend serves an error, or takes longer than 1s, 3 times in a row, it gets killed.
+
+.debug[[k8s/healthchecks.md](https://github.com/RyaxTech/kube.training.git/tree/k8s_metropole_de_lyon/slides/k8s/healthchecks.md)]
+---
+
+## Example: exec probe
+
+Here is a pod template for a Redis server:
+
+```yaml
+apiVersion: v1
+kind: Pod
+metadata:
+  name: redis-with-liveness
+spec:
+  containers:
+  - name: redis
+    image: redis
+    livenessProbe:
+      exec:
+        command: ["redis-cli", "ping"]
+```
+
+If the Redis process becomes unresponsive, it will be killed.
+
+.debug[[k8s/healthchecks.md](https://github.com/RyaxTech/kube.training.git/tree/k8s_metropole_de_lyon/slides/k8s/healthchecks.md)]
+---
+
+## Details about liveness and readiness probes
+
+- Probes are executed at intervals of `periodSeconds` (default: 10)
+
+- The timeout for a probe is set with `timeoutSeconds` (default: 1)
+
+- A probe is considered successful after `successThreshold` successes (default: 1)
+
+- A probe is considered failing after `failureThreshold` failures (default: 3)
+
+- If a probe is not defined, it's as if there was an "always successful" probe
+
+.debug[[k8s/healthchecks.md](https://github.com/RyaxTech/kube.training.git/tree/k8s_metropole_de_lyon/slides/k8s/healthchecks.md)]
+---
+
+class: pic
+
+.interstitial[![Image separating from the next chapter](https://gallant-turing-d0d520.netlify.com/containers/containers-by-the-water.jpg)]
+
+---
+
+name: toc-accessing-logs-from-the-cli
+class: title
+
+Accessing logs from the CLI
+
+.nav[
+[Section précédente](#toc-healthchecks)
+|
+[Retour table des matières](#toc-chapter-2)
+|
+[Section suivante](#toc-centralized-logging)
+]
+
+.debug[(automatically generated title slide)]
+
+---
+# Accessing logs from the CLI
+
+- The `kubectl logs` commands has limitations:
+
+  - it cannot stream logs from multiple pods at a time
+
+  - when showing logs from multiple pods, it mixes them all together
+
+- We are going to see how to do it better
+
+.debug[[k8s/logs-cli.md](https://github.com/RyaxTech/kube.training.git/tree/k8s_metropole_de_lyon/slides/k8s/logs-cli.md)]
+---
+
+## Doing it manually
+
+- We *could* (if we were so inclined), write a program or script that would:
+
+  - take a selector as an argument
+
+  - enumerate all pods matching that selector (with `kubectl get -l ...`)
+
+  - fork one `kubectl logs --follow ...` command per container
+
+  - annotate the logs (the output of each `kubectl logs ...` process) with their origin
+
+  - preserve ordering by using `kubectl logs --timestamps ...` and merge the output
+
+--
+
+- We *could* do it, but thankfully, others did it for us already!
+
+.debug[[k8s/logs-cli.md](https://github.com/RyaxTech/kube.training.git/tree/k8s_metropole_de_lyon/slides/k8s/logs-cli.md)]
+---
+
+## Stern
+
+[Stern](https://github.com/wercker/stern) is an open source project
+by [Wercker](http://www.wercker.com/).
+
+From the README:
+
+*Stern allows you to tail multiple pods on Kubernetes and multiple containers within the pod. Each result is color coded for quicker debugging.*
+
+*The query is a regular expression so the pod name can easily be filtered and you don't need to specify the exact id (for instance omitting the deployment id). If a pod is deleted it gets removed from tail and if a new pod is added it automatically gets tailed.*
+
+Exactly what we need!
+
+.debug[[k8s/logs-cli.md](https://github.com/RyaxTech/kube.training.git/tree/k8s_metropole_de_lyon/slides/k8s/logs-cli.md)]
+---
+
+## Installing Stern
+
+- Run `stern` (without arguments) to check if it's installed:
+
+  ```
+  $ stern
+  Tail multiple pods and containers from Kubernetes
+
+  Usage:
+    stern pod-query [flags]
+  ```
+
+- If it is not installed, the easiest method is to download a [binary release](https://github.com/wercker/stern/releases)
+
+- The following commands will install Stern on a Linux Intel 64 bit machine:
+  ```bash
+  sudo curl -L -o /usr/local/bin/stern \
+       https://github.com/wercker/stern/releases/download/1.10.0/stern_linux_amd64
+  sudo chmod +x /usr/local/bin/stern
+  ```
+
+<!-- ##VERSION## -->
+
+.debug[[k8s/logs-cli.md](https://github.com/RyaxTech/kube.training.git/tree/k8s_metropole_de_lyon/slides/k8s/logs-cli.md)]
+---
+
+## Using Stern
+
+- There are two ways to specify the pods for which we want to see the logs:
+
+  - `-l` followed by a selector expression (like with many `kubectl` commands)
+
+  - with a "pod query", i.e. a regex used to match pod names
+
+- These two ways can be combined if necessary
+
+.exercise[
+
+- View the logs for all the rng containers:
+  ```bash
+  stern rng
+  ```
+
+<!--
+```wait HTTP/1.1```
+```keys ^C```
+-->
+
+]
+
+.debug[[k8s/logs-cli.md](https://github.com/RyaxTech/kube.training.git/tree/k8s_metropole_de_lyon/slides/k8s/logs-cli.md)]
+---
+
+## Stern convenient options
+
+- The `--tail N` flag shows the last `N` lines for each container
+
+  (Instead of showing the logs since the creation of the container)
+
+- The `-t` / `--timestamps` flag shows timestamps
+
+- The `--all-namespaces` flag is self-explanatory
+
+.exercise[
+
+- View what's up with the `weave` system containers:
+  ```bash
+  stern --tail 1 --timestamps --all-namespaces weave
+  ```
+
+<!--
+```wait weave-npc```
+```keys ^C```
+-->
+
+]
+
+.debug[[k8s/logs-cli.md](https://github.com/RyaxTech/kube.training.git/tree/k8s_metropole_de_lyon/slides/k8s/logs-cli.md)]
+---
+
+## Using Stern with a selector
+
+- When specifying a selector, we can omit the value for a label
+
+- This will match all objects having that label (regardless of the value)
+
+- Everything created with `kubectl run` has a label `run`
+
+- We can use that property to view the logs of all the pods created with `kubectl run`
+
+- Similarly, everything created with `kubectl create deployment` has a label `app`
+
+.exercise[
+
+- View the logs for all the things started with `kubectl create deployment`:
+  ```bash
+  stern -l app
+  ```
+
+<!--
+```wait units of work```
+```keys ^C```
+-->
+
+]
+
+.debug[[k8s/logs-cli.md](https://github.com/RyaxTech/kube.training.git/tree/k8s_metropole_de_lyon/slides/k8s/logs-cli.md)]
+---
+
+class: pic
+
+.interstitial[![Image separating from the next chapter](https://gallant-turing-d0d520.netlify.com/containers/distillery-containers.jpg)]
+
+---
+
+name: toc-centralized-logging
+class: title
+
+Centralized logging
+
+.nav[
+[Section précédente](#toc-accessing-logs-from-the-cli)
+|
+[Retour table des matières](#toc-chapter-2)
+|
+[Section suivante](#toc-managing-stacks-with-helm)
+]
+
+.debug[(automatically generated title slide)]
+
+---
+# Centralized logging
+
+- Using `kubectl` or `stern` is simple; but it has drawbacks:
+
+  - when a node goes down, its logs are not available anymore
+
+  - we can only dump or stream logs; we want to search/index/count...
+
+- We want to send all our logs to a single place
+
+- We want to parse them (e.g. for HTTP logs) and index them
+
+- We want a nice web dashboard
+
+--
+
+- We are going to deploy an EFK stack
+
+.debug[[k8s/logs-centralized.md](https://github.com/RyaxTech/kube.training.git/tree/k8s_metropole_de_lyon/slides/k8s/logs-centralized.md)]
+---
+
+## What is EFK?
+
+- EFK is three components:
+
+  - ElasticSearch (to store and index log entries)
+
+  - Fluentd (to get container logs, process them, and put them in ElasticSearch)
+
+  - Kibana (to view/search log entries with a nice UI)
+
+- The only component that we need to access from outside the cluster will be Kibana
+
+.debug[[k8s/logs-centralized.md](https://github.com/RyaxTech/kube.training.git/tree/k8s_metropole_de_lyon/slides/k8s/logs-centralized.md)]
+---
+
+## Deploying EFK on our cluster
+
+- We are going to use a YAML file describing all the required resources
+
+.exercise[
+
+- Load the YAML file into our cluster:
+  ```bash
+  kubectl apply -f ~/kube.training/k8s/efk.yaml
+  ```
+
+]
+
+If we [look at the YAML file](https://github.com/jpetazzo/container.training/blob/master/k8s/efk.yaml), we see that
+it creates a daemon set, two deployments, two services,
+and a few roles and role bindings (to give fluentd the required permissions).
+
+.debug[[k8s/logs-centralized.md](https://github.com/RyaxTech/kube.training.git/tree/k8s_metropole_de_lyon/slides/k8s/logs-centralized.md)]
+---
+
+## The itinerary of a log line (before Fluentd)
+
+- A container writes a line on stdout or stderr
+
+- Both are typically piped to the container engine (Docker or otherwise)
+
+- The container engine reads the line, and sends it to a logging driver
+
+- The timestamp and stream (stdout or stderr) is added to the log line
+
+- With the default configuration for Kubernetes, the line is written to a JSON file
+
+  (`/var/log/containers/pod-name_namespace_container-id.log`)
+
+- That file is read when we invoke `kubectl logs`; we can access it directly too
+
+.debug[[k8s/logs-centralized.md](https://github.com/RyaxTech/kube.training.git/tree/k8s_metropole_de_lyon/slides/k8s/logs-centralized.md)]
+---
+
+## The itinerary of a log line (with Fluentd)
+
+- Fluentd runs on each node (thanks to a daemon set)
+
+- It binds-mounts `/var/log/containers` from the host (to access these files)
+
+- It continuously scans this directory for new files; reads them; parses them
+
+- Each log line becomes a JSON object, fully annotated with extra information:
+  <br/>container id, pod name, Kubernetes labels ...
+
+- These JSON objects are stored in ElasticSearch
+
+- ElasticSearch indexes the JSON objects
+
+- We can access the logs through Kibana (and perform searches, counts, etc.)
+
+.debug[[k8s/logs-centralized.md](https://github.com/RyaxTech/kube.training.git/tree/k8s_metropole_de_lyon/slides/k8s/logs-centralized.md)]
+---
+
+## Accessing Kibana
+
+- Kibana offers a web interface that is relatively straightforward
+
+- Let's check it out!
+
+.exercise[
+
+- Check which `NodePort` was allocated to Kibana:
+  ```bash
+  kubectl get svc kibana
+  ```
+
+- With our web browser, connect to Kibana
+
+]
+
+.debug[[k8s/logs-centralized.md](https://github.com/RyaxTech/kube.training.git/tree/k8s_metropole_de_lyon/slides/k8s/logs-centralized.md)]
+---
+
+## Using Kibana
+
+*Note: this is not a Kibana workshop! So this section is deliberately very terse.*
+
+- The first time you connect to Kibana, you must "configure an index pattern"
+
+- Just use the one that is suggested, `@timestamp`.red[*]
+
+- Then click "Discover" (in the top-left corner)
+
+- You should see container logs
+
+- Advice: in the left column, select a few fields to display, e.g.:
+
+  `kubernetes.host`, `kubernetes.pod_name`, `stream`, `log`
+
+.red[*]If you don't see `@timestamp`, it's probably because no logs exist yet.
+<br/>Wait a bit, and double-check the logging pipeline!
+
+.debug[[k8s/logs-centralized.md](https://github.com/RyaxTech/kube.training.git/tree/k8s_metropole_de_lyon/slides/k8s/logs-centralized.md)]
+---
+
+## Caveat emptor
+
+We are using EFK because it is relatively straightforward
+to deploy on Kubernetes, without having to redeploy or reconfigure
+our cluster. But it doesn't mean that it will always be the best
+option for your use-case. If you are running Kubernetes in the
+cloud, you might consider using the cloud provider's logging
+infrastructure (if it can be integrated with Kubernetes).
+
+The deployment method that we will use here has been simplified:
+there is only one ElasticSearch node. In a real deployment, you
+might use a cluster, both for performance and reliability reasons.
+But this is outside of the scope of this chapter.
+
+The YAML file that we used creates all the resources in the
+`default` namespace, for simplicity. In a real scenario, you will
+create the resources in the `kube-system` namespace or in a dedicated namespace.
+
+.debug[[k8s/logs-centralized.md](https://github.com/RyaxTech/kube.training.git/tree/k8s_metropole_de_lyon/slides/k8s/logs-centralized.md)]
+---
+
+class: pic
+
+.interstitial[![Image separating from the next chapter](https://gallant-turing-d0d520.netlify.com/containers/lots-of-containers.jpg)]
+
+---
+
+name: toc-managing-stacks-with-helm
+class: title
+
+Managing stacks with Helm
+
+.nav[
+[Section précédente](#toc-centralized-logging)
+|
+[Retour table des matières](#toc-chapter-3)
+|
+[Section suivante](#toc-kustomize)
+]
+
+.debug[(automatically generated title slide)]
+
+---
+# Managing stacks with Helm
+
+- We created our first resources with `kubectl run`, `kubectl expose` ...
+
+- We have also created resources by loading YAML files with `kubectl apply -f`
+
+- For larger stacks, managing thousands of lines of YAML is unreasonable
+
+- These YAML bundles need to be customized with variable parameters
+
+  (E.g.: number of replicas, image version to use ...)
+
+- It would be nice to have an organized, versioned collection of bundles
+
+- It would be nice to be able to upgrade/rollback these bundles carefully
+
+- [Helm](https://helm.sh/) is an open source project offering all these things!
+
+.debug[[k8s/helm.md](https://github.com/RyaxTech/kube.training.git/tree/k8s_metropole_de_lyon/slides/k8s/helm.md)]
+---
+
+## Helm concepts
+
+- `helm` is a CLI tool
+
+- `tiller` is its companion server-side component
+
+- A "chart" is an archive containing templatized YAML bundles
+
+- Charts are versioned
+
+- Charts can be stored on private or public repositories
+
+.debug[[k8s/helm.md](https://github.com/RyaxTech/kube.training.git/tree/k8s_metropole_de_lyon/slides/k8s/helm.md)]
+---
+
+## Installing Helm
+
+- If the `helm` CLI is not installed in your environment, install it
+
+.exercise[
+
+- Check if `helm` is installed:
+  ```bash
+  helm
+  ```
+
+- If it's not installed, run the following command:
+  ```bash
+  curl https://raw.githubusercontent.com/kubernetes/helm/master/scripts/get | bash
+  ```
+
+]
+
+.debug[[k8s/helm.md](https://github.com/RyaxTech/kube.training.git/tree/k8s_metropole_de_lyon/slides/k8s/helm.md)]
+---
+
+## Installing Tiller
+
+- Tiller is composed of a *service* and a *deployment* in the `kube-system` namespace
+
+- They can be managed (installed, upgraded...) with the `helm` CLI
+
+.exercise[
+
+- Deploy Tiller:
+  ```bash
+  helm init
+  ```
+
+]
+
+If Tiller was already installed, don't worry: this won't break it.
+
+At the end of the install process, you will see:
+
+```
+Happy Helming!
+```
+
+.debug[[k8s/helm.md](https://github.com/RyaxTech/kube.training.git/tree/k8s_metropole_de_lyon/slides/k8s/helm.md)]
+---
+
+## Fix account permissions
+
+- Helm permission model requires us to tweak permissions
+
+- In a more realistic deployment, you might create per-user or per-team
+  service accounts, roles, and role bindings
+
+.exercise[
+
+- Grant `cluster-admin` role to `kube-system:default` service account:
+  ```bash
+  kubectl create clusterrolebinding add-on-cluster-admin \
+      --clusterrole=cluster-admin --serviceaccount=kube-system:default
+  ```
+
+]
+
+(Defining the exact roles and permissions on your cluster requires
+a deeper knowledge of Kubernetes' RBAC model. The command above is
+fine for personal and development clusters.)
+
+.debug[[k8s/helm.md](https://github.com/RyaxTech/kube.training.git/tree/k8s_metropole_de_lyon/slides/k8s/helm.md)]
+---
+
+## View available charts
+
+- A public repo is pre-configured when installing Helm
+
+- We can view available charts with `helm search` (and an optional keyword)
+
+.exercise[
+
+- View all available charts:
+  ```bash
+  helm search
+  ```
+
+- View charts related to `prometheus`:
+  ```bash
+  helm search prometheus
+  ```
+
+]
+
+.debug[[k8s/helm.md](https://github.com/RyaxTech/kube.training.git/tree/k8s_metropole_de_lyon/slides/k8s/helm.md)]
+---
+
+## Install a chart
+
+- Most charts use `LoadBalancer` service types by default
+
+- Most charts require persistent volumes to store data
+
+- We need to relax these requirements a bit
+
+.exercise[
+
+- Install the Prometheus metrics collector on our cluster:
+  ```bash
+  helm install stable/prometheus \
+         --set server.service.type=NodePort \
+         --set server.persistentVolume.enabled=false
+  ```
+
+]
+
+Where do these `--set` options come from?
+
+.debug[[k8s/helm.md](https://github.com/RyaxTech/kube.training.git/tree/k8s_metropole_de_lyon/slides/k8s/helm.md)]
+---
+
+## Inspecting a chart
+
+- `helm inspect` shows details about a chart (including available options)
+
+.exercise[
+
+- See the metadata and all available options for `stable/prometheus`:
+  ```bash
+  helm inspect stable/prometheus
+  ```
+
+]
+
+The chart's metadata includes an URL to the project's home page.
+
+(Sometimes it conveniently points to the documentation for the chart.)
+
+.debug[[k8s/helm.md](https://github.com/RyaxTech/kube.training.git/tree/k8s_metropole_de_lyon/slides/k8s/helm.md)]
+---
+
+## Viewing installed charts
+
+- Helm keeps track of what we've installed
+
+.exercise[
+
+- List installed Helm charts:
+  ```bash
+  helm list
+  ```
+
+]
+
+.debug[[k8s/helm.md](https://github.com/RyaxTech/kube.training.git/tree/k8s_metropole_de_lyon/slides/k8s/helm.md)]
+---
+
+class: pic
+
+.interstitial[![Image separating from the next chapter](https://gallant-turing-d0d520.netlify.com/containers/plastic-containers.JPG)]
+
+---
+
+name: toc-kustomize
+class: title
+
+Kustomize
+
+.nav[
+[Section précédente](#toc-managing-stacks-with-helm)
+|
+[Retour table des matières](#toc-chapter-3)
+|
+[Section suivante](#toc-namespaces)
+]
+
+.debug[(automatically generated title slide)]
+
+---
+# Kustomize
+
+- Kustomize lets us transform YAML files representing Kubernetes resources
+
+- The original YAML files are valid resource files
+
+  (e.g. they can be loaded with `kubectl apply -f`)
+
+- They are left untouched by Kustomize
+
+- Kustomize lets us define *overlays* that extend or change the resource files
+
+.debug[[k8s/kustomize.md](https://github.com/RyaxTech/kube.training.git/tree/k8s_metropole_de_lyon/slides/k8s/kustomize.md)]
+---
+
+## Differences with Helm
+
+- Helm Charts use placeholders `{{ like.this }}`
+
+- Kustomize "bases" are standard Kubernetes YAML
+
+- It is possible to use an existing set of YAML as a Kustomize base
+
+- As a result, writing a Helm Chart is more work ...
+
+- ... But Helm Charts are also more powerful; e.g. they can:
+
+  - use flags to conditionally include resources or blocks
+
+  - check if a given Kubernetes API group is supported
+
+  - [and much more](https://helm.sh/docs/chart_template_guide/)
+
+.debug[[k8s/kustomize.md](https://github.com/RyaxTech/kube.training.git/tree/k8s_metropole_de_lyon/slides/k8s/kustomize.md)]
+---
+
+## Kustomize concepts
+
+- Kustomize needs a `kustomization.yaml` file
+
+- That file can be a *base* or a *variant*
+
+- If it's a *base*:
+
+  - it lists YAML resource files to use
+
+- If it's a *variant* (or *overlay*):
+
+  - it refers to (at least) one *base*
+
+  - and some *patches*
+
+.debug[[k8s/kustomize.md](https://github.com/RyaxTech/kube.training.git/tree/k8s_metropole_de_lyon/slides/k8s/kustomize.md)]
+---
+
+## An easy way to get started with Kustomize
+
+- We are going to use [Replicated Ship](https://www.replicated.com/ship/) to experiment with Kustomize
+
+- The [Replicated Ship CLI](https://github.com/replicatedhq/ship/releases) has been installed on our clusters
+
+- Replicated Ship has multiple workflows; here is what we will do:
+
+  - initialize a Kustomize overlay from a remote GitHub repository
+
+  - customize some values using the web UI provided by Ship
+
+  - look at the resulting files and apply them to the cluster
+
+.debug[[k8s/kustomize.md](https://github.com/RyaxTech/kube.training.git/tree/k8s_metropole_de_lyon/slides/k8s/kustomize.md)]
+---
+
+## Getting started with Ship
+
+- We need to run `ship init` in a new directory
+
+- `ship init` requires an URL to a remote repository containing Kubernetes YAML
+
+- It will clone that repository and start a web UI
+
+- Later, it can watch that repository and/or update from it
+
+- We will use the [jpetazzo/kubercoins](https://github.com/jpetazzo/kubercoins) repository
+
+  (it contains all the DockerCoins resources as YAML files)
+
+.debug[[k8s/kustomize.md](https://github.com/RyaxTech/kube.training.git/tree/k8s_metropole_de_lyon/slides/k8s/kustomize.md)]
+---
+
+## `ship init`
+
+.exercise[
+
+- Change to a new directory:
+  ```bash
+  mkdir ~/kubercoins
+  cd ~/kubercoins
+  ```
+
+- Run `ship init` with the kubercoins repository:
+  ```bash
+  ship init https://github.com/jpetazzo/kubercoins
+  ```
+
+]
+
+.debug[[k8s/kustomize.md](https://github.com/RyaxTech/kube.training.git/tree/k8s_metropole_de_lyon/slides/k8s/kustomize.md)]
+---
+
+## Access the web UI
+
+- `ship init` tells us to connect on `localhost:8800`
+
+- We need to replace `localhost` with the address of our node
+
+  (since we run on a remote machine)
+
+- Follow the steps in the web UI, and change one parameter
+
+  (e.g. set the number of replicas in the worker Deployment)
+
+- Complete the web workflow, and go back to the CLI
+
+.debug[[k8s/kustomize.md](https://github.com/RyaxTech/kube.training.git/tree/k8s_metropole_de_lyon/slides/k8s/kustomize.md)]
+---
+
+## Inspect the results
+
+- Look at the content of our directory
+
+- `base` contains the kubercoins repository + a `kustomization.yaml` file
+
+- `overlays/ship` contains the Kustomize overlay referencing the base + our patch(es)
+
+- `rendered.yaml` is a YAML bundle containing the patched application
+
+- `.ship` contains a state file used by Ship
+
+.debug[[k8s/kustomize.md](https://github.com/RyaxTech/kube.training.git/tree/k8s_metropole_de_lyon/slides/k8s/kustomize.md)]
+---
+
+## Using the results
+
+- We can `kubectl apply -f rendered.yaml`
+
+  (on any version of Kubernetes)
+
+- Starting with Kubernetes 1.14, we can apply the overlay directly with:
+  ```bash
+  kubectl apply -k overlays/ship
+  ```
+
+- But let's not do that for now!
+
+- We will create a new copy of DockerCoins in another namespace
+
+
+.debug[[k8s/kustomize.md](https://github.com/RyaxTech/kube.training.git/tree/k8s_metropole_de_lyon/slides/k8s/kustomize.md)]
+---
+
+class: pic
+
+.interstitial[![Image separating from the next chapter](https://gallant-turing-d0d520.netlify.com/containers/train-of-containers-1.jpg)]
+
+---
+
+name: toc-namespaces
+class: title
+
+Namespaces
+
+.nav[
+[Section précédente](#toc-kustomize)
+|
+[Retour table des matières](#toc-chapter-3)
+|
+[Section suivante](#toc-network-policies)
+]
+
+.debug[(automatically generated title slide)]
+
+---
+# Namespaces
+
+- We cannot have two resources with the same name
+
+  (Or can we...?)
+
+--
+
+- We cannot have two resources *of the same type* with the same name
+
+  (But it's OK to have a `rng` service, a `rng` deployment, and a `rng` daemon set!)
+
+--
+
+- We cannot have two resources of the same type with the same name *in the same namespace*
+
+  (But it's OK to have e.g. two `rng` services in different namespaces!)
+
+--
+
+- In other words: **the tuple *(type, name, namespace)* needs to be unique**
+
+  (In the resource YAML, the type is called `Kind`)
+
+.debug[[k8s/namespaces.md](https://github.com/RyaxTech/kube.training.git/tree/k8s_metropole_de_lyon/slides/k8s/namespaces.md)]
+---
+
+## Pre-existing namespaces
+
+- If we deploy a cluster with `kubeadm`, we have three or four namespaces:
+
+  - `default` (for our applications)
+
+  - `kube-system` (for the control plane)
+
+  - `kube-public` (contains one ConfigMap for cluster discovery)
+
+  - `kube-node-lease` (in Kubernetes 1.14 and later; contains Lease objects)
+
+- If we deploy differently, we may have different namespaces
+
+.debug[[k8s/namespaces.md](https://github.com/RyaxTech/kube.training.git/tree/k8s_metropole_de_lyon/slides/k8s/namespaces.md)]
+---
+
+## Creating namespaces
+
+- Creating a namespace is done with the `kubectl create namespace` command:
+  ```bash
+  kubectl create namespace blue
+  ```
+
+- We can also get fancy and use a very minimal YAML snippet, e.g.:
+  ```bash
+	kubectl apply -f- <<EOF
+	apiVersion: v1
+	kind: Namespace
+	metadata:
+	  name: blue
+	EOF
+  ```
+
+- The two methods above are identical
+
+- If we are using a tool like Helm, it will create namespaces automatically
+
+.debug[[k8s/namespaces.md](https://github.com/RyaxTech/kube.training.git/tree/k8s_metropole_de_lyon/slides/k8s/namespaces.md)]
+---
+
+## Using namespaces
+
+- We can pass a `-n` or `--namespace` flag to most `kubectl` commands:
+  ```bash
+  kubectl -n blue get svc
+  ```
+
+- We can also change our current *context*
+
+- A context is a *(user, cluster, namespace)* tuple
+
+- We can manipulate contexts with the `kubectl config` command
+
+.debug[[k8s/namespaces.md](https://github.com/RyaxTech/kube.training.git/tree/k8s_metropole_de_lyon/slides/k8s/namespaces.md)]
+---
+
+## Viewing existing contexts
+
+- On our training environments, at this point, there should be only one context
+
+.exercise[
+
+- View existing contexts to see the cluster name and the current user:
+  ```bash
+  kubectl config get-contexts
+  ```
+
+]
+
+- The current context (the only one!) is tagged with a `*`
+
+- What are NAME, CLUSTER, AUTHINFO, and NAMESPACE?
+
+.debug[[k8s/namespaces.md](https://github.com/RyaxTech/kube.training.git/tree/k8s_metropole_de_lyon/slides/k8s/namespaces.md)]
+---
+
+## What's in a context
+
+- NAME is an arbitrary string to identify the context
+
+- CLUSTER is a reference to a cluster
+
+  (i.e. API endpoint URL, and optional certificate)
+
+- AUTHINFO is a reference to the authentication information to use
+
+  (i.e. a TLS client certificate, token, or otherwise)
+
+- NAMESPACE is the namespace
+
+  (empty string = `default`)
+
+.debug[[k8s/namespaces.md](https://github.com/RyaxTech/kube.training.git/tree/k8s_metropole_de_lyon/slides/k8s/namespaces.md)]
+---
+
+## Switching contexts
+
+- We want to use a different namespace
+
+- Solution 1: update the current context
+
+  *This is appropriate if we need to change just one thing (e.g. namespace or authentication).*
+
+- Solution 2: create a new context and switch to it
+
+  *This is appropriate if we need to change multiple things and switch back and forth.*
+
+- Let's go with solution 1!
+
+.debug[[k8s/namespaces.md](https://github.com/RyaxTech/kube.training.git/tree/k8s_metropole_de_lyon/slides/k8s/namespaces.md)]
+---
+
+## Updating a context
+
+- This is done through `kubectl config set-context`
+
+- We can update a context by passing its name, or the current context with `--current`
+
+.exercise[
+
+- Update the current context to use the `blue` namespace:
+  ```bash
+  kubectl config set-context --current --namespace=blue
+  ```
+
+- Check the result:
+  ```bash
+  kubectl config get-contexts
+  ```
+
+]
+
+.debug[[k8s/namespaces.md](https://github.com/RyaxTech/kube.training.git/tree/k8s_metropole_de_lyon/slides/k8s/namespaces.md)]
+---
+
+## Using our new namespace
+
+- Let's check that we are in our new namespace, then deploy a new copy of Dockercoins
+
+.exercise[
+
+- Verify that the new context is empty:
+  ```bash
+  kubectl get all
+  ```
+
+]
+
+.debug[[k8s/namespaces.md](https://github.com/RyaxTech/kube.training.git/tree/k8s_metropole_de_lyon/slides/k8s/namespaces.md)]
+---
+
+## Deploy DockerCoins with Helm
+
+*Follow these instructions if you previously created a Helm Chart.*
+
+.exercise[
+
+- Deploy DockerCoins:
+  ```bash
+  helm install dockercoins
+  ```
+
+]
+
+In the last command line, `dockercoins` is just the local path where
+we created our Helm chart before.
+
+.debug[[k8s/namespaces.md](https://github.com/RyaxTech/kube.training.git/tree/k8s_metropole_de_lyon/slides/k8s/namespaces.md)]
+---
+
+## Deploy DockerCoins with Kustomize
+
+*Follow these instructions if you previously created a Kustomize overlay.*
+
+.exercise[
+
+- Deploy DockerCoins:
+  ```bash
+  kubectl apply -f rendered.yaml
+  ```
+
+- Or, with Kubernetes 1.14, you can also do this:
+  ```bash
+  kubectl apply -k overlays/ship
+  ```
+
+]
+
+.debug[[k8s/namespaces.md](https://github.com/RyaxTech/kube.training.git/tree/k8s_metropole_de_lyon/slides/k8s/namespaces.md)]
+---
+
+## Viewing the deployed app
+
+- Let's see if this worked correctly!
+
+.exercise[
+
+- Retrieve the port number allocated to the `webui` service:
+  ```bash
+  kubectl get svc webui
+  ```
+
+- Point our browser to http://X.X.X.X:3xxxx
+
+]
+
+If the graph shows up but stays at zero, check the next slide!
+
+.debug[[k8s/namespaces.md](https://github.com/RyaxTech/kube.training.git/tree/k8s_metropole_de_lyon/slides/k8s/namespaces.md)]
+---
+
+## Troubleshooting
+
+If did the exercices from the chapter about labels and selectors,
+the app that you just created may not work, because the `rng` service
+selector has `enabled=yes` but the pods created by the `rng` daemon set
+do not have that label.
+
+How can we troubleshoot that?
+
+- Query individual services manually
+
+  → the `rng` service will time out
+
+- Inspect the services with `kubectl describe service`
+  
+  → the `rng` service will have an empty list of backends
+
+.debug[[k8s/namespaces.md](https://github.com/RyaxTech/kube.training.git/tree/k8s_metropole_de_lyon/slides/k8s/namespaces.md)]
+---
+
+## Fixing the broken service
+
+The easiest option is to add the `enabled=yes` label to the relevant pods.
+
+.exercise[
+
+- Add the `enabled` label to the pods of the `rng` daemon set:
+  ```bash
+  kubectl label pods -l app=rng enabled=yes
+  ```
+
+]
+
+The *best* option is to change either the service definition, or the
+daemon set definition, so that their respective selectors match correctly.
+
+*This is left as an exercise for the reader!*
+
+.debug[[k8s/namespaces.md](https://github.com/RyaxTech/kube.training.git/tree/k8s_metropole_de_lyon/slides/k8s/namespaces.md)]
+---
+
+## Namespaces and isolation
+
+- Namespaces *do not* provide isolation
+
+- A pod in the `green` namespace can communicate with a pod in the `blue` namespace
+
+- A pod in the `default` namespace can communicate with a pod in the `kube-system` namespace
+
+- CoreDNS uses a different subdomain for each namespace
+
+- Example: from any pod in the cluster, you can connect to the Kubernetes API with:
+
+  `https://kubernetes.default.svc.cluster.local:443/`
+
+.debug[[k8s/namespaces.md](https://github.com/RyaxTech/kube.training.git/tree/k8s_metropole_de_lyon/slides/k8s/namespaces.md)]
+---
+
+## Isolating pods
+
+- Actual isolation is implemented with *network policies*
+
+- Network policies are resources (like deployments, services, namespaces...)
+
+- Network policies specify which flows are allowed:
+
+  - between pods
+
+  - from pods to the outside world
+
+  - and vice-versa
+
+.debug[[k8s/namespaces.md](https://github.com/RyaxTech/kube.training.git/tree/k8s_metropole_de_lyon/slides/k8s/namespaces.md)]
+---
+
+## Switch back to the default namespace
+
+- Let's make sure that we don't run future exercises in the `blue` namespace
+
+.exercise[
+
+- Switch back to the original context:
+  ```bash
+  kubectl config set-context --current --namespace=
+  ```
+
+]
+
+Note: we could have used `--namespace=default` for the same result.
+
+.debug[[k8s/namespaces.md](https://github.com/RyaxTech/kube.training.git/tree/k8s_metropole_de_lyon/slides/k8s/namespaces.md)]
+---
+
+## Switching namespaces more easily
+
+- We can also use a little helper tool called `kubens`:
+
+  ```bash
+  # Switch to namespace foo
+  kubens foo
+  # Switch back to the previous namespace
+  kubens -
+  ```
+
+- On our clusters, `kubens` is called `kns` instead
+
+  (so that it's even fewer keystrokes to switch namespaces)
+
+.debug[[k8s/namespaces.md](https://github.com/RyaxTech/kube.training.git/tree/k8s_metropole_de_lyon/slides/k8s/namespaces.md)]
+---
+
+##  `kubens` and `kubectx`
+
+- With `kubens`, we can switch quickly between namespaces
+
+- With `kubectx`, we can switch quickly between contexts
+
+- Both tools are simple shell scripts available from https://github.com/ahmetb/kubectx
+
+- On our clusters, they are installed as `kns` and `kctx`
+
+  (for brevity and to avoid completion clashes between `kubectx` and `kubectl`)
+
+.debug[[k8s/namespaces.md](https://github.com/RyaxTech/kube.training.git/tree/k8s_metropole_de_lyon/slides/k8s/namespaces.md)]
+---
+
+## `kube-ps1`
+
+- It's easy to lose track of our current cluster / context / namespace
+
+- `kube-ps1` makes it easy to track these, by showing them in our shell prompt
+
+- It's a simple shell script available from https://github.com/jonmosco/kube-ps1
+
+- On our clusters, `kube-ps1` is installed and included in `PS1`:
+  ```
+  [123.45.67.89] `(kubernetes-admin@kubernetes:default)` docker@node1 ~
+  ```
+  (The highlighted part is `context:namespace`, managed by `kube-ps1`)
+
+- Highly recommended if you work across multiple contexts or namespaces!
+
+.debug[[k8s/namespaces.md](https://github.com/RyaxTech/kube.training.git/tree/k8s_metropole_de_lyon/slides/k8s/namespaces.md)]
+---
+
+class: pic
+
+.interstitial[![Image separating from the next chapter](https://gallant-turing-d0d520.netlify.com/containers/train-of-containers-2.jpg)]
+
+---
+
+name: toc-network-policies
+class: title
+
+Network policies
+
+.nav[
+[Section précédente](#toc-namespaces)
+|
+[Retour table des matières](#toc-chapter-3)
+|
+[Section suivante](#toc-authentication-and-authorization)
+]
+
+.debug[(automatically generated title slide)]
+
+---
+# Network policies
+
+- Namespaces help us to *organize* resources
+
+- Namespaces do not provide isolation
+
+- By default, every pod can contact every other pod
+
+- By default, every service accepts traffic from anyone
+
+- If we want this to be different, we need *network policies*
+
+.debug[[k8s/netpol.md](https://github.com/RyaxTech/kube.training.git/tree/k8s_metropole_de_lyon/slides/k8s/netpol.md)]
+---
+
+## What's a network policy?
+
+A network policy is defined by the following things.
+
+- A *pod selector* indicating which pods it applies to
+
+  e.g.: "all pods in namespace `blue` with the label `zone=internal`"
+
+- A list of *ingress rules* indicating which inbound traffic is allowed
+
+  e.g.: "TCP connections to ports 8000 and 8080 coming from pods with label `zone=dmz`,
+  and from the external subnet 4.42.6.0/24, except 4.42.6.5"
+
+- A list of *egress rules* indicating which outbound traffic is allowed
+
+A network policy can provide ingress rules, egress rules, or both.
+
+.debug[[k8s/netpol.md](https://github.com/RyaxTech/kube.training.git/tree/k8s_metropole_de_lyon/slides/k8s/netpol.md)]
+---
+
+## How do network policies apply?
+
+- A pod can be "selected" by any number of network policies
+
+- If a pod isn't selected by any network policy, then its traffic is unrestricted
+
+  (In other words: in the absence of network policies, all traffic is allowed)
+
+- If a pod is selected by at least one network policy, then all traffic is blocked ...
+
+  ... unless it is explicitly allowed by one of these network policies
+
+.debug[[k8s/netpol.md](https://github.com/RyaxTech/kube.training.git/tree/k8s_metropole_de_lyon/slides/k8s/netpol.md)]
+---
+
+class: extra-details
+
+## Traffic filtering is flow-oriented
+
+- Network policies deal with *connections*, not individual packets
+
+- Example: to allow HTTP (80/tcp) connections to pod A, you only need an ingress rule
+
+  (You do not need a matching egress rule to allow response traffic to go through)
+
+- This also applies for UDP traffic
+
+  (Allowing DNS traffic can be done with a single rule)
+
+- Network policy implementations use stateful connection tracking
+
+.debug[[k8s/netpol.md](https://github.com/RyaxTech/kube.training.git/tree/k8s_metropole_de_lyon/slides/k8s/netpol.md)]
+---
+
+## Pod-to-pod traffic
+
+- Connections from pod A to pod B have to be allowed by both pods:
+
+  - pod A has to be unrestricted, or allow the connection as an *egress* rule
+
+  - pod B has to be unrestricted, or allow the connection as an *ingress* rule
+
+- As a consequence: if a network policy restricts traffic going from/to a pod,
+  <br/>
+  the restriction cannot be overridden by a network policy selecting another pod
+
+- This prevents an entity managing network policies in namespace A
+  (but without permission to do so in namespace B)
+  from adding network policies giving them access to namespace B
+
+.debug[[k8s/netpol.md](https://github.com/RyaxTech/kube.training.git/tree/k8s_metropole_de_lyon/slides/k8s/netpol.md)]
+---
+
+## The rationale for network policies
+
+- In network security, it is generally considered better to "deny all, then allow selectively"
+
+  (The other approach, "allow all, then block selectively" makes it too easy to leave holes)
+
+- As soon as one network policy selects a pod, the pod enters this "deny all" logic
+
+- Further network policies can open additional access
+
+- Good network policies should be scoped as precisely as possible
+
+- In particular: make sure that the selector is not too broad
+
+  (Otherwise, you end up affecting pods that were otherwise well secured)
+
+.debug[[k8s/netpol.md](https://github.com/RyaxTech/kube.training.git/tree/k8s_metropole_de_lyon/slides/k8s/netpol.md)]
+---
+
+## Our first network policy
+
+This is our game plan:
+
+- run a web server in a pod
+
+- create a network policy to block all access to the web server
+
+- create another network policy to allow access only from specific pods
+
+.debug[[k8s/netpol.md](https://github.com/RyaxTech/kube.training.git/tree/k8s_metropole_de_lyon/slides/k8s/netpol.md)]
+---
+
+## Running our test web server
+
+.exercise[
+
+- Let's use the `nginx` image:
+  ```bash
+  kubectl create deployment testweb --image=nginx
+  ```
+
+- Find out the IP address of the pod with one of these two commands:
+  ```bash
+  kubectl get pods -o wide -l app=testweb
+  IP=$(kubectl get pods -l app=testweb -o json | jq -r .items[0].status.podIP)
+  ```
+
+- Check that we can connect to the server:
+  ```bash
+  curl $IP
+  ```
+]
+
+The `curl` command should show us the "Welcome to nginx!" page.
+
+.debug[[k8s/netpol.md](https://github.com/RyaxTech/kube.training.git/tree/k8s_metropole_de_lyon/slides/k8s/netpol.md)]
+---
+
+## Adding a very restrictive network policy
+
+- The policy will select pods with the label `app=testweb`
+
+- It will specify an empty list of ingress rules (matching nothing)
+
+.exercise[
+
+- Apply the policy in this YAML file:
+  ```bash
+    kubectl apply -f ~/kube.training/k8s/netpol-deny-all-for-testweb.yaml
+  ```
+
+- Check if we can still access the server:
+  ```bash
+  curl $IP
+  ```
+
+]
+
+The `curl` command should now time out.
+
+.debug[[k8s/netpol.md](https://github.com/RyaxTech/kube.training.git/tree/k8s_metropole_de_lyon/slides/k8s/netpol.md)]
+---
+
+## Looking at the network policy
+
+This is the file that we applied:
+
+```yaml
+kind: NetworkPolicy
+apiVersion: networking.k8s.io/v1
+metadata:
+  name: deny-all-for-testweb
+spec:
+  podSelector:
+    matchLabels:
+      app: testweb
+  ingress: []
+```
+
+.debug[[k8s/netpol.md](https://github.com/RyaxTech/kube.training.git/tree/k8s_metropole_de_lyon/slides/k8s/netpol.md)]
+---
+
+## Allowing connections only from specific pods
+
+- We want to allow traffic from pods with the label `run=testcurl`
+
+- Reminder: this label is automatically applied when we do `kubectl run testcurl ...`
+
+.exercise[
+
+- Apply another policy:
+  ```bash
+  kubectl apply -f ~/kube.training/k8s/netpol-allow-testcurl-for-testweb.yaml
+  ```
+
+]
+
+.debug[[k8s/netpol.md](https://github.com/RyaxTech/kube.training.git/tree/k8s_metropole_de_lyon/slides/k8s/netpol.md)]
+---
+
+## Looking at the network policy
+
+This is the second file that we applied:
+
+```yaml
+kind: NetworkPolicy
+apiVersion: networking.k8s.io/v1
+metadata:
+  name: allow-testcurl-for-testweb
+spec:
+  podSelector:
+    matchLabels:
+      app: testweb
+  ingress:
+  - from:
+    - podSelector:
+        matchLabels:
+          run: testcurl
+```
+
+.debug[[k8s/netpol.md](https://github.com/RyaxTech/kube.training.git/tree/k8s_metropole_de_lyon/slides/k8s/netpol.md)]
+---
+
+## Testing the network policy
+
+- Let's create pods with, and without, the required label
+
+.exercise[
+
+- Try to connect to testweb from a pod with the `run=testcurl` label:
+  ```bash
+  kubectl run testcurl --rm -i --image=centos -- curl -m3 $IP
+  ```
+
+- Try to connect to testweb with a different label:
+  ```bash
+  kubectl run testkurl --rm -i --image=centos -- curl -m3 $IP
+  ```
+
+]
+
+The first command will work (and show the "Welcome to nginx!" page).
+
+The second command will fail and time out after 3 seconds.
+
+(The timeout is obtained with the `-m3` option.)
+
+.debug[[k8s/netpol.md](https://github.com/RyaxTech/kube.training.git/tree/k8s_metropole_de_lyon/slides/k8s/netpol.md)]
+---
+
+## An important warning
+
+- Some network plugins only have partial support for network policies
+
+- For instance, Weave added support for egress rules [in version 2.4](https://github.com/weaveworks/weave/pull/3313) (released in July 2018)
+
+- But only recently added support for ipBlock [in version 2.5](https://github.com/weaveworks/weave/pull/3367) (released in Nov 2018)
+
+- Unsupported features might be silently ignored
+
+  (Making you believe that you are secure, when you're not)
+
+.debug[[k8s/netpol.md](https://github.com/RyaxTech/kube.training.git/tree/k8s_metropole_de_lyon/slides/k8s/netpol.md)]
+---
+
+## Network policies, pods, and services
+
+- Network policies apply to *pods*
+
+- A *service* can select multiple pods
+
+  (And load balance traffic across them)
+
+- It is possible that we can connect to some pods, but not some others
+
+  (Because of how network policies have been defined for these pods)
+
+- In that case, connections to the service will randomly pass or fail
+
+  (Depending on whether the connection was sent to a pod that we have access to or not)
+
+.debug[[k8s/netpol.md](https://github.com/RyaxTech/kube.training.git/tree/k8s_metropole_de_lyon/slides/k8s/netpol.md)]
+---
+
+## Network policies and namespaces
+
+- A good strategy is to isolate a namespace, so that:
+
+  - all the pods in the namespace can communicate together
+
+  - other namespaces cannot access the pods
+
+  - external access has to be enabled explicitly
+
+- Let's see what this would look like for the DockerCoins app!
+
+.debug[[k8s/netpol.md](https://github.com/RyaxTech/kube.training.git/tree/k8s_metropole_de_lyon/slides/k8s/netpol.md)]
+---
+
+## Network policies for DockerCoins
+
+- We are going to apply two policies
+
+- The first policy will prevent traffic from other namespaces
+
+- The second policy will allow traffic to the `webui` pods
+
+- That's all we need for that app!
+
+.debug[[k8s/netpol.md](https://github.com/RyaxTech/kube.training.git/tree/k8s_metropole_de_lyon/slides/k8s/netpol.md)]
+---
+
+## Blocking traffic from other namespaces
+
+This policy selects all pods in the current namespace.
+
+It allows traffic only from pods in the current namespace.
+
+(An empty `podSelector` means "all pods".)
+
+```yaml
+kind: NetworkPolicy
+apiVersion: networking.k8s.io/v1
+metadata:
+  name: deny-from-other-namespaces
+spec:
+  podSelector: {}
+  ingress:
+  - from:
+    - podSelector: {}
+```
+
+.debug[[k8s/netpol.md](https://github.com/RyaxTech/kube.training.git/tree/k8s_metropole_de_lyon/slides/k8s/netpol.md)]
+---
+
+## Allowing traffic to `webui` pods
+
+This policy selects all pods with label `app=webui`.
+
+It allows traffic from any source.
+
+(An empty `from` fields means "all sources".)
+
+```yaml
+kind: NetworkPolicy
+apiVersion: networking.k8s.io/v1
+metadata:
+  name: allow-webui
+spec:
+  podSelector:
+    matchLabels:
+      app: webui
+  ingress:
+  - from: []
+```
+
+.debug[[k8s/netpol.md](https://github.com/RyaxTech/kube.training.git/tree/k8s_metropole_de_lyon/slides/k8s/netpol.md)]
+---
+
+## Applying both network policies
+
+- Both network policies are declared in the file `k8s/netpol-dockercoins.yaml`
+
+.exercise[
+
+- Apply the network policies:
+  ```bash
+  kubectl apply -f ~/kube.training/k8s/netpol-dockercoins.yaml
+  ```
+
+- Check that we can still access the web UI from outside
+  <br/>
+  (and that the app is still working correctly!)
+
+- Check that we can't connect anymore to `rng` or `hasher` through their ClusterIP
+
+]
+
+Note: using `kubectl proxy` or `kubectl port-forward` allows us to connect
+regardless of existing network policies. This allows us to debug and
+troubleshoot easily, without having to poke holes in our firewall.
+
+.debug[[k8s/netpol.md](https://github.com/RyaxTech/kube.training.git/tree/k8s_metropole_de_lyon/slides/k8s/netpol.md)]
+---
+
+## Cleaning up our network policies
+
+- The network policies that we have installed block all traffic to the default namespace
+
+- We should remove them, otherwise further exercises will fail!
+
+.exercise[
+
+- Remove all network policies:
+  ```bash
+  kubectl delete networkpolicies --all
+  ```
+
+]
+
+.debug[[k8s/netpol.md](https://github.com/RyaxTech/kube.training.git/tree/k8s_metropole_de_lyon/slides/k8s/netpol.md)]
+---
+
+## Protecting the control plane
+
+- Should we add network policies to block unauthorized access to the control plane?
+
+  (etcd, API server, etc.)
+
+--
+
+- At first, it seems like a good idea ...
+
+--
+
+- But it *shouldn't* be necessary:
+
+  - not all network plugins support network policies
+
+  - the control plane is secured by other methods (mutual TLS, mostly)
+
+  - the code running in our pods can reasonably expect to contact the API
+    <br/>
+    (and it can do so safely thanks to the API permission model)
+
+- If we block access to the control plane, we might disrupt legitimate code
+
+- ... Without necessarily improving security
+
+.debug[[k8s/netpol.md](https://github.com/RyaxTech/kube.training.git/tree/k8s_metropole_de_lyon/slides/k8s/netpol.md)]
+---
+
+## Further resources
+
+- As always, the [Kubernetes documentation](https://kubernetes.io/docs/concepts/services-networking/network-policies/) is a good starting point
+
+- The API documentation has a lot of detail about the format of various objects:
+
+  - [NetworkPolicy](https://kubernetes.io/docs/reference/generated/kubernetes-api/v1.12/#networkpolicy-v1-networking-k8s-io)
+
+  - [NetworkPolicySpec](https://kubernetes.io/docs/reference/generated/kubernetes-api/v1.12/#networkpolicyspec-v1-networking-k8s-io)
+
+  - [NetworkPolicyIngressRule](https://kubernetes.io/docs/reference/generated/kubernetes-api/v1.12/#networkpolicyingressrule-v1-networking-k8s-io)
+
+  - etc.
+
+- And two resources by [Ahmet Alp Balkan](https://ahmet.im/):
+
+  - a [very good talk about network policies](https://www.youtube.com/watch?list=PLj6h78yzYM2P-3-xqvmWaZbbI1sW-ulZb&v=3gGpMmYeEO8) at KubeCon North America 2017
+
+  - a repository of [ready-to-use recipes](https://github.com/ahmetb/kubernetes-network-policy-recipes) for network policies
+
+.debug[[k8s/netpol.md](https://github.com/RyaxTech/kube.training.git/tree/k8s_metropole_de_lyon/slides/k8s/netpol.md)]
+---
+
+class: pic
+
+.interstitial[![Image separating from the next chapter](https://gallant-turing-d0d520.netlify.com/containers/two-containers-on-a-truck.jpg)]
+
+---
+
+name: toc-authentication-and-authorization
+class: title
+
+Authentication and authorization
+
+.nav[
+[Section précédente](#toc-network-policies)
+|
+[Retour table des matières](#toc-chapter-3)
+|
+[Section suivante](#toc-exposing-http-services-with-ingress-resources)
+]
+
+.debug[(automatically generated title slide)]
+
+---
+# Authentication and authorization
+
+*And first, a little refresher!*
+
+- Authentication = verifying the identity of a person
+
+  On a UNIX system, we can authenticate with login+password, SSH keys ...
+
+- Authorization = listing what they are allowed to do
+
+  On a UNIX system, this can include file permissions, sudoer entries ...
+
+- Sometimes abbreviated as "authn" and "authz"
+
+- In good modular systems, these things are decoupled
+
+   (so we can e.g. change a password or SSH key without having to reset access rights)
+
+.debug[[k8s/authn-authz.md](https://github.com/RyaxTech/kube.training.git/tree/k8s_metropole_de_lyon/slides/k8s/authn-authz.md)]
+---
+
+## Authentication in Kubernetes
+
+- When the API server receives a request, it tries to authenticate it
+
+  (it examines headers, certificates ... anything available)
+
+- Many authentication methods are available and can be used simultaneously
+
+  (we will see them on the next slide)
+
+- It's the job of the authentication method to produce:
+
+  - the user name
+  - the user ID
+  - a list of groups
+
+- The API server doesn't interpret these; it'll be the job of *authorizers*
+
+.debug[[k8s/authn-authz.md](https://github.com/RyaxTech/kube.training.git/tree/k8s_metropole_de_lyon/slides/k8s/authn-authz.md)]
+---
+
+## Authentication methods
+
+- TLS client certificates
+
+  (that's what we've been doing with `kubectl` so far)
+
+- Bearer tokens
+
+  (a secret token in the HTTP headers of the request)
+
+- [HTTP basic auth](https://en.wikipedia.org/wiki/Basic_access_authentication)
+
+  (carrying user and password in a HTTP header)
+
+- Authentication proxy
+
+  (sitting in front of the API and setting trusted headers)
+
+.debug[[k8s/authn-authz.md](https://github.com/RyaxTech/kube.training.git/tree/k8s_metropole_de_lyon/slides/k8s/authn-authz.md)]
+---
+
+## Anonymous requests
+
+- If any authentication method *rejects* a request, it's denied
+
+  (`401 Unauthorized` HTTP code)
+
+- If a request is neither rejected nor accepted by anyone, it's anonymous
+
+  - the user name is `system:anonymous`
+
+  - the list of groups is `[system:unauthenticated]`
+
+- By default, the anonymous user can't do anything
+
+  (that's what you get if you just `curl` the Kubernetes API)
+
+.debug[[k8s/authn-authz.md](https://github.com/RyaxTech/kube.training.git/tree/k8s_metropole_de_lyon/slides/k8s/authn-authz.md)]
+---
+
+## Authentication with TLS certificates
+
+- This is enabled in most Kubernetes deployments
+
+- The user name is derived from the `CN` in the client certificates
+
+- The groups are derived from the `O` fields in the client certificate
+
+- From the point of view of the Kubernetes API, users do not exist
+
+  (i.e. they are not stored in etcd or anywhere else)
+
+- Users can be created (and given membership to groups) independently of the API
+
+- The Kubernetes API can be set up to use your custom CA to validate client certs
+
+.debug[[k8s/authn-authz.md](https://github.com/RyaxTech/kube.training.git/tree/k8s_metropole_de_lyon/slides/k8s/authn-authz.md)]
+---
+
+class: extra-details
+
+## Viewing our admin certificate
+
+- Let's inspect the certificate we've been using all this time!
+
+.exercise[
+
+- This command will show the `CN` and `O` fields for our certificate:
+  ```bash
+  kubectl config view \
+          --raw \
+          -o json \
+          | jq -r .users[0].user[\"client-certificate-data\"] \
+          | openssl base64 -d -A \
+          | openssl x509 -text \
+          | grep Subject:
+  ```
+
+]
+
+Let's break down that command together! 😅
+
+.debug[[k8s/authn-authz.md](https://github.com/RyaxTech/kube.training.git/tree/k8s_metropole_de_lyon/slides/k8s/authn-authz.md)]
+---
+
+class: extra-details
+
+## Breaking down the command
+
+- `kubectl config view` shows the Kubernetes user configuration
+- `--raw` includes certificate information (which shows as REDACTED otherwise)
+- `-o json` outputs the information in JSON format
+- `| jq ...` extracts the field with the user certificate (in base64)
+- `| openssl base64 -d -A` decodes the base64 format (now we have a PEM file)
+- `| openssl x509 -text` parses the certificate and outputs it as plain text
+- `| grep Subject:` shows us the line that interests us
+
+→ We are user `kubernetes-admin`, in group `system:masters`.
+
+(We will see later how and why this gives us the permissions that we have.)
+
+.debug[[k8s/authn-authz.md](https://github.com/RyaxTech/kube.training.git/tree/k8s_metropole_de_lyon/slides/k8s/authn-authz.md)]
+---
+
+## User certificates in practice
+
+- The Kubernetes API server does not support certificate revocation
+
+  (see issue [#18982](https://github.com/kubernetes/kubernetes/issues/18982))
+
+- As a result, we cannot easily suspend a user's access
+
+- There are workarounds, but they are very inconvenient:
+
+  - issue short-lived certificates (e.g. 24 hours) and regenerate them often
+
+  - re-create the CA and re-issue all certificates in case of compromise
+
+  - grant permissions to individual users, not groups
+    <br/>
+    (and remove all permissions to a compromised user)
+
+- Until this is fixed, we probably want to use other methods
+
+.debug[[k8s/authn-authz.md](https://github.com/RyaxTech/kube.training.git/tree/k8s_metropole_de_lyon/slides/k8s/authn-authz.md)]
+---
+
+## Authentication with tokens
+
+- Tokens are passed as HTTP headers:
+
+  `Authorization: Bearer and-then-here-comes-the-token`
+
+- Tokens can be validated through a number of different methods:
+
+  - static tokens hard-coded in a file on the API server
+
+  - [bootstrap tokens](https://kubernetes.io/docs/reference/access-authn-authz/bootstrap-tokens/) (special case to create a cluster or join nodes)
+
+  - [OpenID Connect tokens](https://kubernetes.io/docs/reference/access-authn-authz/authentication/#openid-connect-tokens) (to delegate authentication to compatible OAuth2 providers)
+
+  - service accounts (these deserve more details, coming right up!)
+
+.debug[[k8s/authn-authz.md](https://github.com/RyaxTech/kube.training.git/tree/k8s_metropole_de_lyon/slides/k8s/authn-authz.md)]
+---
+
+## Service accounts
+
+- A service account is a user that exists in the Kubernetes API
+
+  (it is visible with e.g. `kubectl get serviceaccounts`)
+
+- Service accounts can therefore be created / updated dynamically
+
+  (they don't require hand-editing a file and restarting the API server)
+
+- A service account is associated with a set of secrets
+
+  (the kind that you can view with `kubectl get secrets`)
+
+- Service accounts are generally used to grant permissions to applications, services ...
+
+  (as opposed to humans)
+
+.debug[[k8s/authn-authz.md](https://github.com/RyaxTech/kube.training.git/tree/k8s_metropole_de_lyon/slides/k8s/authn-authz.md)]
+---
+
+class: extra-details
+
+## Token authentication in practice
+
+- We are going to list existing service accounts
+
+- Then we will extract the token for a given service account
+
+- And we will use that token to authenticate with the API
+
+.debug[[k8s/authn-authz.md](https://github.com/RyaxTech/kube.training.git/tree/k8s_metropole_de_lyon/slides/k8s/authn-authz.md)]
+---
+
+class: extra-details
+
+## Listing service accounts
+
+.exercise[
+
+- The resource name is `serviceaccount` or `sa` in short:
+  ```bash
+  kubectl get sa
+  ```
+
+]
+
+There should be just one service account in the default namespace: `default`.
+
+.debug[[k8s/authn-authz.md](https://github.com/RyaxTech/kube.training.git/tree/k8s_metropole_de_lyon/slides/k8s/authn-authz.md)]
+---
+
+class: extra-details
+
+## Finding the secret
+
+.exercise[
+
+- List the secrets for the `default` service account:
+  ```bash
+  kubectl get sa default -o yaml
+  SECRET=$(kubectl get sa default -o json | jq -r .secrets[0].name)
+  ```
+
+]
+
+It should be named `default-token-XXXXX`.
+
+.debug[[k8s/authn-authz.md](https://github.com/RyaxTech/kube.training.git/tree/k8s_metropole_de_lyon/slides/k8s/authn-authz.md)]
+---
+
+class: extra-details
+
+## Extracting the token
+
+- The token is stored in the secret, wrapped with base64 encoding
+
+.exercise[
+
+- View the secret:
+  ```bash
+  kubectl get secret $SECRET -o yaml
+  ```
+
+- Extract the token and decode it:
+  ```bash
+  TOKEN=$(kubectl get secret $SECRET -o json \
+          | jq -r .data.token | openssl base64 -d -A)
+  ```
+
+]
+
+.debug[[k8s/authn-authz.md](https://github.com/RyaxTech/kube.training.git/tree/k8s_metropole_de_lyon/slides/k8s/authn-authz.md)]
+---
+
+class: extra-details
+
+## Using the token
+
+- Let's send a request to the API, without and with the token
+
+.exercise[
+
+- Find the ClusterIP for the `kubernetes` service:
+  ```bash
+  kubectl get svc kubernetes
+  API=$(kubectl get svc kubernetes -o json | jq -r .spec.clusterIP)
+  ```
+
+- Connect without the token:
+  ```bash
+  curl -k https://$API
+  ```
+
+- Connect with the token:
+  ```bash
+  curl -k -H "Authorization: Bearer $TOKEN" https://$API
+  ```
+
+]
+
+.debug[[k8s/authn-authz.md](https://github.com/RyaxTech/kube.training.git/tree/k8s_metropole_de_lyon/slides/k8s/authn-authz.md)]
+---
+
+class: extra-details
+
+## Results
+
+- In both cases, we will get a "Forbidden" error
+
+- Without authentication, the user is `system:anonymous`
+
+- With authentication, it is shown as `system:serviceaccount:default:default`
+
+- The API "sees" us as a different user
+
+- But neither user has any right, so we can't do nothin'
+
+- Let's change that!
+
+.debug[[k8s/authn-authz.md](https://github.com/RyaxTech/kube.training.git/tree/k8s_metropole_de_lyon/slides/k8s/authn-authz.md)]
+---
+
+## Authorization in Kubernetes
+
+- There are multiple ways to grant permissions in Kubernetes, called [authorizers](https://kubernetes.io/docs/reference/access-authn-authz/authorization/#authorization-modules):
+
+  - [Node Authorization](https://kubernetes.io/docs/reference/access-authn-authz/node/) (used internally by kubelet; we can ignore it)
+
+  - [Attribute-based access control](https://kubernetes.io/docs/reference/access-authn-authz/abac/) (powerful but complex and static; ignore it too)
+
+  - [Webhook](https://kubernetes.io/docs/reference/access-authn-authz/webhook/) (each API request is submitted to an external service for approval)
+
+  - [Role-based access control](https://kubernetes.io/docs/reference/access-authn-authz/rbac/) (associates permissions to users dynamically)
+
+- The one we want is the last one, generally abbreviated as RBAC
+
+.debug[[k8s/authn-authz.md](https://github.com/RyaxTech/kube.training.git/tree/k8s_metropole_de_lyon/slides/k8s/authn-authz.md)]
+---
+
+## Role-based access control
+
+- RBAC allows to specify fine-grained permissions
+
+- Permissions are expressed as *rules*
+
+- A rule is a combination of:
+
+  - [verbs](https://kubernetes.io/docs/reference/access-authn-authz/authorization/#determine-the-request-verb) like create, get, list, update, delete ...
+
+  - resources (as in "API resource", like pods, nodes, services ...)
+
+  - resource names (to specify e.g. one specific pod instead of all pods)
+
+  - in some case, [subresources](https://kubernetes.io/docs/reference/access-authn-authz/rbac/#referring-to-resources) (e.g. logs are subresources of pods)
+
+.debug[[k8s/authn-authz.md](https://github.com/RyaxTech/kube.training.git/tree/k8s_metropole_de_lyon/slides/k8s/authn-authz.md)]
+---
+
+## From rules to roles to rolebindings
+
+- A *role* is an API object containing a list of *rules*
+
+  Example: role "external-load-balancer-configurator" can:
+  - [list, get] resources [endpoints, services, pods]
+  - [update] resources [services]
+
+- A *rolebinding* associates a role with a user
+
+  Example: rolebinding "external-load-balancer-configurator":
+  - associates user "external-load-balancer-configurator"
+  - with role "external-load-balancer-configurator"
+
+- Yes, there can be users, roles, and rolebindings with the same name
+
+- It's a good idea for 1-1-1 bindings; not so much for 1-N ones
+
+.debug[[k8s/authn-authz.md](https://github.com/RyaxTech/kube.training.git/tree/k8s_metropole_de_lyon/slides/k8s/authn-authz.md)]
+---
+
+## Cluster-scope permissions
+
+- API resources Role and RoleBinding are for objects within a namespace
+
+- We can also define API resources ClusterRole and ClusterRoleBinding
+
+- These are a superset, allowing to:
+
+  - specify actions on cluster-wide objects (like nodes)
+
+  - operate across all namespaces
+
+- We can create Role and RoleBinding resources within a namespaces
+
+- ClusterRole and ClusterRoleBinding resources are global
+
+.debug[[k8s/authn-authz.md](https://github.com/RyaxTech/kube.training.git/tree/k8s_metropole_de_lyon/slides/k8s/authn-authz.md)]
+---
+
+## Pods and service accounts
+
+- A pod can be associated to a service account
+
+  - by default, it is associated to the `default` service account
+
+  - as we've seen earlier, this service account has no permission anyway
+
+- The associated token is exposed into the pod's filesystem
+
+  (in `/var/run/secrets/kubernetes.io/serviceaccount/token`)
+
+- Standard Kubernetes tooling (like `kubectl`) will look for it there
+
+- So Kubernetes tools running in a pod will automatically use the service account
+
+.debug[[k8s/authn-authz.md](https://github.com/RyaxTech/kube.training.git/tree/k8s_metropole_de_lyon/slides/k8s/authn-authz.md)]
+---
+
+## In practice
+
+- We are going to create a service account
+
+- We will use a default cluster role (`view`)
+
+- We will bind together this role and this service account
+
+- Then we will run a pod using that service account
+
+- In this pod, we will install `kubectl` and check our permissions
+
+.debug[[k8s/authn-authz.md](https://github.com/RyaxTech/kube.training.git/tree/k8s_metropole_de_lyon/slides/k8s/authn-authz.md)]
+---
+
+## Creating a service account
+
+- We will call the new service account `viewer`
+
+  (note that nothing prevents us from calling it `view`, like the role)
+
+.exercise[
+
+- Create the new service account:
+  ```bash
+  kubectl create serviceaccount viewer
+  ```
+
+- List service accounts now:
+  ```bash
+  kubectl get serviceaccounts
+  ```
+
+]
+
+.debug[[k8s/authn-authz.md](https://github.com/RyaxTech/kube.training.git/tree/k8s_metropole_de_lyon/slides/k8s/authn-authz.md)]
+---
+
+## Binding a role to the service account
+
+- Binding a role = creating a *rolebinding* object
+
+- We will call that object `viewercanview`
+
+  (but again, we could call it `view`)
+
+.exercise[
+
+- Create the new role binding:
+  ```bash
+  kubectl create rolebinding viewercanview \
+          --clusterrole=view \
+          --serviceaccount=default:viewer
+  ```
+
+]
+
+It's important to note a couple of details in these flags ...
+
+.debug[[k8s/authn-authz.md](https://github.com/RyaxTech/kube.training.git/tree/k8s_metropole_de_lyon/slides/k8s/authn-authz.md)]
+---
+
+## Roles vs Cluster Roles
+
+- We used `--clusterrole=view`
+
+- What would have happened if we had used `--role=view`?
+
+  - we would have bound the role `view` from the local namespace
+    <br/>(instead of the cluster role `view`)
+
+  - the command would have worked fine (no error)
+
+  - but later, our API requests would have been denied
+
+- This is a deliberate design decision
+
+  (we can reference roles that don't exist, and create/update them later)
+
+.debug[[k8s/authn-authz.md](https://github.com/RyaxTech/kube.training.git/tree/k8s_metropole_de_lyon/slides/k8s/authn-authz.md)]
+---
+
+## Users vs Service Accounts
+
+- We used `--serviceaccount=default:viewer`
+
+- What would have happened if we had used `--user=default:viewer`?
+
+  - we would have bound the role to a user instead of a service account
+
+  - again, the command would have worked fine (no error)
+
+  - ... but our API requests would have been denied later
+
+- What's about the `default:` prefix?
+
+  - that's the namespace of the service account
+
+  - yes, it could be inferred from context, but ... `kubectl` requires it
+
+.debug[[k8s/authn-authz.md](https://github.com/RyaxTech/kube.training.git/tree/k8s_metropole_de_lyon/slides/k8s/authn-authz.md)]
+---
+
+## Testing
+
+- We will run an `alpine` pod and install `kubectl` there
+
+.exercise[
+
+- Run a one-time pod:
+  ```bash
+  kubectl run eyepod --rm -ti --restart=Never \
+          --serviceaccount=viewer \
+          --image alpine
+  ```
+
+- Install `curl`, then use it to install `kubectl`:
+  ```bash
+  apk add --no-cache curl
+  URLBASE=https://storage.googleapis.com/kubernetes-release/release
+  KUBEVER=$(curl -s $URLBASE/stable.txt)
+  curl -LO $URLBASE/$KUBEVER/bin/linux/amd64/kubectl
+  chmod +x kubectl
+  ```
+
+]
+
+.debug[[k8s/authn-authz.md](https://github.com/RyaxTech/kube.training.git/tree/k8s_metropole_de_lyon/slides/k8s/authn-authz.md)]
+---
+
+## Running `kubectl` in the pod
+
+- We'll try to use our `view` permissions, then to create an object
+
+.exercise[
+
+- Check that we can, indeed, view things:
+  ```bash
+  ./kubectl get all
+  ```
+
+- But that we can't create things:
+  ```
+  ./kubectl create deployment testrbac --image=nginx
+  ```
+
+- Exit the container with `exit` or `^D`
+
+<!-- ```keys ^D``` -->
+
+]
+
+.debug[[k8s/authn-authz.md](https://github.com/RyaxTech/kube.training.git/tree/k8s_metropole_de_lyon/slides/k8s/authn-authz.md)]
+---
+
+## Testing directly with `kubectl`
+
+- We can also check for permission with `kubectl auth can-i`:
+  ```bash
+  kubectl auth can-i list nodes
+  kubectl auth can-i create pods
+  kubectl auth can-i get pod/name-of-pod
+  kubectl auth can-i get /url-fragment-of-api-request/
+  kubectl auth can-i '*' services
+  ```
+
+- And we can check permissions on behalf of other users:
+  ```bash
+  kubectl auth can-i list nodes \
+          --as some-user
+  kubectl auth can-i list nodes \
+          --as system:serviceaccount:<namespace>:<name-of-service-account>
+  ```
+
+.debug[[k8s/authn-authz.md](https://github.com/RyaxTech/kube.training.git/tree/k8s_metropole_de_lyon/slides/k8s/authn-authz.md)]
+---
+
+class: extra-details
+
+## Where does this `view` role come from?
+
+- Kubernetes defines a number of ClusterRoles intended to be bound to users
+
+- `cluster-admin` can do *everything* (think `root` on UNIX)
+
+- `admin` can do *almost everything* (except e.g. changing resource quotas and limits)
+
+- `edit` is similar to `admin`, but cannot view or edit permissions
+
+- `view` has read-only access to most resources, except permissions and secrets
+
+*In many situations, these roles will be all you need.*
+
+*You can also customize them if needed!*
+
+.debug[[k8s/authn-authz.md](https://github.com/RyaxTech/kube.training.git/tree/k8s_metropole_de_lyon/slides/k8s/authn-authz.md)]
+---
+
+class: extra-details
+
+## Customizing the default roles
+
+- If you need to *add* permissions to these default roles (or others),
+  <br/>
+  you can do it through the [ClusterRole Aggregation](https://kubernetes.io/docs/reference/access-authn-authz/rbac/#aggregated-clusterroles) mechanism
+
+- This happens by creating a ClusterRole with the following labels:
+  ```yaml
+    metadata:
+      labels:
+        rbac.authorization.k8s.io/aggregate-to-admin: "true"
+        rbac.authorization.k8s.io/aggregate-to-edit: "true"
+        rbac.authorization.k8s.io/aggregate-to-view: "true"
+  ```
+
+- This ClusterRole permissions will be added to `admin`/`edit`/`view` respectively
+
+- This is particulary useful when using CustomResourceDefinitions
+
+  (since Kubernetes cannot guess which resources are sensitive and which ones aren't)
+
+.debug[[k8s/authn-authz.md](https://github.com/RyaxTech/kube.training.git/tree/k8s_metropole_de_lyon/slides/k8s/authn-authz.md)]
+---
+
+class: extra-details
+
+## Where do our permissions come from?
+
+- When interacting with the Kubernetes API, we are using a client certificate
+
+- We saw previously that this client certificate contained:
+
+  `CN=kubernetes-admin` and `O=system:masters`
+
+- Let's look for these in existing ClusterRoleBindings:
+  ```bash
+  kubectl get clusterrolebindings -o yaml | 
+    grep -e kubernetes-admin -e system:masters
+  ```
+
+  (`system:masters` should show up, but not `kubernetes-admin`.)
+
+- Where does this match come from?
+
+.debug[[k8s/authn-authz.md](https://github.com/RyaxTech/kube.training.git/tree/k8s_metropole_de_lyon/slides/k8s/authn-authz.md)]
+---
+
+class: extra-details
+
+## The `system:masters` group
+
+- If we eyeball the output of `kubectl get clusterrolebindings -o yaml`, we'll find out!
+
+- It is in the `cluster-admin` binding:
+  ```bash
+  kubectl describe clusterrolebinding cluster-admin
+  ```
+
+- This binding associates `system:masters` to the cluster role `cluster-admin`
+
+- And the `cluster-admin` is, basically, `root`:
+  ```bash
+  kubectl describe clusterrole cluster-admin
+  ```
+
+.debug[[k8s/authn-authz.md](https://github.com/RyaxTech/kube.training.git/tree/k8s_metropole_de_lyon/slides/k8s/authn-authz.md)]
+---
+
+class: extra-details
+
+## Figuring out who can do what
+
+- For auditing purposes, sometimes we want to know who can perform an action
+
+- Here is a proof-of-concept tool by Aqua Security, doing exactly that:
+
+  https://github.com/aquasecurity/kubectl-who-can
+
+- This is one way to install it:
+  ```bash
+  docker run --rm -v /usr/local/bin:/go/bin golang \
+         go get -v github.com/aquasecurity/kubectl-who-can
+  ```
+
+- This is one way to use it:
+  ```bash
+  kubectl-who-can create pods
+  ```
+
+.debug[[k8s/authn-authz.md](https://github.com/RyaxTech/kube.training.git/tree/k8s_metropole_de_lyon/slides/k8s/authn-authz.md)]
+---
+
+class: pic
+
+.interstitial[![Image separating from the next chapter](https://gallant-turing-d0d520.netlify.com/containers/wall-of-containers.jpeg)]
+
+---
+
+name: toc-exposing-http-services-with-ingress-resources
+class: title
+
+Exposing HTTP services with Ingress resources
+
+.nav[
+[Section précédente](#toc-authentication-and-authorization)
+|
+[Retour table des matières](#toc-chapter-4)
+|
+[Section suivante](#toc-git-based-workflows)
+]
+
+.debug[(automatically generated title slide)]
+
+---
+# Exposing HTTP services with Ingress resources
+
+- *Services* give us a way to access a pod or a set of pods
+
+- Services can be exposed to the outside world:
+
+  - with type `NodePort` (on a port >30000)
+
+  - with type `LoadBalancer` (allocating an external load balancer)
+
+- What about HTTP services?
+
+  - how can we expose `webui`, `rng`, `hasher`?
+
+  - the Kubernetes dashboard?
+
+  - a new version of `webui`?
+
+.debug[[k8s/ingress.md](https://github.com/RyaxTech/kube.training.git/tree/k8s_metropole_de_lyon/slides/k8s/ingress.md)]
+---
+
+## Exposing HTTP services
+
+- If we use `NodePort` services, clients have to specify port numbers
+
+  (i.e. http://xxxxx:31234 instead of just http://xxxxx)
+
+- `LoadBalancer` services are nice, but:
+
+  - they are not available in all environments
+
+  - they often carry an additional cost (e.g. they provision an ELB)
+
+  - they require one extra step for DNS integration
+    <br/>
+    (waiting for the `LoadBalancer` to be provisioned; then adding it to DNS)
+
+- We could build our own reverse proxy
+
+.debug[[k8s/ingress.md](https://github.com/RyaxTech/kube.training.git/tree/k8s_metropole_de_lyon/slides/k8s/ingress.md)]
+---
+
+## Building a custom reverse proxy
+
+- There are many options available:
+
+  Apache, HAProxy, Hipache, NGINX, Traefik, ...
+
+  (look at [jpetazzo/aiguillage](https://github.com/jpetazzo/aiguillage) for a minimal reverse proxy configuration using NGINX)
+
+- Most of these options require us to update/edit configuration files after each change
+
+- Some of them can pick up virtual hosts and backends from a configuration store
+
+- Wouldn't it be nice if this configuration could be managed with the Kubernetes API?
+
+--
+
+- Enter.red[¹] *Ingress* resources!
+
+.footnote[.red[¹] Pun maybe intended.]
+
+.debug[[k8s/ingress.md](https://github.com/RyaxTech/kube.training.git/tree/k8s_metropole_de_lyon/slides/k8s/ingress.md)]
+---
+
+## Ingress resources
+
+- Kubernetes API resource (`kubectl get ingress`/`ingresses`/`ing`)
+
+- Designed to expose HTTP services
+
+- Basic features:
+
+  - load balancing
+  - SSL termination
+  - name-based virtual hosting
+
+- Can also route to different services depending on:
+
+  - URI path (e.g. `/api`→`api-service`, `/static`→`assets-service`)
+  - Client headers, including cookies (for A/B testing, canary deployment...)
+  - and more!
+
+.debug[[k8s/ingress.md](https://github.com/RyaxTech/kube.training.git/tree/k8s_metropole_de_lyon/slides/k8s/ingress.md)]
+---
+
+## Principle of operation
+
+- Step 1: deploy an *ingress controller*
+
+  - ingress controller = load balancer + control loop
+
+  - the control loop watches over ingress resources, and configures the LB accordingly
+
+- Step 2: setup DNS
+
+  - associate DNS entries with the load balancer address
+
+- Step 3: create *ingress resources*
+
+  - the ingress controller picks up these resources and configures the LB
+
+- Step 4: profit!
+
+.debug[[k8s/ingress.md](https://github.com/RyaxTech/kube.training.git/tree/k8s_metropole_de_lyon/slides/k8s/ingress.md)]
+---
+
+## Ingress in action
+
+- We will deploy the Traefik ingress controller
+
+  - this is an arbitrary choice
+
+  - maybe motivated by the fact that Traefik releases are named after cheeses
+
+- For DNS, we will use [nip.io](http://nip.io/)
+
+  - `*.1.2.3.4.nip.io` resolves to `1.2.3.4`
+
+- We will create ingress resources for various HTTP services
+
+.debug[[k8s/ingress.md](https://github.com/RyaxTech/kube.training.git/tree/k8s_metropole_de_lyon/slides/k8s/ingress.md)]
+---
+
+## Deploying pods listening on port 80
+
+- We want our ingress load balancer to be available on port 80
+
+- We could do that with a `LoadBalancer` service
+
+  ... but it requires support from the underlying infrastructure
+
+- We could use pods specifying `hostPort: 80` 
+
+  ... but with most CNI plugins, this [doesn't work or require additional setup](https://github.com/kubernetes/kubernetes/issues/23920)
+
+- We could use a `NodePort` service
+
+  ... but that requires [changing the `--service-node-port-range` flag in the API server](https://kubernetes.io/docs/reference/command-line-tools-reference/kube-apiserver/)
+
+- Last resort: the `hostNetwork` mode
+
+.debug[[k8s/ingress.md](https://github.com/RyaxTech/kube.training.git/tree/k8s_metropole_de_lyon/slides/k8s/ingress.md)]
+---
+
+## Without `hostNetwork`
+
+- Normally, each pod gets its own *network namespace*
+
+  (sometimes called sandbox or network sandbox)
+
+- An IP address is associated to the pod
+
+- This IP address is routed/connected to the cluster network
+
+- All containers of that pod are sharing that network namespace
+
+  (and therefore using the same IP address)
+
+.debug[[k8s/ingress.md](https://github.com/RyaxTech/kube.training.git/tree/k8s_metropole_de_lyon/slides/k8s/ingress.md)]
+---
+
+## With `hostNetwork: true`
+
+- No network namespace gets created
+
+- The pod is using the network namespace of the host
+
+- It "sees" (and can use) the interfaces (and IP addresses) of the host
+
+- The pod can receive outside traffic directly, on any port
+
+- Downside: with most network plugins, network policies won't work for that pod
+
+  - most network policies work at the IP address level
+
+  - filtering that pod = filtering traffic from the node
+
+.debug[[k8s/ingress.md](https://github.com/RyaxTech/kube.training.git/tree/k8s_metropole_de_lyon/slides/k8s/ingress.md)]
+---
+
+## Running Traefik
+
+- The [Traefik documentation](https://docs.traefik.io/user-guide/kubernetes/#deploy-trfik-using-a-deployment-or-daemonset) tells us to pick between Deployment and Daemon Set
+
+- We are going to use a Daemon Set so that each node can accept connections
+
+- We will do two minor changes to the [YAML provided by Traefik](https://github.com/containous/traefik/blob/v1.7/examples/k8s/traefik-ds.yaml):
+
+  - enable `hostNetwork`
+
+  - add a *toleration* so that Traefik also runs on `node1`
+
+.debug[[k8s/ingress.md](https://github.com/RyaxTech/kube.training.git/tree/k8s_metropole_de_lyon/slides/k8s/ingress.md)]
+---
+
+## Taints and tolerations
+
+- A *taint* is an attribute added to a node
+
+- It prevents pods from running on the node
+
+- ... Unless they have a matching *toleration*
+
+- When deploying with `kubeadm`:
+
+  - a taint is placed on the node dedicated to the control plane
+
+  - the pods running the control plane have a matching toleration
+
+.debug[[k8s/ingress.md](https://github.com/RyaxTech/kube.training.git/tree/k8s_metropole_de_lyon/slides/k8s/ingress.md)]
+---
+
+class: extra-details
+
+## Checking taints on our nodes
+
+.exercise[
+
+- Check our nodes specs:
+  ```bash
+  kubectl get node node1 -o json | jq .spec
+  kubectl get node node2 -o json | jq .spec
+  ```
+
+]
+
+We should see a result only for `node1` (the one with the control plane):
+
+```json
+  "taints": [
+    {
+      "effect": "NoSchedule",
+      "key": "node-role.kubernetes.io/master"
+    }
+  ]
+```
+
+.debug[[k8s/ingress.md](https://github.com/RyaxTech/kube.training.git/tree/k8s_metropole_de_lyon/slides/k8s/ingress.md)]
+---
+
+class: extra-details
+
+## Understanding a taint
+
+- The `key` can be interpreted as:
+
+  - a reservation for a special set of pods
+    <br/>
+    (here, this means "this node is reserved for the control plane")
+
+  - an error condition on the node
+    <br/>
+    (for instance: "disk full", do not start new pods here!)
+
+- The `effect` can be:
+
+  - `NoSchedule` (don't run new pods here)
+
+  - `PreferNoSchedule` (try not to run new pods here)
+
+  - `NoExecute` (don't run new pods and evict running pods)
+
+.debug[[k8s/ingress.md](https://github.com/RyaxTech/kube.training.git/tree/k8s_metropole_de_lyon/slides/k8s/ingress.md)]
+---
+
+class: extra-details
+
+## Checking tolerations on the control plane
+
+.exercise[
+
+- Check tolerations for CoreDNS:
+  ```bash
+  kubectl -n kube-system get deployments coredns -o json |
+          jq .spec.template.spec.tolerations
+  ```
+
+]
+
+The result should include:
+```json
+  {
+    "effect": "NoSchedule",
+    "key": "node-role.kubernetes.io/master"
+  }
+```
+
+It means: "bypass the exact taint that we saw earlier on `node1`."
+
+.debug[[k8s/ingress.md](https://github.com/RyaxTech/kube.training.git/tree/k8s_metropole_de_lyon/slides/k8s/ingress.md)]
+---
+
+class: extra-details
+
+## Special tolerations
+
+.exercise[
+
+- Check tolerations on `kube-proxy`:
+  ```bash
+  kubectl -n kube-system get ds kube-proxy -o json | 
+          jq .spec.template.spec.tolerations
+  ```
+
+]
+
+The result should include:
+```json
+  {
+    "operator": "Exists"
+  }
+```
+
+This one is a special case that means "ignore all taints and run anyway."
+
+.debug[[k8s/ingress.md](https://github.com/RyaxTech/kube.training.git/tree/k8s_metropole_de_lyon/slides/k8s/ingress.md)]
+---
+
+## Running Traefik on our cluster
+
+- We provide a YAML file (`k8s/traefik.yaml`) which is essentially the sum of:
+
+  - [Traefik's Daemon Set resources](https://github.com/containous/traefik/blob/v1.7/examples/k8s/traefik-ds.yaml) (patched with `hostNetwork` and tolerations)
+
+  - [Traefik's RBAC rules](https://github.com/containous/traefik/blob/v1.7/examples/k8s/traefik-rbac.yaml) allowing it to watch necessary API objects
+
+.exercise[
+
+- Apply the YAML:
+  ```bash
+  kubectl apply -f ~/kube.training/k8s/traefik.yaml
+  ```
+
+]
+
+.debug[[k8s/ingress.md](https://github.com/RyaxTech/kube.training.git/tree/k8s_metropole_de_lyon/slides/k8s/ingress.md)]
+---
+
+## Checking that Traefik runs correctly
+
+- If Traefik started correctly, we now have a web server listening on each node
+
+.exercise[
+
+- Check that Traefik is serving 80/tcp:
+  ```bash
+  curl localhost
+  ```
+
+]
+
+We should get a `404 page not found` error.
+
+This is normal: we haven't provided any ingress rule yet.
+
+.debug[[k8s/ingress.md](https://github.com/RyaxTech/kube.training.git/tree/k8s_metropole_de_lyon/slides/k8s/ingress.md)]
+---
+
+## Setting up DNS
+
+- To make our lives easier, we will use [nip.io](http://nip.io)
+
+- Check out `http://cheddar.A.B.C.D.nip.io`
+
+  (replacing A.B.C.D with the IP address of `node1`)
+
+- We should get the same `404 page not found` error
+
+  (meaning that our DNS is "set up properly", so to speak!)
+
+.debug[[k8s/ingress.md](https://github.com/RyaxTech/kube.training.git/tree/k8s_metropole_de_lyon/slides/k8s/ingress.md)]
+---
+
+## Traefik web UI
+
+- Traefik provides a web dashboard
+
+- With the current install method, it's listening on port 8080
+
+.exercise[
+
+- Go to `http://node1:8080` (replacing `node1` with its IP address)
+
+<!-- ```open http://node1:8080``` -->
+
+]
+
+.debug[[k8s/ingress.md](https://github.com/RyaxTech/kube.training.git/tree/k8s_metropole_de_lyon/slides/k8s/ingress.md)]
+---
+
+## Setting up host-based routing ingress rules
+
+- We are going to use `errm/cheese` images
+
+  (there are [3 tags available](https://hub.docker.com/r/errm/cheese/tags/): wensleydale, cheddar, stilton)
+
+- These images contain a simple static HTTP server sending a picture of cheese
+
+- We will run 3 deployments (one for each cheese)
+
+- We will create 3 services (one for each deployment)
+
+- Then we will create 3 ingress rules (one for each service)
+
+- We will route `<name-of-cheese>.A.B.C.D.nip.io` to the corresponding deployment
+
+.debug[[k8s/ingress.md](https://github.com/RyaxTech/kube.training.git/tree/k8s_metropole_de_lyon/slides/k8s/ingress.md)]
+---
+
+## Running cheesy web servers
+
+.exercise[
+
+- Run all three deployments:
+  ```bash
+  kubectl create deployment cheddar --image=errm/cheese:cheddar
+  kubectl create deployment stilton --image=errm/cheese:stilton
+  kubectl create deployment wensleydale --image=errm/cheese:wensleydale
+  ```
+
+- Create a service for each of them:
+  ```bash
+  kubectl expose deployment cheddar --port=80
+  kubectl expose deployment stilton --port=80
+  kubectl expose deployment wensleydale --port=80
+  ```
+
+]
+
+.debug[[k8s/ingress.md](https://github.com/RyaxTech/kube.training.git/tree/k8s_metropole_de_lyon/slides/k8s/ingress.md)]
+---
+
+## What does an ingress resource look like?
+
+Here is a minimal host-based ingress resource:
+
+```yaml
+apiVersion: extensions/v1beta1
+kind: Ingress
+metadata:
+  name: cheddar
+spec:
+  rules:
+  - host: cheddar.`A.B.C.D`.nip.io
+    http:
+      paths:
+      - path: /
+        backend:
+          serviceName: cheddar
+          servicePort: 80
+
+```
+
+(It is in `k8s/ingress.yaml`.)
+
+.debug[[k8s/ingress.md](https://github.com/RyaxTech/kube.training.git/tree/k8s_metropole_de_lyon/slides/k8s/ingress.md)]
+---
+
+## Creating our first ingress resources
+
+.exercise[
+
+- Edit the file `~/container.training/k8s/ingress.yaml`
+
+- Replace A.B.C.D with the IP address of `node1`
+
+- Apply the file
+
+- Open http://cheddar.A.B.C.D.nip.io
+
+]
+
+(An image of a piece of cheese should show up.)
+
+.debug[[k8s/ingress.md](https://github.com/RyaxTech/kube.training.git/tree/k8s_metropole_de_lyon/slides/k8s/ingress.md)]
+---
+
+## Creating the other ingress resources
+
+.exercise[
+
+- Edit the file `~/container.training/k8s/ingress.yaml`
+
+- Replace `cheddar` with `stilton` (in `name`, `host`, `serviceName`)
+
+- Apply the file
+
+- Check that `stilton.A.B.C.D.nip.io` works correctly
+
+- Repeat for `wensleydale`
+
+]
+
+.debug[[k8s/ingress.md](https://github.com/RyaxTech/kube.training.git/tree/k8s_metropole_de_lyon/slides/k8s/ingress.md)]
+---
+
+## Using multiple ingress controllers
+
+- You can have multiple ingress controllers active simultaneously
+
+  (e.g. Traefik and NGINX)
+
+- You can even have multiple instances of the same controller
+
+  (e.g. one for internal, another for external traffic)
+
+- The `kubernetes.io/ingress.class` annotation can be used to tell which one to use
+
+- It's OK if multiple ingress controllers configure the same resource
+
+  (it just means that the service will be accessible through multiple paths)
+
+.debug[[k8s/ingress.md](https://github.com/RyaxTech/kube.training.git/tree/k8s_metropole_de_lyon/slides/k8s/ingress.md)]
+---
+
+## Ingress: the good
+
+- The traffic flows directly from the ingress load balancer to the backends
+
+  - it doesn't need to go through the `ClusterIP`
+
+  - in fact, we don't even need a `ClusterIP` (we can use a headless service)
+
+- The load balancer can be outside of Kubernetes
+
+  (as long as it has access to the cluster subnet)
+
+- This allows to use external (hardware, physical machines...) load balancers
+
+- Annotations can encode special features
+
+  (rate-limiting, A/B testing, session stickiness, etc.) 
+
+.debug[[k8s/ingress.md](https://github.com/RyaxTech/kube.training.git/tree/k8s_metropole_de_lyon/slides/k8s/ingress.md)]
+---
+
+## Ingress: the bad
+
+- Aforementioned "special features" are not standardized yet
+
+- Some controllers will support them; some won't
+
+- Even relatively common features (stripping a path prefix) can differ:
+
+  - [traefik.ingress.kubernetes.io/rule-type: PathPrefixStrip](https://docs.traefik.io/user-guide/kubernetes/#path-based-routing)
+
+  - [ingress.kubernetes.io/rewrite-target: /](https://github.com/kubernetes/contrib/tree/master/ingress/controllers/nginx/examples/rewrite)
+
+- This should eventually stabilize
+
+  (remember that ingresses are currently `apiVersion: extensions/v1beta1`)
+
+.debug[[k8s/ingress.md](https://github.com/RyaxTech/kube.training.git/tree/k8s_metropole_de_lyon/slides/k8s/ingress.md)]
+---
+
+class: pic
+
+.interstitial[![Image separating from the next chapter](https://gallant-turing-d0d520.netlify.com/containers/Container-Ship-Freighter-Navigation-Elbe-Romance-1782991.jpg)]
+
+---
+
+name: toc-git-based-workflows
+class: title
+
+Git-based workflows
+
+.nav[
+[Section précédente](#toc-exposing-http-services-with-ingress-resources)
+|
+[Retour table des matières](#toc-chapter-4)
+|
+[Section suivante](#toc-collecting-metrics-with-prometheus)
+]
+
+.debug[(automatically generated title slide)]
+
+---
+# Git-based workflows
+
+- Deploying with `kubectl` has downsides:
+
+  - we don't know *who* deployed *what* and *when*
+
+  - there is no audit trail (except the API server logs)
+
+  - there is no easy way to undo most operations
+
+  - there is no review/approval process (like for code reviews)
+
+- We have all these things for *code*, though
+
+- Can we manage cluster state like we manage our source code?
+
+.debug[[k8s/gitworkflows.md](https://github.com/RyaxTech/kube.training.git/tree/k8s_metropole_de_lyon/slides/k8s/gitworkflows.md)]
+---
+
+## Reminder: Kubernetes is *declarative*
+
+- All we do is create/change resources
+
+- These resources have a perfect YAML representation
+
+- All we do is manipulating these YAML representations
+
+  (`kubectl run` generates a YAML file that gets applied)
+
+- We can store these YAML representations in a code repository
+
+- We can version that code repository and maintain it with best practices
+
+  - define which branch(es) can go to qa/staging/production
+
+  - control who can push to which branches
+
+  - have formal review processes, pull requests ...
+
+.debug[[k8s/gitworkflows.md](https://github.com/RyaxTech/kube.training.git/tree/k8s_metropole_de_lyon/slides/k8s/gitworkflows.md)]
+---
+
+## Enabling git-based workflows
+
+- There are a few tools out there to help us do that
+
+- We'll see demos of two of them: [Flux] and [Gitkube]
+
+- There are *many* other tools, some of them with even more features
+
+- There are also *many* integrations with popular CI/CD systems
+
+  (e.g.: GitLab, Jenkins, ...)
+
+[Flux]: https://www.weave.works/oss/flux/
+[Gitkube]: https://gitkube.sh/
+
+.debug[[k8s/gitworkflows.md](https://github.com/RyaxTech/kube.training.git/tree/k8s_metropole_de_lyon/slides/k8s/gitworkflows.md)]
+---
+
+## Flux overview
+
+- We put our Kubernetes resources as YAML files in a git repository
+
+- Flux polls that repository regularly (every 5 minutes by default)
+
+- The resources described by the YAML files are created/updated automatically
+
+- Changes are made by updating the code in the repository
+
+.debug[[k8s/gitworkflows.md](https://github.com/RyaxTech/kube.training.git/tree/k8s_metropole_de_lyon/slides/k8s/gitworkflows.md)]
+---
+
+## Preparing a repository for Flux
+
+- We need a repository with Kubernetes YAML files
+
+- I have one: https://github.com/jpetazzo/kubercoins
+
+- Fork it to your GitHub account
+
+- Create a new branch in your fork; e.g. `prod`
+
+  (e.g. by adding a line in the README through the GitHub web UI)
+
+- This is the branch that we are going to use for deployment
+
+.debug[[k8s/gitworkflows.md](https://github.com/RyaxTech/kube.training.git/tree/k8s_metropole_de_lyon/slides/k8s/gitworkflows.md)]
+---
+
+## Setting up Flux
+
+- Clone the Flux repository:
+  ```
+  git clone https://github.com/weaveworks/flux
+  ```
+
+- Edit `deploy/flux-deployment.yaml`
+
+- Change the `--git-url` and `--git-branch` parameters:
+  ```yaml
+  - --git-url=git@github.com:your-git-username/kubercoins
+  - --git-branch=prod
+  ```
+
+- Apply all the YAML:
+  ```
+  kubectl apply -f deploy/
+  ```
+
+.debug[[k8s/gitworkflows.md](https://github.com/RyaxTech/kube.training.git/tree/k8s_metropole_de_lyon/slides/k8s/gitworkflows.md)]
+---
+
+## Allowing Flux to access the repository
+
+- When it starts, Flux generates an SSH key
+
+- Display that key:
+  ```
+  kubectl logs deployment/flux | grep identity
+  ```
+
+- Then add that key to the repository, giving it **write** access
+
+  (some Flux features require write access)
+
+- After a minute or so, DockerCoins will be deployed to the current namespace
+
+.debug[[k8s/gitworkflows.md](https://github.com/RyaxTech/kube.training.git/tree/k8s_metropole_de_lyon/slides/k8s/gitworkflows.md)]
+---
+
+## Making changes
+
+- Make changes (on the `prod` branch), e.g. change `replicas` in `worker`
+
+- After a few minutes, the changes will be picked up by Flux and applied
+
+.debug[[k8s/gitworkflows.md](https://github.com/RyaxTech/kube.training.git/tree/k8s_metropole_de_lyon/slides/k8s/gitworkflows.md)]
+---
+
+## Other features
+
+- Flux can keep a list of all the tags of all the images we're running
+
+- The `fluxctl` tool can show us if we're running the latest images
+
+- We can also "automate" a resource (i.e. automatically deploy new images)
+
+- And much more!
+
+.debug[[k8s/gitworkflows.md](https://github.com/RyaxTech/kube.training.git/tree/k8s_metropole_de_lyon/slides/k8s/gitworkflows.md)]
+---
+
+## Gitkube overview
+
+- We put our Kubernetes resources as YAML files in a git repository
+
+- Gitkube is a git server (or "git remote")
+
+- After making changes to the repository, we push to Gitkube
+
+- Gitkube applies the resources to the cluster
+
+.debug[[k8s/gitworkflows.md](https://github.com/RyaxTech/kube.training.git/tree/k8s_metropole_de_lyon/slides/k8s/gitworkflows.md)]
+---
+
+## Setting up Gitkube
+
+- Install the CLI:
+  ```
+  sudo curl -L -o /usr/local/bin/gitkube \
+       https://github.com/hasura/gitkube/releases/download/v0.2.1/gitkube_linux_amd64
+  sudo chmod +x /usr/local/bin/gitkube
+  ```
+
+- Install Gitkube on the cluster:
+  ```
+  gitkube install --expose ClusterIP
+  ```
+
+.debug[[k8s/gitworkflows.md](https://github.com/RyaxTech/kube.training.git/tree/k8s_metropole_de_lyon/slides/k8s/gitworkflows.md)]
+---
+
+## Creating a Remote
+
+- Gitkube provides a new type of API resource: *Remote*
+
+  (this is using a mechanism called Custom Resource Definitions or CRD)
+
+- Create and apply a YAML file containing the following manifest:
+  ```yaml
+	apiVersion: gitkube.sh/v1alpha1
+	kind: Remote
+	metadata:
+	  name: example
+	spec:
+	  authorizedKeys:
+	  - `ssh-rsa AAA...`
+	  manifests:
+	    path: "."
+  ```
+
+  (replace the `ssh-rsa AAA...` section with the content of `~/.ssh/id_rsa.pub`)
+
+.debug[[k8s/gitworkflows.md](https://github.com/RyaxTech/kube.training.git/tree/k8s_metropole_de_lyon/slides/k8s/gitworkflows.md)]
+---
+
+## Pushing to our remote
+
+- Get the `gitkubed` IP address:
+  ```
+  kubectl -n kube-system get svc gitkubed
+  IP=$(kubectl -n kube-system get svc gitkubed -o json | 
+  	   jq -r .spec.clusterIP)
+  ```
+
+- Get ourselves a sample repository with resource YAML files:
+  ```
+  git clone git://github.com/jpetazzo/kubercoins
+  cd kubercoins
+  ```
+
+- Add the remote and push to it:
+  ```
+  git remote add k8s ssh://default-example@$IP/~/git/default-example
+  git push k8s master
+  ```
+
+.debug[[k8s/gitworkflows.md](https://github.com/RyaxTech/kube.training.git/tree/k8s_metropole_de_lyon/slides/k8s/gitworkflows.md)]
+---
+
+## Making changes
+
+- Edit a local file
+
+- Commit
+
+- Push!
+
+- Make sure that you push to the `k8s` remote
+
+.debug[[k8s/gitworkflows.md](https://github.com/RyaxTech/kube.training.git/tree/k8s_metropole_de_lyon/slides/k8s/gitworkflows.md)]
+---
+
+## Other features
+
+- Gitkube can also build container images for us
+
+  (see the [documentation](https://github.com/hasura/gitkube/blob/master/docs/remote.md) for more details)
+
+- Gitkube can also deploy Helm Charts
+
+  (instead of raw YAML files)
+
+.debug[[k8s/gitworkflows.md](https://github.com/RyaxTech/kube.training.git/tree/k8s_metropole_de_lyon/slides/k8s/gitworkflows.md)]
+---
+
+class: pic
+
+.interstitial[![Image separating from the next chapter](https://gallant-turing-d0d520.netlify.com/containers/ShippingContainerSFBay.jpg)]
+
+---
+
+name: toc-collecting-metrics-with-prometheus
+class: title
+
+Collecting metrics with Prometheus
+
+.nav[
+[Section précédente](#toc-git-based-workflows)
+|
+[Retour table des matières](#toc-chapter-4)
+|
+[Section suivante](#toc-)
+]
+
+.debug[(automatically generated title slide)]
+
+---
+# Collecting metrics with Prometheus
+
+- Prometheus is an open-source monitoring system including:
+
+  - multiple *service discovery* backends to figure out which metrics to collect
+
+  - a *scraper* to collect these metrics
+
+  - an efficient *time series database* to store these metrics
+
+  - a specific query language (PromQL) to query these time series
+
+  - an *alert manager* to notify us according to metrics values or trends
+
+- We are going to deploy it on our Kubernetes cluster and see how to query it
+
+.debug[[k8s/prometheus.md](https://github.com/RyaxTech/kube.training.git/tree/k8s_metropole_de_lyon/slides/k8s/prometheus.md)]
+---
+
+## Why Prometheus?
+
+- We don't endorse Prometheus more or less than any other system
+
+- It's relatively well integrated within the Cloud Native ecosystem
+
+- It can be self-hosted (this is useful for tutorials like this)
+
+- It can be used for deployments of varying complexity:
+
+  - one binary and 10 lines of configuration to get started
+
+  - all the way to thousands of nodes and millions of metrics
+
+.debug[[k8s/prometheus.md](https://github.com/RyaxTech/kube.training.git/tree/k8s_metropole_de_lyon/slides/k8s/prometheus.md)]
+---
+
+## Exposing metrics to Prometheus
+
+- Prometheus obtains metrics and their values by querying *exporters*
+
+- An exporter serves metrics over HTTP, in plain text
+
+- This is what the *node exporter* looks like:
+
+  http://demo.robustperception.io:9100/metrics
+
+- Prometheus itself exposes its own internal metrics, too:
+
+  http://demo.robustperception.io:9090/metrics
+
+- If you want to expose custom metrics to Prometheus:
+
+  - serve a text page like these, and you're good to go
+
+  - libraries are available in various languages to help with quantiles etc.
+
+.debug[[k8s/prometheus.md](https://github.com/RyaxTech/kube.training.git/tree/k8s_metropole_de_lyon/slides/k8s/prometheus.md)]
+---
+
+## How Prometheus gets these metrics
+
+- The *Prometheus server* will *scrape* URLs like these at regular intervals
+
+  (by default: every minute; can be more/less frequent)
+
+- If you're worried about parsing overhead: exporters can also use protobuf
+
+- The list of URLs to scrape (the *scrape targets*) is defined in configuration
+
+.debug[[k8s/prometheus.md](https://github.com/RyaxTech/kube.training.git/tree/k8s_metropole_de_lyon/slides/k8s/prometheus.md)]
+---
+
+## Defining scrape targets
+
+This is maybe the simplest configuration file for Prometheus:
+```yaml
+scrape_configs:
+  - job_name: 'prometheus'
+    static_configs:
+      - targets: ['localhost:9090']
+```
+
+- In this configuration, Prometheus collects its own internal metrics
+
+- A typical configuration file will have multiple `scrape_configs`
+
+- In this configuration, the list of targets is fixed
+
+- A typical configuration file will use dynamic service discovery
+
+.debug[[k8s/prometheus.md](https://github.com/RyaxTech/kube.training.git/tree/k8s_metropole_de_lyon/slides/k8s/prometheus.md)]
+---
+
+## Service discovery
+
+This configuration file will leverage existing DNS `A` records:
+```yaml
+scrape_configs:
+  - ...
+  - job_name: 'node'
+    dns_sd_configs:
+      - names: ['api-backends.dc-paris-2.enix.io']
+        type: 'A'
+        port: 9100
+```
+
+- In this configuration, Prometheus resolves the provided name(s)
+
+  (here, `api-backends.dc-paris-2.enix.io`)
+
+- Each resulting IP address is added as a target on port 9100
+
+.debug[[k8s/prometheus.md](https://github.com/RyaxTech/kube.training.git/tree/k8s_metropole_de_lyon/slides/k8s/prometheus.md)]
+---
+
+## Dynamic service discovery
+
+- In the DNS example, the names are re-resolved at regular intervals
+
+- As DNS records are created/updated/removed, scrape targets change as well
+
+- Existing data (previously collected metrics) is not deleted
+
+- Other service discovery backends work in a similar fashion
+
+.debug[[k8s/prometheus.md](https://github.com/RyaxTech/kube.training.git/tree/k8s_metropole_de_lyon/slides/k8s/prometheus.md)]
+---
+
+## Other service discovery mechanisms
+
+- Prometheus can connect to e.g. a cloud API to list instances
+
+- Or to the Kubernetes API to list nodes, pods, services ...
+
+- Or a service like Consul, Zookeeper, etcd, to list applications
+
+- The resulting configurations files are *way more complex*
+
+  (but don't worry, we won't need to write them ourselves)
+
+.debug[[k8s/prometheus.md](https://github.com/RyaxTech/kube.training.git/tree/k8s_metropole_de_lyon/slides/k8s/prometheus.md)]
+---
+
+## Time series database
+
+- We could wonder, "why do we need a specialized database?"
+
+- One metrics data point = metrics ID + timestamp + value
+
+- With a classic SQL or noSQL data store, that's at least 160 bits of data + indexes
+
+- Prometheus is way more efficient, without sacrificing performance
+
+  (it will even be gentler on the I/O subsystem since it needs to write less)
+
+[Storage in Prometheus 2.0](https://www.youtube.com/watch?v=C4YV-9CrawA) by [Goutham V](https://twitter.com/putadent) at DC17EU
+
+.debug[[k8s/prometheus.md](https://github.com/RyaxTech/kube.training.git/tree/k8s_metropole_de_lyon/slides/k8s/prometheus.md)]
+---
+
+## Running Prometheus on our cluster
+
+We need to:
+
+- Run the Prometheus server in a pod
+
+  (using e.g. a Deployment to ensure that it keeps running)
+
+- Expose the Prometheus server web UI (e.g. with a NodePort)
+
+- Run the *node exporter* on each node (with a Daemon Set)
+
+- Setup a Service Account so that Prometheus can query the Kubernetes API
+
+- Configure the Prometheus server
+
+  (storing the configuration in a Config Map for easy updates)
+
+.debug[[k8s/prometheus.md](https://github.com/RyaxTech/kube.training.git/tree/k8s_metropole_de_lyon/slides/k8s/prometheus.md)]
+---
+
+## Helm Charts to the rescue
+
+- To make our lives easier, we are going to use a Helm Chart
+
+- The Helm Chart will take care of all the steps explained above
+
+  (including some extra features that we don't need, but won't hurt)
+
+.debug[[k8s/prometheus.md](https://github.com/RyaxTech/kube.training.git/tree/k8s_metropole_de_lyon/slides/k8s/prometheus.md)]
+---
+
+## Step 1: install Helm
+
+- If we already installed Helm earlier, these commands won't break anything
+
+.exercice[
+
+- Install Tiller (Helm's server-side component) on our cluster:
+  ```bash
+  helm init
+  ```
+
+- Give Tiller permission to deploy things on our cluster:
+  ```bash
+  kubectl create clusterrolebinding add-on-cluster-admin \
+      --clusterrole=cluster-admin --serviceaccount=kube-system:default
+  ```
+
+]
+
+.debug[[k8s/prometheus.md](https://github.com/RyaxTech/kube.training.git/tree/k8s_metropole_de_lyon/slides/k8s/prometheus.md)]
+---
+
+## Step 2: install Prometheus
+
+- Skip this if we already installed Prometheus earlier
+
+  (in doubt, check with `helm list`)
+
+.exercice[
+
+- Install Prometheus on our cluster:
+  ```bash
+  helm install stable/prometheus \
+         --set server.service.type=NodePort \
+         --set server.persistentVolume.enabled=false
+  ```
+
+]
+
+The provided flags:
+
+- expose the server web UI (and API) on a NodePort
+
+- use an ephemeral volume for metrics storage
+  <br/>
+  (instead of requesting a Persistent Volume through a Persistent Volume Claim)
+
+.debug[[k8s/prometheus.md](https://github.com/RyaxTech/kube.training.git/tree/k8s_metropole_de_lyon/slides/k8s/prometheus.md)]
+---
+
+## Connecting to the Prometheus web UI
+
+- Let's connect to the web UI and see what we can do
+
+.exercise[
+
+- Figure out the NodePort that was allocated to the Prometheus server:
+  ```bash
+  kubectl get svc | grep prometheus-server
+  ```
+
+- With your browser, connect to that port
+
+]
+
+.debug[[k8s/prometheus.md](https://github.com/RyaxTech/kube.training.git/tree/k8s_metropole_de_lyon/slides/k8s/prometheus.md)]
+---
+
+## Querying some metrics
+
+- This is easy ... if you are familiar with PromQL
+
+.exercise[
+
+- Click on "Graph", and in "expression", paste the following:
+  ```
+    sum by (instance) (
+      irate(
+        container_cpu_usage_seconds_total{
+          pod_name=~"worker.*"
+          }[5m]
+      )
+    )
+  ```
+
+]
+
+- Click on the blue "Execute" button and on the "Graph" tab just below
+
+- We see the cumulated CPU usage of worker pods for each node
+  <br/>
+  (if we just deployed Prometheus, there won't be much data to see, though)
+
+.debug[[k8s/prometheus.md](https://github.com/RyaxTech/kube.training.git/tree/k8s_metropole_de_lyon/slides/k8s/prometheus.md)]
+---
+
+## Getting started with PromQL
+
+- We can't learn PromQL in just 5 minutes
+
+- But we can cover the basics to get an idea of what is possible
+
+  (and have some keywords and pointers)
+
+- We are going to break down the query above
+
+  (building it one step at a time)
+
+.debug[[k8s/prometheus.md](https://github.com/RyaxTech/kube.training.git/tree/k8s_metropole_de_lyon/slides/k8s/prometheus.md)]
+---
+
+## Graphing one metric across all tags
+
+This query will show us CPU usage across all containers:
+```
+container_cpu_usage_seconds_total
+```
+
+- The suffix of the metrics name tells us: 
+
+  - the unit (seconds of CPU)
+
+  - that it's the total used since the container creation
+
+- Since it's a "total", it is an increasing quantity
+
+  (we need to compute the derivative if we want e.g. CPU % over time)
+
+- We see that the metrics retrieved have *tags* attached to them
+
+.debug[[k8s/prometheus.md](https://github.com/RyaxTech/kube.training.git/tree/k8s_metropole_de_lyon/slides/k8s/prometheus.md)]
+---
+
+## Selecting metrics with tags
+
+This query will show us only metrics for worker containers:
+```
+container_cpu_usage_seconds_total{pod_name=~"worker.*"}
+```
+
+- The `=~` operator allows regex matching
+
+- We select all the pods with a name starting with `worker`
+
+  (it would be better to use labels to select pods; more on that later)
+
+- The result is a smaller set of containers
+
+.debug[[k8s/prometheus.md](https://github.com/RyaxTech/kube.training.git/tree/k8s_metropole_de_lyon/slides/k8s/prometheus.md)]
+---
+
+## Transforming counters in rates
+
+This query will show us CPU usage % instead of total seconds used:
+```
+100*irate(container_cpu_usage_seconds_total{pod_name=~"worker.*"}[5m])
+```
+
+- The [`irate`](https://prometheus.io/docs/prometheus/latest/querying/functions/#irate) operator computes the "per-second instant rate of increase"
+
+  - `rate` is similar but allows decreasing counters and negative values
+
+  - with `irate`, if a counter goes back to zero, we don't get a negative spike
+
+- The `[5m]` tells how far to look back if there is a gap in the data
+
+- And we multiply with `100*` to get CPU % usage
+
+.debug[[k8s/prometheus.md](https://github.com/RyaxTech/kube.training.git/tree/k8s_metropole_de_lyon/slides/k8s/prometheus.md)]
+---
+
+## Aggregation operators
+
+This query sums the CPU usage per node:
+```
+sum by (instance) (
+  irate(container_cpu_usage_seconds_total{pod_name=~"worker.*"}[5m])
+)
+```
+
+- `instance` corresponds to the node on which the container is running
+
+- `sum by (instance) (...)` computes the sum for each instance
+
+- Note: all the other tags are collapsed
+
+  (in other words, the resulting graph only shows the `instance` tag)
+
+- PromQL supports many more [aggregation operators](https://prometheus.io/docs/prometheus/latest/querying/operators/#aggregation-operators)
+
+.debug[[k8s/prometheus.md](https://github.com/RyaxTech/kube.training.git/tree/k8s_metropole_de_lyon/slides/k8s/prometheus.md)]
+---
+
+## What kind of metrics can we collect?
+
+- Node metrics (related to physical or virtual machines)
+
+- Container metrics (resource usage per container)
+
+- Databases, message queues, load balancers, ...
+
+  (check out this [list of exporters](https://prometheus.io/docs/instrumenting/exporters/)!)
+
+- Instrumentation (=deluxe `printf` for our code)
+
+- Business metrics (customers served, revenue, ...)
+
+.debug[[k8s/prometheus.md](https://github.com/RyaxTech/kube.training.git/tree/k8s_metropole_de_lyon/slides/k8s/prometheus.md)]
+---
+
+class: extra-details
+
+## Node metrics
+
+- CPU, RAM, disk usage on the whole node
+
+- Total number of processes running, and their states
+
+- Number of open files, sockets, and their states
+
+- I/O activity (disk, network), per operation or volume
+
+- Physical/hardware (when applicable): temperature, fan speed ...
+
+- ... and much more!
+
+.debug[[k8s/prometheus.md](https://github.com/RyaxTech/kube.training.git/tree/k8s_metropole_de_lyon/slides/k8s/prometheus.md)]
+---
+
+class: extra-details
+
+## Container metrics
+
+- Similar to node metrics, but not totally identical
+
+- RAM breakdown will be different
+
+  - active vs inactive memory
+  - some memory is *shared* between containers, and accounted specially
+
+- I/O activity is also harder to track
+
+  - async writes can cause deferred "charges"
+  - some page-ins are also shared between containers
+
+For details about container metrics, see:
+<br/>
+http://jpetazzo.github.io/2013/10/08/docker-containers-metrics/
+
+.debug[[k8s/prometheus.md](https://github.com/RyaxTech/kube.training.git/tree/k8s_metropole_de_lyon/slides/k8s/prometheus.md)]
+---
+
+class: extra-details
+
+## Application metrics
+
+- Arbitrary metrics related to your application and business
+
+- System performance: request latency, error rate ...
+
+- Volume information: number of rows in database, message queue size ...
+
+- Business data: inventory, items sold, revenue ...
+
+.debug[[k8s/prometheus.md](https://github.com/RyaxTech/kube.training.git/tree/k8s_metropole_de_lyon/slides/k8s/prometheus.md)]
+---
+
+class: extra-details
+
+## Detecting scrape targets
+
+- Prometheus can leverage Kubernetes service discovery
+
+  (with proper configuration)
+
+- Services or pods can be annotated with:
+
+  - `prometheus.io/scrape: true` to enable scraping
+  - `prometheus.io/port: 9090` to indicate the port number
+  - `prometheus.io/path: /metrics` to indicate the URI (`/metrics` by default)
+
+- Prometheus will detect and scrape these (without needing a restart or reload)
+
+.debug[[k8s/prometheus.md](https://github.com/RyaxTech/kube.training.git/tree/k8s_metropole_de_lyon/slides/k8s/prometheus.md)]
+---
+
+## Querying labels
+
+- What if we want to get metrics for containers belong to pod tagged `worker`?
+
+- The cAdvisor exporter does not give us Kubernetes labels
+
+- Kubernetes labels are exposed through another exporter
+
+- We can see Kubernetes labels through metrics `kube_pod_labels`
+
+  (each container appears as a time series with constant value of `1`)
+
+- Prometheus *kind of* supports "joins" between time series
+
+- But only if the names of the tags match exactly
+
+.debug[[k8s/prometheus.md](https://github.com/RyaxTech/kube.training.git/tree/k8s_metropole_de_lyon/slides/k8s/prometheus.md)]
+---
+
+## Unfortunately ...
+
+- The cAdvisor exporter uses tag `pod_name` for the name of a pod
+
+- The Kubernetes service endpoints exporter uses tag `pod` instead
+
+- See [this blog post](https://www.robustperception.io/exposing-the-software-version-to-prometheus) or [this other one](https://www.weave.works/blog/aggregating-pod-resource-cpu-memory-usage-arbitrary-labels-prometheus/) to see how to perform "joins"
+
+- Alas, Prometheus cannot "join" time series with different labels
+
+  (see [Prometheus issue #2204](https://github.com/prometheus/prometheus/issues/2204) for the rationale)
+
+- There is a workaround involving relabeling, but it's "not cheap"
+
+  - see [this comment](https://github.com/prometheus/prometheus/issues/2204#issuecomment-261515520) for an overview
+
+  - or [this blog post](https://5pi.de/2017/11/09/use-prometheus-vector-matching-to-get-kubernetes-utilization-across-any-pod-label/) for a complete description of the process
+
+.debug[[k8s/prometheus.md](https://github.com/RyaxTech/kube.training.git/tree/k8s_metropole_de_lyon/slides/k8s/prometheus.md)]</textarea>
+    <script src="remark.min.js" type="text/javascript">
+    </script>
+    <script type="text/javascript">
+      var slideshow = remark.create({
+        ratio: '16:9',
+        highlightSpans: true,
+        excludedClasses: ["self-paced"]
+      });
+    </script>
+    
+    <!-- 
+    These two scripts will be available only when loading the
+    content using the pub/sub server. Otherwise, they'll just
+    404 and that's OK.
+    -->
+    <script src="/socket.io/socket.io.js">
+    </script>
+    <script src="/remote.js">
+    </script>
+
+  </body>
+</html>
