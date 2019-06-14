@@ -29,12 +29,6 @@ Kubernetes Volumes, Secrets, Configurations and Advanced Features<br/>
 
 .debug[
 ```
- M slides/images/bridge1.png
- M slides/images/bridge2.png
- M slides/k8s/whatsnext.md
- M slides/kube-day3.yml
- M slides/kube-jour1.yml.html
- M slides/kube/advanced.md
  M slides/kube/stockage.md
 ?? slides/images/CloudNativeLandscape_Serverless_latest.png
 ?? slides/images/CloudNativeLandscape_latest.png
@@ -63,7 +57,7 @@ Kubernetes Volumes, Secrets, Configurations and Advanced Features<br/>
 
 ```
 
-These slides have been built from commit: 8b0ab4a
+These slides have been built from commit: c51d955
 
 
 [shared/title.md](https://github.com/RyaxTech/kube.training.git/tree/k8s_metropole_de_lyon/slides/shared/title.md)]
@@ -469,8 +463,9 @@ Rook: orchestration of distributed storage
   ```bash
    git clone https://github.com/rook/rook.git
    cd rook/cluster/examples/kubernetes/ceph
+   kubectl create -f common.yaml
    kubectl create -f operator.yaml
-   kubect create -f cluster.yaml
+   kubectl create -f cluster-test.yaml
   ```
 - check to see everything is running as expected
  ```bash
@@ -500,49 +495,8 @@ Rook: orchestration of distributed storage
 ## Example of dynamic provisioning of PersistentVolumes using Rook
 
 .exercise[
-- Save this storage class definition part as pool.yaml:
-   ```bash
-   apiVersion: ceph.rook.io/v1alpha1
-   kind: Pool
-   metadata:
-     name: replicapool
-     namespace: rook-ceph
-   spec:
-     replicated:
-       size: 3
-   ```
-]
-
-.debug[[kube/stockage.md](https://github.com/RyaxTech/kube.training.git/tree/k8s_metropole_de_lyon/slides/kube/stockage.md)]
----
-
-
-## Example of dynamic provisioning of PersistentVolumes using Rook
-
-.exercise[
-- Save this storage class definition part as storageclass.yaml:
-   ```bash
-   apiVersion: storage.k8s.io/v1
-   kind: StorageClass
-   metadata:
-     name: rook-ceph-block
-   provisioner: ceph.rook.io/block
-   parameters:
-      pool: replicapool
-      #The value of "clusterNamespace" MUST be the same as the one in which your rook cluster exist
-      clusterNamespace: rook-ceph
-   ```
-]
-
-.debug[[kube/stockage.md](https://github.com/RyaxTech/kube.training.git/tree/k8s_metropole_de_lyon/slides/kube/stockage.md)]
----
-
-## Example of dynamic provisioning of PersistentVolumes using Rook
-
-.exercise[
 - Create the pool and storage class:
   ```bash
-  kubectl create -f pool.yaml
   kubectl create -f storageclass.yaml
   ```
 ]
@@ -588,6 +542,22 @@ kubectl get svc wordpress
 ]
 You should see the wordpress app running.
 
+.debug[[kube/stockage.md](https://github.com/RyaxTech/kube.training.git/tree/k8s_metropole_de_lyon/slides/kube/stockage.md)]
+---
+
+## Teardown
+
+.exercise[
+
+- To clean up all the artifacts created by the block demo:
+
+```bash
+kubectl delete -f wordpress.yaml
+kubectl delete -f mysql.yaml
+kubectl delete -n rook-ceph cephblockpools.ceph.rook.io replicapool
+kubectl delete storageclass rook-ceph-block
+```
+]
 .debug[[kube/stockage.md](https://github.com/RyaxTech/kube.training.git/tree/k8s_metropole_de_lyon/slides/kube/stockage.md)]
 ---
 
